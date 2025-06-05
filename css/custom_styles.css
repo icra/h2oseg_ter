@@ -1,0 +1,47 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+#app {
+    height: 100%;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 8 i 4 columnes equivalents */
+    height: 100%;
+}
+
+#map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#cy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+}
+
+#cy-leaflet {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#sidebar {
+    padding: 1rem;
+    overflow-y: auto;
+    height: 100%;
+}
