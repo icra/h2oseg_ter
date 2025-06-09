@@ -20,8 +20,8 @@
             <div v-if="selectedEle">
                 <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
                 <div v-if="selectedEle.eleType === 'punt'">
-                    <p>En aquest punt de la xarxa arriben {{ selectedEle.flowIncome }} m<sup>3</sup>/s
-                        i en surten {{ selectedEle.flowOutcome }} m<sup>3</sup>/s.</p>
+                    <p>En aquest punt de la xarxa arriben {{ selectedEle.inflow }} m<sup>3</sup>/s
+                        i en surten {{ selectedEle.outflow }} m<sup>3</sup>/s.</p>
                     <p>Actualment, el node
                         <span v-if="selectedEle.flowChange >= 0"> aporta </span>
                         <span v-else-if="selectedEle.flowChange < 0"> extreu </span>

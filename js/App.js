@@ -34,7 +34,6 @@ createApp({
                     {
                         selector: 'node',
                         style: {
-                            'background-color': '#0074D9',
                             label: 'data(label)',
                             color: '#fff',
                             'text-valign': 'center',
@@ -76,7 +75,6 @@ createApp({
             L.control.zoom().addTo(map)
 
             leaf.value.fit()
-            gm.countPredecessors(cy.value)
             gm.calculateFlow(cy.value)
 
             gm.setupEleClickListener(cy.value, selectedEle)

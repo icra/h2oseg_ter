@@ -20,31 +20,51 @@ const countPredecessors = function(cy) {
     })
 }
 
-const calculateFlow = function(cy, errorRef = null){
-    cy.nodes().forEach(function(node, i, nodes){
-        let predecessors = node.predecessors('node')
-        let sumFlow = 0;
+const calculateFlow = function(cy, errorRef = null) {
+    const visited = new Set();
+
+    function dfs(node) {
+        if (visited.has(node.id())) return;
+        visited.add(node.id());
+
+        // Processar fills primer
+        const upNodes = node.predecessors('node');
+        upNodes.forEach(upNode => dfs(upNode));
+
+        // Ara calculem el flow per aquest node
+        const predecessors = node.predecessors('node');
+        let inflow = 0;
+
         predecessors.forEach(pre => {
-            let flowChange = parseFloat(pre.data('flowChange')) || 0
-            sumFlow += flowChange;
-        })
-        // if ((node.data('flowChange') + sumFlow) < 0){
-        //     console.error(`el Node ${node.id()} genera un cabal negatiu, flowChange = ${node.data('flowChange')} i flow = ${sumFlow}`)
-        //     if (errorRef) {
-        //         errorRef.value = `El cabal que arriba és ${sumFlow)}, no pots extreure ${node.data('flowChange')}, és més cabal del que arriba`
-        //         return errorRef
-        //     }
-        // }
-        node.data('flowIncome', sumFlow)
-        let flowOutcome = sumFlow + node.data('flowChange')
-        node.data('flowOutcome', flowOutcome)
-        node.outgoers('edge').forEach((edge) => {
-            edge.data('flow', flowOutcome)
-            if (edge.data('flowNeed') > flowOutcome) edge.style('line-color', 'red')
-            if(edge.data('flowNeed') <= flowOutcome) edge.style('line-color', '#1a9ed8')
-        })
-    })
-}
+            let flowChange =  parseFloat(pre.data('flowChange'))
+            if(node.id() === '8') console.log(`Node ${node.id()} - Predecessor ${pre.id()} -  ${flowChange + pre.data('outflow') >= 0} - Flow Change: ${flowChange} - Outflow: ${pre.data('outflow')}`);
+            if (flowChange + pre.data('outflow') >= 0) {
+                if(node.id() === '3') console.log(`Node ${node.id()} Predecessor ${pre.id()} - Flow Change: ${pre.data('flowChange')} - Outflow: ${pre.data('outflow')}`);
+                inflow += flowChange
+            }
+        });
+
+        node.data('inflow', Math.max(0, inflow));
+
+        const rawOutflow = inflow + node.data('flowChange');
+        const outflow = Math.max(0, rawOutflow);
+        node.data('outflow', outflow);
+        node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9')
+        // console.log(`Node ${node.id()} - Flow Income: ${inflow}, Flow Outcome: ${outflow}`);
+        node.outgoers('edge').forEach(edge => {
+            edge.data('flow', outflow);
+            edge.style('line-color', edge.data('flowNeed') > outflow ? 'red' : '#1a9ed8');
+        });
+    }
+
+    // Comença des de fulles → amunt
+    const leaves = cy.nodes().filter(n => n.outgoers('edge').length === 0);
+    console.log(leaves.length)
+    leaves.forEach(leaf => dfs(leaf));
+
+    if (errorRef) errorRef.value = null;
+};
+
 
 function modifyFlowChange(cy, selectedEle, flowModified, errorMsg) {
     if (!selectedEle || !selectedEle.id) return;
