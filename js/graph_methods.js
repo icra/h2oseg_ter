@@ -1,14 +1,43 @@
 const setupEleClickListener = function(cy, selectedEleRef) {
-    cy.on('tap', 'node, edge', (evt) => {
-        const ele = evt.target
+    cy.on('tap', evt => {
+        const ele = evt.target;
 
-        cy.elements().removeClass('selected')
-        ele.addClass('selected')
+        // Si no és ni node ni edge, és fons o un element sense interès
+        if (!ele.isNode?.() && !ele.isEdge?.()) {
+            selectedEleRef.value = null;
+            cy.elements().removeClass('selected');
+            cy.nodes().forEach(node => {
+                node.style('background-color', setNodeColor(node));
+            })
+            cy.edges().forEach(edge => {
+                edge.style('line-color', setEdgeColor(edge));
+            });
+            return;
+        }
 
-        selectedEleRef.value = ele.data()
-        selectedEleRef.value.eleType = ele.isNode() ? 'punt' : 'tram'
-        console.log("Selected element: ", selectedEleRef.value)
-    })
+        // Si és node o edge
+        cy.elements().removeClass('selected');
+        cy.nodes().forEach(node => {
+            node.style('background-color', setNodeColor(node));
+        })
+        cy.edges().forEach(edge => {
+            edge.style('line-color', setEdgeColor(edge));
+        });
+        ele.addClass('selected');
+        selectedEleRef.value = ele.data();
+        selectedEleRef.value.eleType = ele.isNode() ? 'punt' : 'tram';
+    });
+}
+
+const setEdgeColor = function(edge){
+    return edge.data('flow') < edge.data('flowNeed') ? 'red' : '#0074D9'
+}
+
+const setNodeColor = function(node){
+    if (node.incomers().length === 0) {
+        return '#0074D9'; // Si no té edges entrants, és una font
+    }
+    return node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9'
 }
 
 const countPredecessors = function(cy) {
@@ -27,43 +56,50 @@ const calculateFlow = function(cy, errorRef = null) {
         if (visited.has(node.id())) return;
         visited.add(node.id());
 
-        // Processar fills primer
-        const upNodes = node.predecessors('node');
-        upNodes.forEach(upNode => dfs(upNode));
+        // Primer processar els nodes aigües amunt (fonts)
+        const upstreamNodes = node.predecessors('node');
+        upstreamNodes.forEach(pre => dfs(pre));
 
-        // Ara calculem el flow per aquest node
-        const predecessors = node.predecessors('node');
+        // 1. Sumar el flux que REALMENT arriba per cada edge entrant
+        const incomingEdges = node.incomers('edge');
         let inflow = 0;
-
-        predecessors.forEach(pre => {
-            let flowChange =  parseFloat(pre.data('flowChange'))
-            if(node.id() === '8') console.log(`Node ${node.id()} - Predecessor ${pre.id()} -  ${flowChange + pre.data('outflow') >= 0} - Flow Change: ${flowChange} - Outflow: ${pre.data('outflow')}`);
-            if (flowChange + pre.data('outflow') >= 0) {
-                if(node.id() === '3') console.log(`Node ${node.id()} Predecessor ${pre.id()} - Flow Change: ${pre.data('flowChange')} - Outflow: ${pre.data('outflow')}`);
-                inflow += flowChange
-            }
+        incomingEdges.forEach(edge => {
+            const flow = parseFloat(edge.data('flow')) || 0;
+            inflow += flow;
         });
 
-        node.data('inflow', Math.max(0, inflow));
-
-        const rawOutflow = inflow + node.data('flowChange');
+        // 2. Aplicar el flowChange local del node
+        node.data('inflow', inflow);
+        const flowChange = parseFloat(node.data('flowChange')) || 0;
+        const rawOutflow = inflow + flowChange;
         const outflow = Math.max(0, rawOutflow);
         node.data('outflow', outflow);
-        node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9')
-        // console.log(`Node ${node.id()} - Flow Income: ${inflow}, Flow Outcome: ${outflow}`);
-        node.outgoers('edge').forEach(edge => {
+
+        // 3. Estil visual si cal
+        //node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9');
+        node.style('background-color', setNodeColor(node));
+
+        // 4. Assignar aquest outflow als edges sortints
+        const outgoingEdges = node.outgoers('edge');
+        outgoingEdges.forEach(edge => {
             edge.data('flow', outflow);
-            edge.style('line-color', edge.data('flowNeed') > outflow ? 'red' : '#1a9ed8');
+            edge.style('line-color', setEdgeColor(edge));
         });
+
+        // DEBUG opcional
+        if (node.id() === '3' || node.id() === '4') {
+            console.log(`Node ${node.id()} inflow: ${inflow}, flowChange: ${flowChange}, outflow: ${outflow}`);
+        }
     }
 
-    // Comença des de fulles → amunt
+    // Iniciar des de fulles (afluents)
     const leaves = cy.nodes().filter(n => n.outgoers('edge').length === 0);
-    console.log(leaves.length)
     leaves.forEach(leaf => dfs(leaf));
 
     if (errorRef) errorRef.value = null;
 };
+
+
 
 
 function modifyFlowChange(cy, selectedEle, flowModified, errorMsg) {

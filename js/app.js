@@ -34,6 +34,7 @@ createApp({
                     {
                         selector: 'node',
                         style: {
+                            'background-color': '#0074D9',
                             label: 'data(label)',
                             color: '#fff',
                             'text-valign': 'center',
