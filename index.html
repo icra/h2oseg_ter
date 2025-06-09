@@ -17,18 +17,30 @@
             <div id="cy-leaflet"></div>
         </div>
         <div id="sidebar">
-            Aquí hi aniran totes les opcions per interactuar amb la visualització de xarxes.
-
-            <div v-if="selectedNode">
-                <h4>Dades del node seleccionat:</h4>
-                <ul>
-                    <li><strong>ID:</strong> {{ selectedNode.id }}</li>
-                    <li><strong>Lat:</strong> {{ selectedNode.lat ?? '-' }}</li>
-                    <li><strong>Lng:</strong> {{ selectedNode.lng ?? '-' }}</li>
-                </ul>
+            <div v-if="selectedEle">
+                <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
+                <div v-if="selectedEle.eleType === 'punt'">
+                    <p>En aquest punt de la xarxa arriben {{ selectedEle.flowIncome }} m<sup>3</sup>/s
+                        i en surten {{ selectedEle.flowOutcome }} m<sup>3</sup>/s.</p>
+                    <p>Actualment, el node
+                        <span v-if="selectedEle.flowChange >= 0"> aporta </span>
+                        <span v-else-if="selectedEle.flowChange < 0"> extreu </span>
+                        {{ Math.abs(selectedEle.flowChange) }} m<sup>3</sup>/s a la xarxa fluvial
+                    </p>
+                    <h4>Modifica el canvi de cabal generat per aquest punt:</h4>
+                    <input type="number" v-model="flowModified" @keyup.enter="modifyFlowChange(selectedEle, flowModified)" />
+                    <button @click="modifyFlowChange(selectedEle, flowModified)">Modifica</button>
+                    <p v-if="errorMsg" style="color: red; margin-top: 8px;">
+                        ⚠️ {{ errorMsg }}
+                    </p>
+                </div>
+                <div v-if="selectedEle.eleType === 'tram'">
+                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle.flow }} m<sup>3</sup>/s.</p>
+                    <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed }} m<sup>3</sup>/s</p>
+                </div>
             </div>
             <div v-else>
-                <p>Fes clic sobre un node per veure’n les dades.</p>
+                <p>Fes clic sobre un element per veure’n les dades.</p>
             </div>
         </div>
     </div>
