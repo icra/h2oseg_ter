@@ -103,10 +103,7 @@ const calculateFlow = function(cy, errorRef = null) {
     if (errorRef) errorRef.value = null;
 };
 
-
-
-
-function modifyFlowChange(cy, selectedEle, flowModified, errorMsg) {
+const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg) {
     if (!selectedEle || !selectedEle.id) return;
 
     const node = cy.getElementById(selectedEle.id);
@@ -134,10 +131,41 @@ function modifyFlowChange(cy, selectedEle, flowModified, errorMsg) {
     flowModified.value = null;
 }
 
+const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {
+    if (!leafletInstance || !leafletInstance.map) {
+        console.warn('[ZoomLabel] Leaflet map no disponible');
+        return;
+    }
+
+    // Listener de zoom del mapa
+    leafletInstance.map.on('zoomend', () => {
+        const currentZoom = leafletInstance.map.getZoom(); // 👈 canviat!
+        console.log('[ZoomLabel] Zoom actual de Leaflet:', currentZoom);
+
+        if (currentZoom >= zoomThreshold) {
+            cy.nodes().addClass('show-label');
+            cy.edges().addClass('show-label');
+        } else {
+            cy.nodes().removeClass('show-label');
+            cy.edges().removeClass('show-label');
+        }
+    });
+
+    // Establir estat inicial
+    const initialZoom = leafletInstance.map.getZoom();
+    if (initialZoom >= zoomThreshold) {
+        cy.nodes().addClass('show-label');
+    }
+}
+
+
+
+
 
 export default {
     setupEleClickListener,
     calculateFlow,
     modifyFlowChange,
-    countPredecessors
+    countPredecessors,
+    setupZoomLabelControl
 }

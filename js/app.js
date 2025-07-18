@@ -20,7 +20,7 @@ createApp({
                         ...element,
                         data: {
                             ...element.data,
-                            // label: `${element.data.id} (${element.data.flowChange || ''})`,
+                            label: `${element.data.flowChange || ''}`,
                         }
                     };
                 }
@@ -40,8 +40,7 @@ createApp({
                             // label: 'data(label)',
                             color: '#fff',
                             'text-valign': 'center',
-                            'text-halign': 'center',
-                            'font-size': '1px'
+                            'text-halign': 'center'
                         }
                     },
                     {
@@ -60,9 +59,27 @@ createApp({
                             'background-color': 'yellow',
                             'line-color': 'yellow',       // si és un edge
                             'target-arrow-color': 'yellow', // si tens fletxes
-                            'color': 'black',
+                            color: 'black',
                             'transition-property': 'background-color, line-color',
                             'transition-duration': '250ms'
+                        }
+                    },
+                    {
+                        selector: 'node.show-label',
+                        style: {
+                            'label': 'data(flowChange)',
+                            color: '#ffffff',
+                            width: 25,
+                            height: 25
+                        }
+                    },
+                    {
+                        selector: 'edge.show-label',
+                        style: {
+                            'label': 'data(flow)',
+                            'text-background-color': '#fff',
+                            'text-background-opacity': 0.8,
+                            'text-background-shape': 'roundrectangle',
                         }
                     }
                 ],
@@ -121,6 +138,7 @@ createApp({
             gm.calculateFlow(cy.value)
 
             gm.setupEleClickListener(cy.value, selectedEle)
+            gm.setupZoomLabelControl(cy.value, leaf.value, 12);
         })
 
         return {

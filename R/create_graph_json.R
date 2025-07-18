@@ -10,8 +10,8 @@ set.seed(4)
 #   {data: {id: 'ab', source: 'a', target: 'b'}}
 # ]
 
-nodes <- read_sf("assets/nodes.gpkg")
-edges <- readxl::read_excel("assets/edges.xlsx")
+nodes <- read_sf("data_raw/nodes.gpkg")
+edges <- readxl::read_excel("data_raw/edges.xlsx")
 
 nodes_coord <- nodes |> 
   st_transform(4326) |> 
