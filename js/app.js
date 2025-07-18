@@ -11,7 +11,7 @@ createApp({
         const errorMsg = ref(null)
 
         onMounted(async () => {
-            const response = await fetch('assets/test.json')
+            const response = await fetch('assets/ter_graph.json')
             let network = await response.json()
 
             network = network.map(element => {
@@ -20,7 +20,7 @@ createApp({
                         ...element,
                         data: {
                             ...element.data,
-                            label: `${element.data.id} (${element.data.flowChange || ''})`,
+                            // label: `${element.data.id} (${element.data.flowChange || ''})`,
                         }
                     };
                 }
@@ -35,17 +35,19 @@ createApp({
                         selector: 'node',
                         style: {
                             'background-color': '#0074D9',
-                            label: 'data(label)',
+                            'width': 10,
+                            'height': 10,
+                            // label: 'data(label)',
                             color: '#fff',
                             'text-valign': 'center',
                             'text-halign': 'center',
-                            'font-size': '10px'
+                            'font-size': '1px'
                         }
                     },
                     {
                         selector: 'edge',
                         style: {
-                            label: 'data(flow)',
+                            // label: 'data(flow)',
                             width: 2,
                             'text-background-color': '#fff',
                             'text-background-opacity': 0.8,
@@ -70,10 +72,50 @@ createApp({
             leaf.value = cy.value.leaflet({
                 container: document.getElementById('cy-leaflet'),
                 latitude: 'lat',
-                longitude: 'lng'
+                longitude: 'lng',
             })
             const map = leaf.value.map
             L.control.zoom().addTo(map)
+
+            // Crear un control personalitzat
+            const homeControl = L.Control.extend({
+                options: { position: 'topleft' },
+
+                onAdd: function () {
+                    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+                    // Crea un rectangle amb vora discontínua via CSS
+                    container.innerHTML = `
+                        <svg viewBox="0 0 24 24" width="20" height="20" style="margin: 6px;">
+                            <path d="M4 9V4h5M4 4l6 6M20 9V4h-5M20 4l-6 6M4 15v5h5M4 20l6-6M20 15v5h-5M20 20l-6-6"
+                                  stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    `;
+
+                    container.style.backgroundColor = 'white';
+                    container.style.width = '32px';
+                    container.style.height = '32px';
+                    container.style.display = 'flex';
+                    container.style.alignItems = 'center';
+                    container.style.justifyContent = 'center';
+                    container.style.cursor = 'pointer';
+                    container.title = 'Restableix la vista';
+
+                    L.DomEvent.disableClickPropagation(container);
+
+                    container.onclick = () => {
+                        if (leaf.value && typeof leaf.value.fit === 'function') {
+                            leaf.value.fit();
+                        }
+                    };
+
+                    return container;
+                }
+            });
+
+
+            // Afegir-lo al mapa
+            map.addControl(new homeControl());
 
             leaf.value.fit()
             gm.calculateFlow(cy.value)

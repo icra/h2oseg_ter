@@ -50,7 +50,7 @@ const countPredecessors = function(cy) {
 }
 
 const calculateFlow = function(cy, errorRef = null) {
-    const visited = new Set();
+    let visited = new Set();
 
     function dfs(node) {
         if (visited.has(node.id())) return;
@@ -77,13 +77,17 @@ const calculateFlow = function(cy, errorRef = null) {
 
         // 3. Estil visual si cal
         //node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9');
-        node.style('background-color', setNodeColor(node));
+        if (!node.hasClass('selected')) {
+            node.style('background-color', setNodeColor(node));
+        }
 
         // 4. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
             edge.data('flow', outflow);
-            edge.style('line-color', setEdgeColor(edge));
+            if (!edge.hasClass('selected')) {
+                edge.style('line-color', setEdgeColor(edge))
+            }
         });
 
         // DEBUG opcional

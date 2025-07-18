@@ -45,3 +45,8 @@ html, body {
     overflow-y: auto;
     height: 100%;
 }
+
+.align-right {
+    text-align: right;
+    padding: 1em;
+}
