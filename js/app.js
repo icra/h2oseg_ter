@@ -1,3 +1,5 @@
+// noinspection JSVoidFunctionReturnValueUsed
+
 import gm from './graph_methods.js'
 
 const { createApp, onMounted, ref } = Vue
@@ -40,7 +42,8 @@ createApp({
                             // label: 'data(label)',
                             color: '#fff',
                             'text-valign': 'center',
-                            'text-halign': 'center'
+                            'text-halign': 'center',
+                            'grabbable': false
                         }
                     },
                     {
@@ -61,7 +64,8 @@ createApp({
                             'target-arrow-color': 'yellow', // si tens fletxes
                             color: 'black',
                             'transition-property': 'background-color, line-color',
-                            'transition-duration': '250ms'
+                            'transition-duration': '250ms',
+                            'grabbable': false
                         }
                     },
                     {
@@ -86,6 +90,8 @@ createApp({
                 layout: { name: 'preset' }
             })
 
+            cy.value.autoungrabify(true);
+
             leaf.value = cy.value.leaflet({
                 container: document.getElementById('cy-leaflet'),
                 latitude: 'lat',
@@ -103,15 +109,15 @@ createApp({
 
                     // Crea un rectangle amb vora discontínua via CSS
                     container.innerHTML = `
-                        <svg viewBox="0 0 24 24" width="20" height="20" style="margin: 6px;">
+                        <svg viewBox="0 0 22 22" width="18" height="18" style="margin: 6px;">
                             <path d="M4 9V4h5M4 4l6 6M20 9V4h-5M20 4l-6 6M4 15v5h5M4 20l6-6M20 15v5h-5M20 20l-6-6"
                                   stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     `;
 
                     container.style.backgroundColor = 'white';
-                    container.style.width = '32px';
-                    container.style.height = '32px';
+                    container.style.width = '30px';
+                    container.style.height = '30px';
                     container.style.display = 'flex';
                     container.style.alignItems = 'center';
                     container.style.justifyContent = 'center';

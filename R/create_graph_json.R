@@ -11,7 +11,7 @@ set.seed(4)
 # ]
 
 nodes <- read_sf("data_raw/nodes.gpkg")
-edges <- readxl::read_excel("data_raw/edges.xlsx")
+edges <- read_csv("data_raw/edges.csv")
 
 nodes_coord <- nodes |> 
   st_transform(4326) |> 
@@ -39,11 +39,12 @@ j <- length(elements)
 for (i in 1:nrow(edges)){
   elements[[i + j]] <- list(
     data = list(
-      id = paste(edges$from[[i]], edges$to[[i]]), 
+      id = paste(edges$from[[i]], edges$to[[i]], sep = "."), 
       source = edges$from[[i]], 
       target = edges$to[[i]],
       flowNeed = edges$flow_need[[i]],
-      flow = NULL
+      flow = NULL,
+      codi_massa = edges$codi[[i]]
     )
   )
 }

@@ -41,10 +41,11 @@
                 <div v-if="selectedEle.eleType === 'tram'">
                     <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle.flow }} m<sup>3</sup>/s.</p>
                     <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed }} m<sup>3</sup>/s</p>
+                    <p>El tram correspon a la massa d'aigua {{ selectedEle.codi_massa}}</p>
                 </div>
             </div>
             <div v-else>
-                <p>Selecciona el curor (a baix a l'esquerre) i fes clic sobre un element per veure’n les dades.</p>
+                <p>Selecciona el cursor (a baix a l'esquerre) i fes clic sobre un element per veure’n les dades.</p>
             </div>
             <div class="sidebar-footer">
                 <hr />

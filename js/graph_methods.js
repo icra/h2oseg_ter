@@ -15,6 +15,8 @@ const setupEleClickListener = function(cy, selectedEleRef) {
             return;
         }
 
+        console.log("selectedEle", ele.data())
+
         // Si és node o edge
         cy.elements().removeClass('selected');
         cy.nodes().forEach(node => {
