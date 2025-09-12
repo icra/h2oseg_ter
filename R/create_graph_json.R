@@ -1,25 +1,24 @@
 library(tidyverse)
 use('janitor', 'clean_names')
 library(sf)
-library(jsonlite)
 set.seed(4)
 
-# [
-#   {data: {id: 'a', name: 'Node A'}},
-#   {data: {id: 'b', name: 'Node B'}},
-#   {data: {id: 'ab', source: 'a', target: 'b'}}
-# ]
+stop("Cal corregir topologia a QGIS")
 
-nodes <- read_sf("data_raw/nodes.gpkg")
-edges <- read_csv("data_raw/edges.csv")
+nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg")
+edges <- read_csv2("data_raw/edges_natural_antropic.csv")
 
-nodes_coord <- nodes |> 
-  st_transform(4326) |> 
-  st_coordinates() |> 
-  as_tibble()
+# Comprovacions
 
-nodes <- nodes |> 
-  mutate(flow_change = sample(c(1, 2, 3), n(), replace = T))
+if (any(duplicated(edges$from))) {
+  rlang::abort("Hi ha duplicats a from dels arcs")
+}
+
+stopifnot(all(edges$from %in% nodes$node_id) && all(edges$to %in% nodes$node_id))
+
+# tots les nodes tenen un arc sortint excepte el node final (63)
+stopifnot(length(which(nodes$node_id %in% edges$from)) == (nrow(nodes) - 1))
+stopifnot(which(!(nodes$node_id %in% edges$from)) == 63)
 
 edges$flow_need <- sample(2:10, nrow(edges), replace = T)
 
@@ -30,7 +29,9 @@ for (i in 1:nrow(nodes)){
       id = nodes$node_id[[i]], 
       lat = nodes_coord$Y[[i]], 
       lng = nodes_coord$X[[i]],
-      flowChange = nodes$flow_change[[i]]
+      flowChange = nodes$flow_change[[i]],
+      type = nodes$type,
+      name = nodes$nom
     )
   )
 }
