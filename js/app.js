@@ -29,6 +29,8 @@ createApp({
                 return element;
             });
 
+            cytoscape.use(cytoscapePopper)
+
             cy.value = cytoscape({
                 container: document.getElementById('cy'),
                 elements: network,
@@ -69,18 +71,10 @@ createApp({
                         }
                     },
                     {
-                        selector: 'node.show-label',
-                        style: {
-                            'label': 'data(flowChange)',
-                            color: '#ffffff',
-                            width: 25,
-                            height: 25
-                        }
-                    },
-                    {
                         selector: 'edge.show-label',
                         style: {
                             'label': 'data(flow)',
+                            'color': '#0074D9',
                             'text-background-color': '#fff',
                             'text-background-opacity': 0.8,
                             'text-background-shape': 'roundrectangle',
@@ -89,6 +83,9 @@ createApp({
                 ],
                 layout: { name: 'preset' }
             })
+
+            console.log('Cytoscape:', cytoscape?.version)
+            console.log('popperRef?', typeof cy.value.nodes().first().popperRef)
 
             cy.value.autoungrabify(true);
 
@@ -145,6 +142,28 @@ createApp({
 
             gm.setupEleClickListener(cy.value, selectedEle)
             gm.setupZoomLabelControl(cy.value, leaf.value, 12);
+            // gm.placeLabels(cy.value)
+
+            cy.value.on('mouseover', 'node', e => {
+                const node = e.target
+                const ref = node.popperRef()
+
+                const tip = tippy(document.createElement('div'), {
+                    getReferenceClientRect: ref.getBoundingClientRect,
+                    content: `
+                        ${node.data('name') || ''}<br>
+                        Tipus: ${node.data('type')}<br>
+                        Aportació: ${node.data('flowChange')} m³/s<br>
+                    `,
+                    allowHTML: true,
+                    trigger: 'manual',
+                    placement: 'right',
+                    appendTo: document.body
+                })
+
+                tip.show()
+                node.on('mouseout', () => tip.destroy())
+            })
         })
 
         return {

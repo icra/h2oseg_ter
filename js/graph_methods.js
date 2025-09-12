@@ -74,7 +74,7 @@ const calculateFlow = function(cy, errorRef = null) {
         node.data('inflow', inflow);
         const flowChange = parseFloat(node.data('flowChange')) || 0;
         const rawOutflow = inflow + flowChange;
-        const outflow = Math.max(0, rawOutflow);
+        let outflow = Math.max(0, rawOutflow);
         node.data('outflow', outflow);
 
         // 3. Estil visual si cal
@@ -82,6 +82,8 @@ const calculateFlow = function(cy, errorRef = null) {
         if (!node.hasClass('selected')) {
             node.style('background-color', setNodeColor(node));
         }
+
+        outflow = Math.round(outflow * 10) / 10; // Redondejar a 1 decimal
 
         // 4. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
@@ -141,8 +143,8 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
 
     // Listener de zoom del mapa
     leafletInstance.map.on('zoomend', () => {
-        const currentZoom = leafletInstance.map.getZoom(); // 👈 canviat!
-        console.log('[ZoomLabel] Zoom actual de Leaflet:', currentZoom);
+        const currentZoom = leafletInstance.map.getZoom();
+        // console.log('[ZoomLabel] Zoom actual de Leaflet:', currentZoom);
 
         if (currentZoom >= zoomThreshold) {
             cy.nodes().addClass('show-label');
@@ -160,6 +162,48 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
     }
 }
 
+const rectsOverlap = function(a, b) {
+    return !(a.x2 < b.x1 || a.x1 > b.x2 || a.y2 < b.y1 || a.y1 > b.y2)
+}
+
+const labelRectFor = function(node, offX, offY) {
+    const pos = node.renderedPosition();               // posicio node a pantalla
+    const fs  = parseFloat(node.pstyle("font-size").pfValue); // mida lletra
+    const text = node.data("label") || "";
+    const approxW = text.length * (fs * 0.6); // aproximació ample
+    const approxH = fs * 1.2;                 // aproximació alt
+
+    const x1 = pos.x + offX;
+    const y1 = pos.y + offY - approxH; // “top-right” per defecte
+    return { x1, y1, x2: x1 + approxW, y2: y1 + approxH };
+}
+
+const placeLabels = function(cy) {
+    const placed = []; // rectangles ocupats
+    const candidates = [
+        {halign: "right",  valign: "top",    dx:  6, dy: -6},
+        {halign: "left",   valign: "top",    dx: -6, dy: -6},
+        {halign: "right",  valign: "bottom", dx:  6, dy:  6},
+        {halign: "left",   valign: "bottom", dx: -6, dy:  6},
+    ];
+
+    cy.batch(() => {
+        cy.nodes().forEach(n => {
+            let chosen = candidates[0];
+            for (const c of candidates) {
+                const r = labelRectFor(n, c.dx, c.dy);
+                const overlap = placed.some(p => rectsOverlap(r, p));
+                if (!overlap) { chosen = c; placed.push(r); break; }
+            }
+            n.style({
+                "text-halign": chosen.halign,
+                "text-valign": chosen.valign,
+                "text-margin-x": chosen.dx,
+                "text-margin-y": chosen.dy
+            });
+        });
+    });
+}
 
 
 
@@ -169,5 +213,6 @@ export default {
     calculateFlow,
     modifyFlowChange,
     countPredecessors,
-    setupZoomLabelControl
+    setupZoomLabelControl,
+    placeLabels
 }

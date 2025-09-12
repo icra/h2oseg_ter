@@ -1,11 +1,13 @@
 library(tidyverse)
 use('janitor', 'clean_names')
 library(sf)
+library(jsonlite)
 set.seed(4)
 
-stop("Cal corregir topologia a QGIS")
+# stop("Cal corregir topologia a QGIS")
 
-nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg")
+nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |> 
+  mutate(flow_change = signif(flow_change, 2))
 edges <- read_csv2("data_raw/edges_natural_antropic.csv")
 
 # Comprovacions
@@ -22,6 +24,12 @@ stopifnot(which(!(nodes$node_id %in% edges$from)) == 63)
 
 edges$flow_need <- sample(2:10, nrow(edges), replace = T)
 
+
+nodes_coord <- nodes |> 
+  st_transform(4326) |> 
+  st_coordinates() |> 
+  as_tibble()
+
 elements <- list()
 for (i in 1:nrow(nodes)){
   elements[[i]] <- list(
@@ -30,8 +38,8 @@ for (i in 1:nrow(nodes)){
       lat = nodes_coord$Y[[i]], 
       lng = nodes_coord$X[[i]],
       flowChange = nodes$flow_change[[i]],
-      type = nodes$type,
-      name = nodes$nom
+      type = nodes$type[[i]],
+      name = nodes$nom[[i]]
     )
   )
 }
