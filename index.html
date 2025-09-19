@@ -28,11 +28,17 @@
                     <p v-if="selectedEle.name">{{ selectedEle.name }}</p>
                     <p>En aquest punt de la xarxa arriben {{ selectedEle.inflow }} m<sup>3</sup>/s
                         i en surten {{ Math.round(selectedEle.outflow * 10) / 10 }} m<sup>3</sup>/s.</p>
-                    <p>Actualment, el node
-                        <span v-if="selectedEle.flowChange >= 0"> aporta </span>
-                        <span v-else-if="selectedEle.flowChange < 0"> extreu </span>
-                        {{ Math.abs(selectedEle.flowChange) }} m<sup>3</sup>/s a la xarxa fluvial
+                    <p v-if="selectedEle.type === 'massa'">
+                        L'àrea de drenatge d'aquest punt aporta {{ selectedEle.flowChange }} m<sup>3</sup>/s de cabal.
                     </p>
+                    <p v-else-if="selectedEle.type === 'EDAR'">
+                        L'efluent de l'EDAR aporta {{ selectedEle.flowChange }} m<sup>3</sup>/s a la xarxa fluvial.
+                    </p>
+                    <p v-else-if="selectedEle.flowChange > 0">
+                        En aquest punt entren {{ selectedEle.flowChange }} m<sup>3</sup>/s a la xarxa fluvial.
+                    </p>
+                    <p v-else-if="selectedEle.flowChange < 0">
+                        En aquest punt s'extreuen {{ Math.abs(selectedEle.flowChange) }} m<sup>3</sup>/s de la xarxa fluvial.
                     <h4>Modifica el canvi de cabal generat per aquest punt:</h4>
                     <input type="number" v-model="flowModified" @keyup.enter="modifyFlowChange(selectedEle, flowModified)" />
                     <button @click="modifyFlowChange(selectedEle, flowModified)">Modifica</button>
@@ -41,7 +47,7 @@
                     </p>
                 </div>
                 <div v-if="selectedEle.eleType === 'tram'">
-                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle.flow }} m<sup>3</sup>/s.</p>
+                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle.flow }} m<sup>3</sup>/s i té una llargada de {{ Math.round(selectedEle.lengthRiver / 10) / 100 }} km.</p>
                     <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed }} m<sup>3</sup>/s</p>
                     <p>El tram correspon a la massa d'aigua {{ selectedEle.codi_massa}}</p>
                 </div>

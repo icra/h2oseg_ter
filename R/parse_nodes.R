@@ -1,3 +1,4 @@
+stop("Els nodes han sigut editats manualments a QGIS: data_raw/nodes_natural_antropic")
 library(tidyverse)
 use('janitor', 'clean_names')
 library(sf)

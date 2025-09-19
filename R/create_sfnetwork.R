@@ -9,11 +9,10 @@ tmap_mode('view')
 
 masses <- read_sf("data_raw/masses_aigua_ter.gpkg")
 
-nodes <- read_sf("data_raw/nodes.gpkg") |> 
+nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |> 
   mutate(name = as.character(node_id))
-edges_raw <- readxl::read_excel("data_raw/edges.xlsx") |> 
-  mutate(across(from:to, \(x) as.character(x)))
-xarxa <- sfnetwork(nodes, edges, node_key = "name", directed = T)
+
+xarxa <- sfnetwork(edges = masses)
 
 subcomponent(xarxa, "71", mode = "in")
 

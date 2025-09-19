@@ -24,6 +24,21 @@ stopifnot(which(!(nodes$node_id %in% edges$from)) == 63)
 
 edges$flow_need <- sample(2:10, nrow(edges), replace = T)
 
+od_matrix <- qgisprocess::qgis_run_algorithm(
+  "qneat3:OdMatrixFromPointsAsTable",
+  INPUT = "data_raw/masses_aigua_ter.gpkg",
+  POINTS = nodes,
+  ID_FIELD = 'node_id',
+  ENTRY_COST_CALCULATION_METHOD = 1,
+  DEFAULT_DIRECTION = 2
+)$OUTPUT |> read_sf()
+
+edges <- edges |> 
+  left_join(od_matrix, by = join_by(from == origin_id, to == destination_id)) |> 
+  assertr::verify(assertr::not_na(total_cost)) |> 
+  select(-c(entry_cost, network_cost, exit_cost)) |> 
+  rename(massa_length = total_cost)
+
 
 nodes_coord <- nodes |> 
   st_transform(4326) |> 
@@ -53,7 +68,8 @@ for (i in 1:nrow(edges)){
       target = edges$to[[i]],
       flowNeed = edges$flow_need[[i]],
       flow = NULL,
-      codi_massa = edges$codi[[i]]
+      codi_massa = edges$codi[[i]],
+      lengthRiver = edges$massa_length[[i]]
     )
   )
 }
