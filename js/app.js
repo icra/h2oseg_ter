@@ -168,6 +168,10 @@ createApp({
             edgePane.style.zIndex = 650
             edgePane.style.pointerEvents = 'auto'
 
+            const nodePane = map.createPane('nodePane')
+            nodePane.style.zIndex = 660   // per SOBRE dels edges
+            nodePane.style.pointerEvents = 'auto'
+
             const edgeNormalStyle = { color: '#0074D9', weight: 3, opacity: 0.9 }
             const edgeHiStyle     = { color: 'orange',  weight: 5, opacity: 1.0 }
             const nodeNormalStyle = { color: '#0074D9', radius: 4, weight: 2, opacity: 1, fillOpacity: 1 }
@@ -175,7 +179,7 @@ createApp({
 
             const addNodeLayer = function(n){
                 const ll = [ n.data('lat'), n.data('lng') ]
-                const layer = L.circleMarker(ll, nodeNormalStyle)
+                const layer = L.circleMarker(ll, { ...nodeNormalStyle, pane: 'nodePane' })
                 layer.on('click', () => selectById(n.id(), 'node'))
                 layer.on('mouseover', ()=> { layer.setStyle(nodeHiStyle) })
                 layer.on('mouseout',  () => {
