@@ -61,49 +61,16 @@ createApp({
                     {
                         selector: 'node',
                         style: {
-                            'background-color': '#0074D9',
-                            'width': 10,
-                            'height': 10,
-                            // label: 'data(label)',
-                            color: '#fff',
-                            'text-valign': 'center',
-                            'text-halign': 'center',
+                            'opacity': 0,
+                            'events': 'no',
                             'grabbable': false
                         }
                     },
                     {
                         selector: 'edge',
                         style: {
-                            opacity: 0.1,
-                            // events: 'no'
-                            // // label: 'data(flow)',
-                            // width: 2,
-                            // 'text-background-color': '#fff',
-                            // 'text-background-opacity': 0.8,
-                            // 'text-background-shape': 'roundrectangle',
-
-                        }
-                    },
-                    {
-                        selector: '.selected',
-                        style: {
-                            'background-color': 'yellow',
-                            'line-color': 'yellow',       // si és un edge
-                            'target-arrow-color': 'yellow', // si tens fletxes
-                            color: 'black',
-                            'transition-property': 'background-color, line-color',
-                            'transition-duration': '250ms',
-                            'grabbable': false
-                        }
-                    },
-                    {
-                        selector: 'edge.show-label',
-                        style: {
-                            'label': 'data(flow)',
-                            'color': '#0074D9',
-                            'text-background-color': '#fff',
-                            'text-background-opacity': 0.8,
-                            'text-background-shape': 'roundrectangle',
+                            opacity: 0,
+                            events: 'no'
                         }
                     }
                 ],
@@ -123,8 +90,8 @@ createApp({
                 currentSel.id = id
                 currentSel.kind = kind
 
-                edgeLayerById.forEach(l => l.setStyle({ weight: 6, opacity: 0.8 }))
-                nodeLayerById.forEach(l => l.setStyle({ radius: 6, weight: 2, opacity: 1, fillOpacity: 1 }))
+                edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle))
+                nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle))
 
                 // aplica ressaltat
                 if (kind === 'edge') {
@@ -203,8 +170,8 @@ createApp({
 
             const edgeNormalStyle = { color: '#0074D9', weight: 3, opacity: 0.9 }
             const edgeHiStyle     = { color: 'orange',  weight: 5, opacity: 1.0 }
-            const nodeNormalStyle = { radius: 4, weight: 2, opacity: 1, fillOpacity: 1 }
-            const nodeHiStyle     = { radius: 6, weight: 3, opacity: 1, fillOpacity: 1 }
+            const nodeNormalStyle = { color: '#0074D9', radius: 4, weight: 2, opacity: 1, fillOpacity: 1 }
+            const nodeHiStyle     = { color: 'orange', radius: 6, weight: 3, opacity: 1, fillOpacity: 1 }
 
             const addNodeLayer = function(n){
                 const ll = [ n.data('lat'), n.data('lng') ]
