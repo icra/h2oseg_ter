@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "nodes",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "type": "massa", "node_id": 6, "flow_change": 1.0, "codi_sad": null, "nom": "albert", "ma": null, "nearest_node": 7.0 }, "geometry": { "type": "Point", "coordinates": [ 2.16729419947587, 42.304665530073123 ] } },
+{ "type": "Feature", "properties": { "type": "massa", "node_id": 7, "flow_change": 1.0, "codi_sad": null, "nom": "josep", "ma": null, "nearest_node": 6.0 }, "geometry": { "type": "Point", "coordinates": [ 2.170326620184881, 42.306893289931651 ] } },
+{ "type": "Feature", "properties": { "type": "massa", "node_id": 8, "flow_change": 1.0, "codi_sad": null, "nom": "anna", "ma": null, "nearest_node": 7.0 }, "geometry": { "type": "Point", "coordinates": [ 2.241633469976072, 42.306500659883135 ] } },
+{ "type": "Feature", "properties": { "type": "massa", "node_id": 9, "flow_change": 1.0, "codi_sad": null, "nom": "maria", "ma": null, "nearest_node": 1.0 }, "geometry": { "type": "Point", "coordinates": [ 2.220189640549322, 42.385520330429223 ] } },
+{ "type": "Feature", "properties": { "type": "massa", "node_id": 10, "flow_change": 1.0, "codi_sad": null, "nom": "remei", "ma": null, "nearest_node": 11.0 }, "geometry": { "type": "Point", "coordinates": [ 1.984398570017849, 42.31290902977954 ] } },
+{ "type": "Feature", "properties": { "type": "EDAR", "node_id": 104, "flow_change": 0.025, "codi_sad": "EDAR_RIBES", "nom": "EDAR RIBES DE FRESER", "ma": "ES100MSPF2000030", "nearest_node": 6.0 }, "geometry": { "type": "Point", "coordinates": [ 2.1665125636031, 42.299281714348332 ] } }
+]
+}

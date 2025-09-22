@@ -1,178 +1,229 @@
-// noinspection JSVoidFunctionReturnValueUsed
+// js/app.js
+// App Vue 3 + Leaflet + Cytoscape, amb selecció sempre via Leaflet (mode pan permanent)
 
-import gm from './graph_methods.js'
-
-const { createApp, onMounted, ref } = Vue
+const { createApp, ref, onMounted } = Vue
 
 createApp({
     setup() {
-        const cy = ref(null)
-        const leaf = ref(null)
+        // ---- STATE UI (sidebar) ----
         const selectedEle = ref(null)
         const flowModified = ref(null)
-        const errorMsg = ref(null)
+        const errorMsg = ref('')
 
-        onMounted(async () => {
-            const response = await fetch('assets/ter_graph.json')
-            let network = await response.json()
+        // ---- CORE OBJECTS ----
+        const cy = ref(null)
+        const map = ref(null)
 
-            network = network.map(element => {
-                if (element.data && element.data.id) {
-                    return {
-                        ...element,
-                        data: {
-                            ...element.data,
-                            label: `${element.data.flowChange || ''}`,
-                        }
-                    };
+        // ---- LEAFLET LAYERS (per id) ----
+        const nodeLayerById = new Map()
+        const edgeLayerById = new Map()
+
+        // ---- ESTILS LEAFLET ----
+        const normalNodeStyle = { radius: 6, weight: 2, opacity: 1, fillOpacity: 1, color: '#1d4ed8', fillColor: '#1d4ed8' }
+        const hiNodeStyle     = { radius: 8, weight: 3, opacity: 1, fillOpacity: 1, color: '#111827', fillColor: '#111827' }
+
+        const normalEdgeStyle = { weight: 6, opacity: 0.8, color: '#1d4ed8' }
+        const hiEdgeStyle     = { weight: 8, opacity: 1,   color: '#111827' }
+
+        // ------------- HELPERS -------------
+        function nonempty(ele) {
+            // Compatibilitat: ele.nonempty() o length>0
+            return ele && (typeof ele.nonempty === 'function' ? ele.nonempty() : ele.length > 0)
+        }
+
+        function numOr(data, key, fallback = 0) {
+            const v = data(key)
+            const n = Number(v)
+            return Number.isFinite(n) ? n : (v ?? fallback)
+        }
+
+        // Construeix l'objecte per a la sidebar a partir d'un node/edge
+        function buildSelected(ele) {
+            const d = (k) => ele.data(k)
+            if (ele.isNode()) {
+                return {
+                    eleType: 'punt',
+                    id: ele.id(),
+                    name: d('name') ?? d('nom') ?? d('nom_punt_mostreig') ?? null,
+                    type: d('type') ?? d('tipus') ?? d('categoria') ?? null,
+                    inflow: numOr(d, 'inflow', 0),
+                    outflow: numOr(d, 'outflow', 0),
+                    flowChange: numOr(d, 'flowChange', 0)
                 }
-                return element;
-            });
+            } else {
+                return {
+                    eleType: 'tram',
+                    id: ele.id(),
+                    flow: numOr(d, 'flow', 0),
+                    lengthRiver: numOr(d, 'lengthRiver', 0),
+                    flowNeed: numOr(d, 'flowNeed', 0),
+                    codi_massa: d('codi_massa') ?? d('massa') ?? null
+                }
+            }
+        }
 
-            cytoscape.use(cytoscapePopper)
+        // Reflecteix la selecció a Leaflet
+        function highlightOnLeaflet(id, kind) {
+            // reset
+            edgeLayerById.forEach(l => l.setStyle(normalEdgeStyle))
+            nodeLayerById.forEach(l => l.setStyle(normalNodeStyle))
 
+            if (kind === 'edge') {
+                const l = edgeLayerById.get(id)
+                if (l) l.setStyle(hiEdgeStyle)
+            } else {
+                const l = nodeLayerById.get(id)
+                if (l) l.setStyle(hiNodeStyle)
+            }
+        }
+
+        // Selecció centralitzada Leaflet → CY (+ sidebar)
+        function selectById(id, kind) {
+            const ele = cy.value.getElementById(id)
+            if (nonempty(ele)) {
+                // Si tens lògica pròpia de 'tap' (listeners globals), reutilitza-la
+                if (typeof ele.trigger === 'function') {
+                    try { ele.trigger('tap') } catch (_) {}
+                } else if (typeof ele.emit === 'function') {
+                    try { ele.emit('tap') } catch (_) {}
+                }
+
+                // Fallback: actualitza sidebar si la lògica externa no ho fa
+                selectedEle.value = buildSelected(ele)
+
+                // Reflecteix visualment a Leaflet
+                highlightOnLeaflet(id, kind)
+            }
+        }
+
+        // Afegeix capa Leaflet per a un node CY
+        function addNodeLayer(n) {
+            const lat = Number(n.data('lat'))
+            const lng = Number(n.data('lng'))
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) return
+
+            const layer = L.circleMarker([lat, lng], { ...normalNodeStyle, interactive: true })
+            layer.on('click', () => selectById(n.id(), 'node'))
+            layer.addTo(map.value)
+            nodeLayerById.set(n.id(), layer)
+        }
+
+        // Obtén latlngs per a un edge CY
+        function getEdgeLatLngs(e) {
+            // 1) Si ja tens array guardat a data('latlngs'): usem-lo
+            const ll = e.data('latlngs')
+            if (Array.isArray(ll) && ll.length) return ll
+
+            // 2) Sinó, provem de construir amb source/target
+            const src = e.source()
+            const tgt = e.target()
+            const a = [Number(src.data('lat')), Number(src.data('lng'))]
+            const b = [Number(tgt.data('lat')), Number(tgt.data('lng'))]
+            if (a.every(Number.isFinite) && b.every(Number.isFinite)) return [a, b]
+
+            // 3) Sense coords: no dibuixem
+            return null
+        }
+
+        // Afegeix capa Leaflet per a un edge CY (amb hitbox)
+        function addEdgeLayer(e) {
+            const latlngs = getEdgeLatLngs(e)
+            if (!latlngs) return
+
+            const layer = L.polyline(latlngs, { ...normalEdgeStyle, interactive: true })
+            layer.on('click', () => selectById(e.id(), 'edge'))
+            layer.addTo(map.value)
+            edgeLayerById.set(e.id(), layer)
+
+            // Hitbox transparent per fer més fàcil el clic
+            const hit = L.polyline(latlngs, { weight: 18, opacity: 0, interactive: true })
+            hit.on('click', () => selectById(e.id(), 'edge'))
+            hit.addTo(map.value)
+        }
+
+        // Crea totes les capes Leaflet a partir del CY actual
+        function buildLeafletLayersFromCy() {
+            // NODES
+            cy.value.nodes().forEach(addNodeLayer)
+            // EDGES
+            cy.value.edges().forEach(addEdgeLayer)
+        }
+
+        // Opcional: si es canvia la selecció a CY per altres vies (busca, teclat...)
+        function wireCySelectionReflection() {
+            cy.value.on('tap', 'node,edge', (ev) => {
+                const e = ev.target
+                selectedEle.value = buildSelected(e)
+                highlightOnLeaflet(e.id(), e.isNode() ? 'node' : 'edge')
+            })
+        }
+
+        // Control del camp "flowChange" (exemple bàsic)
+        function modifyFlowChange(sel, newVal) {
+            errorMsg.value = ''
+            if (!sel || sel.eleType !== 'punt') return
+            const v = Number(newVal)
+            if (!Number.isFinite(v)) {
+                errorMsg.value = 'Introdueix un número vàlid.'
+                return
+            }
+            // Actualitza el node a CY
+            const n = cy.value.getElementById(sel.id)
+            if (nonempty(n)) {
+                n.data('flowChange', v)
+                // Refresca sidebar
+                selectedEle.value = buildSelected(n)
+            }
+        }
+
+        // ------------- MOUNT -------------
+        onMounted(() => {
+            // 1) Leaflet
+            map.value = L.map('cy-leaflet', {
+                zoomControl: true,
+                preferCanvas: true,
+            }).setView([41.98, 2.82], 10)
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map.value)
+
+            // 2) Cytoscape
             cy.value = cytoscape({
                 container: document.getElementById('cy'),
-                elements: network,
+                elements: window.CY_ELEMENTS || [], // carrega el teu graf aquí (nodes amb lat/lng, edges amb latlngs o source/target)
+                layout: { name: 'preset' },         // posicions “preset” (no fa falta si només fem servir Leaflet)
+                wheelSensitivity: 0.2,
+                boxSelectionEnabled: false,
                 style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'background-color': '#0074D9',
-                            'width': 10,
-                            'height': 10,
-                            // label: 'data(label)',
-                            color: '#fff',
-                            'text-valign': 'center',
-                            'text-halign': 'center',
-                            'grabbable': false
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            // label: 'data(flow)',
-                            width: 2,
-                            'text-background-color': '#fff',
-                            'text-background-opacity': 0.8,
-                            'text-background-shape': 'roundrectangle',
-                        }
-                    },
-                    {
-                        selector: '.selected',
-                        style: {
-                            'background-color': 'yellow',
-                            'line-color': 'yellow',       // si és un edge
-                            'target-arrow-color': 'yellow', // si tens fletxes
-                            color: 'black',
-                            'transition-property': 'background-color, line-color',
-                            'transition-duration': '250ms',
-                            'grabbable': false
-                        }
-                    },
-                    {
-                        selector: 'edge.show-label',
-                        style: {
-                            'label': 'data(flow)',
-                            'color': '#0074D9',
-                            'text-background-color': '#fff',
-                            'text-background-opacity': 0.8,
-                            'text-background-shape': 'roundrectangle',
-                        }
-                    }
-                ],
-                layout: { name: 'preset' }
+                    { selector: 'node', style: { 'background-color': '#1d4ed8', 'width': 10, 'height': 10 } },
+                    { selector: 'edge', style: { 'line-color': '#1d4ed8', 'width': 3, 'opacity': 0.9 } },
+                    // Si algun cop vols fer selecció nativa:
+                    { selector: 'node:selected', style: { 'background-color': '#111827' } },
+                    { selector: 'edge:selected', style: { 'line-color': '#111827', 'width': 5 } }
+                ]
             })
 
-            console.log('Cytoscape:', cytoscape?.version)
-            console.log('popperRef?', typeof cy.value.nodes().first().popperRef)
+            // 3) Important: CY transparent als clics (Leaflet governa la interacció)
+            const cyDiv = document.getElementById('cy')
+            cyDiv.style.pointerEvents = 'none' // sempre en pan
 
-            cy.value.autoungrabify(true);
+            // 4) Construeix capes Leaflet a partir del graf
+            buildLeafletLayersFromCy()
 
-            leaf.value = cy.value.leaflet({
-                container: document.getElementById('cy-leaflet'),
-                latitude: 'lat',
-                longitude: 'lng',
-            })
-            const map = leaf.value.map
-            L.control.zoom().addTo(map)
-
-            // Crear un control personalitzat
-            const homeControl = L.Control.extend({
-                options: { position: 'topleft' },
-
-                onAdd: function () {
-                    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-
-                    // Crea un rectangle amb vora discontínua via CSS
-                    container.innerHTML = `
-                        <svg viewBox="0 0 22 22" width="18" height="18" style="margin: 6px;">
-                            <path d="M4 9V4h5M4 4l6 6M20 9V4h-5M20 4l-6 6M4 15v5h5M4 20l6-6M20 15v5h-5M20 20l-6-6"
-                                  stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    `;
-
-                    container.style.backgroundColor = 'white';
-                    container.style.width = '30px';
-                    container.style.height = '30px';
-                    container.style.display = 'flex';
-                    container.style.alignItems = 'center';
-                    container.style.justifyContent = 'center';
-                    container.style.cursor = 'pointer';
-                    container.title = 'Restableix la vista';
-
-                    L.DomEvent.disableClickPropagation(container);
-
-                    container.onclick = () => {
-                        if (leaf.value && typeof leaf.value.fit === 'function') {
-                            leaf.value.fit();
-                        }
-                    };
-
-                    return container;
-                }
-            });
-
-
-            // Afegir-lo al mapa
-            map.addControl(new homeControl());
-
-            leaf.value.fit()
-            gm.calculateFlow(cy.value)
-
-            gm.setupEleClickListener(cy.value, selectedEle)
-            gm.setupZoomLabelControl(cy.value, leaf.value, 12);
-            // gm.placeLabels(cy.value)
-
-            cy.value.on('mouseover', 'node', e => {
-                const node = e.target
-                const ref = node.popperRef()
-
-                const tip = tippy(document.createElement('div'), {
-                    getReferenceClientRect: ref.getBoundingClientRect,
-                    content: `
-                        ${node.data('name') || ''}<br>
-                        Tipus: ${node.data('type')}<br>
-                        Aportació: ${node.data('flowChange')} m³/s<br>
-                    `,
-                    allowHTML: true,
-                    trigger: 'manual',
-                    placement: 'right',
-                    appendTo: document.body
-                })
-
-                tip.show()
-                node.on('mouseout', () => tip.destroy())
-            })
+            // 5) Reflecteix canvis de selecció de CY → Leaflet (per si hi arriben d’altres fluxos)
+            wireCySelectionReflection()
         })
 
         return {
-            cy,
-            leaf,
+            // Sidebar API
             selectedEle,
             flowModified,
-            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg),
             errorMsg,
+            modifyFlowChange,
+            // (exposes for debugging in console)
+            _debug: { cy, map, nodeLayerById, edgeLayerById }
         }
     }
 }).mount('#app')
