@@ -32,26 +32,20 @@ const setupEleClickListener = function(cy, selectedEleRef) {
 }
 
 const setEdgeColor = function(edge){
+    // console.log("setEdgeColor", edge.data('flow'), edge.data('flowNeed'), edge.data('flow') < edge.data('flowNeed') ? 'red' : '#0074D9')
     return edge.data('flow') < edge.data('flowNeed') ? 'red' : '#0074D9'
 }
 
 const setNodeColor = function(node){
+    console.log("node", node.incomers().length)
     if (node.incomers().length === 0) {
         return '#0074D9'; // Si no té edges entrants, és una font
     }
+    console.log("setNodeColor", node.data('inflow'), node.data('flowChange'), node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9')
     return node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9'
 }
 
-const countPredecessors = function(cy) {
-    cy.nodes().forEach(node => {
-        let predecessors = node.predecessors('node')
-        let count = predecessors.length
-        node.data('predecessorsCount', count)
-        node.data('label', count)
-    })
-}
-
-const calculateFlow = function(cy, errorRef = null) {
+const calculateFlow = function(cy, leafMaps, errorRef = null) {
     let visited = new Set();
 
     function dfs(node) {
@@ -79,9 +73,7 @@ const calculateFlow = function(cy, errorRef = null) {
 
         // 3. Estil visual si cal
         //node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9');
-        if (!node.hasClass('selected')) {
-            node.style('background-color', setNodeColor(node));
-        }
+        applyNodeColorToLeaflet(node, leafMaps)
 
         outflow = Math.round(outflow * 10) / 10; // Redondejar a 1 decimal
 
@@ -89,15 +81,8 @@ const calculateFlow = function(cy, errorRef = null) {
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
             edge.data('flow', outflow);
-            if (!edge.hasClass('selected')) {
-                edge.style('line-color', setEdgeColor(edge))
-            }
+            applyEdgeColorToLeaflet(edge, leafMaps)
         });
-
-        // DEBUG opcional
-        if (node.id() === '3' || node.id() === '4') {
-            console.log(`Node ${node.id()} inflow: ${inflow}, flowChange: ${flowChange}, outflow: ${outflow}`);
-        }
     }
 
     // Iniciar des de fulles (afluents)
@@ -107,7 +92,7 @@ const calculateFlow = function(cy, errorRef = null) {
     if (errorRef) errorRef.value = null;
 };
 
-const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg) {
+const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafMaps) {
     if (!selectedEle || !selectedEle.id) return;
 
     const node = cy.getElementById(selectedEle.id);
@@ -118,7 +103,7 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg) {
     node.data('flowChange', flowModified.value);
 
     // Torna a calcular
-    calculateFlow(cy, errorMsg);
+    calculateFlow(cy, leafMaps, errorMsg);
 
     // Si s’ha generat error, tornem enrere i no modifiquem l’input
     if (errorMsg.value) {
@@ -162,48 +147,20 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
     }
 }
 
-const rectsOverlap = function(a, b) {
-    return !(a.x2 < b.x1 || a.x1 > b.x2 || a.y2 < b.y1 || a.y1 > b.y2)
-}
+const applyNodeColorToLeaflet = (node, leafMaps) => {
+    const layer = leafMaps.nodeLayerById.get(node.id());
+    console.log("layer", layer)
+    if (!layer) return;
+    const color = setNodeColor(node);
+    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
+};
 
-const labelRectFor = function(node, offX, offY) {
-    const pos = node.renderedPosition();               // posicio node a pantalla
-    const fs  = parseFloat(node.pstyle("font-size").pfValue); // mida lletra
-    const text = node.data("label") || "";
-    const approxW = text.length * (fs * 0.6); // aproximació ample
-    const approxH = fs * 1.2;                 // aproximació alt
-
-    const x1 = pos.x + offX;
-    const y1 = pos.y + offY - approxH; // “top-right” per defecte
-    return { x1, y1, x2: x1 + approxW, y2: y1 + approxH };
-}
-
-const placeLabels = function(cy) {
-    const placed = []; // rectangles ocupats
-    const candidates = [
-        {halign: "right",  valign: "top",    dx:  6, dy: -6},
-        {halign: "left",   valign: "top",    dx: -6, dy: -6},
-        {halign: "right",  valign: "bottom", dx:  6, dy:  6},
-        {halign: "left",   valign: "bottom", dx: -6, dy:  6},
-    ];
-
-    cy.batch(() => {
-        cy.nodes().forEach(n => {
-            let chosen = candidates[0];
-            for (const c of candidates) {
-                const r = labelRectFor(n, c.dx, c.dy);
-                const overlap = placed.some(p => rectsOverlap(r, p));
-                if (!overlap) { chosen = c; placed.push(r); break; }
-            }
-            n.style({
-                "text-halign": chosen.halign,
-                "text-valign": chosen.valign,
-                "text-margin-x": chosen.dx,
-                "text-margin-y": chosen.dy
-            });
-        });
-    });
-}
+const applyEdgeColorToLeaflet = (edge, leafMaps) => {
+    const layer = leafMaps?.edgeLayerById?.get(edge.id());
+    if (!layer) return;
+    const color = setEdgeColor(edge);
+    layer.setStyle({ color }); // mantenim weight/opacity actuals
+};
 
 
 
@@ -212,7 +169,5 @@ export default {
     setupEleClickListener,
     calculateFlow,
     modifyFlowChange,
-    countPredecessors,
-    setupZoomLabelControl,
-    placeLabels
+    setupZoomLabelControl
 }

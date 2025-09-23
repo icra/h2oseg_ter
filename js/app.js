@@ -50,10 +50,6 @@ createApp({
                 }
             })
 
-            console.log("cy", [...cyNodes, ...cyEdges])
-
-            cytoscape.use(cytoscapePopper)
-
             cy.value = cytoscape({
                 container: document.getElementById('cy'),
                 elements: [...cyNodes, ...cyEdges],
@@ -158,11 +154,6 @@ createApp({
             map.addControl(new homeControl());
 
             leaf.value.fit()
-            gm.calculateFlow(cy.value)
-
-            gm.setupEleClickListener(cy.value, selectedEle)
-            gm.setupZoomLabelControl(cy.value, leaf.value, 12);
-            gm.placeLabels(cy.value)
 
             const edgePane = map.createPane('edgePane')
             edgePane.style.zIndex = 650
@@ -172,10 +163,10 @@ createApp({
             nodePane.style.zIndex = 660   // per SOBRE dels edges
             nodePane.style.pointerEvents = 'auto'
 
-            const edgeNormalStyle = { color: '#0074D9', weight: 3, opacity: 0.9 }
-            const edgeHiStyle     = { color: 'orange',  weight: 5, opacity: 1.0 }
-            const nodeNormalStyle = { color: '#0074D9', radius: 4, weight: 2, opacity: 1, fillOpacity: 1 }
-            const nodeHiStyle     = { color: 'orange', radius: 6, weight: 3, opacity: 1, fillOpacity: 1 }
+            const edgeNormalStyle = { weight: 3, opacity: 0.9 }
+            const edgeHiStyle     = { weight: 5, opacity: 1.0 }
+            const nodeNormalStyle = { radius: 4, weight: 2, opacity: 1, fillOpacity: 1 }
+            const nodeHiStyle     = { radius: 6, weight: 3, opacity: 1, fillOpacity: 1 }
 
             const addNodeLayer = function(n){
                 const ll = [ n.data('lat'), n.data('lng') ]
@@ -199,7 +190,7 @@ createApp({
                 pane: 'edgePane',
                 style: f => edgeNormalStyle,
                 onEachFeature: (f, layer) => {
-                    const eid = f.properties.id
+                    const eid = String(f.properties.id)
                     edgeLayerById.set(eid, layer)
 
                     layer.on('click', () => selectById(eid,'edge'))
@@ -213,6 +204,11 @@ createApp({
                     })
                 }
             }).addTo(map)
+
+            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg)
+
+            gm.setupEleClickListener(cy.value, selectedEle)
+            gm.setupZoomLabelControl(cy.value, leaf.value, 12);
         })
 
         return {
@@ -220,7 +216,7 @@ createApp({
             leaf,
             selectedEle,
             flowModified,
-            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg),
+            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg, { nodeLayerById, edgeLayerById }),
             errorMsg,
         }
     }
