@@ -15,7 +15,7 @@ function nodeTooltipHTML(n) {
       <div><strong>${n.data('name') ?? ''}</strong></div>
       <div>Tipus: ${n.data('type') ?? '—'}</div>
       <div>Cabal entrant: ${fmt(n.data('inflow'))} m³/s</div>
-      <div>${n.data('flowChange') > 0 ? 'Aportació' : 'Extració'}: ${fmt(n.data('flowChange'))} m³/s</div>
+      <div>${n.data('flowChange') > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('flowChange'), 2)} m³/s</div>
       <div>Cabal sortint: ${fmt(n.data('outflow'))} m³/s</div>
     </div>
   `
@@ -24,7 +24,7 @@ function nodeTooltipHTML(n) {
 function edgeTooltipHTML(e) {
     return `
     <div>
-      <div><strong>Tram ${e.id()}</strong></div>
+      <div><strong>Tram ${e.codi}</strong></div>
       <div>Cabal mitjà: ${fmt(e.data('flow'))} m³/s</div>
       <div>Cabal ambiental: ${fmt(e.data('flowNeed'))} m³/s</div>
       <div>Llargada tram: ${fmt(e.data('lengthRiver'), 0)} m</div>
@@ -61,7 +61,7 @@ createApp({
                         type: n.properties.type,
                         lat: n.geometry.coordinates[1],
                         lng: n.geometry.coordinates[0],
-                        flowChange: n.properties.flow_change
+                        flowChange: n.properties.flowChange
                     }
                 }
             })
@@ -72,8 +72,8 @@ createApp({
                         id: f.properties.id,
                         source: f.properties.from,
                         target: f.properties.to,
-                        flowNeed: f.properties.flow_need,
-                        lengthRiver: f.properties.massa_length
+                        flowNeed: f.properties.flowNeed,
+                        lengthRiver: f.properties.lengthRiver
                     }
                 }
             })

@@ -32,16 +32,13 @@ const setupEleClickListener = function(cy, selectedEleRef) {
 }
 
 const setEdgeColor = function(edge){
-    // console.log("setEdgeColor", edge.data('flow'), edge.data('flowNeed'), edge.data('flow') < edge.data('flowNeed') ? 'red' : '#0074D9')
     return edge.data('flow') < edge.data('flowNeed') ? 'red' : '#0074D9'
 }
 
 const setNodeColor = function(node){
-    console.log("node", node.incomers().length)
     if (node.incomers().length === 0) {
         return '#0074D9'; // Si no té edges entrants, és una font
     }
-    console.log("setNodeColor", node.data('inflow'), node.data('flowChange'), node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9')
     return node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9'
 }
 
@@ -129,7 +126,6 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
     // Listener de zoom del mapa
     leafletInstance.map.on('zoomend', () => {
         const currentZoom = leafletInstance.map.getZoom();
-        // console.log('[ZoomLabel] Zoom actual de Leaflet:', currentZoom);
 
         if (currentZoom >= zoomThreshold) {
             cy.nodes().addClass('show-label');
@@ -149,8 +145,9 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
 
 const applyNodeColorToLeaflet = (node, leafMaps) => {
     const layer = leafMaps.nodeLayerById.get(node.id());
-    console.log("layer", layer)
+
     if (!layer) return;
+
     const color = setNodeColor(node);
     layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
 };
