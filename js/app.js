@@ -4,6 +4,34 @@ import gm from './graph_methods.js'
 
 const { createApp, onMounted, ref } = Vue
 
+const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
+
+const fmt = (v, d=1) => Number.isFinite(+v) ? (+v).toFixed(d) : '—'
+
+// HTML dels tooltips
+function nodeTooltipHTML(n) {
+    return `
+    <div>
+      <div><strong>${n.data('name') ?? ''}</strong></div>
+      <div>Tipus: ${n.data('type') ?? '—'}</div>
+      <div>Cabal entrant: ${fmt(n.data('inflow'))} m³/s</div>
+      <div>${n.data('flowChange') > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('flowChange'), 2)} m³/s</div>
+      <div>Cabal sortint: ${fmt(n.data('outflow'))} m³/s</div>
+    </div>
+  `
+}
+
+function edgeTooltipHTML(e) {
+    return `
+    <div>
+      <div><strong>Tram ${e.codi}</strong></div>
+      <div>Cabal mitjà: ${fmt(e.data('flow'))} m³/s</div>
+      <div>Cabal ambiental: ${fmt(e.data('flowNeed'))} m³/s</div>
+      <div>Llargada tram: ${fmt(e.data('lengthRiver'), 0)} m</div>
+    </div>
+  `
+}
+
 createApp({
     setup() {
         const cy = ref(null)
@@ -12,81 +40,70 @@ createApp({
         const flowModified = ref(null)
         const errorMsg = ref(null)
 
+        const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
+
+        const edgeLayerById = new Map()
+        const nodeLayerById = new Map()
+
         onMounted(async () => {
-            const response = await fetch('assets/ter_graph.json')
-            let network = await response.json()
+            const [nodesResp, edgesResp] = await Promise.all([
+                fetch('assets/nodes.geojson'),
+                fetch('assets/edges.geojson')
+            ])
+            const nodesGeo = await nodesResp.json()
+            const edgesGeo = await edgesResp.json()
 
-            network = network.map(element => {
-                if (element.data && element.data.id) {
-                    return {
-                        ...element,
-                        data: {
-                            ...element.data,
-                            label: `${element.data.flowChange || ''}`,
-                        }
-                    };
+            const cyNodes = nodesGeo.features.map(n => {
+                return {
+                    data: {
+                        id: n.properties.node_id,
+                        name: n.properties.nom,
+                        type: n.properties.type,
+                        lat: n.geometry.coordinates[1],
+                        lng: n.geometry.coordinates[0],
+                        flowChange: n.properties.flowChange
+                    }
                 }
-                return element;
-            });
+            })
 
-            cytoscape.use(cytoscapePopper)
+            const cyEdges = edgesGeo.features.map(f => {
+                return {
+                    data: {
+                        id: f.properties.id,
+                        source: f.properties.from,
+                        target: f.properties.to,
+                        flowNeed: f.properties.flowNeed,
+                        lengthRiver: f.properties.lengthRiver
+                    }
+                }
+            })
 
             cy.value = cytoscape({
                 container: document.getElementById('cy'),
-                elements: network,
+                elements: [...cyNodes, ...cyEdges],
                 style: [
                     {
                         selector: 'node',
                         style: {
-                            'background-color': '#0074D9',
-                            'width': 10,
-                            'height': 10,
-                            // label: 'data(label)',
-                            color: '#fff',
-                            'text-valign': 'center',
-                            'text-halign': 'center',
+                            'opacity': 0,
+                            'events': 'no',
                             'grabbable': false
                         }
                     },
                     {
                         selector: 'edge',
                         style: {
-                            // label: 'data(flow)',
-                            width: 2,
-                            'text-background-color': '#fff',
-                            'text-background-opacity': 0.8,
-                            'text-background-shape': 'roundrectangle',
-                        }
-                    },
-                    {
-                        selector: '.selected',
-                        style: {
-                            'background-color': 'yellow',
-                            'line-color': 'yellow',       // si és un edge
-                            'target-arrow-color': 'yellow', // si tens fletxes
-                            color: 'black',
-                            'transition-property': 'background-color, line-color',
-                            'transition-duration': '250ms',
-                            'grabbable': false
-                        }
-                    },
-                    {
-                        selector: 'edge.show-label',
-                        style: {
-                            'label': 'data(flow)',
-                            'color': '#0074D9',
-                            'text-background-color': '#fff',
-                            'text-background-opacity': 0.8,
-                            'text-background-shape': 'roundrectangle',
+                            opacity: 0,
+                            events: 'no'
                         }
                     }
                 ],
                 layout: { name: 'preset' }
             })
 
-            console.log('Cytoscape:', cytoscape?.version)
-            console.log('popperRef?', typeof cy.value.nodes().first().popperRef)
-
+            cy.value.userPanningEnabled(false)
+            cy.value.userZoomingEnabled(false)
+            cy.value.boxSelectionEnabled(false)
             cy.value.autoungrabify(true);
 
             leaf.value = cy.value.leaflet({
@@ -94,7 +111,38 @@ createApp({
                 latitude: 'lat',
                 longitude: 'lng',
             })
+
+            function highlightOnLeaflet(id, kind){
+                // reseteja estil
+                currentSel.id = id
+                currentSel.kind = kind
+
+                edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle))
+                nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle))
+
+                // aplica ressaltat
+                if (kind === 'edge') {
+                    const l = edgeLayerById.get(id)
+                    if (l) l.setStyle(edgeHiStyle)
+                } else {
+                    const l = nodeLayerById.get(id)
+                    if (l) l.setStyle(nodeHiStyle)
+                }
+            }
+
+            function selectById(id, kind){
+                const ele = cy.value.getElementById(id)
+                if (ele.nonempty()) {
+                    // 1) Reutilitza la teva lògica existent
+                    ele.trigger('tap')     // això ja actualitza sidebar, classes, etc.
+
+                    // 2) Reflecteix a Leaflet (resaltat visual)
+                    highlightOnLeaflet(id, kind)
+                }
+            }
+
             const map = leaf.value.map
+
             L.control.zoom().addTo(map)
 
             // Crear un control personalitzat
@@ -133,37 +181,87 @@ createApp({
                 }
             });
 
-
             // Afegir-lo al mapa
             map.addControl(new homeControl());
 
             leaf.value.fit()
-            gm.calculateFlow(cy.value)
+
+            const edgePane = map.createPane('edgePane')
+            edgePane.style.zIndex = 650
+            edgePane.style.pointerEvents = 'auto'
+
+            const nodePane = map.createPane('nodePane')
+            nodePane.style.zIndex = 660   // per SOBRE dels edges
+            nodePane.style.pointerEvents = 'auto'
+
+            // pane per a tooltips per SOBRE dels nodes
+            const tipPane = map.createPane('tipPane')
+            tipPane.style.zIndex = 1000
+            tipPane.style.pointerEvents = 'none' // no bloquejar clics
+
+            const edgeNormalStyle = { weight: 3, opacity: 0.9 }
+            const edgeHiStyle     = { weight: 5, opacity: 1.0 }
+            const nodeNormalStyle = { radius: 4, weight: 2, opacity: 1, fillOpacity: 1 }
+            const nodeHiStyle     = { radius: 6, weight: 3, opacity: 1, fillOpacity: 1 }
+
+            const addNodeLayer = function(n){
+                const ll = [ n.data('lat'), n.data('lng') ]
+                const layer = L.circleMarker(ll, { ...nodeNormalStyle, pane: 'nodePane' })
+                    .bindTooltip('', TT_OPTS)
+                layer.on('click', () => selectById(n.id(), 'node'))
+                layer.on('mouseover', ()=> {
+                    const cn = cy.value.getElementById(n.id())
+                    const html = nodeTooltipHTML(cn)
+                    const tt = layer.getTooltip()
+                    if (tt) tt.setContent(html)
+                    layer.openTooltip()
+                    layer.setStyle(nodeHiStyle)
+                });
+                layer.on('mouseout',  () => {
+                    layer.closeTooltip()
+                    if (currentSel.id === n.id() && currentSel.kind === 'node') {
+                        layer.setStyle(nodeHiStyle)
+                    } else {
+                        layer.setStyle(nodeNormalStyle)
+                    }
+                })
+                layer.addTo(map)
+                nodeLayerById.set(n.id(), layer)
+            }
+
+            cy.value.nodes().forEach(addNodeLayer)
+
+            const arcsLayer = L.geoJSON(edgesGeo, {
+                pane: 'edgePane',
+                style: f => edgeNormalStyle,
+                onEachFeature: (f, layer) => {
+                    const eid = String(f.properties.id)
+                    edgeLayerById.set(eid, layer)
+                    layer.bindTooltip('', TT_OPTS)
+
+                    layer.on('click', () => selectById(eid,'edge'))
+                    layer.on('mouseover', ()=> {
+                        const ce = cy.value.getElementById(eid)
+                        const html = edgeTooltipHTML(ce)
+                        const tt = layer.getTooltip()
+                        if (tt) tt.setContent(html)
+                        layer.openTooltip()
+                        layer.setStyle(edgeHiStyle)
+                    })
+                    layer.on('mouseout',  () => {
+                        if (currentSel.id === eid && currentSel.kind === 'edge') {
+                            layer.setStyle(edgeHiStyle)
+                        } else {
+                            layer.setStyle(edgeNormalStyle)
+                        }
+                    })
+                }
+            }).addTo(map)
+
+            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg)
 
             gm.setupEleClickListener(cy.value, selectedEle)
             gm.setupZoomLabelControl(cy.value, leaf.value, 12);
-            // gm.placeLabels(cy.value)
-
-            cy.value.on('mouseover', 'node', e => {
-                const node = e.target
-                const ref = node.popperRef()
-
-                const tip = tippy(document.createElement('div'), {
-                    getReferenceClientRect: ref.getBoundingClientRect,
-                    content: `
-                        ${node.data('name') || ''}<br>
-                        Tipus: ${node.data('type')}<br>
-                        Aportació: ${node.data('flowChange')} m³/s<br>
-                    `,
-                    allowHTML: true,
-                    trigger: 'manual',
-                    placement: 'right',
-                    appendTo: document.body
-                })
-
-                tip.show()
-                node.on('mouseout', () => tip.destroy())
-            })
         })
 
         return {
@@ -171,7 +269,7 @@ createApp({
             leaf,
             selectedEle,
             flowModified,
-            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg),
+            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg, { nodeLayerById, edgeLayerById }),
             errorMsg,
         }
     }
