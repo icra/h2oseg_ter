@@ -2,7 +2,7 @@
 
 import gm from './graph_methods.js'
 
-const { createApp, onMounted, ref } = Vue
+const { createApp, onMounted, ref, shallowRef } = Vue
 
 const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
 
@@ -24,7 +24,7 @@ function nodeTooltipHTML(n) {
 function edgeTooltipHTML(e) {
     return `
     <div>
-      <div><strong>Tram ${e.codi}</strong></div>
+      <div><strong>${e.data('codiMassa')}</strong></div>
       <div>Cabal mitjà: ${fmt(e.data('flow'))} m³/s</div>
       <div>Cabal ambiental: ${fmt(e.data('flowNeed'))} m³/s</div>
       <div>Llargada tram: ${fmt(e.data('lengthRiver'), 0)} m</div>
@@ -35,7 +35,7 @@ function edgeTooltipHTML(e) {
 createApp({
     setup() {
         const cy = ref(null)
-        const leaf = ref(null)
+        const leaf = shallowRef(null)
         const selectedEle = ref(null)
         const flowModified = ref(null)
         const errorMsg = ref(null)
@@ -72,6 +72,7 @@ createApp({
                         id: f.properties.id,
                         source: f.properties.from,
                         target: f.properties.to,
+                        codiMassa: f.properties.codi,
                         flowNeed: f.properties.flowNeed,
                         lengthRiver: f.properties.lengthRiver
                     }
