@@ -111,3 +111,21 @@ html, body {
 #map-wrapper #cy-leaflet {
     z-index: 2;
 }
+
+.leaflet-tooltip.cytt {
+     padding: 6px 8px;
+     background: #fff;
+     border: 1px solid #d1d5db;
+     border-radius: 6px;
+     box-shadow: 0 4px 12px rgba(0,0,0,.08);
+     font: 12px/1.3 system-ui, sans-serif;
+     z-index: 999;
+}
+
+.leaflet-tooltip.cytt strong {
+    font-weight: 600;
+}
+
+.cy-leaflet-toggle {
+    display:  none !important;
+}

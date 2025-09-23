@@ -4,6 +4,34 @@ import gm from './graph_methods.js'
 
 const { createApp, onMounted, ref } = Vue
 
+const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
+
+const fmt = (v, d=1) => Number.isFinite(+v) ? (+v).toFixed(d) : '—'
+
+// HTML dels tooltips
+function nodeTooltipHTML(n) {
+    return `
+    <div>
+      <div><strong>${n.data('name') ?? ''}</strong></div>
+      <div>Tipus: ${n.data('type') ?? '—'}</div>
+      <div>Cabal entrant: ${fmt(n.data('inflow'))} m³/s</div>
+      <div>${n.data('flowChange') > 0 ? 'Aportació' : 'Extració'}: ${fmt(n.data('flowChange'))} m³/s</div>
+      <div>Cabal sortint: ${fmt(n.data('outflow'))} m³/s</div>
+    </div>
+  `
+}
+
+function edgeTooltipHTML(e) {
+    return `
+    <div>
+      <div><strong>Tram ${e.id()}</strong></div>
+      <div>Cabal mitjà: ${fmt(e.data('flow'))} m³/s</div>
+      <div>Cabal ambiental: ${fmt(e.data('flowNeed'))} m³/s</div>
+      <div>Llargada tram: ${fmt(e.data('lengthRiver'), 0)} m</div>
+    </div>
+  `
+}
+
 createApp({
     setup() {
         const cy = ref(null)
@@ -73,6 +101,9 @@ createApp({
                 layout: { name: 'preset' }
             })
 
+            cy.value.userPanningEnabled(false)
+            cy.value.userZoomingEnabled(false)
+            cy.value.boxSelectionEnabled(false)
             cy.value.autoungrabify(true);
 
             leaf.value = cy.value.leaflet({
@@ -163,6 +194,11 @@ createApp({
             nodePane.style.zIndex = 660   // per SOBRE dels edges
             nodePane.style.pointerEvents = 'auto'
 
+            // pane per a tooltips per SOBRE dels nodes
+            const tipPane = map.createPane('tipPane')
+            tipPane.style.zIndex = 1000
+            tipPane.style.pointerEvents = 'none' // no bloquejar clics
+
             const edgeNormalStyle = { weight: 3, opacity: 0.9 }
             const edgeHiStyle     = { weight: 5, opacity: 1.0 }
             const nodeNormalStyle = { radius: 4, weight: 2, opacity: 1, fillOpacity: 1 }
@@ -171,9 +207,18 @@ createApp({
             const addNodeLayer = function(n){
                 const ll = [ n.data('lat'), n.data('lng') ]
                 const layer = L.circleMarker(ll, { ...nodeNormalStyle, pane: 'nodePane' })
+                    .bindTooltip('', TT_OPTS)
                 layer.on('click', () => selectById(n.id(), 'node'))
-                layer.on('mouseover', ()=> { layer.setStyle(nodeHiStyle) })
+                layer.on('mouseover', ()=> {
+                    const cn = cy.value.getElementById(n.id())
+                    const html = nodeTooltipHTML(cn)
+                    const tt = layer.getTooltip()
+                    if (tt) tt.setContent(html)
+                    layer.openTooltip()
+                    layer.setStyle(nodeHiStyle)
+                });
                 layer.on('mouseout',  () => {
+                    layer.closeTooltip()
                     if (currentSel.id === n.id() && currentSel.kind === 'node') {
                         layer.setStyle(nodeHiStyle)
                     } else {
@@ -192,9 +237,17 @@ createApp({
                 onEachFeature: (f, layer) => {
                     const eid = String(f.properties.id)
                     edgeLayerById.set(eid, layer)
+                    layer.bindTooltip('', TT_OPTS)
 
                     layer.on('click', () => selectById(eid,'edge'))
-                    layer.on('mouseover', ()=> layer.setStyle(edgeHiStyle))
+                    layer.on('mouseover', ()=> {
+                        const ce = cy.value.getElementById(eid)
+                        const html = edgeTooltipHTML(ce)
+                        const tt = layer.getTooltip()
+                        if (tt) tt.setContent(html)
+                        layer.openTooltip()
+                        layer.setStyle(edgeHiStyle)
+                    })
                     layer.on('mouseout',  () => {
                         if (currentSel.id === eid && currentSel.kind === 'edge') {
                             layer.setStyle(edgeHiStyle)
