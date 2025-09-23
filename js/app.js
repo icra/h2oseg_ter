@@ -2,7 +2,7 @@
 
 import gm from './graph_methods.js'
 
-const { createApp, onMounted, ref, shallowRef } = Vue
+const { createApp, onMounted, ref, shallowRef, watch } = Vue
 
 const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
 
@@ -264,6 +264,16 @@ createApp({
             gm.setupEleClickListener(cy.value, selectedEle)
             gm.setupZoomLabelControl(cy.value, leaf.value, 12);
         })
+
+        // Quan es selecciona un node, posa-hi el valor actual com a valor per defecte
+        watch(selectedEle, (val) => {
+            if (val && val.eleType === 'punt') {
+                // assegura número
+                flowModified.value = Number(val.flowChange).toFixed(2);
+            } else {
+                flowModified.value = null; // o 0, si prefereixes
+            }
+        }, { immediate: true });
 
         return {
             cy,

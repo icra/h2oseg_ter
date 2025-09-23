@@ -40,7 +40,7 @@
                     <p v-else-if="selectedEle.flowChange < 0">
                         En aquest punt s'extreuen {{ Math.abs(selectedEle.flowChange).toFixed(2) }} m<sup>3</sup>/s de la xarxa fluvial.
                     <h4>Modifica el canvi de cabal generat per aquest punt:</h4>
-                    <input type="number" v-model="flowModified" @keyup.enter="modifyFlowChange(selectedEle, flowModified)" :placeholder="selectedEle.flowChange.toFixed(2)" />
+                    <input type="number" v-model.number="flowModified" @keyup.enter="modifyFlowChange(selectedEle, flowModified)" />
                     <button @click="modifyFlowChange(selectedEle, flowModified)">Modifica</button>
                     <p v-if="errorMsg" style="color: red; margin-top: 8px;">
                         ⚠️ {{ errorMsg }}

@@ -114,7 +114,6 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafM
     node.data('label', `${node.id()} (${flowModified.value})`);
     selectedEle.flowChange = flowModified.value;
     selectedEle.flow = node.data('flow');
-    flowModified.value = null;
 }
 
 const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {
