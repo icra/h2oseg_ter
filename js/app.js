@@ -32,6 +32,10 @@ function edgeTooltipHTML(e) {
   `
 }
 
+const reset = function(){
+    window.confirm('Segur que vols reiniciar el model?') && window.location.reload()
+}
+
 createApp({
     setup() {
         const cy = ref(null)
@@ -282,6 +286,7 @@ createApp({
             flowModified,
             modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg, { nodeLayerById, edgeLayerById }),
             errorMsg,
+            reset
         }
     }
 }).mount('#app')
