@@ -1,35 +1,47 @@
 library(tidyverse)
 use('janitor', 'clean_names')
 library(sf)
+library(lwgeom)
 library(jsonlite)
+library(tmap)
+tmap_mode("view")
 set.seed(4)
-
-# stop("Cal corregir topologia a QGIS")
 
 nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |> 
   mutate(codi_sad = if_else(is.na(codi_sad), paste('NODE', node_id, sep = "_"), codi_sad))
 
-edges <- read_csv2("data_raw/edges_natural_antropic.csv") |> 
-  left_join(nodes |> st_drop_geometry() |> select(node_id, codi_sad), by = join_by(from == node_id)) |> 
-  rename(from_id = from, from = codi_sad) |> 
-  left_join(nodes |> st_drop_geometry() |> select(node_id, codi_sad), by = join_by(to == node_id)) |> 
-  rename(to_id = to, to = codi_sad)
+masses <- read_sf("data_raw/MASSES_AIGUA_BE.gpkg", layer = "direccions_correctes")
 
+# Comprova que tots els nodes estan sobre els arcs
+stopifnot(all(nodes |> st_intersects(masses, sparse = FALSE) |> rowSums() > 0))
 
+# Divideix les línies segons els nodes, calcula la distància i dona noms correlatius als trams partits
+edges <- st_split(masses, nodes) |> 
+  st_collection_extract("LINESTRING") %>% 
+  mutate(river_length = st_length(.)) |> 
+  mutate(nom = str_remove_all(edges$NOM_COMU, " \\d$"), .before = 1) |> 
+  mutate(numero = row_number(), .by = nom, .after = nom) |> 
+  mutate(n = n(), .by = nom, .after = numero) |> 
+  mutate(nom_correlatiu = if_else(n == 1, nom, paste(nom, numero)), .before = everything()) |> 
+  select(-c(nom, numero, n))
+
+  
 ## Per quan tinguem edges amb geom ------------------------------
 
-# froms <- st_startpoint(edges_geom) |> 
-#   st_as_sf() |> 
-#   st_join(nodes) |> 
-#   pull(node_id)
+froms <- st_startpoint(edges) |> 
+  st_as_sf() |> 
+  st_join(nodes) |> 
+  pull(codi_sad)
 
-# tos <- st_endpoint(edges_geom) |> 
-#   st_as_sf() |> 
-#   st_join(nodes) |> 
-#   pull(node_id)
+stopifnot(all(!is.na(froms)))
 
-# edges_geom$from <- froms
-# edges_geom$to <- tos
+tos <- st_endpoint(edges) |> 
+  st_as_sf() |> 
+  st_join(nodes) |> 
+  pull(codi_sad)
+
+edges$from <- froms
+edges$to <- tos
 
 
 # Comprovacions ----------------------------------------------------
@@ -48,49 +60,16 @@ stopifnot(which(!(nodes$codi_sad %in% edges$from)) == 63)
 
 edges$flow_need <- sample(2:10, nrow(edges), replace = T)
 
-
-# Calculem gis-length ---------------------------------------------------------------
-
-od_matrix <- qgisprocess::qgis_run_algorithm(
-  "qneat3:OdMatrixFromPointsAsTable",
-  INPUT = "data_raw/masses_aigua_ter.gpkg",
-  POINTS = nodes,
-  ID_FIELD = 'codi_sad',
-  ENTRY_COST_CALCULATION_METHOD = 1,
-  DEFAULT_DIRECTION = 2
-)$OUTPUT |> read_sf()
-
-edges <- edges |> 
-  left_join(od_matrix, by = join_by(from == origin_id, to == destination_id)) |> 
-  assertr::verify(assertr::not_na(total_cost)) |> 
-  select(-c(entry_cost, network_cost, exit_cost)) |> 
-  rename(massa_length = total_cost)
-
 nodes |> 
   select(-c(node_id, nearest_node, ma)) |> 
   rename(name = nom, node_id = codi_sad, flowChange = flow_change) |> 
   st_transform(4326) |> 
   st_write("assets/nodes.geojson", delete_dsn = TRUE)
 
-lines <- list()
-for (i in 1:nrow(edges)){
-  from <- edges[i, "from", drop = TRUE]
-  to <- edges[i, "to", drop = TRUE]
-
-  from_point <- st_coordinates(nodes |> filter(codi_sad == from)) |> st_point()
-  to_point <- st_coordinates(nodes |> filter(codi_sad == to)) |> st_point()
-  lines[[i]] <- st_linestring(c(from_point, to_point))
-}
-lines_sfc <- st_sfc(lines)
-
-edges_sf <- edges |> 
-  mutate(geom = lines_sfc) |> 
-  st_as_sf(crs = 25831)
-
-edges_sf |> 
-  rename(flowNeed = flow_need, lengthRiver = massa_length) |> 
-  select(-c(from_id, to_id)) |> 
+edges |> 
+  rename(nomComu = nom_correlatiu, flowNeed = flow_need, lengthRiver = river_length, codiMassa = EUMSPFCOD) |> 
   mutate(id = paste(from, to, sep = "->"), .before = everything()) |> 
+  mutate(nomComu = str_to_title(nomComu)) |> 
   st_transform(4326) |> 
   st_write("assets/edges.geojson", delete_dsn = TRUE)
 
@@ -130,3 +109,4 @@ edges_sf |>
 # }
 
 # write_json(elements, "assets/test_nodes.json", auto_unbox = T)
+  

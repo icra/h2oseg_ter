@@ -12,7 +12,7 @@ const fmt = (v, d=1) => Number.isFinite(+v) ? (+v).toFixed(d) : '—'
 function nodeTooltipHTML(n) {
     return `
     <div>
-      <div><strong>${n.data('name') ?? ''}</strong></div>
+      <div><strong>${n.data('id') ?? ''}</strong></div>
       <div>Tipus: ${n.data('type') ?? '—'}</div>
       <div>Cabal entrant: ${fmt(n.data('inflow'))} m³/s</div>
       <div>${n.data('flowChange') > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('flowChange'), 2)} m³/s</div>
@@ -24,7 +24,8 @@ function nodeTooltipHTML(n) {
 function edgeTooltipHTML(e) {
     return `
     <div>
-      <div><strong>${e.data('codiMassa')}</strong></div>
+      <div><strong>${e.data('name') ?? ''}</strong></div>
+      <div>${e.data('codiMassa')}</div>
       <div>Cabal mitjà: ${fmt(e.data('flow'))} m³/s</div>
       <div>Cabal ambiental: ${fmt(e.data('flowNeed'))} m³/s</div>
       <div>Llargada tram: ${fmt(e.data('lengthRiver'), 0)} m</div>
@@ -76,9 +77,11 @@ createApp({
                         id: f.properties.id,
                         source: f.properties.from,
                         target: f.properties.to,
-                        codiMassa: f.properties.codi,
+                        codiMassa: f.properties.codiMassa,
                         flowNeed: f.properties.flowNeed,
-                        lengthRiver: f.properties.lengthRiver
+                        lengthRiver: f.properties.lengthRiver,
+                        name: f.properties.nomComu
+
                     }
                 }
             })

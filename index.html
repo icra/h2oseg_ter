@@ -26,6 +26,7 @@
                 <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
                 <div v-if="selectedEle.eleType === 'punt'">
                     <p v-if="selectedEle.name">{{ selectedEle.name }}</p>
+                    <p v-if-else="selectedEle.id">{{ selectedEle.id }}</p>
                     <p>En aquest punt de la xarxa arriben {{ selectedEle.inflow }} m<sup>3</sup>/s
                         i en surten {{ selectedEle.outflow.toFixed(1) }} m<sup>3</sup>/s.</p>
                     <p v-if="selectedEle.type === 'massa'">
