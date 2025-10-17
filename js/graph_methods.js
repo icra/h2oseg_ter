@@ -1,3 +1,5 @@
+const inNodes = ['NODE_82', 'NODE_33', 'NODE_34', 'NODE_84']
+
 function monthSeconds(year, month /* 1..12 */) {
     const start = new Date(Date.UTC(year, month - 1, 1));
     const end   = new Date(Date.UTC(year, month, 1));
@@ -8,7 +10,7 @@ function m3sToHm3(q_m3s, dt_s){ return ( (q_m3s || 0) * dt_s ) / 1e6; }
 function hm3ToM3s(vol_hm3, dt_s){ return dt_s > 0 ? (vol_hm3 * 1e6) / dt_s : 0; }
 
 const RESERVOIR_DEFAULT = {
-    inNodes: new Set(['NODE_82', 'NODE_33', 'NODE_34', 'NODE_84']),
+    inNodes: new Set(inNodes),
     outNode: 'DESEMBASSAT',
     storage: 0,
     capacity_hm3: 400,
@@ -18,8 +20,8 @@ const RESERVOIR_DEFAULT = {
 const getReservoir = function(cy){
     let r = cy.scratch('_reservoir');
     if (!r) {
-        cy.scracth('_reservoir', JSON.parse(JSON.stringify(RESERVOIR_DEFAULT)));
-        r = cy.scratch('_reservoir');
+        r = cloneReservoirDefault();
+        r = cy.scratch('_reservoir', r);
     }
     return r;
 }
@@ -45,6 +47,15 @@ const resReleaseForDemand = function(R, demand_m3s, dt_s){
 const getReservoirstatus = function(cy){
     const R = getReservoir(cy);
     return { ...R, last: {...R.last}}
+}
+
+const cloneReservoirDefault = function(){
+    if (typeof structuredClone === 'function') return structuredClone(RESERVOIR_DEFAULT);
+    return {
+        ...RESERVOIR_DEFAULT,
+        inNodes: new Set(inNodes),
+        last: { ...RESERVOIR_DEFAULT.last },
+    };
 }
 
 const setupEleClickListener = function(cy, selectedEleRef) {
@@ -92,8 +103,6 @@ const setNodeColor = function(node){
 }
 
 const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
-    console.log("cy validation", typeof cy.elements !== 'function')
-
     const R = getReservoir(cy);
 
     const dt_s = opts.dt_s ??
@@ -187,7 +196,6 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
         // 4. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
-            console.log("outflow", outflow)
             edge.data('flow', outflow);
             applyEdgeColorToLeaflet(edge, leafMaps)
         });
