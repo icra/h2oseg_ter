@@ -35,12 +35,11 @@
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 1.0, "node_id": "NODE_30", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.239319489953296, 41.862043580418323 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 3.0, "node_id": "NODE_31", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.295654749653339, 41.846558249714661 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_32", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.309687894775888, 41.944125781830444 ] } },
-{ "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_33", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.340072929753553, 42.003375969793929 ] } },
-{ "type": "Feature", "properties": { "type": "massa", "flowChange": 3.0, "node_id": "NODE_34", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.421991940161833, 41.967527680365187 ] } },
+{ "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_33", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.341790728173545, 42.012895577141649 ] } },
+{ "type": "Feature", "properties": { "type": "massa", "flowChange": 3.0, "node_id": "NODE_34", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.422217734043173, 41.967271151247523 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 3.0, "node_id": "NODE_35", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.379945050211902, 41.902862740149239 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 1.0, "node_id": "NODE_36", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.39046897012349, 41.833479990311361 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_37", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.404172589846745, 41.873425450395764 ] } },
-{ "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_38", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.52216011947827, 41.979210350059596 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 3.0, "node_id": "NODE_39", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.615525620520574, 41.987660699821575 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 3.0, "node_id": "NODE_40", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.634692479419406, 41.962834659630673 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_41", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.476809130583016, 41.896722399712935 ] } },
@@ -84,9 +83,9 @@
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 1.0, "node_id": "NODE_79", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.312627159830479, 42.193521920112339 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 1.0, "node_id": "NODE_80", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.165058480442689, 42.249824279594137 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 3.0, "node_id": "NODE_81", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.19604754963225, 42.003157679684371 ] } },
-{ "type": "Feature", "properties": { "type": "massa", "flowChange": 1.0, "node_id": "NODE_82", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.342269289753345, 41.977023910335802 ] } },
+{ "type": "Feature", "properties": { "type": "massa", "flowChange": 1.0, "node_id": "NODE_82", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.350158863681715, 41.982317752429189 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_83", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.836046210519128, 41.971625679693297 ] } },
-{ "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_84", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.513546760160839, 42.005402350298127 ] } },
+{ "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_84", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.514216580128731, 42.003840180224095 ] } },
 { "type": "Feature", "properties": { "type": "massa", "flowChange": 2.0, "node_id": "NODE_85", "name": null }, "geometry": { "type": "Point", "coordinates": [ 2.301400799424426, 42.070717340426917 ] } },
 { "type": "Feature", "properties": { "type": "ATL", "flowChange": -3.5418969036666668, "node_id": "ATL", "name": "Aigües Ter-Llobregat" }, "geometry": { "type": "Point", "coordinates": [ 2.601582750187695, 41.984933579993339 ] } },
 { "type": "Feature", "properties": { "type": "Cabal ambiental", "flowChange": -0.205346476, "node_id": "C_AMBIEN_REC_MOLI", "name": "CABAL AMBIENTAL REC DEL MOLÍ DE PALS" }, "geometry": { "type": "Point", "coordinates": [ 3.068427719643016, 42.042035410225239 ] } },
@@ -128,6 +127,7 @@
 { "type": "Feature", "properties": { "type": "Comunitat de regants", "flowChange": -0.4801373956, "node_id": "CR_CERVIA", "name": "CR CERVIA REG TOTAL" }, "geometry": { "type": "Point", "coordinates": [ 2.827650859531053, 42.019766080180467 ] } },
 { "type": "Feature", "properties": { "type": "Comunitat de regants", "flowChange": -0.7034050178, "node_id": "CR_VINYALS", "name": "CR VINYALS REG TOTAL" }, "geometry": { "type": "Point", "coordinates": [ 2.827973639988818, 42.019345509698766 ] } },
 { "type": "Feature", "properties": { "type": "Comunitat de regants", "flowChange": -1.7525388292, "node_id": "CR_SENTMENAT", "name": "CR SENTMENAT REG TOTAL" }, "geometry": { "type": "Point", "coordinates": [ 2.985967770002721, 42.082144269724381 ] } },
-{ "type": "Feature", "properties": { "type": "Comunitat de regants", "flowChange": -1.883213859, "node_id": "CR_MOLI_PALS", "name": "CR MOLI DE PALS REG TOTAL" }, "geometry": { "type": "Point", "coordinates": [ 3.068241720436429, 42.041992829673795 ] } }
+{ "type": "Feature", "properties": { "type": "Comunitat de regants", "flowChange": -1.883213859, "node_id": "CR_MOLI_PALS", "name": "CR MOLI DE PALS REG TOTAL" }, "geometry": { "type": "Point", "coordinates": [ 3.068241720436429, 42.041992829673795 ] } },
+{ "type": "Feature", "properties": { "type": "comporta", "flowChange": 3.0, "node_id": "DESEMBASSAT", "name": "Sortida sistema Sau-Susqueda-Pasteral" }, "geometry": { "type": "Point", "coordinates": [ 2.600696544109117, 41.984339807743112 ] } }
 ]
 }

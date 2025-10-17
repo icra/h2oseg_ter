@@ -10,7 +10,7 @@ set.seed(4)
 nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |> 
   mutate(codi_sad = if_else(is.na(codi_sad), paste('NODE', node_id, sep = "_"), codi_sad))
 
-masses <- read_sf("data_raw/MASSES_AIGUA_BE.gpkg", layer = "direccions_correctes")
+masses <- read_sf("data_raw/MASSES_AIGUA_BE.gpkg", layer = "retall_embassament")
 
 # Comprova que tots els nodes estan sobre els arcs
 stopifnot(all(nodes |> st_intersects(masses, sparse = FALSE) |> rowSums() > 0))
@@ -19,11 +19,16 @@ stopifnot(all(nodes |> st_intersects(masses, sparse = FALSE) |> rowSums() > 0))
 edges <- st_split(masses, nodes) |> 
   st_collection_extract("LINESTRING") %>% 
   mutate(river_length = st_length(.)) |> 
-  mutate(nom = str_remove_all(edges$NOM_COMU, " \\d$"), .before = 1) |> 
+  mutate(nom = str_remove_all(NOM_COMU, " \\d$"), .before = 1) |> 
   mutate(numero = row_number(), .by = nom, .after = nom) |> 
   mutate(n = n(), .by = nom, .after = numero) |> 
   mutate(nom_correlatiu = if_else(n == 1, nom, paste(nom, numero)), .before = everything()) |> 
   select(-c(nom, numero, n))
+
+tm_shape(edges) +
+  tm_lines() +
+  tm_shape(nodes) +
+  tm_symbols()
 
   
 ## Per quan tinguem edges amb geom ------------------------------
@@ -43,7 +48,6 @@ tos <- st_endpoint(edges) |>
 edges$from <- froms
 edges$to <- tos
 
-
 # Comprovacions ----------------------------------------------------
 
 if (any(duplicated(edges$from))) {
@@ -53,8 +57,8 @@ if (any(duplicated(edges$from))) {
 stopifnot(all(edges$from %in% nodes$codi_sad) && all(edges$to %in% nodes$codi_sad))
 
 # tots les nodes tenen un arc sortint excepte el node final (63)
-stopifnot(length(which(nodes$codi_sad %in% edges$from)) == (nrow(nodes) - 1))
-stopifnot(which(!(nodes$codi_sad %in% edges$from)) == 63)
+stopifnot(length(which(nodes$codi_sad %in% edges$from)) == (nrow(nodes) - 5))
+stopifnot(nodes$codi_sad[which(!(nodes$codi_sad %in% edges$from))] == c("NODE_33", "NODE_34", "NODE_63", "NODE_82", "NODE_84"))
 
 # Atribuïm valors random ----------------------------------------------------------------
 

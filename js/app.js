@@ -33,6 +33,17 @@ function edgeTooltipHTML(e) {
   `
 }
 
+function embTooltipHTML() {
+    return `
+    <div>
+        <div><strong>Sistema Sau-Susqueda-Pasteral</strong></div>
+        <div>Volum al sistema: Per definir</div>
+        <div>Cabal mitjà d'entrada:</div>
+        <div>Cabal mitjà desembassat:</div>
+    </div>
+    `
+}
+
 const reset = function(){
     window.confirm('Segur que vols reiniciar el model?') && window.location.reload()
 }
@@ -51,12 +62,14 @@ createApp({
         const nodeLayerById = new Map()
 
         onMounted(async () => {
-            const [nodesResp, edgesResp] = await Promise.all([
+            const [nodesResp, edgesResp, embResp] = await Promise.all([
                 fetch('assets/nodes.geojson'),
-                fetch('assets/edges.geojson')
+                fetch('assets/edges.geojson'),
+                fetch('assets/sau_susqueda.geojson')
             ])
             const nodesGeo = await nodesResp.json()
             const edgesGeo = await edgesResp.json()
+            const embGeo = await embResp.json()
 
             const cyNodes = nodesGeo.features.map(n => {
                 return {
@@ -86,9 +99,16 @@ createApp({
                 }
             })
 
+            const virtualEdges = [
+                {data: { id: 'v_82_res', source: 'NODE_82', target: 'DESEMBASSAT', virtual: true}},
+                {data: { id: 'v_33_res', source: 'NODE_33', target: 'DESEMBASSAT', virtual: true}},
+                {data: { id: 'v_34_res', source: 'NODE_34', target: 'DESEMBASSAT', virtual: true}},
+                {data: { id: 'v_84_res', source: 'NODE_84', target: 'DESEMBASSAT', virtual: true}},
+            ]
+
             cy.value = cytoscape({
                 container: document.getElementById('cy'),
-                elements: [...cyNodes, ...cyEdges],
+                elements: [...cyNodes, ...cyEdges, ...virtualEdges],
                 style: [
                     {
                         selector: 'node',
@@ -113,6 +133,11 @@ createApp({
             cy.value.userZoomingEnabled(false)
             cy.value.boxSelectionEnabled(false)
             cy.value.autoungrabify(true);
+
+            cy.value.style()
+                .selector('edge[virtual = "true"]')
+                .style({ 'opacity': 0, 'events': 'no' })
+                .update();
 
             leaf.value = cy.value.leaflet({
                 container: document.getElementById('cy-leaflet'),
@@ -202,6 +227,10 @@ createApp({
             nodePane.style.zIndex = 660   // per SOBRE dels edges
             nodePane.style.pointerEvents = 'auto'
 
+            const embPane = map.createPane('embPane')
+            embPane.style.zIndex = 800
+            embPane.style.pointerEvents = 'auto'
+
             // pane per a tooltips per SOBRE dels nodes
             const tipPane = map.createPane('tipPane')
             tipPane.style.zIndex = 1000
@@ -265,6 +294,31 @@ createApp({
                     })
                 }
             }).addTo(map)
+
+            const embLayer = L.geoJSON(embGeo, {
+                pane: 'embPane',
+                style: () => ({
+                    color: '#0074D9',
+                    weight: 1,
+                    fillColor: '#0074D9',
+                    fillOpacity: 1
+                }),
+                onEachFeature: (feature, layer) => {
+                    // assegura interacció i tooltip
+                    layer.options.interactive = true;
+                    layer.bindTooltip('', TT_OPTS);
+
+                    layer.on({
+                        mouseover: (e) => {
+                            const l = e.target;
+                            const tt = l.getTooltip();
+                            if (tt) tt.setContent(embTooltipHTML(feature)); // passa la feature si ho necessites
+                            l.openTooltip();
+                        },
+                        mouseout: (e) => e.target.closeTooltip()
+                    });
+                }
+            }).addTo(map);
 
             gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg)
 
