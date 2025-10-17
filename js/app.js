@@ -37,9 +37,9 @@ function embTooltipHTML() {
     return `
     <div>
         <div><strong>Sistema Sau-Susqueda-Pasteral</strong></div>
-        <div>Volum al sistema: Per definir</div>
-        <div>Cabal mitjà d'entrada:</div>
-        <div>Cabal mitjà desembassat:</div>
+        <div>Volum al sistema: ${gm.RESERVOIR.storage_hm3.toFixed()} Hm<sup>3</sup></div>
+        <div>Cabal mitjà d'entrada: ${gm.RESERVOIR.last.inflowSum_m3s} m<sup>3</sup>s</div>
+        <div>Cabal mitjà desembassat: ${gm.RESERVOIR.last.released_m3s} m<sup>3</sup>s</div>
     </div>
     `
 }
@@ -322,7 +322,7 @@ createApp({
                 }
             }).addTo(map);
 
-            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg)
+            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
 
             gm.setupEleClickListener(cy.value, selectedEle)
             gm.setupZoomLabelControl(cy.value, leaf.value, 12);
@@ -343,7 +343,8 @@ createApp({
             leaf,
             selectedEle,
             flowModified,
-            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg, { nodeLayerById, edgeLayerById }),
+            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg, { nodeLayerById, edgeLayerById }, {period: {year:2024, month:8}}),
+            getReservoir: () => gm.RESERVOIR,
             errorMsg,
             reset
         }

@@ -9,54 +9,13 @@ function monthSeconds(year, month /* 1..12 */) {
 function m3sToHm3(q_m3s, dt_s){ return ( (q_m3s || 0) * dt_s ) / 1e6; }
 function hm3ToM3s(vol_hm3, dt_s){ return dt_s > 0 ? (vol_hm3 * 1e6) / dt_s : 0; }
 
-const RESERVOIR_DEFAULT = {
+let RESERVOIR = {
     inNodes: new Set(inNodes),
     outNode: 'DESEMBASSAT',
-    storage: 0,
+    storage_hm3: 0,
     capacity_hm3: 400,
     last: {inflowSum_m3s: 0, inflowVol_hm3: 0, releaseDemand_m3s: 0, released_m3s: 0, releasedVol_hm3: 0, dt_s: 0}
 };
-
-const getReservoir = function(cy){
-    let r = cy.scratch('_reservoir');
-    if (!r) {
-        r = cloneReservoirDefault();
-        r = cy.scratch('_reservoir', r);
-    }
-    return r;
-}
-
-const resAddFlow = function(R, q_m3s, dt_s){
-    const vol = m3sToHm3(q_m3s, dt_s);
-    R.storage_hm3 = Math.min(R.storage_hm3 + vol, R.capacity_hm3)
-    R.last.inflowVol_hm3 += vol;
-    R.last.inflowSum_m3s += (q_m3s || 0);
-}
-
-const resReleaseForDemand = function(R, demand_m3s, dt_s){
-    const maxPossible_m3s = hm3ToM3s(R.storage_hm3, dt_s);
-    const released_m3s = Math.min(Math.max(0, demand_m3s || 0), maxPossible_m3s);
-    const usedVol_hm3 = m3sToHm3(released_m3s, dt_s);
-    R.storage_hm3 -= usedVol_hm3;
-    R.last.released_m3s = released_m3s;
-    R.last.releasedVol_hm3 += usedVol_hm3;
-    R.last.releaseDemand_m3s = (demand_m3s || 0);
-    return released_m3s;
-}
-
-const getReservoirstatus = function(cy){
-    const R = getReservoir(cy);
-    return { ...R, last: {...R.last}}
-}
-
-const cloneReservoirDefault = function(){
-    if (typeof structuredClone === 'function') return structuredClone(RESERVOIR_DEFAULT);
-    return {
-        ...RESERVOIR_DEFAULT,
-        inNodes: new Set(inNodes),
-        last: { ...RESERVOIR_DEFAULT.last },
-    };
-}
 
 const setupEleClickListener = function(cy, selectedEleRef) {
     cy.on('tap', evt => {
@@ -103,11 +62,18 @@ const setNodeColor = function(node){
 }
 
 const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
-    const R = getReservoir(cy);
+    const R = RESERVOIR;
+
+    console.log("period", opts.period.year, opts.period.month, monthSeconds(opts.period.year, opts.period.month))
 
     const dt_s = opts.dt_s ??
         (opts.period ? monthSeconds(opts.period.year, opts.period.month) :
                        monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1 ));
+    console.log("dt_s", dt_s);
+
+    if (!opts.resetStorage) {
+        R.storage_hm3 = 0;
+    }
     R.last = {inflowSum_m3s: 0, inflowVol_hm3: 0, releaseDemand_m3s: 0, released_m3s: 0, releasedVol_hm3: 0, dt_s};
 
     let visited = new Set();
@@ -130,11 +96,14 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
 
         // 2. Aplicar el flowChange local del node
         node.data('inflow', inflow);
+        const flowChange = parseFloat(node.data('flowChange')) || 0;
+        const rawOutflow = inflow + flowChange;
+        const positiveOut = Math.max(0, rawOutflow);
 
         if (R.inNodes && R.inNodes.has(node.id())) {
-            const add_hm3 = m3sToHm3(inflow, dt_s);
+            const add_hm3 = m3sToHm3(positiveOut, dt_s);
             const nouVol = Math.min((R.storage_hm3 || 0) + add_hm3, R.capacity_hm3);
-            R.last.inflowSum_m3s += inflow;
+            R.last.inflowSum_m3s += positiveOut;
             R.last.inflowVol_hm3 += nouVol - (R.storage_hm3 || 0);
             R.storage_hm3 = nouVol;
 
@@ -152,6 +121,7 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
         }
 
         if (R.outNode && R.outNode === node.id()) {
+            console.log("Desembassament")
             const demand_m3s = Math.max(0, parseFloat(node.data('flowChange')) || 0);
 
             // màxim que podem treure en m3/s amb el volum actual emmagatzemat
@@ -182,8 +152,6 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
             return;
         }
 
-        const flowChange = parseFloat(node.data('flowChange')) || 0;
-        const rawOutflow = inflow + flowChange;
         let outflow = Math.max(0, rawOutflow);
         node.data('outflow', outflow);
 
@@ -208,9 +176,9 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
     if (errorRef) errorRef.value = null;
 };
 
-const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafMaps) {
+const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafMaps, period) {
     if (!selectedEle || !selectedEle.id) return;
-
+    console.log("period a modifyFlowChange", period)
     const node = cy.getElementById(selectedEle.id);
     if (!node || !node.isNode()) return;
 
@@ -219,7 +187,7 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafM
     node.data('flowChange', flowModified.value);
 
     // Torna a calcular
-    calculateFlow(cy, leafMaps, errorMsg);
+    calculateFlow(cy, leafMaps, errorMsg, period);
 
     // Si s’ha generat error, tornem enrere i no modifiquem l’input
     if (errorMsg.value) {
@@ -285,5 +253,5 @@ export default {
     calculateFlow,
     modifyFlowChange,
     setupZoomLabelControl,
-    getReservoirstatus,
+    RESERVOIR
 }
