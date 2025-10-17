@@ -1,3 +1,52 @@
+function monthSeconds(year, month /* 1..12 */) {
+    const start = new Date(Date.UTC(year, month - 1, 1));
+    const end   = new Date(Date.UTC(year, month, 1));
+    return (end - start) / 1000; // segons al mes
+}
+
+function m3sToHm3(q_m3s, dt_s){ return ( (q_m3s || 0) * dt_s ) / 1e6; }
+function hm3ToM3s(vol_hm3, dt_s){ return dt_s > 0 ? (vol_hm3 * 1e6) / dt_s : 0; }
+
+const RESERVOIR_DEFAULT = {
+    inNodes: new Set(['NODE_82', 'NODE_33', 'NODE_34', 'NODE_84']),
+    outNode: 'DESEMBASSAT',
+    storage: 0,
+    capacity_hm3: 400,
+    last: {inflowSum_m3s: 0, inflowVol_hm3: 0, releaseDemand_m3s: 0, released_m3s: 0, releasedVol_hm3: 0, dt_s: 0}
+};
+
+const getReservoir = function(cy){
+    let r = cy.scratch('_reservoir');
+    if (!r) {
+        cy.scracth('_reservoir', JSON.parse(JSON.stringify(RESERVOIR_DEFAULT)));
+        r = cy.scratch('_reservoir');
+    }
+    return r;
+}
+
+const resAddFlow = function(R, q_m3s, dt_s){
+    const vol = m3sToHm3(q_m3s, dt_s);
+    R.storage_hm3 = Math.min(R.storage_hm3 + vol, R.capacity_hm3)
+    R.last.inflowVol_hm3 = += vol;
+    R.last.inflowSum_m3s += (q_m3s || 0);
+}
+
+const resReleaseForDemand = function(R, demand_m3s, dt_s){
+    const maxPossible_m3s = hm3ToM3s(R.storage_hm3, dt_s);
+    const released_m3s = Math.min(Math.max(0, demand_m3s || 0), maxPossible_m3s);
+    const usedVol_hm3 = m3sToHm3(released_m3s, dt_s);
+    R.storage_hm3 -= usedVol_hm3;
+    R.last.released_m3s = released_m3s;
+    R.last.releasedVol_hm3 += usedVol_hm3;
+    R.last.releaseDemand_m3s = (demand_m3s || 0);
+    return released_m3s;
+}
+
+const getReservoirstatus = function(cy){
+    const R = getReservoir(cy);
+    return { ...R, last: {...R.last}}
+}
+
 const setupEleClickListener = function(cy, selectedEleRef) {
     cy.on('tap', evt => {
         const ele = evt.target;
@@ -42,7 +91,14 @@ const setNodeColor = function(node){
     return node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9'
 }
 
-const calculateFlow = function(cy, leafMaps, errorRef = null) {
+const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
+    const R = getReservoir(cy);
+
+    const dt_s = opts.dt_s ??
+        (opts.period ? monthSeconds(opts.period.year, opts.period.month) :
+                       monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1 ));
+    R.last = {inflowSum_m3s: 0, inflowVol_hm3: 0, releaseDemand_m3s: 0, released_m3s: 0, releasedVol_hm3: 0, dt_s};
+
     let visited = new Set();
 
     function dfs(node) {
@@ -63,6 +119,58 @@ const calculateFlow = function(cy, leafMaps, errorRef = null) {
 
         // 2. Aplicar el flowChange local del node
         node.data('inflow', inflow);
+
+        if (R.inNodes && R.inNodes.has(node.id())) {
+            const add_hm3 = m3sToHm3(inflow, dt_s);
+            const nouVol = Math.min((R.storage_hm3 || 0) + add_hm3, R.capacity_hm3);
+            R.last.inflowSum_m3s += inflow;
+            R.last.inflowVol_hm3 += nouVol - (R.storage_hm3 || 0);
+            R.storage_hm3 = nouVol;
+
+            // no propaguem cabal a través dels arcs virtuals
+            node.data('outflow', 0);
+            node.data('storage_after_hm3', R.storage_hm3);
+
+            const outgoingEdges = node.outgoers('edge');
+            outgoingEdges.forEach(edge => {
+                edge.data('flow', 0);
+                applyEdgeColorToLeaflet(edge, leafMaps)
+            });
+            applyNodeColorToLeaflet(node, leafMaps);
+            return;
+        }
+
+        if (R.outNode && R.outNode === node.id()) {
+            const demand_m3s = Math.max(0, parseFloat(node.data('flowChange')) || 0);
+
+            // màxim que podem treure en m3/s amb el volum actual emmagatzemat
+            const maxPossible_m3s = hm3ToM3s(R.storage_hm3 || 0, dt_s);
+            const release_m3s = Math.min(demand_m3s, maxPossible_m3s);
+
+            // actualitzam l'emmagatzemat
+            const used_hm3 = m3sToHm3(release_m3s, dt_s)
+            R.storage_hm3 = Math.max(0, (R.storage_hm3 || 0) - used_hm3);
+
+            // registres
+            R.last.releaseDemand_m3s = demand_m3s;
+            R.last.released_m3s = release_m3s;
+            R.last.releasedVol_hm3 += used_hm3;
+
+            // propaga a sortints el cabal realment alliberat
+            const outgoingEdges = node.outgoers('edge');
+            outgoingEdges.forEach(edge => {
+                edge.data('flow', release_m3s);
+                applyEdgeColorToLeaflet(edge, leafMaps);
+            });
+
+            node.data('outflow', release_m3s);
+            node.data('released_m3s', release_m3s);
+            node.data('storage_after_hm3', R.storage_hm3);
+
+            applyNodeColorToLeaflet(node, leafMaps);
+            return;
+        }
+
         const flowChange = parseFloat(node.data('flowChange')) || 0;
         const rawOutflow = inflow + flowChange;
         let outflow = Math.max(0, rawOutflow);
@@ -165,5 +273,6 @@ export default {
     setupEleClickListener,
     calculateFlow,
     modifyFlowChange,
-    setupZoomLabelControl
+    setupZoomLabelControl,
+    getReservoirstatus,
 }
