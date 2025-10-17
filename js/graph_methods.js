@@ -27,7 +27,7 @@ const getReservoir = function(cy){
 const resAddFlow = function(R, q_m3s, dt_s){
     const vol = m3sToHm3(q_m3s, dt_s);
     R.storage_hm3 = Math.min(R.storage_hm3 + vol, R.capacity_hm3)
-    R.last.inflowVol_hm3 = += vol;
+    R.last.inflowVol_hm3 += vol;
     R.last.inflowSum_m3s += (q_m3s || 0);
 }
 
@@ -92,6 +92,8 @@ const setNodeColor = function(node){
 }
 
 const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
+    console.log("cy validation", typeof cy.elements !== 'function')
+
     const R = getReservoir(cy);
 
     const dt_s = opts.dt_s ??
@@ -185,6 +187,7 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
         // 4. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
+            console.log("outflow", outflow)
             edge.data('flow', outflow);
             applyEdgeColorToLeaflet(edge, leafMaps)
         });

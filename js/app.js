@@ -129,6 +129,8 @@ createApp({
                 layout: { name: 'preset' }
             })
 
+            console.log("cy", cy.value)
+
             cy.value.userPanningEnabled(false)
             cy.value.userZoomingEnabled(false)
             cy.value.boxSelectionEnabled(false)
