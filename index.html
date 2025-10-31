@@ -32,25 +32,25 @@
             <div v-if="selectedEle">
                 <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
                 <div v-if="selectedEle.id === 'DESEMBASSAT'">
-                    <p>El cabal mitjà desembassat és {{ selectedEle.flowChange }}  m<sup>3</sup>/s</p>
+                    <p>El cabal mitjà desembassat és {{ selectedEle['m' + month] }}  m<sup>3</sup>/s</p>
                     <p>El volum a l'embassament és de {{ getReservoir().storage_hm3.toFixed() }} Hm<sup>3</sup></p>
                 </div>
                 <div v-else-if="selectedEle.eleType === 'punt'">
                     <p v-if="selectedEle.name">{{ selectedEle.name }}</p>
                     <p v-else-if="selectedEle.id">{{ selectedEle.id }}</p>
-                    <p>En aquest punt de la xarxa arriben {{ selectedEle.inflow }} m<sup>3</sup>/s
-                        i en surten {{ selectedEle.outflow.toFixed(1) }} m<sup>3</sup>/s.</p>
+                    <p>En aquest punt de la xarxa arriben {{ selectedEle['inflow' + month] }} m<sup>3</sup>/s
+                        i en surten {{ selectedEle['outflow' + month].toFixed(1) }} m<sup>3</sup>/s.</p>
                     <p v-if="selectedEle.type === 'massa'">
-                        L'àrea de drenatge d'aquest punt aporta {{ selectedEle.flowChange }} m<sup>3</sup>/s de cabal.
+                        L'àrea de drenatge d'aquest punt aporta {{ selectedEle['m' + month].toFixed(2) }} m<sup>3</sup>/s de cabal.
                     </p>
                     <p v-else-if="selectedEle.type === 'EDAR'">
-                        L'efluent de l'EDAR aporta {{ selectedEle.flowChange.toFixed(2) }} m<sup>3</sup>/s a la xarxa fluvial.
+                        L'efluent de l'EDAR aporta {{ selectedEle['m' + month].toFixed(2) }} m<sup>3</sup>/s a la xarxa fluvial.
                     </p>
-                    <p v-else-if="selectedEle.flowChange > 0">
-                        En aquest punt entren {{ Number(selectedEle.flowChange).toFixed(1) }} m<sup>3</sup>/s a la xarxa fluvial.
+                    <p v-else-if="selectedEle['m' + month] > 0">
+                        En aquest punt entren {{ Number(selectedEle['m' + month]).toFixed(1) }} m<sup>3</sup>/s a la xarxa fluvial.
                     </p>
-                    <p v-else-if="selectedEle.flowChange < 0">
-                        En aquest punt s'extreuen {{ Math.abs(selectedEle.flowChange).toFixed(2) }} m<sup>3</sup>/s de la xarxa fluvial.
+                    <p v-else-if="selectedEle['m' + month] < 0">
+                        En aquest punt s'extreuen {{ Math.abs(selectedEle['m' + month]).toFixed(2) }} m<sup>3</sup>/s de la xarxa fluvial.
                 </div>
                 <div v-if="selectedEle.eleType === 'punt'">
                     <h4>Modifica el canvi de cabal generat per aquest punt:</h4>

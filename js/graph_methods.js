@@ -183,22 +183,22 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
     if (errorRef) errorRef.value = null;
 };
 
-const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafMaps, period) {
+const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg, leafMaps, period) {
     if (!selectedEle || !selectedEle.id) return;
-    console.log("period a modifyFlowChange", period)
+    console.log("month a modifyFlowChange", month)
     const node = cy.getElementById(selectedEle.id);
     if (!node || !node.isNode()) return;
 
     // Temporàriament posem el valor
-    const previousValue = node.data('flowChange');
-    node.data('flowChange', flowModified.value);
+    const previousValue = node.data('m' + month);
+    node.data('m' + month, flowModified.value);
 
     // Torna a calcular
     calculateFlow(cy, leafMaps, errorMsg, period);
 
     // Si s’ha generat error, tornem enrere i no modifiquem l’input
     if (errorMsg.value) {
-        node.data('flowChange', previousValue); // revertim
+        node.data('m' + month, previousValue); // revertim
         flowModified.value = null
         calculateFlow(cy)
         return;
@@ -206,8 +206,8 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafM
 
     // Si tot correcte, actualitzem label
     node.data('label', `${node.id()} (${flowModified.value})`);
-    selectedEle.flowChange = flowModified.value;
-    selectedEle.flow = node.data('flow');
+    selectedEle['m' + month] = flowModified.value;
+    selectedEle['flow' + month] = node.data('flow' + month);
 }
 
 const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {

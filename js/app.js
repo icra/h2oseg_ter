@@ -9,24 +9,24 @@ const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cy
 const fmt = (v, d=1) => Number.isFinite(+v) ? (+v).toFixed(d) : '—'
 
 // HTML dels tooltips
-function nodeTooltipHTML(n) {
+function nodeTooltipHTML(n, month) {
     return `
     <div>
       <div><strong>${n.data('id') ?? ''}</strong></div>
       <div>Tipus: ${n.data('type') ?? '—'}</div>
-      <div>Cabal entrant: ${fmt(n.data('inflow'))} m³/s</div>
-      <div>${n.data('flowChange') > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('flowChange'), 2)} m³/s</div>
-      <div>Cabal sortint: ${fmt(n.data('outflow'))} m³/s</div>
+      <div>Cabal entrant: ${fmt(n.data('inflow' + month))} m³/s</div>
+      <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)} m³/s</div>
+      <div>Cabal sortint: ${fmt(n.data('outflow' + month))} m³/s</div>
     </div>
   `
 }
 
-function edgeTooltipHTML(e) {
+function edgeTooltipHTML(e, month) {
     return `
     <div>
       <div><strong>${e.data('name') ?? ''}</strong></div>
       <div>${e.data('codiMassa')}</div>
-      <div>Cabal mitjà: ${fmt(e.data('flow'))} m³/s</div>
+      <div>Cabal mitjà: ${fmt(e.data('flow' + month))} m³/s</div>
       <div>Cabal ambiental: ${fmt(e.data('flowNeed'))} m³/s</div>
       <div>Llargada tram: ${fmt(e.data('lengthRiver'), 0)} m</div>
     </div>
@@ -55,6 +55,7 @@ createApp({
         const selectedEle = ref(null)
         const flowModified = ref(null)
         const errorMsg = ref(null)
+        const month = ref('1')
 
         const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
 
@@ -229,7 +230,7 @@ createApp({
 
             // Afegir-lo al mapa
             map.addControl(new homeControl());
-
+            console.log("month", month.value)
             leaf.value.fit()
 
             const edgePane = map.createPane('edgePane')
@@ -261,7 +262,7 @@ createApp({
                 layer.on('click', () => selectById(n.id(), 'node'))
                 layer.on('mouseover', ()=> {
                     const cn = cy.value.getElementById(n.id())
-                    const html = nodeTooltipHTML(cn)
+                    const html = nodeTooltipHTML(cn, month.value)
                     const tt = layer.getTooltip()
                     if (tt) tt.setContent(html)
                     layer.openTooltip()
@@ -292,7 +293,7 @@ createApp({
                     layer.on('click', () => selectById(eid,'edge'))
                     layer.on('mouseover', ()=> {
                         const ce = cy.value.getElementById(eid)
-                        const html = edgeTooltipHTML(ce)
+                        const html = edgeTooltipHTML(ce, month.value)
                         const tt = layer.getTooltip()
                         if (tt) tt.setContent(html)
                         layer.openTooltip()
@@ -343,7 +344,7 @@ createApp({
         watch(selectedEle, (val) => {
             if (val && val.eleType === 'punt') {
                 // assegura número
-                flowModified.value = Number(val.flowChange).toFixed(2);
+                flowModified.value = Number(val['m' + month.value]).toFixed(2);
             } else {
                 flowModified.value = null; // o 0, si prefereixes
             }
@@ -354,10 +355,11 @@ createApp({
             leaf,
             selectedEle,
             flowModified,
-            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg, { nodeLayerById, edgeLayerById }, {period: {year:2024, month:8}}),
+            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, month.value, errorMsg, { nodeLayerById, edgeLayerById }, {period: {year:2024, month:8}}),
             getReservoir: () => gm.RESERVOIR,
             errorMsg,
-            reset
+            reset,
+            month: month.value
         }
     }
 }).mount('#app')
