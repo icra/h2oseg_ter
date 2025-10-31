@@ -12,9 +12,14 @@ function hm3ToM3s(vol_hm3, dt_s){ return dt_s > 0 ? (vol_hm3 * 1e6) / dt_s : 0; 
 let RESERVOIR = {
     inNodes: new Set(inNodes),
     outNode: 'DESEMBASSAT',
-    storage_hm3: 0,
+    storage_hm3: {},
     capacity_hm3: 400,
-    last: {inflowSum_m3s: 0, inflowVol_hm3: 0, releaseDemand_m3s: 0, released_m3s: 0, releasedVol_hm3: 0, dt_s: 0}
+    inflowSum_m3s: {},
+    inflowVol_hm3: {},
+    releaseDemand_m3s: {},
+    released_m3s: {},
+    releasedVol_hm3: {}
+    // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
 
 const setupEleClickListener = function(cy, selectedEleRef) {
@@ -65,24 +70,30 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
     const months = ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10", "m11", "m12"];
     for (const m of months){
         calculateFlowMonth(cy, leafMaps, errorRef, {period: {year: 2024, month: m.substr(1)}});
+        console.log("embassament a", m, RESERVOIR)
     }
     console.log("edges", cy.edges())
     console.log("nodes", cy.nodes())
 }
 
 const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
-    const R = RESERVOIR;
+    let R = RESERVOIR;
 
     const month = opts.period.month
+    const m = Number(month)
 
     const dt_s = opts.dt_s ??
         (opts.period ? monthSeconds(opts.period.year, opts.period.month) :
                        monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1 ));
 
     if (!opts.resetStorage) {
-        R.storage_hm3 = 0;
+        R.storage_hm3[m] = R.storage_hm3[m - 1] || 0;
     }
-    R.last = {inflowSum_m3s: 0, inflowVol_hm3: 0, releaseDemand_m3s: 0, released_m3s: 0, releasedVol_hm3: 0, dt_s};
+    R.inflowSum_m3s[m] = 0
+    R.inflowVol_hm3[m] = 0
+    R.releaseDemand_m3s[m] = 0
+    R.released_m3s[m] = 0
+    R.releasedVol_hm3[m] = 0
 
     let visited = new Set();
 
@@ -110,14 +121,14 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
 
         if (R.inNodes && R.inNodes.has(node.id())) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
-            const nouVol = Math.min((R.storage_hm3 || 0) + add_hm3, R.capacity_hm3);
-            R.last.inflowSum_m3s += positiveOut;
-            R.last.inflowVol_hm3 += nouVol - (R.storage_hm3 || 0);
-            R.storage_hm3 = nouVol;
+            const nouVol = Math.min(R.storage_hm3[m] + add_hm3, R.capacity_hm3);
+            R.inflowSum_m3s[m] += positiveOut;
+            R.inflowVol_hm3[m] += nouVol - R.storage_hm3[m];
+            R.storage_hm3[m] = nouVol;
 
             // no propaguem cabal a través dels arcs virtuals
             node.data('outflow' + month, 0);
-            node.data('storage_after_hm3' + month, R.storage_hm3);
+            node.data('storage_after_hm3' + month, R.storage_hm3[m]);
 
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
@@ -132,17 +143,17 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
             const demand_m3s = Math.max(0, parseFloat(node.data('m' + month)) || 0);
 
             // màxim que podem treure en m3/s amb el volum actual emmagatzemat
-            const maxPossible_m3s = hm3ToM3s(R.storage_hm3 || 0, dt_s);
+            const maxPossible_m3s = hm3ToM3s(R.storage_hm3[m] || 0, dt_s);
             const release_m3s = Math.min(demand_m3s, maxPossible_m3s);
 
             // actualitzam l'emmagatzemat
             const used_hm3 = m3sToHm3(release_m3s, dt_s)
-            R.storage_hm3 = Math.max(0, (R.storage_hm3 || 0) - used_hm3);
+            R.storage_hm3[m] = Math.max(0, R.storage_hm3[m] - used_hm3);
 
             // registres
-            R.last.releaseDemand_m3s = demand_m3s;
-            R.last.released_m3s = release_m3s;
-            R.last.releasedVol_hm3 += used_hm3;
+            R.releaseDemand_m3s[m] = demand_m3s;
+            R.released_m3s[m] = release_m3s;
+            R.releasedVol_hm3[m] += used_hm3;
 
             // propaga a sortints el cabal realment alliberat
             const outgoingEdges = node.outgoers('edge');
@@ -151,9 +162,9 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
                 applyEdgeColorToLeaflet(edge, leafMaps);
             });
 
-            node.data('outflow', release_m3s);
-            node.data('released_m3s', release_m3s);
-            node.data('storage_after_hm3', R.storage_hm3);
+            node.data('outflow' + month, release_m3s);
+            node.data('released_m3s' + month, release_m3s);
+            node.data('storage_after_hm3' + month, R.storage_hm3[m]);
 
             applyNodeColorToLeaflet(node, leafMaps);
             return;

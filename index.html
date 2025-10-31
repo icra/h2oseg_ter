@@ -33,7 +33,7 @@
                 <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
                 <div v-if="selectedEle.id === 'DESEMBASSAT'">
                     <p>El cabal mitjà desembassat és {{ selectedEle['m' + month] }}  m<sup>3</sup>/s</p>
-                    <p>El volum a l'embassament és de {{ getReservoir().storage_hm3.toFixed() }} Hm<sup>3</sup></p>
+                    <p>El volum a l'embassament és de {{ getReservoir().storage_hm3[month].toFixed() }} Hm<sup>3</sup></p>
                 </div>
                 <div v-else-if="selectedEle.eleType === 'punt'">
                     <p v-if="selectedEle.name">{{ selectedEle.name }}</p>
@@ -77,10 +77,10 @@
                         <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
                     </svg>
                     <span class="lab">Volum</span>
-                    <span class="val">{{ getReservoir().storage_hm3.toFixed(2) }} hm³</span>
+                    <span class="val">{{ reservoir.storage_hm3[month].toFixed(2) }} hm³</span>
                     <div class="cap">
                         <div class="cap-fill"
-                             :style="{ width: Math.min(100, Math.max(0, (getReservoir().storage_hm3 / getReservoir().capacity_hm3) * 100)).toFixed(0) + '%' }">
+                             :style="{ width: Math.min(100, Math.max(0, (reservoir.storage_hm3[month] / reservoir.capacity_hm3) * 100)).toFixed(0) + '%' }">
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
                             <path d="M12 3v12m0 0l-4-4m4 4 4-4M4 21h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span class="lab">Entrant</span>
-                        <span class="val">{{ Number(getReservoir().last.inflowSum_m3s || 0).toFixed(2) }} m³/s</span>
+                        <span class="val">{{ Number(reservoir.inflowSum_m3s[month] || 0).toFixed(2) }} m³/s</span>
                     </div>
 
                     <div class="res-item">
@@ -100,7 +100,7 @@
                             <path d="M12 21V9m0 0 4 4m-4-4-4 4M4 3h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span class="lab">Sortint</span>
-                        <span class="val">{{ Number(getReservoir().last.released_m3s || 0).toFixed(2) }} m³/s</span>
+                        <span class="val">{{ Number(reservoir.released_m3s[month] || 0).toFixed(2) }} m³/s</span>
                     </div>
                 </div>
             </div>

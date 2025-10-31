@@ -33,13 +33,13 @@ function edgeTooltipHTML(e, month) {
   `
 }
 
-function embTooltipHTML() {
+function embTooltipHTML(month) {
     return `
     <div>
         <div><strong>Sistema Sau-Susqueda-Pasteral</strong></div>
-        <div>Volum al sistema: ${gm.RESERVOIR.storage_hm3.toFixed()} Hm<sup>3</sup></div>
-        <div>Cabal mitjà d'entrada: ${gm.RESERVOIR.last.inflowSum_m3s} m<sup>3</sup>s</div>
-        <div>Cabal mitjà desembassat: ${gm.RESERVOIR.last.released_m3s} m<sup>3</sup>s</div>
+        <div>Volum al sistema: ${gm.RESERVOIR.storage_hm3[month].toFixed()} Hm<sup>3</sup></div>
+        <div>Cabal mitjà d'entrada: ${gm.RESERVOIR.inflowSum_m3s[month]} m<sup>3</sup>s</div>
+        <div>Cabal mitjà desembassat: ${gm.RESERVOIR.released_m3s[month]} m<sup>3</sup>s</div>
     </div>
     `
 }
@@ -342,7 +342,7 @@ createApp({
                         mouseover: (e) => {
                             const l = e.target;
                             const tt = l.getTooltip();
-                            if (tt) tt.setContent(embTooltipHTML(feature)); // passa la feature si ho necessites
+                            if (tt) tt.setContent(embTooltipHTML(month.value)); // passa la feature si ho necessites
                             l.openTooltip();
                         },
                         mouseout: (e) => e.target.closeTooltip()
@@ -372,10 +372,10 @@ createApp({
             selectedEle,
             flowModified,
             modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, month.value, errorMsg, { nodeLayerById, edgeLayerById }, {period: {year:2024, month:8}}),
-            getReservoir: () => gm.RESERVOIR,
+            reservoir: gm.RESERVOIR,
             errorMsg,
             reset,
-            month: month,
+            month,
             monthSelector
         }
     }

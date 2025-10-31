@@ -61,7 +61,7 @@ mesos <- paste0("m", 1:12)
 pluja <- c(1, 1, 2, 3, 4, 2, 0.5, 0.3, 1.5, 4, 3, 1)
 
 for (i in seq_along(mesos)){
-  nodes[mesos[i]] <- if_else(nodes$flow_change > 0, nodes$flow_change * pluja[[i]], nodes$flow_change)
+  nodes[mesos[i]] <- if_else(nodes$type == "massa", nodes$flow_change * pluja[[i]], nodes$flow_change)
 }
 
 # Guardem la xarxa a assets -----------------------------------------------------
