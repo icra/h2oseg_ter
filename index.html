@@ -22,6 +22,13 @@
                 <img src="assets/logo_h20seg.png" alt="Logo H2OSEG" style="height: 50px;" />
                 <span style="padding: 0.5em;">Ter</span>
             </div>
+            <!-- Month selector -->
+            <div class="month-select" v-cloak>
+                <label for="selMonth">Mes:</label>
+                <select id="selMonth" :value="selMonth" @change="onMonthChange">
+                    <option v-for="m in months" :key="m.k" :value="m.k">{{ m.k }} — {{ m.lab }}</option>
+                </select>
+            </div>
             <div v-if="selectedEle">
                 <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
                 <div v-if="selectedEle.id === 'DESEMBASSAT'">
@@ -63,7 +70,7 @@
                 <p>Fes clic sobre un element per veure’n les dades.</p>
             </div>
             <div v-if="cy" class="res-mini res-stack">
-                <div>Informació del sistema Sau-Susqueda</div>
+                <div>Informació del sistema Sau-Susqueda {{ selMonth }}</div>
                 <!-- Línia superior: Volum -->
                 <div class="res-top">
                     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
