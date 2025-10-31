@@ -1,14 +1,8 @@
 // noinspection JSVoidFunctionReturnValueUsed
+
 import gm from './graph_methods.js'
-import monthly  from "./monthly.js";
 
-const { createApp, onMounted, ref, shallowRef, watch, computed } = Vue
-
-const months = [
-    {k:1,  lab:'Gen'}, {k:2,  lab:'Feb'}, {k:3,  lab:'Mar'}, {k:4,  lab:'Abr'},
-    {k:5,  lab:'Mai'}, {k:6,  lab:'Jun'}, {k:7,  lab:'Jul'}, {k:8,  lab:'Ago'},
-    {k:9,  lab:'Set'}, {k:10, lab:'Oct'}, {k:11, lab:'Nov'}, {k:12, lab:'Des'}
-]
+const { createApp, onMounted, ref, shallowRef, watch } = Vue
 
 const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
 
@@ -54,11 +48,6 @@ const reset = function(){
     window.confirm('Segur que vols reiniciar el model?') && window.location.reload()
 }
 
-const layers = {
-    nodeLayerById: new Map(),
-    edgeLayerById: new Map(),
-}
-
 createApp({
     setup() {
         const cy = ref(null)
@@ -66,45 +55,11 @@ createApp({
         const selectedEle = ref(null)
         const flowModified = ref(null)
         const errorMsg = ref(null)
-        const year = ref(2024);
-        const selMonth = ref(1)
 
         const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
 
-        const applyMonthToUI = function(m){
-            const rec = monthly.pickReservoirStateForMonth(m);
-            gm.RESERVOIR.last = {inflowSum_m3s: rec.inflowSum_m3s, released_m3s: rec.released_m3s};
-            gm.RESERVOIR.storage_hm3 = rec.storage_hm3;
-        }
-
-        const recalcAllMonths = async function(){
-            await monthly.simulateYear(cy.value, layers, errorMsg, { year: year.value });
-            applyMonthToUI(selMonth.value);
-        }
-
-        const reservoirForMonth = computed(() => {
-            const rec = monthly.pickReservoirStateForMonth(selMonth.value);
-            return {
-                storage_hm3: rec.storage_hm3 ?? 0,
-                capacity_hm3: gm.RESERVOIR.capacity_hm3 ?? 0,
-                last: {
-                    inflowSum_m3s: rec.inflowSum_m3s ?? 0,
-                    released_m3s:  rec.released_m3s  ?? 0
-                }
-            };
-        });
-
-        function getReservoir(){ return reservoirForMonth.value; }
-
-        function onMonthChange(e){
-            const m = Number(e?.target?.value ?? selMonth.value);
-            selMonth.value = m;
-            applyMonthToUI(m);
-        }
-
-        function reset(){
-            if (window.confirm('Segur que vols reiniciar el model?')) window.location.reload();
-        }
+        const edgeLayerById = new Map()
+        const nodeLayerById = new Map()
 
         onMounted(async () => {
             const [nodesResp, edgesResp, embResp] = await Promise.all([
@@ -124,7 +79,6 @@ createApp({
                         type: n.properties.type,
                         lat: n.geometry.coordinates[1],
                         lng: n.geometry.coordinates[0],
-                        flowChange: n.properties.m1,
                         m1: n.properties.m1,
                         m2: n.properties.m2,
                         m3: n.properties.m3,
@@ -209,15 +163,15 @@ createApp({
                 currentSel.id = id
                 currentSel.kind = kind
 
-                layers.edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle))
-                layers.nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle))
+                edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle))
+                nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle))
 
                 // aplica ressaltat
                 if (kind === 'edge') {
-                    const l = layers.edgeLayerById.get(id)
+                    const l = edgeLayerById.get(id)
                     if (l) l.setStyle(edgeHiStyle)
                 } else {
-                    const l = layers.nodeLayerById.get(id)
+                    const l = nodeLayerById.get(id)
                     if (l) l.setStyle(nodeHiStyle)
                 }
             }
@@ -322,7 +276,7 @@ createApp({
                     }
                 })
                 layer.addTo(map)
-                layers.nodeLayerById.set(n.id(), layer)
+                nodeLayerById.set(n.id(), layer)
             }
 
             cy.value.nodes().forEach(addNodeLayer)
@@ -332,7 +286,7 @@ createApp({
                 style: f => edgeNormalStyle,
                 onEachFeature: (f, layer) => {
                     const eid = String(f.properties.id)
-                    layers.edgeLayerById.set(eid, layer)
+                    edgeLayerById.set(eid, layer)
                     layer.bindTooltip('', TT_OPTS)
 
                     layer.on('click', () => selectById(eid,'edge'))
@@ -379,42 +333,28 @@ createApp({
                 }
             }).addTo(map);
 
-            // gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
-            await recalcAllMonths();
-
+            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
 
             gm.setupEleClickListener(cy.value, selectedEle)
             gm.setupZoomLabelControl(cy.value, leaf.value, 12);
         })
 
-        watch(selMonth, (m) => applyMonthToUI(m));
-
-        const selectedEleForMonth = computed(() => {
-            const ele = selectedEle.value;
-            if (!ele || !cyvalue) return ele;
-            const m = selMonth.value;
-            const cyEle = cy.value.getElementById(ele.id);
-            if (!cyEle || !cyEle.length) return ele;
-            const store = cyEle.data('monthly') || {}
-            const rec = store[m] || {};
-            // spread original + override month-specific inflow/outflow/flowChange if present
-            return {
-                ...ele,
-                inflow:     rec.inflow     ?? ele.inflow,
-                outflow:    rec.outflow    ?? ele.outflow,
-                flowChange: rec.flowChange ?? ele.flowChange
-            };
-        })
+        // Quan es selecciona un node, posa-hi el valor actual com a valor per defecte
+        watch(selectedEle, (val) => {
+            if (val && val.eleType === 'punt') {
+                // assegura número
+                flowModified.value = Number(val.flowChange).toFixed(2);
+            } else {
+                flowModified.value = null; // o 0, si prefereixes
+            }
+        }, { immediate: true });
 
         return {
             cy,
             leaf,
-            months,
-            selMonth,
-            year,
-            selectedEle: selectedEleForMonth,
+            selectedEle,
             flowModified,
-            modifyFlowChange: () => gm.modifyFlowChange(cy.value, ele, v, layers.nodeLayerById, layers.edgeLayerById, { period: { year: year.value, month: selMonth.value } }),
+            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg, { nodeLayerById, edgeLayerById }, {period: {year:2024, month:8}}),
             getReservoir: () => gm.RESERVOIR,
             errorMsg,
             reset

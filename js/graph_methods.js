@@ -61,15 +61,23 @@ const setNodeColor = function(node){
     return node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9'
 }
 
-const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
+const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
+    const months = ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10", "m11", "m12"];
+    for (const m of months){
+        calculateFlowMonth(cy, leafMaps, errorRef, {period: {year: 2024, month: m.substr(1)}});
+    }
+    console.log("edges", cy.edges())
+    console.log("nodes", cy.nodes())
+}
+
+const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
     const R = RESERVOIR;
 
-    console.log("period", opts.period.year, opts.period.month, monthSeconds(opts.period.year, opts.period.month))
+    const month = opts.period.month
 
     const dt_s = opts.dt_s ??
         (opts.period ? monthSeconds(opts.period.year, opts.period.month) :
                        monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1 ));
-    console.log("dt_s", dt_s);
 
     if (!opts.resetStorage) {
         R.storage_hm3 = 0;
@@ -90,13 +98,13 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
         const incomingEdges = node.incomers('edge');
         let inflow = 0;
         incomingEdges.forEach(edge => {
-            const flow = parseFloat(edge.data('flow')) || 0;
+            const flow = parseFloat(edge.data('flow' + month)) || 0;
             inflow += flow;
         });
 
         // 2. Aplicar el flowChange local del node
-        node.data('inflow', inflow);
-        const flowChange = parseFloat(node.data('flowChange')) || 0;
+        node.data('inflow' + month, inflow);
+        const flowChange = parseFloat(node.data('m' + month)) || 0;
         const rawOutflow = inflow + flowChange;
         const positiveOut = Math.max(0, rawOutflow);
 
@@ -108,12 +116,12 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
             R.storage_hm3 = nouVol;
 
             // no propaguem cabal a través dels arcs virtuals
-            node.data('outflow', 0);
-            node.data('storage_after_hm3', R.storage_hm3);
+            node.data('outflow' + month, 0);
+            node.data('storage_after_hm3' + month, R.storage_hm3);
 
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
-                edge.data('flow', 0);
+                edge.data('flow' + month, 0);
                 applyEdgeColorToLeaflet(edge, leafMaps)
             });
             applyNodeColorToLeaflet(node, leafMaps);
@@ -121,8 +129,7 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
         }
 
         if (R.outNode && R.outNode === node.id()) {
-            console.log("Desembassament")
-            const demand_m3s = Math.max(0, parseFloat(node.data('flowChange')) || 0);
+            const demand_m3s = Math.max(0, parseFloat(node.data('m' + month)) || 0);
 
             // màxim que podem treure en m3/s amb el volum actual emmagatzemat
             const maxPossible_m3s = hm3ToM3s(R.storage_hm3 || 0, dt_s);
@@ -153,7 +160,7 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
         }
 
         let outflow = Math.max(0, rawOutflow);
-        node.data('outflow', outflow);
+        node.data('outflow' + month, outflow);
 
         // 3. Estil visual si cal
         //node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9');
@@ -164,7 +171,7 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
         // 4. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
-            edge.data('flow', outflow);
+            edge.data('flow' + month, outflow);
             applyEdgeColorToLeaflet(edge, leafMaps)
         });
     }
