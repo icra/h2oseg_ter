@@ -189,4 +189,6 @@ html, body {
 }
 .month-select select {
     padding:.25rem .5rem;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
 }

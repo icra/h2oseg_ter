@@ -25,8 +25,8 @@
             <!-- Month selector -->
             <div class="month-select" v-cloak>
                 <label for="selMonth">Mes:</label>
-                <select id="selMonth" :value="selMonth" @change="onMonthChange">
-                    <option v-for="m in months" :key="m.k" :value="m.k">{{ m.k }} — {{ m.lab }}</option>
+                <select id="selMonth" class="month-select" :value="month" v-model="month">
+                    <option v-for="m in monthSelector" :key="m.value" :value="m.value">{{ m.label }}</option>
                 </select>
             </div>
             <div v-if="selectedEle">
@@ -61,7 +61,7 @@
                     </p>
                 </div>
                 <div v-else-if="selectedEle.eleType === 'tram'">
-                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle.flow }} m<sup>3</sup>/s i té una llargada de {{ Math.round(selectedEle.lengthRiver / 10) / 100 }} km.</p>
+                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle['flow' + month] }} m<sup>3</sup>/s i té una llargada de {{ Math.round(selectedEle.lengthRiver / 10) / 100 }} km.</p>
                     <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed }} m<sup>3</sup>/s</p>
                     <p>El tram correspon a la massa d'aigua {{ selectedEle.codiMassa}}</p>
                 </div>

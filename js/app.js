@@ -56,6 +56,22 @@ createApp({
         const flowModified = ref(null)
         const errorMsg = ref(null)
         const month = ref('1')
+        const monthSelector = ref(
+            [
+                {value: '1', label: "Gener"},
+                {value: '2', label: "Febrer"},
+                {value: '3', label: "Març"},
+                {value: '4', label: "Abril"},
+                {value: '5', label: "Maig"},
+                {value: '6', label: "Juny"},
+                {value: '7', label: "Juliol"},
+                {value: '8', label: "Agost"},
+                {value: '9', label: "Setembre"},
+                {value: '10', label: "Octubre"},
+                {value: '11', label: "Novembre"},
+                {value: '12', label: "Desembre"},
+            ]
+        )
 
         const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
 
@@ -359,7 +375,8 @@ createApp({
             getReservoir: () => gm.RESERVOIR,
             errorMsg,
             reset,
-            month: month.value
+            month: month,
+            monthSelector
         }
     }
 }).mount('#app')
