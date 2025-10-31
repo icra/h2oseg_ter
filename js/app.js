@@ -55,6 +55,7 @@ createApp({
         const selectedEle = ref(null)
         const flowModified = ref(null)
         const errorMsg = ref(null)
+        const month = "m1"
 
         const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
 
@@ -79,7 +80,19 @@ createApp({
                         type: n.properties.type,
                         lat: n.geometry.coordinates[1],
                         lng: n.geometry.coordinates[0],
-                        flowChange: n.properties.flowChange
+                        flowChange: n.properties.m1,
+                        m1: n.properties.m1,
+                        m2: n.properties.m2,
+                        m3: n.properties.m3,
+                        m4: n.properties.m4,
+                        m5: n.properties.m5,
+                        m6: n.properties.m6,
+                        m7: n.properties.m7,
+                        m8: n.properties.m8,
+                        m9: n.properties.m9,
+                        m10: n.properties.m10,
+                        m11: n.properties.m11,
+                        m12: n.properties.m12,
                     }
                 }
             })
