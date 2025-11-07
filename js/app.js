@@ -350,7 +350,7 @@ createApp({
                 }
             }).addTo(map);
 
-            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+            gm.calculateFlow(cy.value, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
 
             gm.setupEleClickListener(cy.value, selectedEle)
             gm.setupZoomLabelControl(cy.value, leaf.value, 12);
@@ -365,6 +365,11 @@ createApp({
                 flowModified.value = null; // o 0, si prefereixes
             }
         }, { immediate: true });
+
+        watch(month, (m) => {
+            console.log("leafMaps", { nodeLayerById, edgeLayerById})
+            gm.setGraphColors(m, cy.value, { nodeLayerById, edgeLayerById})
+        })
 
         return {
             cy,

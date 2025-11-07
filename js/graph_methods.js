@@ -55,28 +55,54 @@ const setupEleClickListener = function(cy, selectedEleRef) {
     });
 }
 
-const setEdgeColor = function(edge){
-    return edge.data('flow') < edge.data('flowNeed') ? 'red' : '#0074D9'
+const setGraphColors = function(month, cy, leafMaps){
+    cy.nodes().forEach(node => {
+        applyNodeColorToLeaflet(node, month, leafMaps)
+    });
+
+    cy.edges().forEach(edge => {
+        applyEdgeColorToLeaflet(edge, month, leafMaps)
+    });
 }
 
-const setNodeColor = function(node){
+const applyNodeColorToLeaflet = (node, month, leafMaps) => {
+    const layer = leafMaps.nodeLayerById.get(node.id());
+
+    if (!layer) return;
+
+    const color = setNodeColor(node, month);
+    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
+};
+
+const applyEdgeColorToLeaflet = (edge, month, leafMaps) => {
+    const layer = leafMaps?.edgeLayerById?.get(edge.id());
+    if (!layer) return;
+    const color = setEdgeColor(edge, month);
+    layer.setStyle({ color }); // mantenim weight/opacity actuals
+};
+
+const setEdgeColor = function(edge, month){
+    return edge.data('flow' + month) < edge.data('flowNeed') ? 'red' : '#0074D9'
+}
+
+const setNodeColor = function(node, month){
     if (node.incomers().length === 0) {
         return '#0074D9'; // Si no té edges entrants, és una font
     }
-    return node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9'
+    return node.data('inflow' + month) + node.data('m' + month) < 0 ? 'red' : '#0074D9'
 }
 
-const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
+const calculateFlow = function(cy, errorRef = null, opts = {}){
     const months = ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10", "m11", "m12"];
     for (const m of months){
-        calculateFlowMonth(cy, leafMaps, errorRef, {period: {year: 2024, month: m.substr(1)}});
-        console.log("embassament a", m, RESERVOIR)
+        calculateFlowMonth(cy, errorRef, {period: {year: 2024, month: m.substr(1)}});
+        console.log("embassament a", m, RESERVOIR.storage_hm3[m.substr(1)])
     }
     console.log("edges", cy.edges())
     console.log("nodes", cy.nodes())
 }
 
-const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
+const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     let R = RESERVOIR;
 
     const month = opts.period.month
@@ -133,9 +159,9 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
                 edge.data('flow' + month, 0);
-                applyEdgeColorToLeaflet(edge, leafMaps)
+                // applyEdgeColorToLeaflet(edge, leafMaps)
             });
-            applyNodeColorToLeaflet(node, leafMaps);
+            // applyNodeColorToLeaflet(node, leafMaps);
             return;
         }
 
@@ -159,14 +185,14 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
                 edge.data('flow', release_m3s);
-                applyEdgeColorToLeaflet(edge, leafMaps);
+                // applyEdgeColorToLeaflet(edge, leafMaps);
             });
 
             node.data('outflow' + month, release_m3s);
             node.data('released_m3s' + month, release_m3s);
             node.data('storage_after_hm3' + month, R.storage_hm3[m]);
 
-            applyNodeColorToLeaflet(node, leafMaps);
+            // applyNodeColorToLeaflet(node, leafMaps);
             return;
         }
 
@@ -175,7 +201,7 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
 
         // 3. Estil visual si cal
         //node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9');
-        applyNodeColorToLeaflet(node, leafMaps)
+        // applyNodeColorToLeaflet(node, leafMaps)
 
         outflow = Math.round(outflow * 10) / 10; // Redondejar a 1 decimal
 
@@ -183,7 +209,7 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
             edge.data('flow' + month, outflow);
-            applyEdgeColorToLeaflet(edge, leafMaps)
+            // applyEdgeColorToLeaflet(edge, leafMaps)
         });
     }
 
@@ -196,7 +222,7 @@ const calculateFlowMonth = function(cy, leafMaps, errorRef = null, opts = {}) {
 
 const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg, leafMaps, period) {
     if (!selectedEle || !selectedEle.id) return;
-    console.log("month a modifyFlowChange", month)
+
     const node = cy.getElementById(selectedEle.id);
     if (!node || !node.isNode()) return;
 
@@ -247,21 +273,7 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
     }
 }
 
-const applyNodeColorToLeaflet = (node, leafMaps) => {
-    const layer = leafMaps.nodeLayerById.get(node.id());
 
-    if (!layer) return;
-
-    const color = setNodeColor(node);
-    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
-};
-
-const applyEdgeColorToLeaflet = (edge, leafMaps) => {
-    const layer = leafMaps?.edgeLayerById?.get(edge.id());
-    if (!layer) return;
-    const color = setEdgeColor(edge);
-    layer.setStyle({ color }); // mantenim weight/opacity actuals
-};
 
 
 
@@ -271,5 +283,6 @@ export default {
     calculateFlow,
     modifyFlowChange,
     setupZoomLabelControl,
+    setGraphColors,
     RESERVOIR
 }

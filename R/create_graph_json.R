@@ -59,10 +59,15 @@ edges$flow_need <- sample(2:10, nrow(edges), replace = T)
 
 mesos <- paste0("m", 1:12)
 pluja <- c(1, 1, 2, 3, 4, 2, 0.5, 0.3, 1.5, 4, 3, 1)
+pesos <- c(1, 1, 1, 1, 1, 3, 5, 5, 3, 1, 1, 1)
+total <- 80 * 12
+desembassat <- pesos/sum(pesos) * total
 
 for (i in seq_along(mesos)){
   nodes[mesos[i]] <- if_else(nodes$type == "massa", nodes$flow_change * pluja[[i]], nodes$flow_change)
+  nodes[nodes$codi_sad == 'DESEMBASSAT', mesos[i]] <- desembassat[[i]]
 }
+
 
 # Guardem la xarxa a assets -----------------------------------------------------
 
