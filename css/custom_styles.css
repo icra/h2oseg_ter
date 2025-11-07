@@ -183,3 +183,18 @@ html, body {
     .res-top .val{ justify-self:end; }
     .res-bottom{ grid-template-columns: 1fr; }
 }
+
+.month-select {
+    display:flex; gap:.5rem; align-items:center;
+}
+button, .month-select select {
+    padding:.25rem .5rem;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: .25rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #d1d5db;
+}

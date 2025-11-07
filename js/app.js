@@ -9,37 +9,37 @@ const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cy
 const fmt = (v, d=1) => Number.isFinite(+v) ? (+v).toFixed(d) : '—'
 
 // HTML dels tooltips
-function nodeTooltipHTML(n) {
+function nodeTooltipHTML(n, month) {
     return `
     <div>
       <div><strong>${n.data('id') ?? ''}</strong></div>
       <div>Tipus: ${n.data('type') ?? '—'}</div>
-      <div>Cabal entrant: ${fmt(n.data('inflow'))} m³/s</div>
-      <div>${n.data('flowChange') > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('flowChange'), 2)} m³/s</div>
-      <div>Cabal sortint: ${fmt(n.data('outflow'))} m³/s</div>
+      <div>Cabal entrant: ${fmt(n.data('inflow' + month))} m³/s</div>
+      <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)} m³/s</div>
+      <div>Cabal sortint: ${fmt(n.data('outflow' + month))} m³/s</div>
     </div>
   `
 }
 
-function edgeTooltipHTML(e) {
+function edgeTooltipHTML(e, month) {
     return `
     <div>
       <div><strong>${e.data('name') ?? ''}</strong></div>
       <div>${e.data('codiMassa')}</div>
-      <div>Cabal mitjà: ${fmt(e.data('flow'))} m³/s</div>
+      <div>Cabal mitjà: ${fmt(e.data('flow' + month))} m³/s</div>
       <div>Cabal ambiental: ${fmt(e.data('flowNeed'))} m³/s</div>
       <div>Llargada tram: ${fmt(e.data('lengthRiver'), 0)} m</div>
     </div>
   `
 }
 
-function embTooltipHTML() {
+function embTooltipHTML(month) {
     return `
     <div>
         <div><strong>Sistema Sau-Susqueda-Pasteral</strong></div>
-        <div>Volum al sistema: ${gm.RESERVOIR.storage_hm3.toFixed()} Hm<sup>3</sup></div>
-        <div>Cabal mitjà d'entrada: ${gm.RESERVOIR.last.inflowSum_m3s} m<sup>3</sup>s</div>
-        <div>Cabal mitjà desembassat: ${gm.RESERVOIR.last.released_m3s} m<sup>3</sup>s</div>
+        <div>Volum al sistema: ${gm.RESERVOIR.storage_hm3[month].toFixed()} Hm<sup>3</sup></div>
+        <div>Cabal mitjà d'entrada: ${gm.RESERVOIR.inflowSum_m3s[month].toFixed(2)} m<sup>3</sup>s</div>
+        <div>Cabal mitjà desembassat: ${gm.RESERVOIR.released_m3s[month].toFixed(2)} m<sup>3</sup>s</div>
     </div>
     `
 }
@@ -55,6 +55,24 @@ createApp({
         const selectedEle = ref(null)
         const flowModified = ref(null)
         const errorMsg = ref(null)
+        const month = ref('0')
+        const monthSelector = ref(
+            [
+                {value: '0', label: "Mitjana anual"},
+                {value: '1', label: "Gener"},
+                {value: '2', label: "Febrer"},
+                {value: '3', label: "Març"},
+                {value: '4', label: "Abril"},
+                {value: '5', label: "Maig"},
+                {value: '6', label: "Juny"},
+                {value: '7', label: "Juliol"},
+                {value: '8', label: "Agost"},
+                {value: '9', label: "Setembre"},
+                {value: '10', label: "Octubre"},
+                {value: '11', label: "Novembre"},
+                {value: '12', label: "Desembre"},
+            ]
+        )
 
         const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
 
@@ -79,7 +97,18 @@ createApp({
                         type: n.properties.type,
                         lat: n.geometry.coordinates[1],
                         lng: n.geometry.coordinates[0],
-                        flowChange: n.properties.flowChange
+                        m1: n.properties.m1,
+                        m2: n.properties.m2,
+                        m3: n.properties.m3,
+                        m4: n.properties.m4,
+                        m5: n.properties.m5,
+                        m6: n.properties.m6,
+                        m7: n.properties.m7,
+                        m8: n.properties.m8,
+                        m9: n.properties.m9,
+                        m10: n.properties.m10,
+                        m11: n.properties.m11,
+                        m12: n.properties.m12,
                     }
                 }
             })
@@ -218,7 +247,7 @@ createApp({
 
             // Afegir-lo al mapa
             map.addControl(new homeControl());
-
+            console.log("month", month.value)
             leaf.value.fit()
 
             const edgePane = map.createPane('edgePane')
@@ -250,7 +279,7 @@ createApp({
                 layer.on('click', () => selectById(n.id(), 'node'))
                 layer.on('mouseover', ()=> {
                     const cn = cy.value.getElementById(n.id())
-                    const html = nodeTooltipHTML(cn)
+                    const html = nodeTooltipHTML(cn, month.value)
                     const tt = layer.getTooltip()
                     if (tt) tt.setContent(html)
                     layer.openTooltip()
@@ -281,7 +310,7 @@ createApp({
                     layer.on('click', () => selectById(eid,'edge'))
                     layer.on('mouseover', ()=> {
                         const ce = cy.value.getElementById(eid)
-                        const html = edgeTooltipHTML(ce)
+                        const html = edgeTooltipHTML(ce, month.value)
                         const tt = layer.getTooltip()
                         if (tt) tt.setContent(html)
                         layer.openTooltip()
@@ -314,7 +343,7 @@ createApp({
                         mouseover: (e) => {
                             const l = e.target;
                             const tt = l.getTooltip();
-                            if (tt) tt.setContent(embTooltipHTML(feature)); // passa la feature si ho necessites
+                            if (tt) tt.setContent(embTooltipHTML(month.value)); // passa la feature si ho necessites
                             l.openTooltip();
                         },
                         mouseout: (e) => e.target.closeTooltip()
@@ -322,8 +351,8 @@ createApp({
                 }
             }).addTo(map);
 
-            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById}, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
-
+            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById }, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+            gm.setGraphColors(month.value, cy.value, { nodeLayerById, edgeLayerById });
             gm.setupEleClickListener(cy.value, selectedEle)
             gm.setupZoomLabelControl(cy.value, leaf.value, 12);
         })
@@ -332,21 +361,27 @@ createApp({
         watch(selectedEle, (val) => {
             if (val && val.eleType === 'punt') {
                 // assegura número
-                flowModified.value = Number(val.flowChange).toFixed(2);
+                flowModified.value = Number(val['m' + month.value]).toFixed(2);
             } else {
                 flowModified.value = null; // o 0, si prefereixes
             }
         }, { immediate: true });
+
+        watch(month, (m) => {
+            gm.setGraphColors(m, cy.value, { nodeLayerById, edgeLayerById})
+        })
 
         return {
             cy,
             leaf,
             selectedEle,
             flowModified,
-            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, errorMsg, { nodeLayerById, edgeLayerById }, {period: {year:2024, month:8}}),
-            getReservoir: () => gm.RESERVOIR,
+            modifyFlowChange: () => gm.modifyFlowChange(cy.value, selectedEle.value, flowModified, month.value, errorMsg, { nodeLayerById, edgeLayerById }, {period: {year:2024, month:8}}),
+            reservoir: gm.RESERVOIR,
             errorMsg,
-            reset
+            reset,
+            month,
+            monthSelector
         }
     }
 }).mount('#app')

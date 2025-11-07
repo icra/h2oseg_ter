@@ -1,4 +1,25 @@
 const inNodes = ['NODE_82', 'NODE_33', 'NODE_34', 'NODE_84']
+const flowChangeKeys = Array(12).fill().map((e, i) => 'm' + (1 + i))
+const inflowKeys = Array(12).fill().map((e, i) => 'inflow' + (1 + i))
+const outflowKeys = Array(12).fill().map((e, i) => 'outflow' + (1 + i))
+const flowKeys = Array(12).fill().map((e, i) => 'flow' + (1 + i))
+const rKeys = Array(12).fill().map((e, i) => String(i + 1))
+console.log(rKeys)
+
+const rampPalette = [
+    '#0074D9',
+    '#2D87B1',
+    '#5A9A8A',
+    '#88AD63',
+    '#B5C13B',
+    '#E3D414',
+    '#FAC900',
+    '#FBA100',
+    '#FC7900',
+    '#FD5000',
+    '#FE2800',
+    '#FF0000',
+]
 
 function monthSeconds(year, month /* 1..12 */) {
     const start = new Date(Date.UTC(year, month - 1, 1));
@@ -12,9 +33,14 @@ function hm3ToM3s(vol_hm3, dt_s){ return dt_s > 0 ? (vol_hm3 * 1e6) / dt_s : 0; 
 let RESERVOIR = {
     inNodes: new Set(inNodes),
     outNode: 'DESEMBASSAT',
-    storage_hm3: 0,
+    storage_hm3: {},
     capacity_hm3: 400,
-    last: {inflowSum_m3s: 0, inflowVol_hm3: 0, releaseDemand_m3s: 0, released_m3s: 0, releasedVol_hm3: 0, dt_s: 0}
+    inflowSum_m3s: {},
+    inflowVol_hm3: {},
+    releaseDemand_m3s: {},
+    released_m3s: {},
+    releasedVol_hm3: {}
+    // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
 
 const setupEleClickListener = function(cy, selectedEleRef) {
@@ -50,31 +76,118 @@ const setupEleClickListener = function(cy, selectedEleRef) {
     });
 }
 
-const setEdgeColor = function(edge){
-    return edge.data('flow') < edge.data('flowNeed') ? 'red' : '#0074D9'
+const setGraphColors = function(month, cy, leafMaps){
+    cy.nodes().forEach(node => {
+        if (month === '0'){
+            const nodeFaults = rKeys.map(m => setNodeColor(node, m)).filter(e => e === rampPalette[11]).length
+            applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[nodeFaults - 1])
+        } else {
+            applyNodeColorToLeaflet(node, month, leafMaps)
+        }
+    });
+
+    cy.edges().forEach(edge => {
+        if (month === '0'){
+            const edgeFaults = rKeys.map(m => setEdgeColor(edge, m)).filter(e => e === rampPalette[11]).length
+            applyEdgeColorToLeaflet(edge, '0', leafMaps, rampPalette[edgeFaults - 1])
+        } else {
+            applyEdgeColorToLeaflet(edge, month, leafMaps)
+        }
+    });
 }
 
-const setNodeColor = function(node){
-    if (node.incomers().length === 0) {
-        return '#0074D9'; // Si no té edges entrants, és una font
+const applyNodeColorToLeaflet = (node, month, leafMaps, customColor = null) => {
+    const layer = leafMaps.nodeLayerById.get(node.id());
+
+    if (!layer) {
+        console.error("No s'ha trobat la capa on aplicar color als nodes")
+        return;
     }
-    return node.data('inflow') + node.data('flowChange') < 0 ? 'red' : '#0074D9'
+
+
+    const color = customColor || setNodeColor(node, month);
+    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
+};
+
+const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
+    const layer = leafMaps?.edgeLayerById?.get(edge.id());
+    if (!layer) {
+        if (!(/^v_\d+/.test(edge.id()))) console.error("No s'ha trobat la capa on aplicar color als trams")
+        return;
+    }
+    const color = customColor || setEdgeColor(edge, month);
+    layer.setStyle({ color }); // mantenim weight/opacity actuals
+};
+
+const setEdgeColor = function(edge, month){
+    return edge.data('flow' + month) < edge.data('flowNeed') ? rampPalette[11] : rampPalette[0]
 }
 
-const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
-    const R = RESERVOIR;
+const setNodeColor = function(node, month){
+    if (node.incomers().length === 0) {
+        return rampPalette[0]; // Si no té edges entrants, és una font
+    }
+    return node.data('inflow' + month) + node.data('m' + month) < 0 ? rampPalette[11] : rampPalette[0]
+}
 
-    console.log("period", opts.period.year, opts.period.month, monthSeconds(opts.period.year, opts.period.month))
+const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
+    const months = Array(12).fill().map((e, i) => String(i + 1));
+    for (const m of months){
+        calculateFlowMonth(cy, errorRef, {period: {year: 2024, month: m}});
+        console.log("embassament a", m, RESERVOIR.storage_hm3[m])
+    }
+    // Calculem mitjanes anuals per tots els elements
+    cy.nodes().forEach(node => {
+        const data = node.data();
+
+        const changesMean = flowChangeKeys.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / flowChangeKeys.length;
+        node.data('m0', changesMean);
+
+        const inflowMean = inflowKeys.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / inflowKeys.length;
+        node.data('inflow0', inflowMean);
+
+        const outflowMean = outflowKeys.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / inflowKeys.length;
+        node.data('outflow0', outflowMean);
+    })
+
+    cy.edges().forEach(edge => {
+        const data = edge.data();
+
+        const flowMean = flowKeys.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / flowKeys.length;
+        edge.data('flow0', flowMean);
+    })
+
+
+    RESERVOIR.storage_hm3['0'] = rKeys.map(k => RESERVOIR.storage_hm3[k])
+        .reduce((a, b) => a + b, 0) / rKeys.length;
+    RESERVOIR.inflowSum_m3s['0'] = rKeys.map(k => RESERVOIR.inflowSum_m3s[k])
+        .reduce((a, b) => a + b, 0) / rKeys.length;
+    RESERVOIR.released_m3s['0'] = rKeys.map(k => RESERVOIR.released_m3s[k])
+        .reduce((a, b) => a + b, 0) / rKeys.length;
+}
+
+const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
+    let R = RESERVOIR;
+
+    const month = opts.period.month
+    const m = Number(month)
 
     const dt_s = opts.dt_s ??
         (opts.period ? monthSeconds(opts.period.year, opts.period.month) :
                        monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1 ));
-    console.log("dt_s", dt_s);
 
     if (!opts.resetStorage) {
-        R.storage_hm3 = 0;
+        R.storage_hm3[m] = R.storage_hm3[m - 1] || 0;
     }
-    R.last = {inflowSum_m3s: 0, inflowVol_hm3: 0, releaseDemand_m3s: 0, released_m3s: 0, releasedVol_hm3: 0, dt_s};
+    R.inflowSum_m3s[m] = 0
+    R.inflowVol_hm3[m] = 0
+    R.releaseDemand_m3s[m] = 0
+    R.released_m3s[m] = 0
+    R.releasedVol_hm3[m] = 0
 
     let visited = new Set();
 
@@ -90,82 +203,81 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
         const incomingEdges = node.incomers('edge');
         let inflow = 0;
         incomingEdges.forEach(edge => {
-            const flow = parseFloat(edge.data('flow')) || 0;
+            const flow = parseFloat(edge.data('flow' + month)) || 0;
             inflow += flow;
         });
 
         // 2. Aplicar el flowChange local del node
-        node.data('inflow', inflow);
-        const flowChange = parseFloat(node.data('flowChange')) || 0;
+        node.data('inflow' + month, inflow);
+        const flowChange = parseFloat(node.data('m' + month)) || 0;
         const rawOutflow = inflow + flowChange;
         const positiveOut = Math.max(0, rawOutflow);
 
         if (R.inNodes && R.inNodes.has(node.id())) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
-            const nouVol = Math.min((R.storage_hm3 || 0) + add_hm3, R.capacity_hm3);
-            R.last.inflowSum_m3s += positiveOut;
-            R.last.inflowVol_hm3 += nouVol - (R.storage_hm3 || 0);
-            R.storage_hm3 = nouVol;
+            const nouVol = Math.min(R.storage_hm3[m] + add_hm3, R.capacity_hm3);
+            R.inflowSum_m3s[m] += positiveOut;
+            R.inflowVol_hm3[m] += nouVol - R.storage_hm3[m];
+            R.storage_hm3[m] = nouVol;
 
             // no propaguem cabal a través dels arcs virtuals
-            node.data('outflow', 0);
-            node.data('storage_after_hm3', R.storage_hm3);
+            node.data('outflow' + month, 0);
+            node.data('storage_after_hm3' + month, R.storage_hm3[m]);
 
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
-                edge.data('flow', 0);
-                applyEdgeColorToLeaflet(edge, leafMaps)
+                edge.data('flow' + month, 0);
+                // applyEdgeColorToLeaflet(edge, leafMaps)
             });
-            applyNodeColorToLeaflet(node, leafMaps);
+            // applyNodeColorToLeaflet(node, leafMaps);
             return;
         }
 
         if (R.outNode && R.outNode === node.id()) {
-            console.log("Desembassament")
-            const demand_m3s = Math.max(0, parseFloat(node.data('flowChange')) || 0);
+            const demand_m3s = Math.max(0, parseFloat(node.data('m' + month)) || 0);
 
             // màxim que podem treure en m3/s amb el volum actual emmagatzemat
-            const maxPossible_m3s = hm3ToM3s(R.storage_hm3 || 0, dt_s);
+            const maxPossible_m3s = hm3ToM3s(R.storage_hm3[m] || 0, dt_s);
             const release_m3s = Math.min(demand_m3s, maxPossible_m3s);
 
             // actualitzam l'emmagatzemat
             const used_hm3 = m3sToHm3(release_m3s, dt_s)
-            R.storage_hm3 = Math.max(0, (R.storage_hm3 || 0) - used_hm3);
+            R.storage_hm3[m] = Math.max(0, R.storage_hm3[m] - used_hm3);
 
             // registres
-            R.last.releaseDemand_m3s = demand_m3s;
-            R.last.released_m3s = release_m3s;
-            R.last.releasedVol_hm3 += used_hm3;
+            R.releaseDemand_m3s[m] = demand_m3s;
+            R.released_m3s[m] = release_m3s;
+            R.releasedVol_hm3[m] += used_hm3;
 
             // propaga a sortints el cabal realment alliberat
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
-                edge.data('flow', release_m3s);
-                applyEdgeColorToLeaflet(edge, leafMaps);
+                edge.data('flow' + month, release_m3s);
+                // applyEdgeColorToLeaflet(edge, leafMaps);
             });
 
-            node.data('outflow', release_m3s);
-            node.data('released_m3s', release_m3s);
-            node.data('storage_after_hm3', R.storage_hm3);
+            node.data('outflow' + month, release_m3s);
+            node.data('released_m3s' + month, release_m3s);
+            node.data('storage_after_hm3' + month, R.storage_hm3[m]);
 
-            applyNodeColorToLeaflet(node, leafMaps);
+            // applyNodeColorToLeaflet(node, leafMaps);
             return;
         }
 
         let outflow = Math.max(0, rawOutflow);
-        node.data('outflow', outflow);
+        node.data('outflow' + month, outflow);
 
         // 3. Estil visual si cal
-        //node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9');
-        applyNodeColorToLeaflet(node, leafMaps)
+        //node.style('background-color', rawOutflow < 0 ? rampPalette[11] : rampPalette[0]);
+        // applyNodeColorToLeaflet(node, leafMaps)
 
         outflow = Math.round(outflow * 10) / 10; // Redondejar a 1 decimal
 
         // 4. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
-            edge.data('flow', outflow);
-            applyEdgeColorToLeaflet(edge, leafMaps)
+            edge.data('flow' + month, outflow);
+            // applyEdgeColorToLeaflet(edge, leafMaps)
         });
     }
 
@@ -176,22 +288,22 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}) {
     if (errorRef) errorRef.value = null;
 };
 
-const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafMaps, period) {
+const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg, leafMaps, period) {
     if (!selectedEle || !selectedEle.id) return;
-    console.log("period a modifyFlowChange", period)
+
     const node = cy.getElementById(selectedEle.id);
     if (!node || !node.isNode()) return;
 
     // Temporàriament posem el valor
-    const previousValue = node.data('flowChange');
-    node.data('flowChange', flowModified.value);
+    const previousValue = node.data('m' + month);
+    node.data('m' + month, flowModified.value);
 
     // Torna a calcular
     calculateFlow(cy, leafMaps, errorMsg, period);
 
     // Si s’ha generat error, tornem enrere i no modifiquem l’input
     if (errorMsg.value) {
-        node.data('flowChange', previousValue); // revertim
+        node.data('m' + month, previousValue); // revertim
         flowModified.value = null
         calculateFlow(cy)
         return;
@@ -199,8 +311,8 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, errorMsg, leafM
 
     // Si tot correcte, actualitzem label
     node.data('label', `${node.id()} (${flowModified.value})`);
-    selectedEle.flowChange = flowModified.value;
-    selectedEle.flow = node.data('flow');
+    selectedEle['m' + month] = flowModified.value;
+    selectedEle['flow' + month] = node.data('flow' + month);
 }
 
 const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {
@@ -229,21 +341,7 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
     }
 }
 
-const applyNodeColorToLeaflet = (node, leafMaps) => {
-    const layer = leafMaps.nodeLayerById.get(node.id());
 
-    if (!layer) return;
-
-    const color = setNodeColor(node);
-    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
-};
-
-const applyEdgeColorToLeaflet = (edge, leafMaps) => {
-    const layer = leafMaps?.edgeLayerById?.get(edge.id());
-    if (!layer) return;
-    const color = setEdgeColor(edge);
-    layer.setStyle({ color }); // mantenim weight/opacity actuals
-};
 
 
 
@@ -253,5 +351,6 @@ export default {
     calculateFlow,
     modifyFlowChange,
     setupZoomLabelControl,
+    setGraphColors,
     RESERVOIR
 }
