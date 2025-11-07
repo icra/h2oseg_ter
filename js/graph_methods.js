@@ -1,4 +1,25 @@
 const inNodes = ['NODE_82', 'NODE_33', 'NODE_34', 'NODE_84']
+const flowChangeKeys = Array(12).fill().map((e, i) => 'm' + (1 + i))
+const inflowKeys = Array(12).fill().map((e, i) => 'inflow' + (1 + i))
+const outflowKeys = Array(12).fill().map((e, i) => 'outflow' + (1 + i))
+const flowKeys = Array(12).fill().map((e, i) => 'flow' + (1 + i))
+const rKeys = Array(12).fill().map((e, i) => String(i + 1))
+console.log(rKeys)
+
+const rampPalette = [
+    '#0074D9',
+    '#2D87B1',
+    '#5A9A8A',
+    '#88AD63',
+    '#B5C13B',
+    '#E3D414',
+    '#FAC900',
+    '#FBA100',
+    '#FC7900',
+    '#FD5000',
+    '#FE2800',
+    '#FF0000',
+]
 
 function monthSeconds(year, month /* 1..12 */) {
     const start = new Date(Date.UTC(year, month - 1, 1));
@@ -57,49 +78,96 @@ const setupEleClickListener = function(cy, selectedEleRef) {
 
 const setGraphColors = function(month, cy, leafMaps){
     cy.nodes().forEach(node => {
-        applyNodeColorToLeaflet(node, month, leafMaps)
+        if (month === '0'){
+            const nodeFaults = rKeys.map(m => setNodeColor(node, m)).filter(e => e === rampPalette[11]).length
+            applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[nodeFaults - 1])
+        } else {
+            applyNodeColorToLeaflet(node, month, leafMaps)
+        }
     });
 
     cy.edges().forEach(edge => {
-        applyEdgeColorToLeaflet(edge, month, leafMaps)
+        if (month === '0'){
+            const edgeFaults = rKeys.map(m => setEdgeColor(edge, m)).filter(e => e === rampPalette[11]).length
+            applyEdgeColorToLeaflet(edge, '0', leafMaps, rampPalette[edgeFaults - 1])
+        } else {
+            applyEdgeColorToLeaflet(edge, month, leafMaps)
+        }
     });
 }
 
-const applyNodeColorToLeaflet = (node, month, leafMaps) => {
+const applyNodeColorToLeaflet = (node, month, leafMaps, customColor = null) => {
     const layer = leafMaps.nodeLayerById.get(node.id());
 
-    if (!layer) return;
+    if (!layer) {
+        console.error("No s'ha trobat la capa on aplicar color als nodes")
+        return;
+    }
 
-    const color = setNodeColor(node, month);
+
+    const color = customColor || setNodeColor(node, month);
     layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
 };
 
-const applyEdgeColorToLeaflet = (edge, month, leafMaps) => {
+const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
     const layer = leafMaps?.edgeLayerById?.get(edge.id());
-    if (!layer) return;
-    const color = setEdgeColor(edge, month);
+    if (!layer) {
+        if (!(/^v_\d+/.test(edge.id()))) console.error("No s'ha trobat la capa on aplicar color als trams")
+        return;
+    }
+    const color = customColor || setEdgeColor(edge, month);
     layer.setStyle({ color }); // mantenim weight/opacity actuals
 };
 
 const setEdgeColor = function(edge, month){
-    return edge.data('flow' + month) < edge.data('flowNeed') ? 'red' : '#0074D9'
+    return edge.data('flow' + month) < edge.data('flowNeed') ? rampPalette[11] : rampPalette[0]
 }
 
 const setNodeColor = function(node, month){
     if (node.incomers().length === 0) {
-        return '#0074D9'; // Si no té edges entrants, és una font
+        return rampPalette[0]; // Si no té edges entrants, és una font
     }
-    return node.data('inflow' + month) + node.data('m' + month) < 0 ? 'red' : '#0074D9'
+    return node.data('inflow' + month) + node.data('m' + month) < 0 ? rampPalette[11] : rampPalette[0]
 }
 
-const calculateFlow = function(cy, errorRef = null, opts = {}){
-    const months = ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10", "m11", "m12"];
+const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
+    const months = Array(12).fill().map((e, i) => String(i + 1));
     for (const m of months){
-        calculateFlowMonth(cy, errorRef, {period: {year: 2024, month: m.substr(1)}});
-        console.log("embassament a", m, RESERVOIR.storage_hm3[m.substr(1)])
+        calculateFlowMonth(cy, errorRef, {period: {year: 2024, month: m}});
+        console.log("embassament a", m, RESERVOIR.storage_hm3[m])
     }
-    console.log("edges", cy.edges())
-    console.log("nodes", cy.nodes())
+    // Calculem mitjanes anuals per tots els elements
+    cy.nodes().forEach(node => {
+        const data = node.data();
+
+        const changesMean = flowChangeKeys.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / flowChangeKeys.length;
+        node.data('m0', changesMean);
+
+        const inflowMean = inflowKeys.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / inflowKeys.length;
+        node.data('inflow0', inflowMean);
+
+        const outflowMean = outflowKeys.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / inflowKeys.length;
+        node.data('outflow0', outflowMean);
+    })
+
+    cy.edges().forEach(edge => {
+        const data = edge.data();
+
+        const flowMean = flowKeys.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / flowKeys.length;
+        edge.data('flow0', flowMean);
+    })
+
+
+    RESERVOIR.storage_hm3['0'] = rKeys.map(k => RESERVOIR.storage_hm3[k])
+        .reduce((a, b) => a + b, 0) / rKeys.length;
+    RESERVOIR.inflowSum_m3s['0'] = rKeys.map(k => RESERVOIR.inflowSum_m3s[k])
+        .reduce((a, b) => a + b, 0) / rKeys.length;
+    RESERVOIR.released_m3s['0'] = rKeys.map(k => RESERVOIR.released_m3s[k])
+        .reduce((a, b) => a + b, 0) / rKeys.length;
 }
 
 const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
@@ -184,7 +252,7 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
             // propaga a sortints el cabal realment alliberat
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
-                edge.data('flow', release_m3s);
+                edge.data('flow' + month, release_m3s);
                 // applyEdgeColorToLeaflet(edge, leafMaps);
             });
 
@@ -200,7 +268,7 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
         node.data('outflow' + month, outflow);
 
         // 3. Estil visual si cal
-        //node.style('background-color', rawOutflow < 0 ? 'red' : '#0074D9');
+        //node.style('background-color', rawOutflow < 0 ? rampPalette[11] : rampPalette[0]);
         // applyNodeColorToLeaflet(node, leafMaps)
 
         outflow = Math.round(outflow * 10) / 10; // Redondejar a 1 decimal

@@ -38,8 +38,8 @@ function embTooltipHTML(month) {
     <div>
         <div><strong>Sistema Sau-Susqueda-Pasteral</strong></div>
         <div>Volum al sistema: ${gm.RESERVOIR.storage_hm3[month].toFixed()} Hm<sup>3</sup></div>
-        <div>Cabal mitjà d'entrada: ${gm.RESERVOIR.inflowSum_m3s[month]} m<sup>3</sup>s</div>
-        <div>Cabal mitjà desembassat: ${gm.RESERVOIR.released_m3s[month]} m<sup>3</sup>s</div>
+        <div>Cabal mitjà d'entrada: ${gm.RESERVOIR.inflowSum_m3s[month].toFixed(2)} m<sup>3</sup>s</div>
+        <div>Cabal mitjà desembassat: ${gm.RESERVOIR.released_m3s[month].toFixed(2)} m<sup>3</sup>s</div>
     </div>
     `
 }
@@ -55,9 +55,10 @@ createApp({
         const selectedEle = ref(null)
         const flowModified = ref(null)
         const errorMsg = ref(null)
-        const month = ref('1')
+        const month = ref('0')
         const monthSelector = ref(
             [
+                {value: '0', label: "Mitjana anual"},
                 {value: '1', label: "Gener"},
                 {value: '2', label: "Febrer"},
                 {value: '3', label: "Març"},
@@ -350,8 +351,8 @@ createApp({
                 }
             }).addTo(map);
 
-            gm.calculateFlow(cy.value, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
-
+            gm.calculateFlow(cy.value, { nodeLayerById, edgeLayerById }, errorMsg, { period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+            gm.setGraphColors(month.value, cy.value, { nodeLayerById, edgeLayerById });
             gm.setupEleClickListener(cy.value, selectedEle)
             gm.setupZoomLabelControl(cy.value, leaf.value, 12);
         })
@@ -367,7 +368,6 @@ createApp({
         }, { immediate: true });
 
         watch(month, (m) => {
-            console.log("leafMaps", { nodeLayerById, edgeLayerById})
             gm.setGraphColors(m, cy.value, { nodeLayerById, edgeLayerById})
         })
 
