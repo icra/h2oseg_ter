@@ -22,24 +22,37 @@
                 <img src="assets/logo_h20seg.png" alt="Logo H2OSEG" style="height: 50px;" />
                 <span style="padding: 0.5em;">Ter</span>
             </div>
+            <!-- Month selector -->
+            <div class="month-select" v-cloak>
+                <label for="selMonth">Mes:</label>
+                <select id="selMonth" class="month-select" :value="month" v-model="month">
+                    <option v-for="m in monthSelector" :key="m.value" :value="m.value">{{ m.label }}</option>
+                </select>
+            </div>
             <div v-if="selectedEle">
                 <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
-                <div v-if="selectedEle.eleType === 'punt'">
+                <div v-if="selectedEle.id === 'DESEMBASSAT'">
+                    <p>El cabal mitjà desembassat és {{ selectedEle['m' + month] }}  m<sup>3</sup>/s</p>
+                    <p>El volum a l'embassament és de {{ getReservoir().storage_hm3[month].toFixed() }} Hm<sup>3</sup></p>
+                </div>
+                <div v-else-if="selectedEle.eleType === 'punt'">
                     <p v-if="selectedEle.name">{{ selectedEle.name }}</p>
-                    <p v-if-else="selectedEle.id">{{ selectedEle.id }}</p>
-                    <p>En aquest punt de la xarxa arriben {{ selectedEle.inflow }} m<sup>3</sup>/s
-                        i en surten {{ selectedEle.outflow.toFixed(1) }} m<sup>3</sup>/s.</p>
+                    <p v-else-if="selectedEle.id">{{ selectedEle.id }}</p>
+                    <p>En aquest punt de la xarxa arriben {{ selectedEle['inflow' + month] }} m<sup>3</sup>/s
+                        i en surten {{ selectedEle['outflow' + month].toFixed(1) }} m<sup>3</sup>/s.</p>
                     <p v-if="selectedEle.type === 'massa'">
-                        L'àrea de drenatge d'aquest punt aporta {{ selectedEle.flowChange }} m<sup>3</sup>/s de cabal.
+                        L'àrea de drenatge d'aquest punt aporta {{ selectedEle['m' + month].toFixed(2) }} m<sup>3</sup>/s de cabal.
                     </p>
                     <p v-else-if="selectedEle.type === 'EDAR'">
-                        L'efluent de l'EDAR aporta {{ selectedEle.flowChange.toFixed(2) }} m<sup>3</sup>/s a la xarxa fluvial.
+                        L'efluent de l'EDAR aporta {{ selectedEle['m' + month].toFixed(2) }} m<sup>3</sup>/s a la xarxa fluvial.
                     </p>
-                    <p v-else-if="selectedEle.flowChange > 0">
-                        En aquest punt entren {{ Number(selectedEle.flowChange).toFixed(1) }} m<sup>3</sup>/s a la xarxa fluvial.
+                    <p v-else-if="selectedEle['m' + month] > 0">
+                        En aquest punt entren {{ Number(selectedEle['m' + month]).toFixed(1) }} m<sup>3</sup>/s a la xarxa fluvial.
                     </p>
-                    <p v-else-if="selectedEle.flowChange < 0">
-                        En aquest punt s'extreuen {{ Math.abs(selectedEle.flowChange).toFixed(2) }} m<sup>3</sup>/s de la xarxa fluvial.
+                    <p v-else-if="selectedEle['m' + month] < 0">
+                        En aquest punt s'extreuen {{ Math.abs(selectedEle['m' + month]).toFixed(2) }} m<sup>3</sup>/s de la xarxa fluvial.
+                </div>
+                <div v-if="selectedEle.eleType === 'punt'">
                     <h4>Modifica el canvi de cabal generat per aquest punt:</h4>
                     <input type="number" v-model.number="flowModified" @keyup.enter="modifyFlowChange(selectedEle, flowModified)" />
                     <button @click="modifyFlowChange(selectedEle, flowModified)">Modifica</button>
@@ -47,14 +60,49 @@
                         ⚠️ {{ errorMsg }}
                     </p>
                 </div>
-                <div v-if="selectedEle.eleType === 'tram'">
-                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle.flow }} m<sup>3</sup>/s i té una llargada de {{ Math.round(selectedEle.lengthRiver / 10) / 100 }} km.</p>
+                <div v-else-if="selectedEle.eleType === 'tram'">
+                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle['flow' + month] }} m<sup>3</sup>/s i té una llargada de {{ Math.round(selectedEle.lengthRiver / 10) / 100 }} km.</p>
                     <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed }} m<sup>3</sup>/s</p>
                     <p>El tram correspon a la massa d'aigua {{ selectedEle.codiMassa}}</p>
                 </div>
             </div>
             <div v-else>
-                <p>Selecciona el cursor (a baix a l'esquerre) i fes clic sobre un element per veure’n les dades.</p>
+                <p>Fes clic sobre un element per veure’n les dades.</p>
+            </div>
+            <div v-if="cy" class="res-mini res-stack">
+                <div>Informació del sistema Sau-Susqueda {{ selMonth }}</div>
+                <!-- Línia superior: Volum -->
+                <div class="res-top">
+                    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
+                    </svg>
+                    <span class="lab">Volum</span>
+                    <span class="val">{{ reservoir.storage_hm3[month].toFixed(2) }} hm³</span>
+                    <div class="cap">
+                        <div class="cap-fill"
+                             :style="{ width: Math.min(100, Math.max(0, (reservoir.storage_hm3[month] / reservoir.capacity_hm3) * 100)).toFixed(0) + '%' }">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Línia inferior: Entrant | Sortint -->
+                <div class="res-bottom">
+                    <div class="res-item">
+                        <svg class="ico in" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3v12m0 0l-4-4m4 4 4-4M4 21h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="lab">Entrant</span>
+                        <span class="val">{{ Number(reservoir.inflowSum_m3s[month] || 0).toFixed(2) }} m³/s</span>
+                    </div>
+
+                    <div class="res-item">
+                        <svg class="ico out" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 21V9m0 0 4 4m-4-4-4 4M4 3h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="lab">Sortint</span>
+                        <span class="val">{{ Number(reservoir.released_m3s[month] || 0).toFixed(2) }} m³/s</span>
+                    </div>
+                </div>
             </div>
             <div class="sidebar-footer">
                 <button @click="reset">Valors d'inici</button>
