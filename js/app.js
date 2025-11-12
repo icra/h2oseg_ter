@@ -17,6 +17,7 @@ function nodeTooltipHTML(n, month) {
       <div>Cabal entrant: ${fmt(n.data('inflow' + month))} m³/s</div>
       <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)} m³/s</div>
       <div>Cabal sortint: ${fmt(n.data('outflow' + month))} m³/s</div>
+      <div>Dèficit: ${n.data('deficit' + month)}</div>
     </div>
   `
 }

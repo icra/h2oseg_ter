@@ -65,7 +65,7 @@ desembassat <- pesos/sum(pesos) * total
 
 for (i in seq_along(mesos)){
   nodes[mesos[i]] <- if_else(nodes$type == "massa", nodes$flow_change * pluja[[i]], nodes$flow_change)
-  nodes[nodes$codi_sad == 'DESEMBASSAT', mesos[i]] <- desembassat[[i]]
+  nodes[nodes$codi_sad == 'ATL', mesos[i]] <- -10
 }
 
 
