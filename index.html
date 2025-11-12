@@ -67,8 +67,8 @@
                     </p>
                 </div>
                 <div v-else-if="selectedEle.eleType === 'tram'">
-                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle['flow' + month] }} m<sup>3</sup>/s i té una llargada de {{ Math.round(selectedEle.lengthRiver / 10) / 100 }} km.</p>
-                    <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed }} m<sup>3</sup>/s</p>
+                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle['flow' + month].toFixed(1) }} m<sup>3</sup>/s i té una llargada de {{ selectedEle.lengthRiver.toFixed(1) }} km.</p>
+                    <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed.toFixed(1) }} m<sup>3</sup>/s</p>
                     <p>El tram correspon a la massa d'aigua {{ selectedEle.codiMassa}}</p>
                 </div>
             </div>

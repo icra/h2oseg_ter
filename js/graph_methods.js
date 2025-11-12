@@ -117,6 +117,15 @@ const setNodeColor = function(node, month){
     return node.data('inflow' + month) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
 }
 
+// utilitat: construir un Set amb tots els ancestres (predecessors) d’un node donat
+const ancestorsOf = function(cy, nodeId){
+    const anc = new Set();
+    const start = cy.getElementById(nodeId);
+    start.predecessors('node').forEach(n => anc.add(n.id()));
+    anc.add(nodeId); // incloure també el node mateix per comoditat
+    return anc;
+}
+
 const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
     const months = Array(12).fill().map((e, i) => String(i + 1));
     for (const m of months){
@@ -176,15 +185,23 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     R.released_m3s[m] = 0
     R.releasedVol_hm3[m] = 0
 
+    const damAncestors = ancestorsOf(cy, R.outNode);
+
     let visited = new Set();
 
     function dfs(node) {
         if (visited.has(node.id())) return;
         visited.add(node.id());
 
-        // Primer processar els nodes aigües amunt (fonts)
+        // Primer processar els nodes aigües amunt (fonts) i primer els afluents aigües avall de l'embassament
         const upstreamNodes = node.predecessors('node');
-        upstreamNodes.forEach(pre => dfs(pre));
+        const ordered = upstreamNodes.sort((a, b) => {
+            const aIsAnc = damAncestors.has(a.id());
+            const bIsAnc = damAncestors.has(b.id());
+            if (aIsAnc === bIsAnc) return 0;
+            return aIsAnc ? 1 : -1; // els NO ancestres primer
+        });
+        ordered.forEach(pre => dfs(pre));
 
         // 1. Sumar el flux que REALMENT arriba per cada edge entrant
         const incomingEdges = node.incomers('edge');
@@ -199,6 +216,8 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
         const flowChange = parseFloat(node.data('m' + month)) || 0;
         const rawOutflow = inflow + flowChange;
         const positiveOut = Math.max(0, rawOutflow);
+        let outflow = Math.max(0, rawOutflow);
+        node.data('outflow' + month, outflow);
 
         if (R.inNodes && R.inNodes.has(node.id())) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
@@ -221,7 +240,19 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
         }
 
         if (R.outNode && R.outNode === node.id()) {
-            // Això és el que cal canviar per ajusatar-ho a la demanda real, ara agafa les dades del node però cal sumar totes les demandes aigües avall i restar-hi les contribucions.
+
+            // Calculem la demanda real aigües avall considerant les contribucions dels afluents
+            let demanda = 0
+            node.successors('node').each(n => {
+                demanda += (n.data('inflow' + month) + n.data('outflow' + month)) * -1 || 0
+                if( month === '1') console.log("node", n.id(), n.data('inflow' + month), n.data('outflow' + month), demanda)
+            });
+            const edge = cy.edges().filter(e => e.id() === 'EDAR_TORROELLA->NODE_63').first();
+            demanda += edge.data('flowNeed') * -1
+            if( month === '1') console.log("demanda", month, demanda)
+
+
+            // Això és el que cal canviar per ajustar-ho a la demanda real, ara agafa les dades del node però cal sumar totes les demandes aigües avall i restar-hi les contribucions.
             // Cal assegurar que els cabals dels afluents ja estiguin calculats en aquest moment
             const demand_m3s = Math.max(0, parseFloat(node.data('m' + month)) || 0);
 
@@ -250,8 +281,7 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
             return;
         }
 
-        let outflow = Math.max(0, rawOutflow);
-        node.data('outflow' + month, outflow);
+
 
         // 3. Estil visual si cal
         //node.style('background-color', rawOutflow < 0 ? rampPalette[12] : rampPalette[0]);
