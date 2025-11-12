@@ -12,6 +12,12 @@
 </head>
 <body>
 <div id="app">
+    <div v-if="loading" class="loading-overlay">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <p>Carregant dades...</p>
+        </div>
+    </div>
     <div class="layout">
         <div id="map-wrapper">
             <div id="cy"></div>
@@ -52,10 +58,10 @@
                     <p v-else-if="selectedEle['m' + month] < 0">
                         En aquest punt s'extreuen {{ Math.abs(selectedEle['m' + month]).toFixed(2) }} m<sup>3</sup>/s de la xarxa fluvial.
                 </div>
-                <div v-if="selectedEle.eleType === 'punt'">
-                    <h4>Modifica el canvi de cabal generat per aquest punt:</h4>
-                    <input type="number" v-model.number="flowModified" @keyup.enter="modifyFlowChange(selectedEle, flowModified)" />
-                    <button @click="modifyFlowChange(selectedEle, flowModified)">Modifica</button>
+                <div v-if="selectedEle.eleType === 'punt' && month !== '0'">
+                    <h4>Modifica el canvi de cabal generat per aquest punt pel mes de {{ monthSelector.find(e => e.value === month).label }}:</h4>
+                    <input type="number" v-model.number="flowModified" @keyup.enter="modifyFlowChange(selectedEle, flowModified, month)" />
+                    <button @click="modifyFlowChange(selectedEle, flowModified, month)">Modifica</button>
                     <p v-if="errorMsg" style="color: red; margin-top: 8px;">
                         ⚠️ {{ errorMsg }}
                     </p>
@@ -70,14 +76,14 @@
                 <p>Fes clic sobre un element per veure’n les dades.</p>
             </div>
             <div v-if="cy" class="res-mini res-stack">
-                <div>Informació del sistema Sau-Susqueda {{ selMonth }}</div>
+                <div>Informació del sistema Sau-Susqueda ({{ monthSelector.find(e=> e.value === month).label }})</div>
                 <!-- Línia superior: Volum -->
                 <div class="res-top">
                     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
                     </svg>
                     <span class="lab">Volum</span>
-                    <span class="val">{{ reservoir.storage_hm3[month].toFixed(2) }} hm³</span>
+                    <span class="val">{{ reservoir.storage_hm3[month].toFixed(1) }} hm³</span>
                     <div class="cap">
                         <div class="cap-fill"
                              :style="{ width: Math.min(100, Math.max(0, (reservoir.storage_hm3[month] / reservoir.capacity_hm3) * 100)).toFixed(0) + '%' }">
@@ -92,7 +98,7 @@
                             <path d="M12 3v12m0 0l-4-4m4 4 4-4M4 21h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span class="lab">Entrant</span>
-                        <span class="val">{{ Number(reservoir.inflowSum_m3s[month] || 0).toFixed(2) }} m³/s</span>
+                        <span class="val">{{ Number(reservoir.inflowSum_m3s[month] || 0).toFixed(1) }} m³/s</span>
                     </div>
 
                     <div class="res-item">
@@ -100,7 +106,7 @@
                             <path d="M12 21V9m0 0 4 4m-4-4-4 4M4 3h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span class="lab">Sortint</span>
-                        <span class="val">{{ Number(reservoir.released_m3s[month] || 0).toFixed(2) }} m³/s</span>
+                        <span class="val">{{ Number(reservoir.released_m3s[month] || 0).toFixed(1) }} m³/s</span>
                     </div>
                 </div>
             </div>
