@@ -5,3 +5,8 @@
 /data_raw/mde.tif
 /data_raw/mde_filled.tif
 data_raw/db.sqlite
+data_raw/area_estudi.tif
+data_raw/gruixos_neu/
+gruixos_*
+air.toml
+.vscode/

@@ -4,7 +4,6 @@ const inflowKeys = Array(12).fill().map((e, i) => 'inflow' + (1 + i))
 const outflowKeys = Array(12).fill().map((e, i) => 'outflow' + (1 + i))
 const flowKeys = Array(12).fill().map((e, i) => 'flow' + (1 + i))
 const rKeys = Array(12).fill().map((e, i) => String(i + 1))
-console.log(rKeys)
 
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
 
@@ -21,13 +20,13 @@ let RESERVOIR = {
     inNodes: new Set(inNodes),
     outNode: 'DESEMBASSAT',
     storage_hm3: {},
-    capacity_hm3: 4000,
+    capacity_hm3: 400,
     inflowSum_m3s: {},
     inflowVol_hm3: {},
     releaseDemand_m3s: {},
     released_m3s: {},
     releasedVol_hm3: {},
-    initial_storage_hm3: 200
+    initial_storage_hm3: 0
     // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
 
@@ -131,7 +130,6 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
     const months = Array(12).fill().map((e, i) => String(i + 1));
     for (const m of months){
         calculateFlowMonth(cy, errorRef, {period: {year: 2024, month: m}});
-        console.log("embassament a", m, RESERVOIR.storage_hm3[m])
     }
     // Calculem mitjanes anuals per tots els elements
     cy.nodes().forEach(node => {
@@ -165,6 +163,8 @@ const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
         .reduce((a, b) => a + b, 0) / rKeys.length;
     RESERVOIR.released_m3s['0'] = rKeys.map(k => RESERVOIR.released_m3s[k])
         .reduce((a, b) => a + b, 0) / rKeys.length;
+
+    console.log('RESERVOIR complete', RESERVOIR)
 }
 
 const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
@@ -185,8 +185,6 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     R.releaseDemand_m3s[m] = 0
     R.released_m3s[m] = 0
     R.releasedVol_hm3[m] = 0
-
-    console.log("volum al principi", month, R.storage_hm3[m], "mes anterior", R.storage_hm3[m -1])
 
     const damAncestors = ancestorsOf(cy, R.outNode);
 
@@ -227,9 +225,9 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
             const nouVol = Math.min(R.storage_hm3[m] + add_hm3, R.capacity_hm3);
             R.inflowSum_m3s[m] += positiveOut;
-            R.inflowVol_hm3[m] += m3sToHm3(R.inflowSum_m3s[m])
+            R.inflowVol_hm3[m] += m3sToHm3(R.inflowSum_m3s[m], dt_s)
+            // if (month === '5') console.log("inflowVol", m, R.inflowVol_hm3[m]);
             R.storage_hm3[m] = nouVol;
-            console.log("després de inNodes, afegit", add_hm3, "nou volum", nouVol)
 
             // no propaguem cabal a través dels arcs virtuals
             node.data('outflow' + month, 0);
@@ -256,19 +254,12 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
             return;
         }
 
+        // outflow = Math.round(outflow * 10) / 10; // Redondejar a 1 decimal
 
-
-        // 3. Estil visual si cal
-        //node.style('background-color', rawOutflow < 0 ? rampPalette[12] : rampPalette[0]);
-        // applyNodeColorToLeaflet(node, leafMaps)
-
-        outflow = Math.round(outflow * 10) / 10; // Redondejar a 1 decimal
-
-        // 4. Assignar aquest outflow als edges sortints
+        // 3. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
             edge.data('flow' + month, outflow);
-            // applyEdgeColorToLeaflet(edge, leafMaps)
         });
     }
 
@@ -279,31 +270,49 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     // Segona passada per calcular demanda de l'embassament i alliberar l'aigua
 
     const dam = cy.getElementById(R.outNode);
-
     const succNodes = dam.successors('node');
-    const succSet = new Set();
-    succNodes.forEach(node => succSet.add(node.id()));
-
     let demanda = 0;
+
     succNodes.forEach(n => {
         // la demanda és el cabal que necessita menys el que li entra.
         if (n.data('m' + month) < 0) {
-            const demandaNode = (n.data('inflow' + month) + n.data('m' + month)) * -1
+            const demandaNode = (n.data('m' + month)*(-1) - n.data('inflow' + month))
             demanda += Math.max(demandaNode, 0)
+            // if (month === '1') console.log(n.id(), demandaNode, demanda)
         }
-        n.incomers('edge').forEach(e => {
-            // si el tram del Ter no té el cabal ambiental, l'afegim a la demanda
-           if (succSet.has(e.source().id())){
-               const deficitCabal = e.data('flowNeed') - e.data('flow' + month);
-               demanda += Math.max(deficitCabal, 0)
-           }
-        });
+    });
+
+    // Augmentem demanda un factor de seguretat
+    demanda = demanda * 1.01
+
+    const R_backup = structuredClone(R)
+
+    // recalculem cabals sota presa
+    calculateFlowDownstreamDam(cy, demanda, dam, month, dt_s)
+
+    // Calcular demanda ambiental, és el màxim de flowNeed - flow
+    let maxDemandaAmbiental = 0
+    dam.successors('edge').forEach(edge => {
+        const demandaAmbiental = edge.data('flowNeed') - edge.data('flow' + month)
+        maxDemandaAmbiental = Math.max(maxDemandaAmbiental, demandaAmbiental)
+        // if (month === '1') console.log('demanda ambiental', edge.id(), demandaAmbiental, maxDemandaAmbiental)
     })
-    console.log(m, "demanda", demanda, 'inflow', R.inflowSum_m3s[m] )
-    if (m !== 1)
+
+    Object.assign(RESERVOIR, structuredClone(R_backup));
+    console.log(month, 'after backup')
+
+    calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, dt_s)
+
+    if (errorRef) errorRef.value = null;
+};
+
+const calculateFlowDownstreamDam = function(cy, demanda, dam, month, dt_s){
+    let R = RESERVOIR
+    const m = Number(month)
+
     // si l'embassament és ple, allibera com a mínim el cabal d'entrada
     if (R.storage_hm3[m] >= R.capacity_hm3 - 1e-6) {
-        console.log("is full", R.storage_hm3[m], R.capacity_hm3);
+        console.log("Embassament ple")
         demanda = Math.max(demanda, R.inflowSum_m3s[m])
     }
     const maxPossible_m3s = hm3ToM3s(R.storage_hm3[m], dt_s);
@@ -314,7 +323,7 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     R.released_m3s[m] = release_m3s;
     R.releasedVol_hm3[m] = used_hm3;
 
-    console.log(m, "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
+    console.log(m, "entrada", R.inflowVol_hm3[m], "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
 
     dam.data('outflow' + month, release_m3s);
     dam.outgoers('edge').forEach(e => e.data('flow' + month, release_m3s));
@@ -336,15 +345,9 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
         n.data('outflow' + month, out2);
 
         // 4) propagar cap avall
-        const outRounded = Math.round(out2 * 10) / 10;
-        n.outgoers('edge').forEach(ed => ed.data('flow' + month, outRounded));
+        n.outgoers('edge').forEach(ed => ed.data('flow' + month, out2));
     });
-
-
-
-
-    if (errorRef) errorRef.value = null;
-};
+}
 
 const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg, leafMaps, period) {
     if (!selectedEle || !selectedEle.id) return;

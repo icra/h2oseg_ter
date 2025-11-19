@@ -15,27 +15,30 @@ masses <- read_sf("data_raw/MASSES_AIGUA_BE.gpkg", layer = "retall_embassament")
 stopifnot(all(nodes |> st_intersects(masses, sparse = FALSE) |> rowSums() > 0))
 
 # Divideix les línies segons els nodes, calcula la distància i dona noms correlatius als trams partits
-edges <- st_split(masses, nodes) |> 
-  st_collection_extract("LINESTRING") %>% 
-  mutate(river_length = st_length(.)) |> 
-  mutate(nom = str_remove_all(NOM_COMU, " \\d$"), .before = 1) |> 
-  mutate(numero = row_number(), .by = nom, .after = nom) |> 
-  mutate(n = n(), .by = nom, .after = numero) |> 
-  mutate(nom_correlatiu = if_else(n == 1, nom, paste(nom, numero)), .before = everything()) |> 
+edges <- st_split(masses, nodes) |>
+  st_collection_extract("LINESTRING") %>%
+  mutate(river_length = st_length(.)) |>
+  mutate(nom = str_remove_all(NOM_COMU, " \\d$"), .before = 1) |>
+  mutate(numero = row_number(), .by = nom, .after = nom) |>
+  mutate(n = n(), .by = nom, .after = numero) |>
+  mutate(
+    nom_correlatiu = if_else(n == 1, nom, paste(nom, numero)),
+    .before = everything()
+  ) |>
   select(-c(nom, numero, n))
 
 ## Per quan tinguem edges amb geom ------------------------------
 
-froms <- st_startpoint(edges) |> 
-  st_as_sf() |> 
-  st_join(nodes) |> 
+froms <- st_startpoint(edges) |>
+  st_as_sf() |>
+  st_join(nodes) |>
   pull(codi_sad)
 
 stopifnot(all(!is.na(froms)))
 
-tos <- st_endpoint(edges) |> 
-  st_as_sf() |> 
-  st_join(nodes) |> 
+tos <- st_endpoint(edges) |>
+  st_as_sf() |>
+  st_join(nodes) |>
   pull(codi_sad)
 
 edges$from <- froms
@@ -47,11 +50,16 @@ if (any(duplicated(edges$from))) {
   rlang::abort("Hi ha duplicats a from dels arcs")
 }
 
-stopifnot(all(edges$from %in% nodes$codi_sad) && all(edges$to %in% nodes$codi_sad))
+stopifnot(
+  all(edges$from %in% nodes$codi_sad) && all(edges$to %in% nodes$codi_sad)
+)
 
 # comprova que tots els nodes tenen arcs sortint excepte els finals
 stopifnot(length(which(nodes$codi_sad %in% edges$from)) == (nrow(nodes) - 5))
-stopifnot(nodes$codi_sad[which(!(nodes$codi_sad %in% edges$from))] == c("NODE_33", "NODE_34", "NODE_63", "NODE_82", "NODE_84"))
+stopifnot(
+  nodes$codi_sad[which(!(nodes$codi_sad %in% edges$from))] ==
+    c("NODE_33", "NODE_34", "NODE_63", "NODE_82", "NODE_84")
+)
 
 # Atribuïm valors random ----------------------------------------------------------------
 
@@ -59,28 +67,32 @@ edges$flow_need <- sample(2:10, nrow(edges), replace = T)
 
 mesos <- paste0("m", 1:12)
 pluja <- c(1, 1, 2, 3, 4, 2, 0.5, 0.3, 1.5, 4, 3, 1)
-pesos <- c(1, 1, 1, 1, 1, 3, 5, 5, 3, 1, 1, 1)
-total <- 80 * 12
-desembassat <- pesos/sum(pesos) * total
 
-for (i in seq_along(mesos)){
-  nodes[mesos[i]] <- if_else(nodes$type == "massa", nodes$flow_change * pluja[[i]], nodes$flow_change)
-  nodes[nodes$codi_sad == 'ATL', mesos[i]] <- -10
+for (i in seq_along(mesos)) {
+  nodes[mesos[i]] <- if_else(
+    nodes$type == "massa",
+    nodes$flow_change * pluja[[i]] * 0.1,
+    nodes$flow_change
+  )
 }
 
 
 # Guardem la xarxa a assets -----------------------------------------------------
 
-nodes |> 
-  select(-c(node_id, nearest_node, ma)) |> 
-  rename(name = nom, node_id = codi_sad, flowChange = flow_change) |> 
-  st_transform(4326) |> 
+nodes |>
+  select(-c(node_id, nearest_node, ma)) |>
+  rename(name = nom, node_id = codi_sad, flowChange = flow_change) |>
+  st_transform(4326) |>
   st_write("assets/nodes.geojson", delete_dsn = TRUE)
 
-edges |> 
-  rename(nomComu = nom_correlatiu, flowNeed = flow_need, lengthRiver = river_length, codiMassa = EUMSPFCOD) |> 
-  mutate(id = paste(from, to, sep = "->"), .before = everything()) |> 
-  mutate(nomComu = str_to_title(nomComu)) |> 
-  st_transform(4326) |> 
+edges |>
+  rename(
+    nomComu = nom_correlatiu,
+    flowNeed = flow_need,
+    lengthRiver = river_length,
+    codiMassa = EUMSPFCOD
+  ) |>
+  mutate(id = paste(from, to, sep = "->"), .before = everything()) |>
+  mutate(nomComu = str_to_title(nomComu)) |>
+  st_transform(4326) |>
   st_write("assets/edges.geojson", delete_dsn = TRUE)
-  
