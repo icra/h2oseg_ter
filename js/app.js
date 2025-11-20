@@ -85,7 +85,7 @@ createApp({
                 month.value,
                 errorMsg,
                 { nodeLayerById, edgeLayerById },
-                {period: {year:2024, month:8}})
+                {period: {year:2024, month: month.value}})
 
             loading.value = false
         };

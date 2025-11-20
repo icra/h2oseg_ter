@@ -1,15 +1,38 @@
+source("R/read_db.R")
 library(tidyverse)
 use('janitor', 'clean_names')
 library(sf)
 library(lwgeom)
 library(jsonlite)
-library(tmap)
-tmap_mode("view")
 set.seed(4)
 
-nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg")
+nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |>
+  select(-c(flow_change, node_id, ma, nearest_node))
 
-masses <- read_sf("data_raw/MASSES_AIGUA_BE.gpkg", layer = "retall_embassament")
+nodes <- nodes |>
+  left_join(read_rds("data_raw/conques_dades_cabal.rds"), by = 'codi_sad') |>
+  left_join(read_rds("data_raw/cabals_antropic.rds"), by = 'codi_sad')
+
+stopifnot(
+  nodes |>
+    filter(type == 'massa' | type == 'comporta') |>
+    filter(if_any(area_m2:neu12, \(x) is.na(x))) |>
+    nrow() ==
+    0
+)
+
+stopifnot(
+  nodes |>
+    filter(type != 'massa' & type != 'comporta') |>
+    filter(if_any(m1:m12, \(x) is.na(x))) |>
+    nrow() ==
+    0
+)
+
+masses <- read_sf(
+  "data_raw/MASSES_AIGUA_BE.gpkg",
+  layer = "retall_embassament"
+)
 
 # Comprova que tots els nodes estan sobre els arcs
 stopifnot(all(nodes |> st_intersects(masses, sparse = FALSE) |> rowSums() > 0))
@@ -65,23 +88,10 @@ stopifnot(
 
 edges$flow_need <- sample(2:10, nrow(edges), replace = T)
 
-mesos <- paste0("m", 1:12)
-pluja <- c(1, 1, 2, 3, 4, 2, 0.5, 0.3, 1.5, 4, 3, 1)
-
-for (i in seq_along(mesos)) {
-  nodes[mesos[i]] <- if_else(
-    nodes$type == "massa",
-    nodes$flow_change * pluja[[i]] * 0.1,
-    nodes$flow_change
-  )
-}
-
-
 # Guardem la xarxa a assets -----------------------------------------------------
 
 nodes |>
-  select(-c(node_id, nearest_node, ma)) |>
-  rename(name = nom, node_id = codi_sad, flowChange = flow_change) |>
+  rename(name = nom, node_id = codi_sad) |>
   st_transform(4326) |>
   st_write("assets/nodes.geojson", delete_dsn = TRUE)
 

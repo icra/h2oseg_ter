@@ -78,10 +78,28 @@ window.Quarto = {
 
 
 <p>La contribució de cada àrea de drenatge es calcula de la següent manera: <span class="math display">\[
-C = A(P - P\sum{u_ip_i} - \Delta{Nk})
+C = A(P - P · ETP\sum{Kc_ip_i} - \Delta{Nr})
 \]</span></p>
-<p>On <em>A</em> és l’àrea de drenatge, <em>P</em> és la precipitació acumulada del mes, <em>u<sub>i</sub></em> és la retenció de la coberta del sòl <em>i</em> i <em>p<sub>i</sub></em> és la proporció de superfície ocupada per la coberta <em>i</em>. <span class="math inline">\(\Delta{N}\)</span> és la diferència en el gruix de neu respecte al mes anterior i <em>k</em> és una constant de conversió entre mm de neu i mm de pluja.</p>
-<p>Els factors a calibrar son <em>u</em> i <em>k</em>. La calibració es realitza de manera independent aigües amunt i aigües avall de l’embassament i per cada mes.</p>
+<p>On <em>A</em> és l’àrea de drenatge, <em>P</em> és la precipitació acumulada del mes, ETP és la evapotranspiració de referència, <em>Kc<sub>i</sub></em> és la constant de la coberta del sòl <em>i</em> i <em>p<sub>i</sub></em> és la proporció de superfície ocupada per la coberta <em>i</em>. <span class="math inline">\(\Delta{N}\)</span> és la diferència en el gruix de neu respecte al mes anterior i <em>r</em> és una ràtio de conversió entre mm de neu i mm de pluja.</p>
+<p>Els factors a calibrar son <em>Kc</em> i <em>r</em>. La calibració es realitza de manera independent aigües amunt i aigües avall de l’embassament i per cada mes.</p>
+<p><em>ET</em>P es calcula segons el mètode de <a href="https://hidrologia.usal.es/temas/Evapotransp.pdf">Thornwaite</a>:</p>
+<p><span class="math display">\[
+ETP = ETP_{sc}\frac{N}{12}\frac{d}{30}
+\]</span></p>
+<p><span class="math display">\[
+ETP_{sc} = 16(\frac{10t}{I})^a
+\]</span></p>
+<p><span class="math display">\[
+I = \sum{(\frac{t_i}{5})^{1.514}}
+\]</span></p>
+<ul>
+<li>ETP<sub>sc</sub>: ETP sense corregir (mm)</li>
+<li>N: número màxim d’hores de sol segons la latitud.</li>
+<li>d: número de dies del mes</li>
+<li>I: Índex de calor anual</li>
+<li>a: <em>6.75x10<sup>-7</sup>I<sup>3</sup> - 771x10<sup>-7</sup>I<sup>2</sup> + 1792x10<sup>-5</sup>I + 0.49239</em></li>
+<li>t: temperatura mitjana del mes <em>i</em> (ºC)</li>
+</ul>
 
 </main>
 <!-- /main column -->

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "Fent còpia de data_raw al sharepoint"... 
+
+cp -au data_raw "../../../ICRA/H2OSEG - ICRA - General/Dades SAD"
+
 # 🔧 CONFIGURA aquí
 REMOTE_USER="root"
 REMOTE_HOST="icra.loading.net"

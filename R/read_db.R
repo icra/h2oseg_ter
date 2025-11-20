@@ -1,3 +1,4 @@
+source('R/helpers.R')
 library(tidyverse)
 use('janitor', 'clean_names')
 use('assertr', c('verify', 'not_na'))
@@ -10,16 +11,7 @@ data <- fromJSON(db$text) |>
   flatten() |>
   as_tibble() |>
   clean_names() |>
-  mutate(valor_cabal = as.numeric(valor_cabal))
-
-
-nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg")
-
-codis_db <- data$codi_sad |> unique()
-
-codis_db[!(codis_db %in% nodes$codi_sad)]
-
-data2 <- data |>
+  mutate(valor_cabal = as.numeric(valor_cabal)) |>
   mutate(
     codi_sad = case_match(
       codi_sad,
@@ -30,31 +22,32 @@ data2 <- data |>
     )
   )
 
-codis_db <- data2$codi_sad |> unique()
 
-codis_db[!(codis_db %in% nodes$codi_sad)]
+nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg")
 
-nodes$codi_sad[!(nodes$codi_sad %in% codis_db)]
+codis_db <- data$codi_sad |> unique()
 
-# Add monthly data fake ----------------------------------------
-
-recode_mesos <- tibble(
-  mesos = data2$nom_dada |> unique(),
-  m = 1:12
+stopifnot(
+  nodes |>
+    filter(type != 'massa') |>
+    filter(!(codi_sad %in% codis_db)) |>
+    nrow() ==
+    0
 )
 
-data2 |>
-  filter(codi_sad %in% nodes$codi_sad) |>
-  left_join(recode_mesos, by = join_by(nom_dada == mesos)) |>
+data |>
   mutate(
-    valor_cabal = case_match(
-      metadata_codi_sad_entrada_sortida_control,
-      "S" ~ -valor_cabal,
-      "E" ~ valor_cabal,
-      .default = NA
+    valor_cabal = if_else(
+      metadata_codi_sad_entrada_sortida_control == 'S',
+      -valor_cabal,
+      valor_cabal
     )
   ) |>
-  verify(not_na(valor_cabal))
-summarize()
-
-data2$metadata_codi_sad_entrada_sortida_control
+  summarize(
+    valor_cabal = mean(valor_cabal, na.rm = T),
+    .by = c(codi_sad, nom_dada)
+  ) |>
+  mutate(mes_dada = create_month_index(str_to_lower(nom_dada), "m")) |>
+  select(-nom_dada) |>
+  pivot_wider(names_from = mes_dada, values_from = valor_cabal) |>
+  write_rds("data_raw/cabals_antropic.rds")

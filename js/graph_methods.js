@@ -173,9 +173,7 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     const month = opts.period.month
     const m = Number(month)
 
-    const dt_s = opts.dt_s ??
-        (opts.period ? monthSeconds(opts.period.year, opts.period.month) :
-                       monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1 ));
+    const dt_s = opts.period ? monthSeconds(opts.period.year, opts.period.month) : monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1);
 
     if (!opts.resetStorage) {
         R.storage_hm3[m] = m !== 1 ? R.storage_hm3[m - 1] : R.initial_storage_hm3;
