@@ -84,7 +84,6 @@ createApp({
                 flowModified,
                 month.value,
                 errorMsg,
-                { nodeLayerById, edgeLayerById },
                 {period: {year:2024, month: month.value}})
 
             loading.value = false
@@ -107,26 +106,15 @@ createApp({
                 const embGeo = await embResp.json()
 
                 const cyNodes = nodesGeo.features.map(n => {
+                    const nodeData = Object.keys(n.properties).reduce((acc, key) => {
+                        acc[key] = n.properties[key];
+                        return acc;
+                    }, {});
+                    nodeData.lat = n.geometry.coordinates[1];
+                    nodeData.lng = n.geometry.coordinates[0];
+
                     return {
-                        data: {
-                            id: n.properties.node_id,
-                            name: n.properties.nom,
-                            type: n.properties.type,
-                            lat: n.geometry.coordinates[1],
-                            lng: n.geometry.coordinates[0],
-                            m1: n.properties.m1,
-                            m2: n.properties.m2,
-                            m3: n.properties.m3,
-                            m4: n.properties.m4,
-                            m5: n.properties.m5,
-                            m6: n.properties.m6,
-                            m7: n.properties.m7,
-                            m8: n.properties.m8,
-                            m9: n.properties.m9,
-                            m10: n.properties.m10,
-                            m11: n.properties.m11,
-                            m12: n.properties.m12,
-                        }
+                        data: nodeData
                     }
                 })
 
@@ -368,7 +356,8 @@ createApp({
                     }
                 }).addTo(map);
 
-                gm.calculateFlow(cy.value, {nodeLayerById, edgeLayerById}, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+                gm.calculateContribution(cy.value)
+                gm.calculateFlow(cy.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);

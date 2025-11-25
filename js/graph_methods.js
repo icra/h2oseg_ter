@@ -1,9 +1,57 @@
 const inNodes = ['NODE_82', 'NODE_33', 'NODE_34', 'NODE_84']
-const flowChangeKeys = Array(12).fill().map((e, i) => 'm' + (1 + i))
-const inflowKeys = Array(12).fill().map((e, i) => 'inflow' + (1 + i))
-const outflowKeys = Array(12).fill().map((e, i) => 'outflow' + (1 + i))
-const flowKeys = Array(12).fill().map((e, i) => 'flow' + (1 + i))
-const rKeys = Array(12).fill().map((e, i) => String(i + 1))
+
+const createMonths = function(preffix){
+    return Array(12).fill().map((e, i) => String(preffix + (1 + i)))
+}
+
+const flowChangeKeys = createMonths('m')
+const inflowKeys = createMonths('inflow')
+const outflowKeys = createMonths('outflow')
+const flowKeys = createMonths('flow')
+const rKeys = createMonths('')
+
+const lightHours = [9.3, 10.4, 11.7, 13.2, 14.4, 15, 14.8, 13.7, 12.3, 10.8, 9.6, 9]
+const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+// Kc per mes (gen ... des)
+
+// Aigua superficial
+const Kc_aigua = [
+    0.90, 0.95, 1.00, 1.05, 1.15, 1.20,
+    1.20, 1.15, 1.10, 1.00, 0.95, 0.90
+];
+
+// Conreu de regadiu
+const Kc_regadiu = [
+    0.50, 0.60, 0.85, 1.05, 1.15, 1.20,
+    1.20, 1.15, 0.95, 0.80, 0.60, 0.50
+];
+
+// Conreu de secà
+const Kc_seca = [
+    0.35, 0.45, 0.75, 0.95, 1.00, 0.80,
+    0.25, 0.25, 0.45, 0.65, 0.55, 0.35
+];
+
+// Forestal
+const Kc_forestal = [
+    0.60, 0.70, 0.90, 1.05, 1.15, 1.20,
+    1.15, 1.10, 1.00, 0.90, 0.80, 0.60
+];
+
+// Prats / pastures
+const Kc_prats = [
+    0.50, 0.55, 0.75, 0.90, 1.00, 1.05,
+    1.05, 0.95, 0.85, 0.75, 0.60, 0.50
+];
+
+// Urbà
+const Kc_urba = [
+    0.15, 0.15, 0.20, 0.25, 0.35, 0.40,
+    0.40, 0.35, 0.30, 0.25, 0.20, 0.15
+];
+
+const r_neu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18];
+
 
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
 
@@ -126,7 +174,63 @@ const ancestorsOf = function(cy, nodeId){
     return anc;
 }
 
-const calculateFlow = function(cy, leafMaps, errorRef = null, opts = {}){
+const calculateNodeContribution = function(node){
+    const tmit = Object.keys(node.data())
+        .filter(k => k.startsWith('tmit'))
+
+    tmit.forEach(m => {
+        node.data(m, Math.max(node.data(m), 0))
+    })
+
+    const I = tmit.reduce((sum, tmit) => sum + Math.pow(Math.max(node.data(tmit), 0) / 5, 1.514), 0)
+    const a = 6.75e-7 * Math.pow(I, 3) - 771e-7 * Math.pow(I, 2) + 1792e-5 * I + 0.49239;
+    const ETPsc = tmit.map(tmit => 16 * Math.pow((10 * node.data(tmit))/I, a))
+    const ETP = ETPsc.map((e, i) => e * (lightHours[i] / 12) * (monthDays[i] / 30))
+
+    const aigua = Kc_aigua.map(kc => kc * node.data('us_aigua'))
+    const regadiu = Kc_regadiu.map(kc => kc * node.data('us_conreu_regadiu'))
+    const seca = Kc_seca.map(kc => kc * node.data('us_conreu_seca'))
+    const forestal = Kc_forestal.map(kc => kc * node.data('us_forestal'))
+    const prats = Kc_prats.map(kc => kc * node.data('us_prats'))
+    const urba = Kc_urba.map(kc => kc * node.data('us_urba'))
+
+    const kc = aigua.map((_, i) => aigua[i] + regadiu[i] + seca[i] + forestal[i] + prats[i] + urba[i])
+    const ET = ETP.map((e, i) => e * kc[i])
+
+    const ppt = Object.keys(node.data())
+        .filter(k => k.startsWith('ppt'))
+        .map(p => node.data(p))
+
+    const neu = Object.keys(node.data())
+        .filter(k => k.startsWith('neu'))
+        .map(n => node.data(n))
+
+    const deltaNeu = neu.map((n, i) => {
+        const lag = i === 0 ? 11 : i - 1
+        return n - neu[lag]
+    })
+
+    const mmNeu = deltaNeu.map((n, i) => n * r_neu[i])
+
+    const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]))
+
+    const seconds = Array(12).fill().map((e, i) => i + 1)
+        .map(m => monthSeconds(2024, m))
+
+    flowChangeKeys.forEach((k, i) => {
+        node.data(k, monthContrib[i] * 0.001 / seconds[i])
+    })
+}
+
+const calculateContribution = function(cy){
+    cy.nodes().forEach(node => {
+        if (node.data('type') === 'massa' || node.data('type') === 'comporta') {
+            calculateNodeContribution(node)
+        }
+    })
+}
+
+const calculateFlow = function(cy, errorRef = null, opts = {}){
     const months = Array(12).fill().map((e, i) => String(i + 1));
     for (const m of months){
         calculateFlowMonth(cy, errorRef, {period: {year: 2024, month: m}});
@@ -234,9 +338,7 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
                 edge.data('flow' + month, 0);
-                // applyEdgeColorToLeaflet(edge, leafMaps)
             });
-            // applyNodeColorToLeaflet(node, leafMaps);
             return;
         }
 
@@ -347,7 +449,7 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, dt_s){
     });
 }
 
-const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg, leafMaps, period) {
+const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg, period) {
     if (!selectedEle || !selectedEle.id) return;
 
     const node = cy.getElementById(selectedEle.id);
@@ -358,7 +460,7 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg
     node.data('m' + month, flowModified.value);
 
     // Torna a calcular
-    calculateFlow(cy, leafMaps, errorMsg, period);
+    calculateFlow(cy, errorMsg, period);
 
     // Si s’ha generat error, tornem enrere i no modifiquem l’input
     if (errorMsg.value) {
@@ -407,6 +509,7 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
 
 export default {
     setupEleClickListener,
+    calculateContribution,
     calculateFlow,
     modifyFlowChange,
     setupZoomLabelControl,

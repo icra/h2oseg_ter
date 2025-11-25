@@ -1,19 +1,19 @@
 La contribució de cada àrea de drenatge es calcula de la següent manera: $$
-C = A(P - P · ETP\sum{Kc_ip_i} - \Delta{Nr})
+C_i = A(P_i - ETP_i\sum{Kc_jp_j} - \Delta{Nr})
 $$
 
-On *A* és l'àrea de drenatge, *P* és la precipitació acumulada del mes, ETP és la evapotranspiració de referència, *Kc~i~* és la constant de la coberta del sòl *i* i *p~i~* és la proporció de superfície ocupada per la coberta *i*. $\Delta{N}$ és la diferència en el gruix de neu respecte al mes anterior i *r* és una ràtio de conversió entre mm de neu i mm de pluja.
+On *A* és l'àrea de drenatge, *P~i~* és la precipitació acumulada del mes *i*, ETP~i~ és la evapotranspiració de referència del mes *i*, *Kc~j~* és la constant de la coberta del sòl *j* i *p~j~* és la proporció de superfície ocupada per la coberta *j*. $\Delta{N}$ és la diferència en el gruix de neu respecte al mes anterior i *r* és una ràtio de conversió entre mm de neu i mm de pluja.
 
 Els factors a calibrar son *Kc* i *r*. La calibració es realitza de manera independent aigües amunt i aigües avall de l'embassament i per cada mes.
 
 *ET*P es calcula segons el mètode de [Thornwaite](https://hidrologia.usal.es/temas/Evapotransp.pdf):
 
 $$
-ETP = ETP_{sc}\frac{N}{12}\frac{d}{30}
+ETP_i = ETP_{sc}\frac{N_i}{12}\frac{d_i}{30}
 $$
 
 $$
-ETP_{sc} = 16(\frac{10t}{I})^a
+ETPsc_i = 16(\frac{10t_i}{I})^a
 $$
 
 $$

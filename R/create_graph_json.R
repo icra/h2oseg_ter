@@ -91,7 +91,7 @@ edges$flow_need <- sample(2:10, nrow(edges), replace = T)
 # Guardem la xarxa a assets -----------------------------------------------------
 
 nodes |>
-  rename(name = nom, node_id = codi_sad) |>
+  rename(name = nom, id = codi_sad) |>
   st_transform(4326) |>
   st_write("assets/nodes.geojson", delete_dsn = TRUE)
 

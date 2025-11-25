@@ -130,6 +130,15 @@ stopifnot(
     0
 )
 
+conques <- conques |>
+  mutate(across(starts_with("us_"), \(x) x / area_m2))
+
+conques |>
+  rowwise() |>
+  mutate(total = sum(c_across(starts_with("us_")))) |>
+  select(codi_sad, area_m2, total, starts_with("us_")) |>
+  filter(total < 0.99 | total > 1.01)
+
 # Helpers rasters meteo ------------------------------------------------
 
 zonal_month <- function(r, preffix) {
@@ -197,3 +206,26 @@ conques |>
   st_drop_geometry() |>
   select(-c(FID_custom, VALUE)) |>
   write_rds("data_raw/conques_dades_cabal.rds")
+
+stop()
+# Comprovacions ----------------------------------------------
+
+# I
+I <- conques |>
+  st_drop_geometry() |>
+  select(codi_sad, starts_with("tmit")) |>
+  mutate(across(where(is.numeric), \(x) (pmax(x, 0) / 5)^1.514)) |>
+  column_to_rownames("codi_sad") |>
+  rowSums()
+
+a <- 6.75e-7 * I^3 - 771e-7 * I^2 + 1792e-5 * I + 0.49239
+
+# 6.75e-7 * Math.pow(I, 3) - 771e-7 * Math.pow(I, 2) + 1792e-5 * I + 0.49239
+
+codi <- sample(names(I), 1)
+
+conques |>
+  filter(codi_sad == codi) |>
+  st_drop_geometry() |>
+  select(codi_sad, starts_with("tmit")) |>
+  mutate(across(starts_with("tmit"), \(x) 16 * ((10 * x) / I[codi])^a[codi]))
