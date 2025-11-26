@@ -53,6 +53,10 @@ const Kc_urba = [
 const r_neu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18];
 
 
+const r_neu2 = r_neu.map(e => e * 0.2)
+
+
+
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
 
 function monthSeconds(year, month /* 1..12 */) {
@@ -210,7 +214,7 @@ const calculateNodeContribution = function(node){
         return n - neu[lag]
     })
 
-    const mmNeu = deltaNeu.map((n, i) => n * r_neu[i])
+    const mmNeu = deltaNeu.map((n, i) => n * r_neu2[i])
 
     const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]))
         .map(c => Math.max(c, 0))
@@ -354,8 +358,6 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
 
             return;
         }
-
-        // outflow = Math.round(outflow * 10) / 10; // Redondejar a 1 decimal
 
         // 3. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');

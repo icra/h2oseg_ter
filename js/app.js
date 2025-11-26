@@ -6,7 +6,15 @@ const { createApp, onMounted, ref, shallowRef, watch } = Vue
 
 const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
 
-const fmt = (v, d=1) => Number.isFinite(+v) ? (+v).toFixed(d) : '—'
+const fmt = (v, d=1, convert=true) => {
+    let unit = 'm³/s'
+    if (Math.abs(+v) < 0.1) {
+        unit = 'l/s'
+        // convertim a litres per segon
+        v = +v * 1000
+    }
+    return Number.isFinite(+v) ? (+v).toFixed(d) + ' ' + unit : '—'
+}
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month) {
@@ -14,10 +22,10 @@ function nodeTooltipHTML(n, month) {
     <div>
       <div><strong>${n.data('id') ?? ''}</strong></div>
       <div>Tipus: ${n.data('type') ?? '—'}</div>
-      <div>Cabal entrant: ${fmt(n.data('inflow' + month))} m³/s</div>
-      <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)} m³/s</div>
-      <div>Cabal sortint: ${fmt(n.data('outflow' + month))} m³/s</div>
-      <div>Dèficit: ${n.data('deficit' + month)}</div>
+      <div>Cabal entrant: ${fmt(n.data('inflow' + month))}</div>
+      <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
+      <div>Cabal sortint: ${fmt(n.data('outflow' + month))}</div>
+      <div>Dèficit: ${fmt(n.data('deficit' + month), 2)}</div>
     </div>
   `
 }
@@ -27,9 +35,9 @@ function edgeTooltipHTML(e, month) {
     <div>
       <div><strong>${e.data('name') ?? ''}</strong></div>
       <div>${e.data('codiMassa')}</div>
-      <div>Cabal mitjà: ${fmt(e.data('flow' + month))} m³/s</div>
-      <div>Cabal ambiental: ${fmt(e.data('flowNeed'))} m³/s</div>
-      <div>Llargada tram: ${fmt(e.data('lengthRiver'), 0)} m</div>
+      <div>Cabal mitjà: ${fmt(e.data('flow' + month))}</div>
+      <div>Cabal ambiental: ${fmt(e.data('flowNeed'))}</div>
+      <div>Llargada tram: ${+e.data('lengthRiver').toFixed(0)} m</div>
     </div>
   `
 }
