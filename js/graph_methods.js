@@ -213,6 +213,7 @@ const calculateNodeContribution = function(node){
     const mmNeu = deltaNeu.map((n, i) => n * r_neu[i])
 
     const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]))
+        .map(c => Math.max(c, 0))
 
     const seconds = Array(12).fill().map((e, i) => i + 1)
         .map(m => monthSeconds(2024, m))
