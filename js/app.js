@@ -2,9 +2,11 @@
 
 import gm from './graph_methods.js'
 
-const { createApp, onMounted, ref, shallowRef, watch } = Vue
+const { createApp, onMounted, ref, shallowRef, watch, nextTick } = Vue
 
 const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 const fmt = (v) => {
     let unit = 'm³/s'
@@ -97,25 +99,13 @@ createApp({
         )
         const editMode = ref('annual')
         const annualFlow = ref(null)
-        const modifyFlowChange = async function(){
-            loading.value = true
-
-            await gm.modifyFlowChange(
-                cy.value,
-                selectedEle.value,
-                flowModified,
-                month.value,
-                errorMsg,
-                {period: {year:2024, month: month.value}})
-
-            loading.value = false
-        };
 
         const applyFlowChanges = async function(ele){
             loading.value = true
+            await sleep(1)
 
             for (const m of monthSelector.value){
-                flowModified.value = flowModifiedByMonth.value[m.value]
+                flowModified.value = Number(flowModifiedByMonth.value[m.value])
 
                 await gm.modifyFlowChange(
                     cy.value,
@@ -135,6 +125,7 @@ createApp({
             const target = Number(annualFlow.value)
             if(!Number.isFinite(target)) {
                 errorMsg.value = "Introdueix una mitjana anual vàlida"
+                loading.value = false
                 return
             }
 
@@ -155,6 +146,7 @@ createApp({
                 flowModifiedByMonth.value[m] = newVals[idx]
             })
 
+            await sleep(0)
             await applyFlowChanges(ele)
 
             loading.value = false
@@ -348,11 +340,25 @@ createApp({
                 const nodeNormalStyle = {radius: 4, weight: 2, opacity: 1, fillOpacity: 1}
                 const nodeHiStyle = {radius: 6, weight: 3, opacity: 1, fillOpacity: 1}
 
+                map.on('click', () => {
+                    selectedEle.value = null;
+                    currentSel.id = null;
+                    currentSel.kind = null;
+
+                    cy.value.elements().removeClass('selected');
+
+                    edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle));
+                    nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle));
+                })
+
                 const addNodeLayer = function (n) {
                     const ll = [n.data('lat'), n.data('lng')]
                     const layer = L.circleMarker(ll, {...nodeNormalStyle, pane: 'nodePane'})
                         .bindTooltip('', TT_OPTS)
-                    layer.on('click', () => selectById(n.id(), 'node'))
+                    layer.on('click', (e) => {
+                        L.DomEvent.stopPropagation(e)
+                        selectById(n.id(), 'node')
+                    })
                     layer.on('mouseover', () => {
                         const cn = cy.value.getElementById(n.id())
                         const html = nodeTooltipHTML(cn, month.value)
@@ -383,7 +389,10 @@ createApp({
                         edgeLayerById.set(eid, layer)
                         layer.bindTooltip('', TT_OPTS)
 
-                        layer.on('click', () => selectById(eid, 'edge'))
+                        layer.on('click', (e) => {
+                            L.DomEvent.stropPropagation(e)
+                            selectById(eid, 'edge')
+                        })
                         layer.on('mouseover', () => {
                             const ce = cy.value.getElementById(eid)
                             const html = edgeTooltipHTML(ce, month.value)
@@ -445,12 +454,14 @@ createApp({
                 const init = {}
                 monthSelector.value.forEach(m => {
                     const raw = val['m' + m.value]
-                    init[m.value] = Number.isFinite(+raw) ? Number(raw) : 0
+                    const num = Number.isFinite(+raw) ? Number(raw) : 0
+                    init[m.value] = Number(num.toFixed(2))
                 })
                 flowModifiedByMonth.value = init
 
                 const rawAnnual = val['m0']
-                annualFlow.value = Number.isFinite(+rawAnnual) ? Number(rawAnnual) : 0
+                const annualNum = Number.isFinite(+rawAnnual) ? Number(rawAnnual) : 0
+                annualFlow.value = Number(annualNum.toFixed(2))
             } else {
                 flowModifiedByMonth.value = {}
                 annualFlow.value = null

@@ -281,8 +281,8 @@ button:hover {
 
 .res-actions button {
     padding: 4px 10px;
-    border-radius: 999px;
-    border: none;
+    border-radius: .25rem;
+    border: 1px solid #d1d5db;
     cursor: pointer;
 }
 

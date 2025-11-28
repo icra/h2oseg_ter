@@ -120,7 +120,7 @@
                                                     type="number"
                                                     step="0.01"
                                                     :value="Number(annualFlow ?? 0).toFixed(2)"
-                                                    @input="annualFlow = Number($event.target.value)"
+                                                    @blur="annualFlow = Number($event.target.value)"
                                                     class="res-input"
                                             />
                                         </td>
@@ -161,8 +161,8 @@
                                             <input
                                                     type="number"
                                                     step="0.01"
-                                                    :value="Number(flowModifiedByMonth[m.value] ?? 0).toFixed(2)"
-                                                    @input="flowModifiedByMonth[m.value] = Number($event.target.value)"
+                                                    v-model.number="flowModifiedByMonth[m.value]"
+                                                    @blur="flowModifiedByMonth[m.value] = Number(flowModifiedByMonth[m.value]).toFixed(2)"
                                                     class="res-input"
                                             />
                                         </td>
