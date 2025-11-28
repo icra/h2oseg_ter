@@ -251,6 +251,10 @@ const calculateFlow = function(cy, errorRef = null, opts = {}){
         calculateFlowMonth(cy, errorRef, {period: {year: 2024, month: m}});
     }
     // Calculem mitjanes anuals per tots els elements
+    calculateAnnualValues(cy)
+}
+
+const calculateAnnualValues = function(cy){
     cy.nodes().forEach(node => {
         const data = node.data();
 
@@ -473,13 +477,13 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg
     node.data('m' + month, flowModified.value);
 
     // Torna a calcular
-    calculateFlow(cy, errorMsg, period);
+    calculateFlowMonth(cy, errorMsg, period);
 
     // Si s’ha generat error, tornem enrere i no modifiquem l’input
     if (errorMsg.value) {
         node.data('m' + month, previousValue); // revertim
         flowModified.value = null
-        calculateFlow(cy)
+        calculateFlowMonth(cy, errorMsg, period)
         return;
     }
 
@@ -487,6 +491,11 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg
     node.data('label', `${node.id()} (${flowModified.value})`);
     selectedEle['m' + month] = flowModified.value;
     selectedEle['flow' + month] = node.data('flow' + month);
+
+    calculateAnnualValues(cy);
+
+    selectedEle['m0'] = node.data('m0')
+    selectedEle['flow0'] = node.data('flow0');
 }
 
 const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {

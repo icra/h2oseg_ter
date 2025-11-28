@@ -3,10 +3,9 @@ use('janitor', 'clean_names')
 library(sf)
 library(lwgeom)
 library(jsonlite)
-set.seed(4)
 
-nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |>
-  select(-c(flow_change, node_id, ma, nearest_node))
+nodes <- read_sf("data_raw/nodes_2811.gpkg") |>
+  select(-c(flow_chang, node_id, ma, nearest_no))
 
 nodes <- nodes |>
   left_join(read_rds("data_raw/conques_dades_cabal.rds"), by = 'codi_sad') |>

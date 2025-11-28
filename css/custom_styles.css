@@ -154,7 +154,7 @@ html, body {
 }
 .res-top .ico{ width:14px; height:14px; color:#0d6efd; }
 .res-top .lab{ color:#6b7280; }
-.res-top .val{ font-weight:600; color:#0f172a; }
+.res-top .val{ font-weight:600; color:#0f172a;}
 
 /* barra de capacitat mini */
 .cap{ width:100%; height:6px; background:#eef2f7; border:1px solid #e7eaf0;
@@ -175,7 +175,7 @@ html, body {
 .res-item .ico.in{ color:#16a34a; }
 .res-item .ico.out{ color:#dc2626; }
 .res-item .lab{ color:#6b7280; }
-.res-item .val{ font-weight:600; color:#0f172a; }
+.res-item .val{ font-weight:600; color:#0f172a;}
 
 /* responsiu: si l’ample és molt estret, que caiguin en dues línies */
 @media (max-width: 380px){
@@ -231,4 +231,76 @@ button:hover {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+.res-header-text h4 {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.res-header-text .lab {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.res-table-wrapper {
+    margin-top: 0.5rem;
+}
+
+.res-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.res-table th,
+.res-table td {
+    padding: 4px 6px;
+    text-align: left;
+}
+
+.res-table thead tr {
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.res-table tbody tr:nth-child(odd) {
+    background: rgba(0,0,0,0.02);
+}
+
+.res-input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.res-actions {
+    margin-top: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.res-actions button {
+    padding: 4px 10px;
+    border-radius: .25rem;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+}
+
+.res-error {
+    color: red;
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.res-table td.val {
+    text-align: right;
+}
+
+.res-table th.val {
+    text-align: right;
+}
+
+/* Alinea els inputs numèrics a la dreta */
+.res-table input[type="number"] {
+    text-align: right;
 }
