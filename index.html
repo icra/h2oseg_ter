@@ -15,7 +15,7 @@
     <div v-if="loading" class="loading-overlay">
         <div class="loading-box">
             <div class="spinner"></div>
-            <p>Carregant dades...</p>
+            <p>Calculant cabals...</p>
         </div>
     </div>
     <div class="layout">
@@ -38,25 +38,26 @@
             <div v-if="selectedEle">
                 <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
                 <div v-if="selectedEle.id === 'DESEMBASSAT'">
-                    <p>El cabal mitjà desembassat és {{ selectedEle['m' + month] }}  m<sup>3</sup>/s</p>
-                    <p>El volum a l'embassament és de {{ getReservoir().storage_hm3[month].toFixed() }} Hm<sup>3</sup></p>
+                    <p>{{ selectedEle.name }}</p>
+                    <p>El cabal mitjà desembassat és {{ fmt(selectedEle['m' + month]) }}  m<sup>3</sup>/s</p>
+                    <p>El volum a l'embassament és de {{ reservoir.storage_hm3[month].toFixed() }} Hm<sup>3</sup></p>
                 </div>
                 <div v-else-if="selectedEle.eleType === 'punt'">
                     <p v-if="selectedEle.name">{{ selectedEle.name }}</p>
                     <p v-else-if="selectedEle.id">{{ selectedEle.id }}</p>
-                    <p>En aquest punt de la xarxa arriben {{ selectedEle['inflow' + month] }} m<sup>3</sup>/s
-                        i en surten {{ selectedEle['outflow' + month].toFixed(1) }} m<sup>3</sup>/s.</p>
+                    <p>En aquest punt de la xarxa arriben {{ fmt(selectedEle['inflow' + month]) }}
+                        i en surten {{ fmt(selectedEle['outflow' + month]) }}</p>
                     <p v-if="selectedEle.type === 'massa'">
-                        L'àrea de drenatge d'aquest punt aporta {{ selectedEle['m' + month].toFixed(2) }} m<sup>3</sup>/s de cabal.
+                        L'àrea de drenatge d'aquest punt aporta {{ fmt(selectedEle['m' + month]) }} de cabal.
                     </p>
                     <p v-else-if="selectedEle.type === 'EDAR'">
-                        L'efluent de l'EDAR aporta {{ selectedEle['m' + month].toFixed(2) }} m<sup>3</sup>/s a la xarxa fluvial.
+                        L'efluent de l'EDAR aporta {{ fmt(selectedEle['m' + month]) }} a la xarxa fluvial.
                     </p>
                     <p v-else-if="selectedEle['m' + month] > 0">
-                        En aquest punt entren {{ Number(selectedEle['m' + month]).toFixed(1) }} m<sup>3</sup>/s a la xarxa fluvial.
+                        En aquest punt entren {{ fmt(selectedEle['m' + month]) }} a la xarxa fluvial.
                     </p>
                     <p v-else-if="selectedEle['m' + month] < 0">
-                        En aquest punt s'extreuen {{ Math.abs(selectedEle['m' + month]).toFixed(2) }} m<sup>3</sup>/s de la xarxa fluvial.
+                        En aquest punt s'extreuen {{ fmt(Math.abs(selectedEle['m' + month])) }} m<sup>3</sup>/s de la xarxa fluvial.
                 </div>
                 <div v-if="selectedEle.eleType === 'punt' && month !== '0'">
                     <h4>Modifica el canvi de cabal generat per aquest punt pel mes de {{ monthSelector.find(e => e.value === month).label }}:</h4>
@@ -67,8 +68,8 @@
                     </p>
                 </div>
                 <div v-else-if="selectedEle.eleType === 'tram'">
-                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle['flow' + month].toFixed(1) }} m<sup>3</sup>/s i té una llargada de {{ selectedEle.lengthRiver.toFixed(1) }} km.</p>
-                    <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed.toFixed(1) }} m<sup>3</sup>/s</p>
+                    <p>En aquest tram de la xarxa fluvial hi circulen {{ fmt(selectedEle['flow' + month]) }} i té una llargada de {{ selectedEle.lengthRiver.toFixed(1) }} km.</p>
+                    <p>El cabal mínim per garantir un bon estat ecològic son {{ fmt(selectedEle['envFlow' + month]) }} </p>
                     <p>El tram correspon a la massa d'aigua {{ selectedEle.codiMassa}}</p>
                 </div>
             </div>

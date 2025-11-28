@@ -6,27 +6,38 @@ const { createApp, onMounted, ref, shallowRef, watch } = Vue
 
 const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
 
-const fmt = (v, d=1, convert=true) => {
+const fmt = (v) => {
     let unit = 'm³/s'
+    let d = 2
     if (Math.abs(+v) < 0.1) {
         unit = 'l/s'
         // convertim a litres per segon
         v = +v * 1000
+        d = 0
     }
     return Number.isFinite(+v) ? (+v).toFixed(d) + ' ' + unit : '—'
 }
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month) {
+    if (n.id() === 'DESEMBASSAT') {
+        return `
+            <div>
+              <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
+              <div>Tipus: ${n.data('type') ?? '—'}</div>
+              <div>Cabal desembassat: ${fmt(n.data('outflow' + month))}</div>
+            </div>
+        `
+    }
     return `
-    <div>
-      <div><strong>${n.data('id') ?? ''}</strong></div>
-      <div>Tipus: ${n.data('type') ?? '—'}</div>
-      <div>Cabal entrant: ${fmt(n.data('inflow' + month))}</div>
-      <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
-      <div>Cabal sortint: ${fmt(n.data('outflow' + month))}</div>
-      <div>Dèficit: ${fmt(n.data('deficit' + month), 2)}</div>
-    </div>
+        <div>
+          <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
+          <div>Tipus: ${n.data('type') ?? '—'}</div>
+          <div>Cabal entrant: ${fmt(n.data('inflow' + month))}</div>
+          <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
+          <div>Cabal sortint: ${fmt(n.data('outflow' + month))}</div>
+          <div>Dèficit: ${fmt(n.data('deficit' + month), 2)}</div>
+        </div>
   `
 }
 
@@ -36,7 +47,7 @@ function edgeTooltipHTML(e, month) {
       <div><strong>${e.data('name') ?? ''}</strong></div>
       <div>${e.data('codiMassa')}</div>
       <div>Cabal mitjà: ${fmt(e.data('flow' + month))}</div>
-      <div>Cabal ambiental: ${fmt(e.data('flowNeed'))}</div>
+      <div>Cabal ambiental: ${fmt(e.data('envFlow' + month))}</div>
       <div>Llargada tram: ${+e.data('lengthRiver').toFixed(0)} m</div>
     </div>
   `
@@ -126,18 +137,16 @@ createApp({
                     }
                 })
 
-                const cyEdges = edgesGeo.features.map(f => {
-                    return {
-                        data: {
-                            id: f.properties.id,
-                            source: f.properties.from,
-                            target: f.properties.to,
-                            codiMassa: f.properties.codiMassa,
-                            flowNeed: f.properties.flowNeed,
-                            lengthRiver: f.properties.lengthRiver,
-                            name: f.properties.nomComu
+                const cyEdges = edgesGeo.features.map(e => {
+                    const edgeData = Object.keys(e.properties).reduce((acc, key) => {
+                        acc[key] = e.properties[key];
+                        return acc;
+                    }, {});
+                    edgeData.source = e.properties.from;
+                    edgeData.target = e.properties.to;
 
-                        }
+                    return {
+                        data: edgeData
                     }
                 })
 
@@ -364,7 +373,7 @@ createApp({
                     }
                 }).addTo(map);
 
-                gm.calculateContribution(cy.value)
+                gm.calculateContribution(cy.value, gm.params)
                 gm.calculateFlow(cy.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
@@ -408,7 +417,8 @@ createApp({
             reset,
             month,
             monthSelector,
-            loading
+            loading,
+            fmt
         }
     }
 }).mount('#app')
