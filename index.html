@@ -5,6 +5,8 @@
     <title>H2OSEG Ter</title>
     <!-- Estils de Leaflet -->
     <link rel="stylesheet" href="css/leaflet.css" />
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>-->
     <!-- Estils de cytoscape-leaf -->
     <link rel="stylesheet" href="css/cytoscape-leaf.css" />
     <link rel="stylesheet" href="css/custom_styles.css" />
@@ -15,7 +17,7 @@
     <div v-if="loading" class="loading-overlay">
         <div class="loading-box">
             <div class="spinner"></div>
-            <p>Carregant dades...</p>
+            <p>Calculant cabals...</p>
         </div>
     </div>
     <div class="layout">
@@ -38,37 +40,142 @@
             <div v-if="selectedEle">
                 <h4>Dades del {{ selectedEle.eleType }} seleccionat:</h4>
                 <div v-if="selectedEle.id === 'DESEMBASSAT'">
-                    <p>El cabal mitjà desembassat és {{ selectedEle['m' + month] }}  m<sup>3</sup>/s</p>
-                    <p>El volum a l'embassament és de {{ getReservoir().storage_hm3[month].toFixed() }} Hm<sup>3</sup></p>
+                    <p>{{ selectedEle.name }}</p>
+                    <p>El cabal mitjà desembassat és {{ fmt(selectedEle['m' + month]) }}  m<sup>3</sup>/s</p>
+                    <p>El volum a l'embassament és de {{ reservoir.storage_hm3[month].toFixed() }} Hm<sup>3</sup></p>
                 </div>
                 <div v-else-if="selectedEle.eleType === 'punt'">
                     <p v-if="selectedEle.name">{{ selectedEle.name }}</p>
                     <p v-else-if="selectedEle.id">{{ selectedEle.id }}</p>
-                    <p>En aquest punt de la xarxa arriben {{ selectedEle['inflow' + month] }} m<sup>3</sup>/s
-                        i en surten {{ selectedEle['outflow' + month].toFixed(1) }} m<sup>3</sup>/s.</p>
+                    <p>En aquest punt de la xarxa arriben {{ fmt(selectedEle['inflow' + month]) }}
+                        i en surten {{ fmt(selectedEle['outflow' + month]) }}</p>
                     <p v-if="selectedEle.type === 'massa'">
-                        L'àrea de drenatge d'aquest punt aporta {{ selectedEle['m' + month].toFixed(2) }} m<sup>3</sup>/s de cabal.
+                        L'àrea de drenatge d'aquest punt aporta {{ fmt(selectedEle['m' + month]) }} de cabal.
                     </p>
                     <p v-else-if="selectedEle.type === 'EDAR'">
-                        L'efluent de l'EDAR aporta {{ selectedEle['m' + month].toFixed(2) }} m<sup>3</sup>/s a la xarxa fluvial.
+                        L'efluent de l'EDAR aporta {{ fmt(selectedEle['m' + month]) }} a la xarxa fluvial.
                     </p>
                     <p v-else-if="selectedEle['m' + month] > 0">
-                        En aquest punt entren {{ Number(selectedEle['m' + month]).toFixed(1) }} m<sup>3</sup>/s a la xarxa fluvial.
+                        En aquest punt entren {{ fmt(selectedEle['m' + month]) }} a la xarxa fluvial.
                     </p>
                     <p v-else-if="selectedEle['m' + month] < 0">
-                        En aquest punt s'extreuen {{ Math.abs(selectedEle['m' + month]).toFixed(2) }} m<sup>3</sup>/s de la xarxa fluvial.
+                        En aquest punt s'extreuen {{ fmt(Math.abs(selectedEle['m' + month])) }} m<sup>3</sup>/s de la xarxa fluvial.
                 </div>
-                <div v-if="selectedEle.eleType === 'punt' && month !== '0'">
-                    <h4>Modifica el canvi de cabal generat per aquest punt pel mes de {{ monthSelector.find(e => e.value === month).label }}:</h4>
-                    <input type="number" v-model.number="flowModified" @keyup.enter="modifyFlowChange(selectedEle, flowModified, month)" />
-                    <button @click="modifyFlowChange(selectedEle, flowModified, month)">Modifica</button>
-                    <p v-if="errorMsg" style="color: red; margin-top: 8px;">
-                        ⚠️ {{ errorMsg }}
-                    </p>
+                <div v-if="selectedEle.eleType === 'punt'">
+                    <div class="mode-toggle">
+                        <label>
+                            <input type="radio" value="annual" v-model="editMode" />
+                            Mitjana anual
+                        </label>
+                        <label>
+                            <input type="radio" value="monthly" v-model="editMode" />
+                            Mes a mes
+                        </label>
+                    </div>
+                    <div v-if="editMode === 'annual'" class="res-mini res-stack">
+                        <div class="res-top">
+                            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
+                            </svg>
+                            <div class="res-header-text">
+                                <h4>Canvi de cabal generat per aquest punt</h4>
+                            </div>
+                        </div>
+
+                        <div class="res-table-wrapper">
+                            <table class="res-table">
+                                <thead>
+                                <tr>
+                                    <th>Mes</th>
+                                    <th>Cabal actual</th>
+                                    <th>Nou cabal</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="lab">Mitjana anual</td>
+                                    <td class="val">
+                                        <!-- opcional: valor original del model -->
+                                        {{ selectedEle['m0'].toFixed(2) }}
+                                    </td>
+                                    <td>
+                                        <input
+                                                type="number"
+                                                step="0.01"
+                                                :value="Number(annualFlow).toFixed(2)"
+                                                @input="annualFlow = Number($event.target.value)"
+                                                class="res-input"
+                                        />
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="res-bottom res-actions">
+                            <button @click="applyAnnualChange(selectedEle)">
+                                Aplica
+                            </button>
+
+                            <p v-if="errorMsg" class="res-error">
+                                ⚠️ {{ errorMsg }}
+                            </p>
+                        </div>
+                    </div>
+                    <div v-if="editMode === 'monthly'" class="res-mini res-stack">
+                        <div class="res-top">
+                            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
+                            </svg>
+                            <div class="res-header-text">
+                                <h4>Canvi de cabal generat per aquest punt</h4>
+                            </div>
+                        </div>
+
+                        <div class="res-table-wrapper">
+                            <table class="res-table">
+                                <thead>
+                                <tr>
+                                    <th>Mes</th>
+                                    <th>Cabal actual</th>
+                                    <th>Nou cabal</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="m in monthSelector.slice(1, 13)" :key="m.value">
+                                    <td class="lab">{{ m.label }}</td>
+                                    <td class="val">
+                                        <!-- opcional: valor original del model -->
+                                        {{ selectedEle['m' + m.value].toFixed(2) || 0 }}
+                                    </td>
+                                    <td>
+                                        <input
+                                                type="number"
+                                                step="0.01"
+                                                :value="Number(flowModifiedByMonth[m.value]).toFixed(2)"
+                                                @input="flowModifiedByMonth[m.value] = Number($event.target.value)"
+                                                class="res-input"
+                                        />
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="res-bottom res-actions">
+                            <button @click="applyFlowChanges(selectedEle)">
+                                Aplica tots els canvis
+                            </button>
+
+                            <p v-if="errorMsg" class="res-error">
+                                ⚠️ {{ errorMsg }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div v-else-if="selectedEle.eleType === 'tram'">
-                    <p>En aquest tram de la xarxa fluvial hi circulen {{ selectedEle['flow' + month].toFixed(1) }} m<sup>3</sup>/s i té una llargada de {{ selectedEle.lengthRiver.toFixed(1) }} km.</p>
-                    <p>El cabal mínim per garantir un bon estat ecològic son {{ selectedEle.flowNeed.toFixed(1) }} m<sup>3</sup>/s</p>
+                    <p>En aquest tram de la xarxa fluvial hi circulen {{ fmt(selectedEle['flow' + month]) }} i té una llargada de {{ selectedEle.lengthRiver.toFixed(1) }} km.</p>
+                    <p>El cabal mínim per garantir un bon estat ecològic son {{ fmt(selectedEle['envFlow' + month]) }} </p>
                     <p>El tram correspon a la massa d'aigua {{ selectedEle.codiMassa}}</p>
                 </div>
             </div>

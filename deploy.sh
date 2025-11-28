@@ -2,7 +2,7 @@
 
 echo "Fent còpia de data_raw al sharepoint"... 
 
-cp -au data_raw "../../../ICRA/H2OSEG - ICRA - General/Dades SAD"
+rsync -auP data_raw "../../../ICRA/H2OSEG - ICRA - General/Dades SAD/"
 
 # 🔧 CONFIGURA aquí
 REMOTE_USER="root"

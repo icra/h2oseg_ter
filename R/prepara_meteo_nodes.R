@@ -5,7 +5,9 @@ library(terra)
 library(sf)
 
 
-conques <- read_sf("data_raw/subconques_v10.gpkg")
+conques <- read_sf("data_raw/subconques_v12_7.gpkg")
+
+stop("Cal preparar-ho per les dades noves")
 
 nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg")
 

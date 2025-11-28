@@ -30,13 +30,13 @@ const Kc_regadiu = [
 const Kc_seca = [
     0.35, 0.45, 0.75, 0.95, 1.00, 0.80,
     0.25, 0.25, 0.45, 0.65, 0.55, 0.35
-];
+].map(e => e * 0.7);
 
 // Forestal
 const Kc_forestal = [
     0.60, 0.70, 0.90, 1.05, 1.15, 1.20,
     1.15, 1.10, 1.00, 0.90, 0.80, 0.60
-];
+].map(e => e * 0.6);
 
 // Prats / pastures
 const Kc_prats = [
@@ -50,12 +50,20 @@ const Kc_urba = [
     0.40, 0.35, 0.30, 0.25, 0.20, 0.15
 ];
 
-const r_neu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18];
+const r_neu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18]
+    .map(e => e * 0.2)
 
-
-const r_neu2 = r_neu.map(e => e * 0.2)
-
-
+const params = {
+    kc: {
+        aigua: Kc_aigua,
+        urba: Kc_urba,
+        forestal: Kc_forestal,
+        seca: Kc_seca,
+        regadiu: Kc_regadiu,
+        prats: Kc_prats
+    },
+    rNeu: r_neu
+}
 
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
 
@@ -159,7 +167,7 @@ const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
 };
 
 const setEdgeColor = function(edge, month){
-    return edge.data('flow' + month) < edge.data('flowNeed') ? rampPalette[12] : rampPalette[0]
+    return edge.data('flow' + month) < edge.data('envFlow' + month) ? rampPalette[12] : rampPalette[0]
 }
 
 const setNodeColor = function(node, month){
@@ -178,7 +186,9 @@ const ancestorsOf = function(cy, nodeId){
     return anc;
 }
 
-const calculateNodeContribution = function(node){
+
+
+const calculateNodeContribution = function(node, params){
     const tmit = Object.keys(node.data())
         .filter(k => k.startsWith('tmit'))
 
@@ -191,12 +201,12 @@ const calculateNodeContribution = function(node){
     const ETPsc = tmit.map(tmit => 16 * Math.pow((10 * node.data(tmit))/I, a))
     const ETP = ETPsc.map((e, i) => e * (lightHours[i] / 12) * (monthDays[i] / 30))
 
-    const aigua = Kc_aigua.map(kc => kc * node.data('us_aigua'))
-    const regadiu = Kc_regadiu.map(kc => kc * node.data('us_conreu_regadiu'))
-    const seca = Kc_seca.map(kc => kc * node.data('us_conreu_seca'))
-    const forestal = Kc_forestal.map(kc => kc * node.data('us_forestal'))
-    const prats = Kc_prats.map(kc => kc * node.data('us_prats'))
-    const urba = Kc_urba.map(kc => kc * node.data('us_urba'))
+    const aigua = params.kc.aigua.map(kc => kc * node.data('us_aigua'))
+    const regadiu = params.kc.regadiu.map(kc => kc * node.data('us_conreu_regadiu'))
+    const seca = params.kc.seca.map(kc => kc * node.data('us_conreu_seca'))
+    const forestal = params.kc.forestal.map(kc => kc * node.data('us_forestal'))
+    const prats = params.kc.prats.map(kc => kc * node.data('us_prats'))
+    const urba = params.kc.urba.map(kc => kc * node.data('us_urba'))
 
     const kc = aigua.map((_, i) => aigua[i] + regadiu[i] + seca[i] + forestal[i] + prats[i] + urba[i])
     const ET = ETP.map((e, i) => e * kc[i])
@@ -214,7 +224,7 @@ const calculateNodeContribution = function(node){
         return n - neu[lag]
     })
 
-    const mmNeu = deltaNeu.map((n, i) => n * r_neu2[i])
+    const mmNeu = deltaNeu.map((n, i) => n * params.rNeu[i])
 
     const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]))
         .map(c => Math.max(c, 0))
@@ -227,10 +237,10 @@ const calculateNodeContribution = function(node){
     })
 }
 
-const calculateContribution = function(cy){
+const calculateContribution = function(cy, params = params){
     cy.nodes().forEach(node => {
         if (node.data('type') === 'massa' || node.data('type') === 'comporta') {
-            calculateNodeContribution(node)
+            calculateNodeContribution(node, params)
         }
     })
 }
@@ -393,10 +403,10 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     // recalculem cabals sota presa
     calculateFlowDownstreamDam(cy, demanda, dam, month, dt_s)
 
-    // Calcular demanda ambiental, és el màxim de flowNeed - flow
+    // Calcular demanda ambiental, és el màxim de envFlow<m> - flow
     let maxDemandaAmbiental = 0
     dam.successors('edge').forEach(edge => {
-        const demandaAmbiental = edge.data('flowNeed') - edge.data('flow' + month)
+        const demandaAmbiental = edge.data('envFlow' + month) - edge.data('flow' + month)
         maxDemandaAmbiental = Math.max(maxDemandaAmbiental, demandaAmbiental)
         // if (month === '1') console.log('demanda ambiental', edge.id(), demandaAmbiental, maxDemandaAmbiental)
     })
@@ -517,5 +527,6 @@ export default {
     modifyFlowChange,
     setupZoomLabelControl,
     setGraphColors,
-    RESERVOIR
+    RESERVOIR,
+    params
 }

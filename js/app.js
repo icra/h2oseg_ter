@@ -6,27 +6,38 @@ const { createApp, onMounted, ref, shallowRef, watch } = Vue
 
 const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
 
-const fmt = (v, d=1, convert=true) => {
+const fmt = (v) => {
     let unit = 'm³/s'
+    let d = 2
     if (Math.abs(+v) < 0.1) {
         unit = 'l/s'
         // convertim a litres per segon
         v = +v * 1000
+        d = 0
     }
     return Number.isFinite(+v) ? (+v).toFixed(d) + ' ' + unit : '—'
 }
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month) {
+    if (n.id() === 'DESEMBASSAT') {
+        return `
+            <div>
+              <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
+              <div>Tipus: ${n.data('type') ?? '—'}</div>
+              <div>Cabal desembassat: ${fmt(n.data('outflow' + month))}</div>
+            </div>
+        `
+    }
     return `
-    <div>
-      <div><strong>${n.data('id') ?? ''}</strong></div>
-      <div>Tipus: ${n.data('type') ?? '—'}</div>
-      <div>Cabal entrant: ${fmt(n.data('inflow' + month))}</div>
-      <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
-      <div>Cabal sortint: ${fmt(n.data('outflow' + month))}</div>
-      <div>Dèficit: ${fmt(n.data('deficit' + month), 2)}</div>
-    </div>
+        <div>
+          <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
+          <div>Tipus: ${n.data('type') ?? '—'}</div>
+          <div>Cabal entrant: ${fmt(n.data('inflow' + month))}</div>
+          <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
+          <div>Cabal sortint: ${fmt(n.data('outflow' + month))}</div>
+          <div>Dèficit: ${fmt(n.data('deficit' + month), 2)}</div>
+        </div>
   `
 }
 
@@ -36,7 +47,7 @@ function edgeTooltipHTML(e, month) {
       <div><strong>${e.data('name') ?? ''}</strong></div>
       <div>${e.data('codiMassa')}</div>
       <div>Cabal mitjà: ${fmt(e.data('flow' + month))}</div>
-      <div>Cabal ambiental: ${fmt(e.data('flowNeed'))}</div>
+      <div>Cabal ambiental: ${fmt(e.data('envFlow' + month))}</div>
       <div>Llargada tram: ${+e.data('lengthRiver').toFixed(0)} m</div>
     </div>
   `
@@ -64,6 +75,7 @@ createApp({
         const loading = ref(true)
         const selectedEle = ref(null)
         const flowModified = ref(null)
+        const flowModifiedByMonth = ref(null)
         const errorMsg = ref(null)
         const month = ref('0')
         const monthSelector = ref(
@@ -83,6 +95,8 @@ createApp({
                 {value: '12', label: "Desembre"},
             ]
         )
+        const editMode = ref('annual')
+        const annualFlow = ref(null)
         const modifyFlowChange = async function(){
             loading.value = true
 
@@ -96,6 +110,57 @@ createApp({
 
             loading.value = false
         };
+
+        const applyFlowChanges = async function(ele){
+            loading.value = true
+
+            for (const m of monthSelector.value){
+                flowModified.value = flowModifiedByMonth.value[m.value]
+
+                await gm.modifyFlowChange(
+                    cy.value,
+                    selectedEle.value,
+                    flowModified,
+                    m.value,
+                    errorMsg,
+                    {period: {year:2024, month: m.value}}
+                )
+            }
+
+            loading.value = false
+        }
+        const applyAnnualChange = async function (ele) {
+            loading.value = true
+
+            const target = Number(annualFlow.value)
+            if(!Number.isFinite(target)) {
+                errorMsg.value = "Introdueix una mitjana anual vàlida"
+                return
+            }
+
+            errorMsg.value = null
+
+            const months = Array(12).fill().map((e, i)=> String(i+1))
+
+            let newVals
+
+            if (Math.abs(+ele.m0) < 1e-6) {
+                newVals = months.map(() => target)
+            } else {
+                const k = target / ele.m0
+                newVals = months.map(m => ele['m' + m] * k)
+            }
+
+            months.forEach((m ,idx) => {
+                flowModifiedByMonth.value[m] = newVals[idx]
+            })
+
+            await applyFlowChanges(ele)
+
+            loading.value = false
+        }
+
+
         const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
 
         const edgeLayerById = new Map()
@@ -126,18 +191,16 @@ createApp({
                     }
                 })
 
-                const cyEdges = edgesGeo.features.map(f => {
-                    return {
-                        data: {
-                            id: f.properties.id,
-                            source: f.properties.from,
-                            target: f.properties.to,
-                            codiMassa: f.properties.codiMassa,
-                            flowNeed: f.properties.flowNeed,
-                            lengthRiver: f.properties.lengthRiver,
-                            name: f.properties.nomComu
+                const cyEdges = edgesGeo.features.map(e => {
+                    const edgeData = Object.keys(e.properties).reduce((acc, key) => {
+                        acc[key] = e.properties[key];
+                        return acc;
+                    }, {});
+                    edgeData.source = e.properties.from;
+                    edgeData.target = e.properties.to;
 
-                        }
+                    return {
+                        data: edgeData
                     }
                 })
 
@@ -364,7 +427,7 @@ createApp({
                     }
                 }).addTo(map);
 
-                gm.calculateContribution(cy.value)
+                gm.calculateContribution(cy.value, gm.params)
                 gm.calculateFlow(cy.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
@@ -379,21 +442,22 @@ createApp({
         // Quan es selecciona un node, posa-hi el valor actual com a valor per defecte
         watch(selectedEle, (val) => {
             if (val && val.eleType === 'punt') {
-                // assegura número
-                flowModified.value = Number(val['m' + month.value]).toFixed(2);
+                const init = {}
+                monthSelector.value.forEach(m => {
+                    const raw = val['m' + m.value]
+                    init[m.value] = Number.isFinite(+raw) ? Number(raw) : 0
+                })
+                flowModifiedByMonth.value = init
+
+                const rawAnnual = val['m0']
+                annualFlow.value = Number.isFinite(+rawAnnual) ? Number(rawAnnual) : 0
             } else {
-                flowModified.value = null; // o 0, si prefereixes
+                flowModifiedByMonth.value = {}
+                annualFlow.value = null
             }
         }, { immediate: true });
 
         watch(month, (m) => {
-            const val = selectedEle.value
-            if (val && val.eleType === 'punt') {
-                flowModified.value = Number(val['m' + m]).toFixed(2)
-            } else {
-                flowModified.value = null
-            }
-
             gm.setGraphColors(m, cy.value, { nodeLayerById, edgeLayerById})
         })
 
@@ -402,13 +466,18 @@ createApp({
             leaf,
             selectedEle,
             flowModified,
-            modifyFlowChange,
+            flowModifiedByMonth,
+            applyFlowChanges,
+            applyAnnualChange,
+            editMode,
+            annualFlow,
             reservoir: gm.RESERVOIR,
             errorMsg,
             reset,
             month,
             monthSelector,
-            loading
+            loading,
+            fmt
         }
     }
 }).mount('#app')
