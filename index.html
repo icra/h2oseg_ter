@@ -41,20 +41,30 @@
             <div v-if="selectedEle" class="res-mini res-stack">
                 <!-- Capçalera de la card -->
                 <div class="res-top">
-                    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg v-if="selectedEle.eleType === 'punt'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <svg v-else-if="selectedEle.eleType === 'tram'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="4" y1="12" x2="20" y2="12"
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <svg v-else class="ico" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
                     </svg>
+
+
                     <div class="res-header-text">
                         <h4>
+                            <span v-if="selectedEle.nomComu">{{ selectedEle.nomComu }}</span>
+                            <span v-else-if="selectedEle.name">{{ selectedEle.name }}</span>
+                            <span v-else-if="selectedEle.id">{{ selectedEle.id }}</span>
+                            <span v-else>{{ selectedEle.eleType }}</span>
+                        </h4>
+                        <span class="lab">
                             <span v-if="selectedEle.eleType === 'punt'">Punt de la xarxa</span>
                             <span v-else-if="selectedEle.eleType === 'tram'">Tram de la xarxa</span>
                             <span v-else>Element seleccionat</span>
-                        </h4>
-                        <span class="lab">
-                <span v-if="selectedEle.name">{{ selectedEle.name }}</span>
-                <span v-else-if="selectedEle.id">{{ selectedEle.id }}</span>
-                <span v-else>{{ selectedEle.eleType }}</span>
-            </span>
+                        </span>
                     </div>
                 </div>
 

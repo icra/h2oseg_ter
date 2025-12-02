@@ -46,7 +46,7 @@ function nodeTooltipHTML(n, month) {
 function edgeTooltipHTML(e, month) {
     return `
     <div>
-      <div><strong>${e.data('name') ?? ''}</strong></div>
+      <div><strong>${e.data('nomComu') ?? ''}</strong></div>
       <div>${e.data('codiMassa')}</div>
       <div>Cabal mitjà: ${fmt(e.data('flow' + month))}</div>
       <div>Cabal ambiental: ${fmt(e.data('envFlow' + month))}</div>
@@ -62,6 +62,15 @@ function embTooltipHTML(month) {
         <div>Volum al sistema: ${fmt(gm.RESERVOIR.storage_hm3[month])} Hm<sup>3</sup></div>
         <div>Cabal mitjà d'entrada: ${fmt(gm.RESERVOIR.inflowSum_m3s[month])} m<sup>3</sup>s</div>
         <div>Cabal mitjà desembassat: ${fmt(gm.RESERVOIR.released_m3s[month])} m<sup>3</sup>s</div>
+    </div>
+    `
+}
+
+function canalsTooltipHTML(n, c, month) {
+    return `
+    <div>
+        <div><strong>${c.nom}</strong></div>
+        <div>Cabal mitjà: ${fmt(Math.abs(n.data('m' + month)))}</div>
     </div>
     `
 }
@@ -161,14 +170,17 @@ createApp({
         onMounted(async () => {
             loading.value = true
             try {
-                const [nodesResp, edgesResp, embResp] = await Promise.all([
+                const [nodesResp, edgesResp, embResp, canalsResp] = await Promise.all([
                     fetch('assets/nodes.geojson'),
                     fetch('assets/edges.geojson'),
-                    fetch('assets/sau_susqueda.geojson')
+                    fetch('assets/sau_susqueda.geojson'),
+                    fetch('assets/canals.geojson'),
                 ])
                 const nodesGeo = await nodesResp.json()
                 const edgesGeo = await edgesResp.json()
                 const embGeo = await embResp.json()
+                const canalsGeo = await canalsResp.json()
+
 
                 const cyNodes = nodesGeo.features.map(n => {
                     const nodeData = Object.keys(n.properties).reduce((acc, key) => {
@@ -330,12 +342,16 @@ createApp({
                 embPane.style.zIndex = 800
                 embPane.style.pointerEvents = 'auto'
 
+                const canalsPane = map.createPane('canalsPane')
+                embPane.style.zIndex = 800
+                embPane.style.pointerEvents = 'auto'
+
                 // pane per a tooltips per SOBRE dels nodes
                 const tipPane = map.createPane('tipPane')
                 tipPane.style.zIndex = 1000
                 tipPane.style.pointerEvents = 'none' // no bloquejar clics
 
-                const edgeNormalStyle = {weight: 3, opacity: 0.9}
+                const edgeNormalStyle = {weight: 3, opacity: 1}
                 const edgeHiStyle = {weight: 5, opacity: 1.0}
                 const nodeNormalStyle = {radius: 4, weight: 2, opacity: 1, fillOpacity: 1}
                 const nodeHiStyle = {radius: 6, weight: 3, opacity: 1, fillOpacity: 1}
@@ -390,7 +406,7 @@ createApp({
                         layer.bindTooltip('', TT_OPTS)
 
                         layer.on('click', (e) => {
-                            L.DomEvent.stropPropagation(e)
+                            L.DomEvent.stopPropagation(e)
                             selectById(eid, 'edge')
                         })
                         layer.on('mouseover', () => {
@@ -429,6 +445,29 @@ createApp({
                                 const l = e.target;
                                 const tt = l.getTooltip();
                                 if (tt) tt.setContent(embTooltipHTML(month.value)); // passa la feature si ho necessites
+                                l.openTooltip();
+                            },
+                            mouseout: (e) => e.target.closeTooltip()
+                        });
+                    }
+                }).addTo(map);
+
+                const canalsLayer = L.geoJSON(canalsGeo, {
+                    pane: 'canalsPane',
+                    style: () => ({color: '#ffa663', weight: 3, opacity: 1}),
+                    onEachFeature: (feature, layer) => {
+                        // assegura interacció i tooltip
+                        layer.options.interactive = true;
+                        layer.bindTooltip('', TT_OPTS);
+
+                        layer.on({
+                            mouseover: (e) => {
+                                const l = e.target;
+                                const c = e.target.feature.properties;
+                                const n = cy.value.getElementById(c.codi_sad)
+                                const tt = l.getTooltip();
+                                console.log("canal", n.data('m' + month.value))
+                                if (tt) tt.setContent(canalsTooltipHTML(n, c, month.value)); // passa la feature si ho necessites
                                 l.openTooltip();
                             },
                             mouseout: (e) => e.target.closeTooltip()

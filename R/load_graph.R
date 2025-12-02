@@ -4,8 +4,9 @@ library(sf)
 library(lwgeom)
 library(jsonlite)
 
-nodes <- read_sf("data_raw/nodes_2811.gpkg") |>
-  select(-c(flow_chang, node_id, ma, nearest_no))
+nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |>
+  select(-c(flow_change, node_id, ma, nearest_node)) |>
+  filter(!is.na(codi_sad))
 
 nodes <- nodes |>
   left_join(read_rds("data_raw/conques_dades_cabal.rds"), by = 'codi_sad') |>
