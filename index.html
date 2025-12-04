@@ -273,8 +273,8 @@
                 </div>
             </div>
 
-
-            <div v-if="cy" class="res-mini res-stack">
+            <!-- Embassament -->
+            <div v-if="cy" class="res-mini res-stack" :key="tick">
                 <div>Informació del sistema Sau-Susqueda ({{ monthSelector.find(e=> e.value === month).label }})</div>
                 <!-- Línia superior: Volum -->
                 <div class="res-top">
