@@ -113,6 +113,7 @@ createApp({
             rainReduction: false
         })
         const rainReductionPerc = ref(0)
+        const tick = ref(0)
 
         const applyFlowChanges = async function(ele){
             loading.value = true
@@ -181,6 +182,7 @@ createApp({
             await gm.calculateContribution(cy.value, gm.params)
             await gm.calculateFlow(cy.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
             await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
+            tick.value++
 
             loading.value = false
         }
@@ -584,7 +586,8 @@ createApp({
             openModal,
             activeScenarios,
             applyScenariosChanges,
-            rainReductionPerc
+            rainReductionPerc,
+            tick
         }
     }
 }).mount('#app')

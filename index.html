@@ -14,6 +14,41 @@
 </head>
 <body>
 <div id="app">
+    <!-- MODAL D'ESCENARIS -->
+    <div v-if="openModal" class="modal-backdrop">
+        <div class="modal-dialog" @click.stop>
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h3 class="modal-title">Configuració d'escenaris</h3>
+                <button class="modal-close" @click="openModal=false" aria-label="Tanca">
+                    ×
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <!-- Reducció pluja-->
+                <input id="rainReduction" type="checkbox" v-model="activeScenarios.rainReduction"/>
+                <label>Reducció de la pluja anual</label>
+                <div v-if="activeScenarios.rainReduction">
+                    <input v-if="activeScenarios.rainReduction" type="range" min="-100" max="0" v-model="rainReductionPerc" />
+                    <span>{{rainReductionPerc}}%</span>
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+                <button class="btn-secondary" @click="openModal=false">
+                    Cancel·la
+                </button>
+                <button class="btn-primary" @click="applyScenariosChanges">
+                    Aplica canvis
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div v-if="loading" class="loading-overlay">
         <div class="loading-box">
             <div class="spinner"></div>
@@ -214,6 +249,30 @@
             <div v-else class="res-mini res-stack">
                 <p>Fes clic sobre un element per veure’n les dades.</p>
             </div>
+            <!--            Escenaris-->
+            <div class="res-mini res-stack">
+                <div class="res-top">
+                    <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
+                        <rect x="5"  y="14" width="3" height="6"  rx="1" fill="currentColor"/>
+                        <rect x="10" y="10" width="3" height="10" rx="1" fill="currentColor"/>
+                        <rect x="15" y="6"  width="3" height="14" rx="1" fill="currentColor"/>
+                    </svg>
+                    <div class="res-header-text">
+                        <h4>Escenaris de simulació</h4>
+                        <ul>
+                            <li v-if="activeScenarios.rainReduction">Reducció de pluja: {{rainReductionPerc}}%</li>
+                        </ul>
+
+
+                    </div>
+                </div>
+                <div class="res-bottom res-actions">
+                    <button @click="openModal=true">
+                        Configura
+                    </button>
+                </div>
+            </div>
+
 
             <div v-if="cy" class="res-mini res-stack">
                 <div>Informació del sistema Sau-Susqueda ({{ monthSelector.find(e=> e.value === month).label }})</div>
