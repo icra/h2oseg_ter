@@ -108,6 +108,11 @@ createApp({
         )
         const editMode = ref('annual')
         const annualFlow = ref(null)
+        const openModal = ref(false)
+        const activeScenarios = ref({
+            rainReduction: false
+        })
+        const rainReductionPerc = ref(0)
 
         const applyFlowChanges = async function(ele){
             loading.value = true
@@ -160,7 +165,55 @@ createApp({
 
             loading.value = false
         }
+        const applyScenariosChanges = async function() {
+            openModal.value = false
+            loading.value = true
+            await sleep(1)
+            console.log(activeScenarios.value.rainReduction, rainReductionPerc.value)
+            if (activeScenarios.value.rainReduction === false && rainReductionPerc.value !== '0'){
+                console.log("dins inactiu")
+                rainReductionPerc.value = '0'
+                await rainReduction()
+            } else if (activeScenarios.value.rainReduction) {
+                await rainReduction()
+            }
 
+            await gm.calculateContribution(cy.value, gm.params)
+            await gm.calculateFlow(cy.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+            await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
+
+            loading.value = false
+        }
+        const rainReduction = async function(){
+            if (!cy) {
+                console.error("cy not loaded")
+                return
+            }
+            console.log("rain reduction value", rainReductionPerc.value, typeof rainReductionPerc.value)
+            const reduction = (100 + Number(rainReductionPerc.value)) / 100
+            const ppt = Array(12).fill().map((e, i)=> String('ppt' + (i+1)))
+            const refppt = Array(12).fill().map((e, i)=> String('refppt' + (i+1)))
+
+            console.log('node_1', cy.value.getElementById('NODE_1').data('refppt1'))
+            if (cy.value.getElementById('NODE_1').data('refppt1') === undefined) {
+                console.log("refppt created")
+                cy.value.nodes().forEach(n => {
+                    for (const i in refppt) {
+                        n.data(refppt[i], n.data(ppt[i]))
+                    }
+                })
+            }
+
+            cy.value.nodes().forEach(n => {
+                if (n.data('ppt1') === null) return
+                for (const i in ppt){
+                    const newRain = n.data(refppt[i]) * reduction
+                    n.data(ppt[i], newRain)
+                }
+                if (n.id() === 'NODE_64') console.log("node_64", n.data())
+            })
+            loading.value = false
+        }
 
         const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
 
@@ -454,7 +507,7 @@ createApp({
 
                 const canalsLayer = L.geoJSON(canalsGeo, {
                     pane: 'canalsPane',
-                    style: () => ({color: '#ffa663', weight: 3, opacity: 1}),
+                    style: () => ({color: '#713c00', weight: 3, opacity: 1}),
                     onEachFeature: (feature, layer) => {
                         // assegura interacció i tooltip
                         layer.options.interactive = true;
@@ -527,7 +580,11 @@ createApp({
             month,
             monthSelector,
             loading,
-            fmt
+            fmt,
+            openModal,
+            activeScenarios,
+            applyScenariosChanges,
+            rainReductionPerc
         }
     }
 }).mount('#app')
