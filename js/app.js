@@ -98,7 +98,7 @@ createApp({
         const month = ref('0')
         const monthSelector = ref(
             [
-                {value: '0', label: "Mitjana anual"},
+                {value: '0', label: "Total anual"},
                 {value: '1', label: "Gener"},
                 {value: '2', label: "Febrer"},
                 {value: '3', label: "Març"},
@@ -144,13 +144,14 @@ createApp({
         const applyAnnualChange = async function (ele) {
             loading.value = true
 
-            const target = Number(annualVolume.value) * 1000000 / (24 * 365 * 3600)
-            if(!Number.isFinite(target)) {
-                errorMsg.value = "Introdueix una mitjana anual vàlida"
+            if(annualVolume.value === '' || annualVolume.value === NaN || annualVolume.value === null) {
+                errorMsg.value = "Introdueix un volum vàlid"
+                annualVolume.value = Number(Hm3ToM3(ele.m0))
                 loading.value = false
                 return
             }
 
+            const target = annualVolume.value * 1000000 / (24 * 365 * 3600)
             errorMsg.value = null
 
             const months = Array(12).fill().map((e, i)=> String(i+1))

@@ -145,7 +145,7 @@
                             </label>
                         </div>
 
-                        <!-- MODE: MITJANA ANUAL -->
+                        <!-- MODE: VOLUM ANUAL -->
                         <div v-if="editMode === 'annual'">
                             <div class="res-table-wrapper">
                                 <table class="res-table">
@@ -164,7 +164,7 @@
                                             <input
                                                     type="number"
                                                     step="0.1"
-                                                    v-model.number="annualVolume"
+                                                    v-model="annualVolume"
                                                     class="res-input"
                                             />
                                         </td>
