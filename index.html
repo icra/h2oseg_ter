@@ -129,7 +129,7 @@
                         </p>
                         <p v-else-if="selectedEle['m' + month] < 0">
                             En aquest punt s'extreuen
-                            {{ fmt(Math.abs(selectedEle['m' + month])) }} m<sup>3</sup>/s de la xarxa fluvial.
+                            {{ fmt(Math.abs(selectedEle['m' + month])) }} de la xarxa fluvial.
                         </p>
 
                         <!-- Selector de mode -->
@@ -137,11 +137,11 @@
                             <p>Modifica el cabal</p>
                             <label>
                                 <input type="radio" value="annual" v-model="editMode" />
-                                Mitjana anual
+                                Volum anual (Hm<sup>3</sup>)
                             </label>
                             <label>
                                 <input type="radio" value="monthly" v-model="editMode" />
-                                Mes a mes
+                                Cabal mes a mes (m<sup>3</sup>/s)
                             </label>
                         </div>
 
@@ -151,21 +151,20 @@
                                 <table class="res-table">
                                     <thead>
                                     <tr>
-                                        <th class="val">Cabal actual</th>
-                                        <th class="val">Nou cabal</th>
+                                        <th class="val">Volum actual</th>
+                                        <th class="val">Nou volum</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
                                         <td class="val">
-                                            {{ Number(selectedEle.m0 || 0).toFixed(2) }}
+                                            {{ Number(Hm3ToM3(selectedEle.m0) || 0) }}
                                         </td>
                                         <td>
                                             <input
                                                     type="number"
-                                                    step="0.01"
-                                                    :value="Number(annualFlow ?? 0).toFixed(2)"
-                                                    @blur="annualFlow = Number($event.target.value)"
+                                                    step="0.1"
+                                                    v-model.number="annualVolume"
                                                     class="res-input"
                                             />
                                         </td>

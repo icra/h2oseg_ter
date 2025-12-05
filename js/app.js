@@ -20,6 +20,11 @@ const fmt = (v) => {
     return Number.isFinite(+v) ? (+v).toFixed(d) + ' ' + unit : '—'
 }
 
+const Hm3ToM3 = function(m3s){
+    const s = 365 * 24 * 3600
+    return (+m3s * s / 1000000).toFixed(1)
+}
+
 // HTML dels tooltips
 function nodeTooltipHTML(n, month) {
     if (n.id() === 'DESEMBASSAT') {
@@ -28,6 +33,7 @@ function nodeTooltipHTML(n, month) {
               <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
               <div>Tipus: ${n.data('type') ?? '—'}</div>
               <div>Cabal desembassat: ${fmt(n.data('outflow' + month))}</div>
+              ${month === '0' ? '<div>Total anual: ' + Hm3ToM3(n.data('outflow' + month)) + ' Hm<sup>3</sup></div>' : ''}
             </div>
         `
     }
@@ -38,7 +44,8 @@ function nodeTooltipHTML(n, month) {
           <div>Cabal entrant: ${fmt(n.data('inflow' + month))}</div>
           <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
           <div>Cabal sortint: ${fmt(n.data('outflow' + month))}</div>
-          <div>Dèficit: ${fmt(n.data('deficit' + month), 2)}</div>
+          ${month === '0' ? '<div>' + (n.data('m' + month) > 0 ? "Aportació" : "Extracció total") + ': ' + Hm3ToM3(n.data('m' + month)) + ' Hm<sup>3</sup></div>' : ''}
+          ${n.data('deficit' + month) < 0 ? '<div>Dèficit: '+ fmt(n.data('deficit' + month), 2) + '</div>' : ''}
         </div>
   `
 }
@@ -107,7 +114,7 @@ createApp({
             ]
         )
         const editMode = ref('annual')
-        const annualFlow = ref(null)
+        const annualVolume = ref(null)
         const openModal = ref(false)
         const activeScenarios = ref({
             rainReduction: false
@@ -137,7 +144,7 @@ createApp({
         const applyAnnualChange = async function (ele) {
             loading.value = true
 
-            const target = Number(annualFlow.value)
+            const target = Number(annualVolume.value) * 1000000 / (24 * 365 * 3600)
             if(!Number.isFinite(target)) {
                 errorMsg.value = "Introdueix una mitjana anual vàlida"
                 loading.value = false
@@ -553,12 +560,13 @@ createApp({
                 })
                 flowModifiedByMonth.value = init
 
-                const rawAnnual = val['m0']
+                const rawAnnual = Hm3ToM3(val['m0'])
+                console.log("rawAnnual", rawAnnual)
                 const annualNum = Number.isFinite(+rawAnnual) ? Number(rawAnnual) : 0
-                annualFlow.value = Number(annualNum.toFixed(2))
+                annualVolume.value = Number(annualNum)
             } else {
                 flowModifiedByMonth.value = {}
-                annualFlow.value = null
+                annualVolume.value = null
             }
         }, { immediate: true });
 
@@ -575,7 +583,7 @@ createApp({
             applyFlowChanges,
             applyAnnualChange,
             editMode,
-            annualFlow,
+            annualVolume,
             reservoir: gm.RESERVOIR,
             errorMsg,
             reset,
@@ -587,6 +595,7 @@ createApp({
             activeScenarios,
             applyScenariosChanges,
             rainReductionPerc,
+            Hm3ToM3,
             tick
         }
     }
