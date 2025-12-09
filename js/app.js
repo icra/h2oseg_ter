@@ -517,7 +517,7 @@ createApp({
 
                 const canalsLayer = L.geoJSON(canalsGeo, {
                     pane: 'canalsPane',
-                    style: () => ({color: '#713c00', weight: 3, opacity: 1}),
+                    style: () => ({color: '#a5a5a5', weight: 2, opacity: 1}),
                     onEachFeature: (feature, layer) => {
                         // assegura interacció i tooltip
                         layer.options.interactive = true;
@@ -529,7 +529,6 @@ createApp({
                                 const c = e.target.feature.properties;
                                 const n = cy.value.getElementById(c.codi_sad)
                                 const tt = l.getTooltip();
-                                console.log("canal", n.data('m' + month.value))
                                 if (tt) tt.setContent(canalsTooltipHTML(n, c, month.value)); // passa la feature si ho necessites
                                 l.openTooltip();
                             },
