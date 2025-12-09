@@ -139,7 +139,7 @@ for (v in topo) {
 stopifnot(
   edges_tbl |>
     filter(if_any(gen:des, \(x) is.na(x))) |>
-    nrow ==
+    nrow() ==
     0
 )
 

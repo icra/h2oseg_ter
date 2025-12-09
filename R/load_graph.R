@@ -82,7 +82,3 @@ stopifnot(
   nodes$codi_sad[which(!(nodes$codi_sad %in% edges$from))] ==
     c("NODE_33", "NODE_34", "NODE_63", "NODE_82", "NODE_84")
 )
-
-# Uneix cabals ambientals
-edges <- edges |>
-  left_join(read_rds("data_raw/cabals_ambientals.rds"), by = "nom_correlatiu")

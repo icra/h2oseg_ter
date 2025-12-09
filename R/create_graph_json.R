@@ -9,6 +9,11 @@ nodes |>
   st_write("assets/nodes.geojson", delete_dsn = TRUE)
 
 edges |>
+  # Uneix cabals ambientals
+  left_join(
+    read_rds("data_raw/cabals_ambientals.rds"),
+    by = "nom_correlatiu"
+  ) |>
   rename(
     nomComu = nom_correlatiu,
     lengthRiver = river_length,

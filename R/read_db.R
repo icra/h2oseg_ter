@@ -18,6 +18,8 @@ data <- fromJSON(db$text) |>
       "ABASTAMENT_ATL" ~ "ATL",
       "ETAP_MONTFULLA" ~ "ETAP_MONFULLA",
       "EDAR_STJOANABADESSES" ~ "EDAR_STJOAN",
+      "EDAR_PLANESHOSTOLES" ~ "EDAR_HOSTOLES",
+      "EDAR_GESTORELLO" ~ "EDAR_TORELLO",
       .default = codi_sad
     )
   )
@@ -29,7 +31,7 @@ codis_db <- data$codi_sad |> unique()
 
 stopifnot(
   nodes |>
-    filter(type != 'massa') |>
+    filter(!(type %in% c('massa', 'entrada'))) |>
     filter(!(codi_sad %in% codis_db)) |>
     nrow() ==
     0
@@ -50,4 +52,9 @@ data |>
   mutate(mes_dada = create_month_index(str_to_lower(nom_dada), "m")) |>
   select(-nom_dada) |>
   pivot_wider(names_from = mes_dada, values_from = valor_cabal) |>
+  mutate(across(m1:m12, \(x) if_else(codi_sad == "CR_MONAR", x - 3, x))) |>
+  add_row(
+    codi_sad = "SEQUIA_MONAR"
+  ) |>
+  mutate(across(m1:m12, \(x) if_else(codi_sad == 'SEQUIA_MONAR', 3, x))) |>
   write_rds("data_raw/cabals_antropic.rds")
