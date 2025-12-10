@@ -5,20 +5,21 @@ library(terra)
 library(sf)
 
 
-conques <- read_sf("data_raw/subconques_v12_7.gpkg")
-
-stop("Cal preparar-ho per les dades noves")
+conques <- read_sf("data_raw/arees_drenatge_v03.gpkg") |>
+  summarise(.by = codi_sad, across(geom, st_union))
 
 nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg")
+afor <- read_sf("data_raw/aforaments.gpkg") |>
+  select(codi_sad, type, nom)
+
+nodes <- bind_rows(nodes, afor)
 
 codis_nodes <- nodes |>
-  filter(type == 'massa' | type == 'comporta') |>
+  filter(type %in% c('massa', 'comporta', 'aforament')) |>
   pull(codi_sad)
 
 stopifnot(all(conques$codi_sad %in% codis_nodes))
-stopifnot(all(codis_nodes %in% conques$codi_sad))
-
-conques$area_m2 <- st_area(conques) |> as.numeric()
+stopifnot(sum(codis_nodes %in% conques$codi_sad) > 5)
 
 # Usos del sòl ----------------------------------------------------------------------------
 
@@ -62,7 +63,7 @@ usos_rcl <- classify(usos, mat_class, right = NA)
 usos_conques <- freq(usos_rcl, zones = vect(conques), touches = FALSE)
 
 zone_id <- tibble(
-  zone = 1:85,
+  zone = seq_along(conques$codi_sad),
   codi_sad = vect(conques)$codi_sad
 )
 
@@ -75,7 +76,8 @@ usos_conques <- usos_conques |>
   pivot_wider(names_from = us, values_from = area_m2) |>
   clean_names()
 
-conques <- conques |>
+conques <- conques %>%
+  mutate(area_m2 = st_area(.) |> as.numeric()) |>
   left_join(usos_conques, by = "codi_sad") |>
   mutate(across(everything(), \(x) replace_na(x, 0))) |>
   mutate(across(starts_with("us_"), \(x) pmin(x, area_m2)))
@@ -206,10 +208,9 @@ conques <- conques |>
 
 conques |>
   st_drop_geometry() |>
-  select(-c(FID_custom, VALUE)) |>
   write_rds("data_raw/conques_dades_cabal.rds")
 
-stop()
+stop("A partir d'aquí son comprovacions")
 # Comprovacions ----------------------------------------------
 
 # I
