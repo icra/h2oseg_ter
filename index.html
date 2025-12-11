@@ -93,6 +93,11 @@
     </div>
     <div class="layout">
         <div id="map-wrapper">
+            <div class="map-title" v-cloak>
+                Mes seleccionat:
+                <strong>{{ monthSelector.find(m => m.value === month).label }}</strong>
+            </div>
+
             <div id="cy"></div>
             <div id="cy-leaflet"></div>
         </div>
