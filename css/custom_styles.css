@@ -478,3 +478,264 @@ button:hover {
 .map-title strong {
     font-weight: 600;
 }
+
+.map-legend {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    z-index: 10;
+    font-size: 0.8rem;
+    color: #111827;
+    pointer-events: none; /* no bloqueja el mapa */
+}
+
+.map-legend .legend-block {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    padding: 6px 6px 6px 8px;   /* compacte, poca dreta */
+    margin-top: 6px;
+    min-width: auto;
+    width: auto;
+    pointer-events: auto;
+}
+
+.legend-title {
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+}
+
+/* ---------- LLEGENDES PER A UN SOL MES (línies/punts blau/vermell) ---------- */
+
+.legend-symbol {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.legend-label {
+    font-size: 0.78rem;
+    color: #374151;
+}
+
+.legend-line {
+    width: 22px;
+    height: 0;
+    border-top-width: 2px;
+    border-top-style: solid;
+    border-radius: 999px;
+}
+
+.legend-line.red {
+    border-top-color: #dc2626; /* vermell */
+}
+
+.legend-line.blue {
+    border-top-color: #2563eb; /* blau */
+}
+
+.legend-point {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+}
+
+.legend-point.blue {
+    background: #2563eb;
+}
+
+.legend-point.red {
+    background: #dc2626;
+}
+
+/* Escala bàsica (per a llegenda mensual, si la fas servir) */
+.legend-scale {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #4b5563;
+    padding: 2px 0;
+}
+
+/* Una mica de responsive per pantalles estretes */
+@media (max-width: 800px) {
+    .map-legend {
+        right: 6px;
+        bottom: 6px;
+    }
+
+    .map-legend .legend-block {
+        min-width: 170px;
+    }
+}
+
+/* ---------- LLEGENDES ANUALS (12 línies + 12 punts) ---------- */
+
+.legend-category {
+    margin-top: 4px;
+}
+
+.legend-subtitle {
+    font-size: 0.75rem;
+    color: #4b5563;
+    margin-bottom: 2px;
+}
+
+/* Filera: columna de símbols + números al costat */
+.legend-block-annual .legend-multi-row {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+}
+
+/* Columna de 12 símbols (de 0 a baix a 12 a dalt) */
+.legend-block-annual .legend-multi-column {
+    display: flex;
+    flex-direction: column-reverse; /* primer color a baix, últim a dalt */
+    gap: 1px;
+}
+
+/* Línies petites (cabal ambiental) */
+.legend-tiny-line {
+    width: 22px;
+    height: 0;
+    border-top-width: 3px;
+    border-top-style: solid;
+    border-radius: 999px;
+}
+
+/* Punts petits (demanda) */
+.legend-tiny-point {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+}
+
+/* Escala dins del bloc anual: enganxada a la columna de símbols */
+.legend-block-annual .legend-scale {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-left: 4px;
+    font-size: 0.7rem;
+    color: #4b5563;
+    padding: 0;
+    line-height: 1;
+}
+
+/* Distribució en dues columnes per a la llegenda anual */
+.legend-annual-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+    margin-top: 6px;
+}
+
+/* Ajustos per mantenir-la compacta */
+.legend-category {
+    margin-top: 0;
+}
+
+.legend-subtitle {
+    margin-bottom: 2px;
+}
+
+/* Columna de símbols + escala */
+.legend-block-annual .legend-multi-row {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+}
+
+.legend-block-annual {
+    padding-right: 4px !important; /* o 0 si vols encara més compacte */
+    min-width: auto !important;
+}
+
+/* Columna vertical de 12 símbols */
+.legend-block-annual .legend-multi-column {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between; /* distribueix els 12 símbols uniformement */
+    height: 120px; /* <-- alçada comuna (pots ajustar-ho) */
+}
+
+/* Sobreescribim perquè els gap no desalineïn */
+.legend-block-annual .legend-multi-column > * {
+    margin: 0;
+}
+
+/* ---------- LLEGENDES ANUALS (12 línies + 12 punts) ---------- */
+
+.legend-category {
+    margin-top: 2px;
+}
+
+.legend-subtitle {
+    font-size: 0.75rem;
+    color: #4b5563;
+    margin-bottom: 2px;
+    padding-right: 0.3rem;
+}
+
+/* llegenda anual en 2 columnes, però ajustada al contingut */
+.legend-annual-grid {
+    display: flex;
+    gap: 12px;              /* separació entre les dues columnes */
+    margin-top: 4px;
+}
+
+.legend-block-annual {
+    padding-right: 4px;
+}
+
+/* Columna símbols + números */
+.legend-block-annual .legend-multi-row {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+}
+
+/* Columna vertical de 12 símbols, tots amb la mateixa alçada total */
+.legend-block-annual .legend-multi-column {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    height: 120px;          /* mateixa alçada per línies i punts */
+}
+
+/* Línies petites (cabal ambiental) */
+.legend-tiny-line {
+    width: 22px;
+    height: 0;
+    border-top-width: 3px;
+    border-top-style: solid;
+    border-radius: 999px;
+}
+
+/* Punts petits (demanda) */
+.legend-tiny-point {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+}
+
+/* Escala enganxada al costat dels símbols */
+.legend-block-annual .legend-scale {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-left: 2px;
+    font-size: 0.7rem;
+    color: #4b5563;
+    line-height: 1;
+    padding: 0;
+}
+

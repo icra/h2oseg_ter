@@ -15,7 +15,7 @@
 <body>
 <div id="app">
     <!-- MODAL D'ESCENARIS -->
-    <div v-if="openModal" class="modal-backdrop">
+    <div v-if="openModal" class="modal-backdrop" v-cloak>
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
@@ -91,16 +91,103 @@
             <p>Calculant cabals...</p>
         </div>
     </div>
-    <div class="layout">
+    <div class="layout" v-cloak>
         <div id="map-wrapper">
+            <!-- Títol sobre el mapa -->
             <div class="map-title" v-cloak>
-                Mes seleccionat:
                 <strong>{{ monthSelector.find(m => m.value === month).label }}</strong>
+            </div>
+
+            <!-- Llegenda flotant -->
+            <div class="map-legend" v-cloak>
+                <!-- Mode TOTAL ANUAL -->
+                <div v-if="month === '0'">
+                    <div class="legend-block legend-block-annual">
+                        <div class="legend-title">Llegenda</div>
+
+                        <div class="legend-annual-grid">
+                            <!-- COL 1 — Cabal ambiental -->
+                            <div class="legend-category">
+                                <div class="legend-subtitle">Incompliment cabal ambiental</div>
+                                <div class="legend-multi-row">
+                                    <div class="legend-multi-column">
+            <span
+                    v-for="(c, idx) in rampPalette"
+                    :key="'env-'+idx"
+                    class="legend-tiny-line"
+                    :style="{ borderTopColor: c }"
+            ></span>
+                                    </div>
+                                    <div class="legend-scale">
+                                        <span>12 mesos</span>
+                                        <span>0 mesos</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- COL 2 — Demanda no satisfeta -->
+                            <div class="legend-category">
+                                <div class="legend-subtitle">Demanda no satisfeta</div>
+                                <div class="legend-multi-row">
+                                    <div class="legend-multi-column">
+            <span
+                    v-for="(c, idx) in rampPalette"
+                    :key="'dem-'+idx"
+                    class="legend-tiny-point"
+                    :style="{ backgroundColor: c }"
+            ></span>
+                                    </div>
+                                    <div class="legend-scale">
+                                        <span>12 mesos</span>
+                                        <span>0 mesos</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Mode UN SOL MES -->
+                <div v-else>
+                    <div class="legend-block">
+
+                        <div class="legend-title">Llegenda</div>
+                        <div class="legend-symbol">
+                            <span class="legend-line blue"></span>
+                            <span class="legend-label">
+                        Compleix el cabal ambiental
+                    </span>
+                        </div>
+                        <div class="legend-symbol">
+                            <span class="legend-line red"></span>
+                            <span class="legend-label">
+                        No compleix el cabal ambiental
+                    </span>
+                        </div>
+
+                        <div class="legend-symbol">
+                            <span class="legend-point blue"></span>
+                            <span class="legend-label">
+                        Demanda satisfeta
+                    </span>
+                        </div>
+
+                        <div class="legend-symbol">
+                            <span class="legend-point red"></span>
+                            <span class="legend-label">
+                        Demanda no satisfeta
+                    </span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="cy"></div>
             <div id="cy-leaflet"></div>
         </div>
+
         <div id="sidebar">
             <div class ="align-right">
                 <img src="assets/logo_h20seg.png" alt="Logo H2OSEG" style="height: 50px;" />

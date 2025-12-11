@@ -597,6 +597,7 @@ createApp({
             rainReductionPerc,
             pptMean,
             Hm3ToM3,
+            rampPalette: gm.rampPalette,
             tick
         }
     }

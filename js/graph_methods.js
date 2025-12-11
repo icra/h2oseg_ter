@@ -548,5 +548,6 @@ export default {
     setGraphColors,
     calculateMeanPpt,
     RESERVOIR,
-    params
+    params,
+    rampPalette
 }
