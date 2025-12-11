@@ -167,14 +167,14 @@ const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
 };
 
 const setEdgeColor = function(edge, month){
-    return edge.data('flow' + month) < edge.data('envFlow' + month) ? rampPalette[12] : rampPalette[0]
+    return (edge.data('flow' + month) + 0.01) < edge.data('envFlow' + month) ? rampPalette[12] : rampPalette[0]
 }
 
 const setNodeColor = function(node, month){
     if (node.incomers().length === 0) {
         return rampPalette[0]; // Si no té edges entrants, és una font
     }
-    return node.data('inflow' + month) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
+    return (node.data('inflow' + month) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
 }
 
 // utilitat: construir un Set amb tots els ancestres (predecessors) d’un node donat
