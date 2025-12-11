@@ -380,3 +380,81 @@ button:hover {
     background: #eee;
     color: #333;
 }
+
+.scenario-block {
+    border-radius: 10px;
+    border: 1px solid #e7eaf0;
+    background: #f9fafb;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.scenario-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.scenario-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.scenario-toggle input[type="checkbox"] {
+    margin: 0;
+    width: 14px;
+    height: 14px;
+    accent-color: #0074D9; /* navegadors moderns */
+}
+
+.scenario-title {
+    font-size: 0.9rem;
+}
+
+.scenario-chip {
+    margin-left: auto;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.scenario-desc {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.scenario-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.scenario-slider input[type="range"] {
+    width: 100%;
+}
+
+.scenario-values {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: #374151;
+}
+
+.scenario-value-new {
+    font-weight: 600;
+}
+
+.scenario-value-delta {
+    opacity: 0.8;
+}

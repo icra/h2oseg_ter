@@ -2,9 +2,9 @@
 
 import gm from './graph_methods.js'
 
-const { createApp, onMounted, ref, shallowRef, watch, nextTick } = Vue
+const {createApp, onMounted, ref, shallowRef, watch, nextTick} = Vue
 
-const TT_OPTS = { direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane' }
+const TT_OPTS = {direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane'}
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -20,7 +20,7 @@ const fmt = (v) => {
     return Number.isFinite(+v) ? (+v).toFixed(d) + ' ' + unit : '—'
 }
 
-const Hm3ToM3 = function(m3s){
+const Hm3ToM3 = function (m3s) {
     const s = 365 * 24 * 3600
     return (+m3s * s / 1000000).toFixed(1)
 }
@@ -45,7 +45,7 @@ function nodeTooltipHTML(n, month) {
           <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
           <div>Cabal sortint: ${fmt(n.data('outflow' + month))}</div>
           ${month === '0' ? '<div>' + (n.data('m' + month) > 0 ? "Aportació" : "Extracció total") + ': ' + Hm3ToM3(n.data('m' + month)) + ' Hm<sup>3</sup></div>' : ''}
-          ${n.data('deficit' + month) < 0 ? '<div>Dèficit: '+ fmt(n.data('deficit' + month), 2) + '</div>' : ''}
+          ${n.data('deficit' + month) < 0 ? '<div>Dèficit: ' + fmt(n.data('deficit' + month), 2) + '</div>' : ''}
         </div>
   `
 }
@@ -82,7 +82,7 @@ function canalsTooltipHTML(n, c, month) {
     `
 }
 
-const reset = function(){
+const reset = function () {
     window.confirm('Segur que vols reiniciar el model?') && window.location.reload()
 }
 
@@ -120,13 +120,14 @@ createApp({
             rainReduction: false
         })
         const rainReductionPerc = ref(0)
+        const pptMean = ref(null)
         const tick = ref(0)
 
-        const applyFlowChanges = async function(ele){
+        const applyFlowChanges = async function (ele) {
             loading.value = true
             await sleep(1)
 
-            for (const m of monthSelector.value){
+            for (const m of monthSelector.value) {
                 flowModified.value = Number(flowModifiedByMonth.value[m.value])
 
                 await gm.modifyFlowChange(
@@ -135,7 +136,7 @@ createApp({
                     flowModified,
                     m.value,
                     errorMsg,
-                    {period: {year:2024, month: m.value}}
+                    {period: {year: 2024, month: m.value}}
                 )
             }
 
@@ -144,7 +145,7 @@ createApp({
         const applyAnnualChange = async function (ele) {
             loading.value = true
 
-            if(annualVolume.value === '' || annualVolume.value === NaN || annualVolume.value === null) {
+            if (annualVolume.value === '' || annualVolume.value === NaN || annualVolume.value === null) {
                 errorMsg.value = "Introdueix un volum vàlid"
                 annualVolume.value = Number(Hm3ToM3(ele.m0))
                 loading.value = false
@@ -154,7 +155,7 @@ createApp({
             const target = annualVolume.value * 1000000 / (24 * 365 * 3600)
             errorMsg.value = null
 
-            const months = Array(12).fill().map((e, i)=> String(i+1))
+            const months = Array(12).fill().map((e, i) => String(i + 1))
 
             let newVals
 
@@ -165,7 +166,7 @@ createApp({
                 newVals = months.map(m => ele['m' + m] * k)
             }
 
-            months.forEach((m ,idx) => {
+            months.forEach((m, idx) => {
                 flowModifiedByMonth.value[m] = newVals[idx]
             })
 
@@ -174,12 +175,12 @@ createApp({
 
             loading.value = false
         }
-        const applyScenariosChanges = async function() {
+        const applyScenariosChanges = async function () {
             openModal.value = false
             loading.value = true
             await sleep(1)
             console.log(activeScenarios.value.rainReduction, rainReductionPerc.value)
-            if (activeScenarios.value.rainReduction === false && rainReductionPerc.value !== '0'){
+            if (activeScenarios.value.rainReduction === false && rainReductionPerc.value !== '0') {
                 console.log("dins inactiu")
                 rainReductionPerc.value = '0'
                 await rainReduction()
@@ -194,17 +195,16 @@ createApp({
 
             loading.value = false
         }
-        const rainReduction = async function(){
+        const rainReduction = async function () {
             if (!cy) {
                 console.error("cy not loaded")
                 return
             }
             console.log("rain reduction value", rainReductionPerc.value, typeof rainReductionPerc.value)
             const reduction = (100 + Number(rainReductionPerc.value)) / 100
-            const ppt = Array(12).fill().map((e, i)=> String('ppt' + (i+1)))
-            const refppt = Array(12).fill().map((e, i)=> String('refppt' + (i+1)))
+            const ppt = Array(12).fill().map((e, i) => String('ppt' + (i + 1)))
+            const refppt = Array(12).fill().map((e, i) => String('refppt' + (i + 1)))
 
-            console.log('node_1', cy.value.getElementById('NODE_1').data('refppt1'))
             if (cy.value.getElementById('NODE_1').data('refppt1') === undefined) {
                 console.log("refppt created")
                 cy.value.nodes().forEach(n => {
@@ -216,7 +216,7 @@ createApp({
 
             cy.value.nodes().forEach(n => {
                 if (n.data('ppt1') === null) return
-                for (const i in ppt){
+                for (const i in ppt) {
                     const newRain = n.data(refppt[i]) * reduction
                     n.data(ppt[i], newRain)
                 }
@@ -225,7 +225,7 @@ createApp({
             loading.value = false
         }
 
-        const currentSel = { id: null, kind: null } // kind: 'node' | 'edge'
+        const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
 
         const edgeLayerById = new Map()
         const nodeLayerById = new Map()
@@ -536,7 +536,7 @@ createApp({
                         });
                     }
                 }).addTo(map);
-
+                pptMean.value = gm.calculateMeanPpt(cy.value)
                 gm.calculateContribution(cy.value, gm.params)
                 gm.calculateFlow(cy.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
@@ -568,10 +568,10 @@ createApp({
                 flowModifiedByMonth.value = {}
                 annualVolume.value = null
             }
-        }, { immediate: true });
+        }, {immediate: true});
 
         watch(month, (m) => {
-            gm.setGraphColors(m, cy.value, { nodeLayerById, edgeLayerById})
+            gm.setGraphColors(m, cy.value, {nodeLayerById, edgeLayerById})
         })
 
         return {
@@ -595,6 +595,7 @@ createApp({
             activeScenarios,
             applyScenariosChanges,
             rainReductionPerc,
+            pptMean,
             Hm3ToM3,
             tick
         }

@@ -239,7 +239,7 @@ const calculateNodeContribution = function(node, params){
 
 const calculateContribution = function(cy, params = params){
     cy.nodes().forEach(node => {
-        if (node.data('type') === 'massa' || node.data('type') === 'comporta') {
+        if (node.data('type') === 'massa' || node.data('type') === 'comporta' || node.data('type') === 'aforament') {
             calculateNodeContribution(node, params)
         }
     })
@@ -416,7 +416,6 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     })
 
     Object.assign(RESERVOIR, structuredClone(R_backup));
-    console.log(month, 'after backup')
 
     calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, dt_s)
 
@@ -429,7 +428,7 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, dt_s){
 
     // si l'embassament és ple, allibera com a mínim el cabal d'entrada
     if (R.storage_hm3[m] >= R.capacity_hm3 - 1e-6) {
-        console.log("Embassament ple")
+        console.log("Embassament ple al mes", month)
         demanda = Math.max(demanda, R.inflowSum_m3s[m])
     }
     const maxPossible_m3s = hm3ToM3s(R.storage_hm3[m], dt_s);
@@ -440,7 +439,7 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, dt_s){
     R.released_m3s[m] = release_m3s;
     R.releasedVol_hm3[m] = used_hm3;
 
-    console.log(m, "entrada", R.inflowVol_hm3[m], "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
+    // console.log(m, "entrada", R.inflowVol_hm3[m], "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
 
     dam.data('outflow' + month, release_m3s);
     dam.outgoers('edge').forEach(e => e.data('flow' + month, release_m3s));
@@ -524,10 +523,21 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
     }
 }
 
+const calculateMeanPpt = function(cy){
+    let meanPpt = []
+    let sumArea = 0
+    cy.nodes().forEach(node => {
+        if (node.data('ppt1') === undefined) return
+        const ppt = Object.keys(node.data())
+            .filter(k => k.startsWith('ppt'))
+            .map(p => node.data(p))
 
-
-
-
+        meanPpt.push(ppt.reduce((a, b) => a + b, 0) * node.data('area_m2'))
+        sumArea += node.data('area_m2')
+    })
+    const sumPpt = meanPpt.reduce((a, b) => a + b, 0)
+    return sumPpt / sumArea
+}
 
 export default {
     setupEleClickListener,
@@ -536,6 +546,7 @@ export default {
     modifyFlowChange,
     setupZoomLabelControl,
     setGraphColors,
+    calculateMeanPpt,
     RESERVOIR,
     params
 }

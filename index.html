@@ -27,15 +27,51 @@
 
             <!-- BODY -->
             <div class="modal-body">
-                <!-- Reducció pluja-->
-                <input id="rainReduction" type="checkbox" v-model="activeScenarios.rainReduction"/>
-                <label>Reducció de la pluja anual</label>
-                <div v-if="activeScenarios.rainReduction">
-                    <input v-if="activeScenarios.rainReduction" type="range" min="-100" max="0" v-model="rainReductionPerc" />
-                    <span>{{rainReductionPerc}}%</span>
-                </div>
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="rainReduction">
+                            <input
+                                    id="rainReduction"
+                                    type="checkbox"
+                                    v-model="activeScenarios.rainReduction"
+                            />
+                            <span class="scenario-title">Reducció de la pluja anual</span>
+                        </label>
 
+                        <!-- Xip amb el % quan l'escenari és actiu -->
+                        <span
+                                v-if="activeScenarios.rainReduction"
+                                class="scenario-chip"
+                        >
+                {{ rainReductionPerc }}%
+            </span>
+                    </div>
+
+                    <p class="scenario-desc">
+                        Aplica una reducció uniforme a la precipitació mitjana anual
+                        (actualment {{ Number(pptMean || 0).toFixed(0) }} mm).
+                    </p>
+
+                    <div v-if="activeScenarios.rainReduction" class="scenario-slider">
+                        <input
+                                type="range"
+                                min="-100"
+                                max="0"
+                                v-model="rainReductionPerc"
+                        />
+
+                        <div class="scenario-values">
+                <span class="scenario-value-new">
+                    Nou valor: {{ ((pptMean * (100 + +rainReductionPerc) / 100)).toFixed(0) }} mm
+                </span>
+                            <span class="scenario-value-delta">
+                    Canvi: {{ rainReductionPerc }}%
+                </span>
+                        </div>
+                    </div>
+                </div>
             </div>
+
 
             <!-- FOOTER -->
             <div class="modal-footer">
