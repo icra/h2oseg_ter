@@ -14,6 +14,8 @@ edges |>
     read_rds("data_raw/cabals_ambientals.rds"),
     by = "nom_correlatiu"
   ) |>
+  verify(not_na(envFlow1)) |>
+  verify(not_na(envFlow0)) |>
   rename(
     nomComu = nom_correlatiu,
     lengthRiver = river_length,
