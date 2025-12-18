@@ -3,6 +3,18 @@ source("R/load_graph.R")
 
 # Guardem la xarxa a assets -----------------------------------------------------
 
+data |>
+  filter(
+    codi_sad %in% (nodes |> filter(type == "aforament") |> pull(codi_sad))
+  ) |>
+  summarize(
+    cabal_m3s = mean(valor_cabal, na.rm = TRUE),
+    .by = c(codi_sad, nom_dada)
+  ) |>
+  mutate(mes = 1:12, .by = codi_sad) |>
+  select(codi_sad, mes, cabal_m3s) |>
+  write_json("calibration/cabals_aforament.json")
+
 nodes |>
   rename(name = nom, id = codi_sad) |>
   st_transform(4326) |>

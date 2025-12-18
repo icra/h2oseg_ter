@@ -30,13 +30,13 @@ const Kc_regadiu = [
 const Kc_seca = [
     0.35, 0.45, 0.75, 0.95, 1.00, 0.80,
     0.25, 0.25, 0.45, 0.65, 0.55, 0.35
-].map(e => e * 0.7);
+]
 
 // Forestal
 const Kc_forestal = [
     0.60, 0.70, 0.90, 1.05, 1.15, 1.20,
     1.15, 1.10, 1.00, 0.90, 0.80, 0.60
-].map(e => e * 0.6);
+]
 
 // Prats / pastures
 const Kc_prats = [
@@ -51,7 +51,6 @@ const Kc_urba = [
 ];
 
 const r_neu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18]
-    .map(e => e * 0.2)
 
 const params = {
     kc: {
@@ -227,7 +226,6 @@ const calculateNodeContribution = function(node, params){
     const mmNeu = deltaNeu.map((n, i) => n * params.rNeu[i])
 
     const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]))
-        .map(c => Math.max(c, 0))
 
     const seconds = Array(12).fill().map((e, i) => i + 1)
         .map(m => monthSeconds(2024, m))
@@ -287,7 +285,7 @@ const calculateAnnualValues = function(cy){
     RESERVOIR.released_m3s['0'] = rKeys.map(k => RESERVOIR.released_m3s[k])
         .reduce((a, b) => a + b, 0) / rKeys.length;
 
-    console.log('RESERVOIR complete', RESERVOIR)
+    // console.log('RESERVOIR complete', RESERVOIR)
 }
 
 const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
@@ -428,7 +426,7 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, dt_s){
 
     // si l'embassament és ple, allibera com a mínim el cabal d'entrada
     if (R.storage_hm3[m] >= R.capacity_hm3 - 1e-6) {
-        console.log("Embassament ple al mes", month)
+        // console.log("Embassament ple al mes", month)
         demanda = Math.max(demanda, R.inflowSum_m3s[m])
     }
     const maxPossible_m3s = hm3ToM3s(R.storage_hm3[m], dt_s);
@@ -543,6 +541,7 @@ export default {
     setupEleClickListener,
     calculateContribution,
     calculateFlow,
+    calculateFlowMonth,
     modifyFlowChange,
     setupZoomLabelControl,
     setGraphColors,
