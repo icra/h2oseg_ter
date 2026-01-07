@@ -61,7 +61,12 @@ const params = {
         regadiu: Kc_regadiu,
         prats: Kc_prats
     },
-    rNeu: r_neu
+    rNeu: r_neu,
+    gwLoss: {
+        low: 1e-6,
+        mid: 3e-6,
+        high: 8e-6,
+    }
 }
 
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
@@ -185,8 +190,6 @@ const ancestorsOf = function(cy, nodeId){
     return anc;
 }
 
-
-
 const calculateNodeContribution = function(node, params){
     const tmit = Object.keys(node.data())
         .filter(k => k.startsWith('tmit'))
@@ -243,10 +246,31 @@ const calculateContribution = function(cy, params = params){
     })
 }
 
-const calculateFlow = function(cy, errorRef = null, opts = {}){
+const applyGwLossToEdge = function(q_in, edge, month, params){
+    if (params === null) {
+        console.error("Params is null")
+        return q_in
+    }
+
+    const L_m = edge.data('lengthRiver') * 1000;
+    const type = edge.data('gwType');
+    // k pot ser escalar o array per mes
+    let k = params.gwLoss[type];
+    if (Array.isArray(k)) k = k[month - 1]
+    k = Number(k) || 0;
+
+    if (L_m <= 0 || k <= 0 || q_in <= 0) {
+        return q_in;
+    }
+
+    // q_out = q_in * exp(-k L)
+    return q_in * Math.exp(-k * L_m);
+}
+
+const calculateFlow = function(cy, params, errorRef = null, opts = {}){
     const months = Array(12).fill().map((e, i) => String(i + 1));
     for (const m of months){
-        calculateFlowMonth(cy, errorRef, {period: {year: 2024, month: m}});
+        calculateFlowMonth(cy, params, errorRef, {period: {year: 2024, month: m}});
     }
     // Calculem mitjanes anuals per tots els elements
     calculateAnnualValues(cy)
@@ -288,7 +312,7 @@ const calculateAnnualValues = function(cy){
     // console.log('RESERVOIR complete', RESERVOIR)
 }
 
-const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
+const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     let R = RESERVOIR;
 
     const month = opts.period.month
@@ -374,7 +398,8 @@ const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
         // 3. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
-            edge.data('flow' + month, outflow);
+            const qOutEdge = applyGwLossToEdge(outflow, edge, m, params)
+            edge.data('flow' + month, qOutEdge);
         });
     }
 
@@ -474,13 +499,13 @@ const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg
     node.data('m' + month, flowModified.value);
 
     // Torna a calcular
-    calculateFlowMonth(cy, errorMsg, period);
+    calculateFlowMonth(cy, params, errorMsg, period);
 
     // Si s’ha generat error, tornem enrere i no modifiquem l’input
     if (errorMsg.value) {
         node.data('m' + month, previousValue); // revertim
         flowModified.value = null
-        calculateFlowMonth(cy, errorMsg, period)
+        calculateFlowMonth(cy, params, errorMsg, period)
         return;
     }
 

@@ -189,7 +189,7 @@ createApp({
             }
 
             await gm.calculateContribution(cy.value, gm.params)
-            await gm.calculateFlow(cy.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+            await gm.calculateFlow(cy.value, gm.params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
             await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -538,7 +538,7 @@ createApp({
                 }).addTo(map);
                 pptMean.value = gm.calculateMeanPpt(cy.value)
                 gm.calculateContribution(cy.value, gm.params)
-                gm.calculateFlow(cy.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+                gm.calculateFlow(cy.value, gm.params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);

@@ -1,5 +1,6 @@
 source("R/read_db.R")
 source("R/load_graph.R")
+use('assertr', c('verify', 'not_na'))
 
 # Guardem la xarxa a assets -----------------------------------------------------
 
@@ -7,6 +8,7 @@ data |>
   filter(
     codi_sad %in% (nodes |> filter(type == "aforament") |> pull(codi_sad))
   ) |>
+  filter(codi_sad != "CONTROL_TER_VOLTREGA") |>
   summarize(
     cabal_m3s = mean(valor_cabal, na.rm = TRUE),
     .by = c(codi_sad, nom_dada)
@@ -35,5 +37,7 @@ edges |>
   ) |>
   mutate(id = paste(from, to, sep = "->"), .before = everything()) |>
   mutate(nomComu = str_to_title(nomComu)) |>
+  left_join(read_rds("data_raw/gwType.rds"), by = "id") |>
+  verify(not_na(gwType)) |>
   st_transform(4326) |>
   st_write("assets/edges.geojson", delete_dsn = TRUE)

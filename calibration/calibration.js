@@ -92,7 +92,7 @@ function sseForMonth(month, mults) {
     p.rNeu[i] *= mults.rNeu;
 
     gm.calculateContribution(cy, p);
-    gm.calculateFlow(cy, null, { period: { year: 2024, month } });
+    gm.calculateFlow(cy, gm.params,null, { period: { year: 2024, month } });
 
     const rows = obsByMonth.get(month) ?? [];
     let sse = 0;
@@ -251,7 +251,7 @@ cy.edges().forEach(e => {
     e.data('flow' + month, 0);
 });
 
-gm.calculateFlowMonth(cy, null, { period: { year: 2024, month }, resetStorage: true });
+gm.calculateFlowMonth(cy, gm.params, null, { period: { year: 2024, month }, resetStorage: true });
 
 // Mostra resultats
 nseResults.sort((a, b) => (b.nse ?? -1e9) - (a.nse ?? -1e9));

@@ -65,16 +65,12 @@ function buildContext() {
     damDownstream.add(damId);
 
     const TARGET_STATION = "CONTROL_TER_RODA";
+    const targetWeight = 50;
 
 // pesos per estació (RODA domina)
     function stationWeight(code) {
-        if (code === TARGET_STATION) return 50;   // ajusta (10, 50, 100...)
+        if (code === TARGET_STATION) return targetWeight;   // ajusta (10, 50, 100...)
         return 1;
-    }
-
-    function safeNum(x, fallback = null) {
-        const v = (x === null || x === undefined) ? NaN : Number(x);
-        return Number.isFinite(v) ? v : fallback;
     }
 
     function clamp(x, lo, hi) {
@@ -118,7 +114,7 @@ function buildContext() {
         gm.RESERVOIR.storage_hm3[month] =
             (month !== 1 ? gm.RESERVOIR.storage_hm3[month - 1] : gm.RESERVOIR.initial_storage_hm3);
 
-        gm.calculateFlowMonth(cy, null, { period: { year: 2024, month }, resetStorage: true });
+        gm.calculateFlowMonth(cy, gm.params,null, { period: { year: 2024, month }, resetStorage: true });
 
         const obsMap = obsMapByMonth.get(month) || new Map();
 
@@ -174,7 +170,7 @@ function buildContext() {
         p.rNeu[i] *= mults.rNeuMul;
 
         gm.calculateContribution(cy, p);
-        gm.calculateFlow(cy, null, {period: {year: 2024, month}});
+        gm.calculateFlow(cy, gm.params,null, {period: {year: 2024, month}});
 
         const obsMap = obsMapByMonth.get(month) || new Map();
 
@@ -216,7 +212,7 @@ function buildContext() {
         p.rNeu[i] *= mults.rNeuMul;
 
         gm.calculateContribution(cy, p);
-        gm.calculateFlow(cy, null, { period: { year: 2024, month: m } });
+        gm.calculateFlow(cy, gm.paramsnull, { period: { year: 2024, month: m } });
 
         const obsMap = obsMapByMonth.get(m) || new Map();
 
@@ -264,7 +260,13 @@ function buildContext() {
         const paramsList = [...uses.map(u => "kc:" + u), "rNeuMul"];
 
         // grid coarse
-        const grid = [0.6, 0.75, 0.85, 1.0, 1.15, 1.3, 1.6, 2.0];
+        const start = 0;
+        const end = 20;
+        const length = 20;
+
+        const step = (end - start) / (length - 1);
+
+        const grid = Array.from({ length }, (_, i) => start + i * step);
 
         let bestMults = {
             kcMulByUse: Object.fromEntries(uses.map(u => [u, 1])),
