@@ -93,6 +93,20 @@ function buildContext() {
         const i = month - 1;
         const p = structuredClone(gm.params);
 
+        // === Config multi-objectiu ===
+        const EPS_LOG = 1e-6;     // prova: 1e-6 .. 1e-3
+        const ALPHA = 0.5;        // 0.5 = 50% RMSE lineal + 50% RMSE log
+        const USE_LOG = true;     // false => sqrt en lloc de log
+
+        function safePosQ(x, eps = 1e-12) {
+            return Math.max(0, Number(x) || 0) + eps;
+        }
+
+        function transformQ(x) {
+            const q = safePosQ(x, EPS_LOG);
+            return USE_LOG ? Math.log(q) : Math.sqrt(q);
+        }
+
         // kc per ús (només mes i)
         for (const k of Object.keys(p.kc)) {
             const mul = mults.kcMulByUse?.[k] ?? 1;
@@ -115,11 +129,16 @@ function buildContext() {
             e.data('flow' + month, 0);
         });
 
-        gm.calculateFlowMonth(cy, p,null, { period: { year: 2024, month }, resetStorage: true });
+        gm.calculateFlowMonth(cy, p, null, { period: { year: 2024, month }, resetStorage: true });
 
         const obsMap = obsMapByMonth.get(month) || new Map();
 
-        let sseW = 0, wSum = 0, nUsed = 0;
+        // RMSE lineal
+        let sseLin = 0, wSumLin = 0;
+        // RMSE transformada (log o sqrt)
+        let sseT = 0, wSumT = 0;
+
+        let nUsed = 0;
 
         for (const [code, q_obs] of obsMap.entries()) {
             const n = cy.getElementById(code);
@@ -130,23 +149,47 @@ function buildContext() {
             const mod = +n.data("inflow" + month) || 0;
             if (!Number.isFinite(obs) || !Number.isFinite(mod)) continue;
 
-            const err = mod - obs;
-
             // pes: RODA domina * i opcionalment cabals grans dominen
             const wStation = stationWeight(code);
             const wQ = defaultWeight(obs, 1); // posa 1 o 2 si vols |q|^2
             const w = wStation * wQ;
 
-            sseW += w * err * err;
-            wSum += w;
+            // part lineal
+            {
+                const err = mod - obs;
+                sseLin += w * err * err;
+                wSumLin += w;
+            }
+
+            // part log/sqrt (mateix pes w; si vols donar més pes als petits, canvia wQ a 1 aquí)
+            {
+                const obsT = transformQ(obs);
+                const modT = transformQ(mod);
+                if (Number.isFinite(obsT) && Number.isFinite(modT)) {
+                    const errT = modT - obsT;
+                    sseT += w * errT * errT;
+                    wSumT += w;
+                }
+            }
+
             nUsed++;
         }
 
-        if (nUsed === 0 || wSum <= 0 || !Number.isFinite(sseW)) {
+        if (
+            nUsed === 0 ||
+            wSumLin <= 0 ||
+            wSumT <= 0 ||
+            !Number.isFinite(sseLin) ||
+            !Number.isFinite(sseT)
+        ) {
             throw new Error(`No usable observations for month ${month}`);
         }
 
-        const rmseW = Math.sqrt(sseW / wSum);
+        const rmseLin = Math.sqrt(sseLin / wSumLin);
+        const rmseT = Math.sqrt(sseT / wSumT);
+
+        // cost combinat
+        const rmseCombo = ALPHA * rmseLin + (1 - ALPHA) * rmseT;
 
         // regularització log^2 suau per evitar límits (per ús + neu)
         const L = 0.01; // prova 0.003..0.03
@@ -161,12 +204,27 @@ function buildContext() {
             reg += logMulPenalty(mul);
         }
 
-        return rmseW + L * reg;
+        return rmseCombo + L * reg;
     }
+
 
     function rmseOnlyForMonth_byUse(month, mults) {
         const i = month - 1;
         const p = structuredClone(gm.params);
+
+        // === Mateixa configuració que a sseForMonth_byUse ===
+        const EPS_LOG = 1e-6;   // prova: 1e-6 .. 1e-3
+        const ALPHA = 0.5;      // 0.5 = 50/50
+        const USE_LOG = true;   // false => sqrt
+
+        function safePosQ(x, eps = 1e-12) {
+            return Math.max(0, Number(x) || 0) + eps;
+        }
+
+        function transformQ(x) {
+            const q = safePosQ(x, EPS_LOG);
+            return USE_LOG ? Math.log(q) : Math.sqrt(q);
+        }
 
         for (const k of Object.keys(p.kc)) {
             const mul = mults.kcMulByUse?.[k] ?? 1;
@@ -179,11 +237,18 @@ function buildContext() {
         }
 
         gm.calculateContribution(cy, p);
-        gm.calculateFlow(cy,p,null, {period: {year: 2024, month}});
+        gm.calculateFlow(cy, p, null, { period: { year: 2024, month } });
 
         const obsMap = obsMapByMonth.get(month) || new Map();
 
-        let sseW = 0, wSum = 0, nUsed = 0;
+        // RMSE lineal (ponderat)
+        let sseLin = 0, wSumLin = 0;
+
+        // RMSE log/sqrt (ponderat)
+        let sseT = 0, wSumT = 0;
+
+        let nUsed = 0;
+        let nUsedT = 0;
 
         for (const [code, q_obs] of obsMap.entries()) {
             const n = cy.getElementById(code);
@@ -194,16 +259,50 @@ function buildContext() {
             const mod = +n.data("inflow" + month) || 0;
             if (!Number.isFinite(obs) || !Number.isFinite(mod)) continue;
 
-            const err = mod - obs;
             const w = stationWeight(code) * defaultWeight(obs, 1);
-            sseW += w * err * err;
-            wSum += w;
+
+            // lineal
+            const err = mod - obs;
+            sseLin += w * err * err;
+            wSumLin += w;
             nUsed++;
+
+            // transformada
+            const obsT = transformQ(obs);
+            const modT = transformQ(mod);
+            if (Number.isFinite(obsT) && Number.isFinite(modT)) {
+                const errT = modT - obsT;
+                sseT += w * errT * errT;
+                wSumT += w;
+                nUsedT++;
+            }
         }
 
-        if (!nUsed || wSum <= 0) return Infinity;
-        return Math.sqrt(sseW / wSum);
+        if (!nUsed || wSumLin <= 0) return { ok: false, month, reason: "no-usable-linear", rmseW: Infinity };
+
+        const rmseW = Math.sqrt(sseLin / wSumLin);
+
+        // si per algun motiu la transformada no ha pogut computar (hauria de ser rar)
+        const rmseT = (!nUsedT || wSumT <= 0) ? Infinity : Math.sqrt(sseT / wSumT);
+
+        const rmseCombo = ALPHA * rmseW + (1 - ALPHA) * rmseT;
+
+        return {
+            ok: true,
+            month,
+            nUsed,
+            // lineal
+            rmseW,
+            // log/sqrt
+            rmseTrans: rmseT,
+            trans: USE_LOG ? "log" : "sqrt",
+            eps: EPS_LOG,
+            // combinació
+            alpha: ALPHA,
+            rmseCombo
+        };
     }
+
 
     function includeInCalibration(node) {
         return !damDownstream.has(node.id());
@@ -374,11 +473,11 @@ function buildContext() {
             }
         }
 
-        const rmseW = rmseOnlyForMonth_byUse(month, bestMults);
         const stations = stationErrorsForMonth_byUse(month, bestMults);
-        const nUsed = stations.reduce((s, st) => s + st.n, 0);
+        const nUsed = stations.reduce((s, st) => s + (st.n || 0), 0);
+        const metrics = rmseOnlyForMonth_byUse(month, bestMults);
 
-        return { mes: month, ...bestMults, rmseW, cost: bestCost, nUsed, stations };
+        return { mes: month, ...bestMults, metrics, cost: bestCost, nUsed, stations };
     }
 
     return {calibrateMonth};
