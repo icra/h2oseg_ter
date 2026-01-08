@@ -63,7 +63,7 @@
 │   ├── test.json
 │   └── test_nodes.json
 ├── calibration
-│   └── calibration.js
+│   └── calibration_deprecated.js
 ├── css
 │   ├── custom_styles.css
 │   ├── cytoscape-leaf.css

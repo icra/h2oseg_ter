@@ -69,6 +69,44 @@ const params = {
     }
 }
 
+function buildCalibratedParams(baseParams, calibResults) {
+    // index per mes: 1..12
+    const byMonth = new Map(calibResults.map(r => [+r.mes, r]));
+
+    const p = structuredClone(baseParams);
+
+    // kc: array per ús (12)
+    for (const use of Object.keys(p.kc)) {
+        p.kc[use] = p.kc[use].map((baseKc, i) => {
+            const month = i + 1;
+            const r = byMonth.get(month);
+            const mul = r?.kcMulByUse?.[use] ?? 1;
+            return baseKc * mul;
+        });
+    }
+
+    // rNeu: array (12)
+    p.rNeu = p.rNeu.map((base, i) => {
+        const month = i + 1;
+        const r = byMonth.get(month);
+        const mul = r?.rNeuMul ?? 1;
+        return base * mul;
+    });
+
+    // gwLoss: tu el tens escalar; el convertim a array (12) perquè puguis aplicar mul mensual
+    for (const t of Object.keys(p.gwLoss)) {
+        const baseK = p.gwLoss[t]; // escalar
+        p.gwLoss[t] = Array.from({ length: 12 }, (_, i) => {
+            const month = i + 1;
+            const r = byMonth.get(month);
+            const mul = r?.gwMulByType?.[t] ?? 1;
+            return baseK * mul;
+        });
+    }
+
+    return p;
+}
+
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
 
 function monthSeconds(year, month /* 1..12 */) {
@@ -573,5 +611,6 @@ export default {
     calculateMeanPpt,
     RESERVOIR,
     params,
-    rampPalette
+    rampPalette,
+    buildCalibratedParams
 }

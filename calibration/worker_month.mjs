@@ -65,7 +65,7 @@ function buildContext() {
     damDownstream.add(damId);
 
     const TARGET_STATION = "CONTROL_TER_RODA";
-    const targetWeight = 50;
+    const targetWeight = 1;
 
 // pesos per estació (RODA domina)
     function stationWeight(code) {
@@ -99,6 +99,10 @@ function buildContext() {
             p.kc[k][i] *= mul;
         }
         p.rNeu[i] *= mults.rNeuMul;
+        for (const t of Object.keys(p.gwLoss)) {
+            const mul = mults.gwMulByType?.[t] ?? 1;
+            p.gwLoss[t] *= mul;
+        }
 
         gm.calculateContribution(cy, p);
 
@@ -111,10 +115,7 @@ function buildContext() {
             e.data('flow' + month, 0);
         });
 
-        gm.RESERVOIR.storage_hm3[month] =
-            (month !== 1 ? gm.RESERVOIR.storage_hm3[month - 1] : gm.RESERVOIR.initial_storage_hm3);
-
-        gm.calculateFlowMonth(cy, gm.params,null, { period: { year: 2024, month }, resetStorage: true });
+        gm.calculateFlowMonth(cy, p,null, { period: { year: 2024, month }, resetStorage: true });
 
         const obsMap = obsMapByMonth.get(month) || new Map();
 
@@ -155,6 +156,10 @@ function buildContext() {
             reg += logMulPenalty(mul);
         }
         reg += logMulPenalty(mults.rNeuMul ?? 1);
+        for (const t of Object.keys(p.gwLoss)) {
+            const mul = mults.gwMulByType?.[t] ?? 1;
+            reg += logMulPenalty(mul);
+        }
 
         return rmseW + L * reg;
     }
@@ -168,9 +173,13 @@ function buildContext() {
             p.kc[k][i] *= mul;
         }
         p.rNeu[i] *= mults.rNeuMul;
+        for (const t of Object.keys(p.gwLoss)) {
+            const mul = mults.gwMulByType?.[t] ?? 1;
+            p.gwLoss[t] *= mul;
+        }
 
         gm.calculateContribution(cy, p);
-        gm.calculateFlow(cy, gm.params,null, {period: {year: 2024, month}});
+        gm.calculateFlow(cy,p,null, {period: {year: 2024, month}});
 
         const obsMap = obsMapByMonth.get(month) || new Map();
 
@@ -210,9 +219,13 @@ function buildContext() {
             p.kc[k][i] *= mul;
         }
         p.rNeu[i] *= mults.rNeuMul;
+        for (const t of Object.keys(p.gwLoss)) {
+            const mul = mults.gwMulByType?.[t] ?? 1;
+            p.gwLoss[t] *= mul;
+        }
 
         gm.calculateContribution(cy, p);
-        gm.calculateFlow(cy, gm.paramsnull, { period: { year: 2024, month: m } });
+        gm.calculateFlow(cy, p, null, { period: { year: 2024, month: m } });
 
         const obsMap = obsMapByMonth.get(m) || new Map();
 
@@ -243,7 +256,7 @@ function buildContext() {
     }
 
     const MUL_MIN = 0.2;
-    const MUL_MAX = 8.0;
+    const MUL_MAX = 20;
 
     function calibrateMonth(month) {
         const obsMap = obsMapByMonth.get(month) || new Map();
@@ -257,10 +270,15 @@ function buildContext() {
         if (!usable.length) throw new Error(`No usable observations for month ${month}`);
 
         const uses = Object.keys(gm.params.kc); // ["aigua","urba","forestal","seca","regadiu","prats"] etc
-        const paramsList = [...uses.map(u => "kc:" + u), "rNeuMul"];
+        const gwTypes = Object.keys(gm.params.gwLoss);
+        const paramsList = [
+            ...uses.map(u => "kc:" + u),
+            "rNeuMul",
+            ...gwTypes.map(t => "gw:" + t)
+        ];
 
         // grid coarse
-        const start = 0;
+        const start = 0.2;
         const end = 20;
         const length = 20;
 
@@ -270,7 +288,8 @@ function buildContext() {
 
         let bestMults = {
             kcMulByUse: Object.fromEntries(uses.map(u => [u, 1])),
-            rNeuMul: 1
+            rNeuMul: 1,
+            gwMulByType: Object.fromEntries(gwTypes.map(u => [u, 1]))
         };
 
         let bestCost = sseForMonth_byUse(month, bestMults);
@@ -287,10 +306,15 @@ function buildContext() {
                     const trial = structuredClone(bestMults);
 
                     if (key === "rNeuMul") {
-                        trial.rNeuMul = v;
+                        trial.rNeuMul = clamp(v, 0, MUL_MAX);
+                    } else if (key.startsWith("kc:")) {
+                        const use = key.slice(3);
+                        trial.kcMulByUse[use] = clamp(v, MUL_MIN, MUL_MAX);
+                    } else if (key.startsWith("gw:")) {
+                        const t = key.slice(3);
+                        trial.gwMulByType[t] = clamp(v, MUL_MIN, MUL_MAX);
                     } else {
-                        const use = key.slice(3); // "kc:<use>"
-                        trial.kcMulByUse[use] = v;
+                        throw new Error(`Unrecognized key: ${key}`);
                     }
 
                     const cost = sseForMonth_byUse(month, trial);
@@ -323,12 +347,18 @@ function buildContext() {
                 if (key === "rNeuMul") {
                     const v = trial.rNeuMul * f;
                     if (v <= 1e-4) continue;
-                    trial.rNeuMul = clamp(v, MUL_MIN, MUL_MAX);
-                } else {
+                    trial.rNeuMul = clamp(v,0, MUL_MAX);
+                } else if (key.startsWith("kc:")) {
                     const use = key.slice(3);
                     const v = trial.kcMulByUse[use] * f;
                     if (v <= 1e-4) continue;
                     trial.kcMulByUse[use] = clamp(v, MUL_MIN, MUL_MAX);
+                } else if (key.startsWith("gw:")) {
+                    const t = key.slice(3);
+                    const v = trial.gwMulByType[t] * f;
+                    if (v <= 1e-4) continue;
+                    trial.gwMulByType[t] = clamp(v, MUL_MIN, MUL_MAX);
+
                 }
 
                 const cost = sseForMonth_byUse(month, trial);

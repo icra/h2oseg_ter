@@ -86,6 +86,12 @@ const reset = function () {
     window.confirm('Segur que vols reiniciar el model?') && window.location.reload()
 }
 
+async function loadCalibResults() {
+    const res = await fetch("/assets/calibration_results.json");
+    if (!res.ok) throw new Error(`Cannot load calibration results: ${res.status}`);
+    return await res.json();
+}
+
 createApp({
     setup() {
         const cy = ref(null)
@@ -188,8 +194,8 @@ createApp({
                 await rainReduction()
             }
 
-            await gm.calculateContribution(cy.value, gm.params)
-            await gm.calculateFlow(cy.value, gm.params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+            await gm.calculateContribution(cy.value, params)
+            await gm.calculateFlow(cy.value, params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
             await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -243,6 +249,10 @@ createApp({
                 const edgesGeo = await edgesResp.json()
                 const embGeo = await embResp.json()
                 const canalsGeo = await canalsResp.json()
+
+                const calibResults = await loadCalibResults();
+                const params = gm.buildCalibratedParams(gm.params, calibResults);
+
 
 
                 const cyNodes = nodesGeo.features.map(n => {
@@ -537,8 +547,8 @@ createApp({
                     }
                 }).addTo(map);
                 pptMean.value = gm.calculateMeanPpt(cy.value)
-                gm.calculateContribution(cy.value, gm.params)
-                gm.calculateFlow(cy.value, gm.params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+                gm.calculateContribution(cy.value, params)
+                gm.calculateFlow(cy.value, params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);

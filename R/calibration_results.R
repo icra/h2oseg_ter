@@ -40,7 +40,7 @@ ordre_estacions <- c(
   "CONTROL_TER_RODA"
 )
 
-read_json("calibration/calibration_results.json") |>
+results <- read_json("calibration/calibration_results.json") |>
   map(\(x) {
     tibble(
       mes = x$mes,
@@ -57,7 +57,7 @@ read_json("calibration/calibration_results.json") |>
 
 # Control cabals ------------------------------------
 
-results |>
+cabals |>
   filter(str_detect(codi_sad, "_TER_")) |>
   mutate(
     codi_sad = fct(
