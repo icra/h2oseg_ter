@@ -5,7 +5,6 @@ library(lwgeom)
 library(jsonlite)
 
 nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |>
-  select(-c(flow_change, node_id, ma, nearest_node)) |>
   filter(!is.na(codi_sad)) |>
   bind_rows(
     read_sf("data_raw/aforaments.gpkg") |>
@@ -15,6 +14,10 @@ nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |>
 nodes <- nodes |>
   left_join(read_rds("data_raw/conques_dades_cabal.rds"), by = 'codi_sad') |>
   left_join(read_rds("data_raw/cabals_antropic.rds"), by = 'codi_sad')
+
+if (any(is.na(nodes$m1[nodes$type == 'EDAR'])) == TRUE) {
+  rlang::abort("EDAR sense cabal")
+}
 
 final_nodes <- c("NODE_33", "NODE_34", "NODE_63", "NODE_82", "NODE_84")
 

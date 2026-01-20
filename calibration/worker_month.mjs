@@ -117,6 +117,10 @@ function buildContext() {
             const mul = mults.gwMulByType?.[t] ?? 1;
             p.gwLoss[t] *= mul;
         }
+        for (const t of Object.keys(p.gwGain)) {
+            const mul = mults.gwGainMulByType?.[t] ?? 1;
+            p.gwGain[t] *= mul;
+        }
 
         gm.calculateContribution(cy, p);
 
@@ -203,7 +207,10 @@ function buildContext() {
             const mul = mults.gwMulByType?.[t] ?? 1;
             reg += logMulPenalty(mul);
         }
-
+        for (const t of Object.keys(p.gwGain)) {
+            const mul = mults.gwGainMulByType?.[t] ?? 1;
+            reg += 2 * logMulPenalty(mul);
+        }
         return rmseCombo + L * reg;
     }
 
@@ -234,6 +241,10 @@ function buildContext() {
         for (const t of Object.keys(p.gwLoss)) {
             const mul = mults.gwMulByType?.[t] ?? 1;
             p.gwLoss[t] *= mul;
+        }
+        for (const t of Object.keys(p.gwGain)) {
+            const mul = mults.gwGainMulByType?.[t] ?? 1;
+            p.gwGain[t] *= mul;
         }
 
         gm.calculateContribution(cy, p);
@@ -322,6 +333,10 @@ function buildContext() {
             const mul = mults.gwMulByType?.[t] ?? 1;
             p.gwLoss[t] *= mul;
         }
+        for (const t of Object.keys(p.gwGain)) {
+            const mul = mults.gwGainMulByType?.[t] ?? 1;
+            p.gwGain[t] *= mul;
+        }
 
         gm.calculateContribution(cy, p);
         gm.calculateFlow(cy, p, null, { period: { year: 2024, month: m } });
@@ -356,6 +371,7 @@ function buildContext() {
 
     const MUL_MIN = 0.2;
     const MUL_MAX = 20;
+    const MUL_MAX_GAIN = 5;
 
     function calibrateMonth(month) {
         const obsMap = obsMapByMonth.get(month) || new Map();
@@ -373,7 +389,8 @@ function buildContext() {
         const paramsList = [
             ...uses.map(u => "kc:" + u),
             "rNeuMul",
-            ...gwTypes.map(t => "gw:" + t)
+            ...gwTypes.map(t => "gwLoss:" + t),
+            ...gwTypes.map(t => "gwGain:" + t)
         ];
 
         // grid coarse
@@ -388,7 +405,8 @@ function buildContext() {
         let bestMults = {
             kcMulByUse: Object.fromEntries(uses.map(u => [u, 1])),
             rNeuMul: 1,
-            gwMulByType: Object.fromEntries(gwTypes.map(u => [u, 1]))
+            gwMulByType: Object.fromEntries(gwTypes.map(t => [t, 1])),
+            gwGainMulByType: Object.fromEntries(gwTypes.map(t => [t, 1]))
         };
 
         let bestCost = sseForMonth_byUse(month, bestMults);
@@ -409,9 +427,12 @@ function buildContext() {
                     } else if (key.startsWith("kc:")) {
                         const use = key.slice(3);
                         trial.kcMulByUse[use] = clamp(v, MUL_MIN, MUL_MAX);
-                    } else if (key.startsWith("gw:")) {
-                        const t = key.slice(3);
+                    } else if (key.startsWith("gwLoss:")) {
+                        const t = key.slice(7);
                         trial.gwMulByType[t] = clamp(v, MUL_MIN, MUL_MAX);
+                    } else if (key.startsWith("gwGain:")) {
+                        const t = key.slice(7);
+                        trial.gwGainMulByType[t] = clamp(v, MUL_MIN, MUL_MAX_GAIN);
                     } else {
                         throw new Error(`Unrecognized key: ${key}`);
                     }
@@ -452,12 +473,16 @@ function buildContext() {
                     const v = trial.kcMulByUse[use] * f;
                     if (v <= 1e-4) continue;
                     trial.kcMulByUse[use] = clamp(v, MUL_MIN, MUL_MAX);
-                } else if (key.startsWith("gw:")) {
-                    const t = key.slice(3);
+                } else if (key.startsWith("gwLoss:")) {
+                    const t = key.slice(7);
                     const v = trial.gwMulByType[t] * f;
                     if (v <= 1e-4) continue;
                     trial.gwMulByType[t] = clamp(v, MUL_MIN, MUL_MAX);
-
+                } else if (key.startsWith("gwGain:")) {
+                    const t = key.slice(7);
+                    const v = trial.gwGainMulByType[t] * f;
+                    if (v <= 1e-4) continue;
+                    trial.gwGainMulByType[t] = clamp(v, MUL_MIN, MUL_MAX_GAIN);
                 }
 
                 const cost = sseForMonth_byUse(month, trial);

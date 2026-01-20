@@ -40,7 +40,8 @@ ordre_estacions <- c(
   "CONTROL_TER_RODA"
 )
 
-results <- read_json("calibration/calibration_results.json") |>
+# Multiplicadors
+read_json("calibration/calibration_results.json") |>
   map(\(x) {
     tibble(
       mes = x$mes,
@@ -98,3 +99,9 @@ data |>
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
   )
+
+
+read_json("calibration/calibration_indicators.json", simplifyVector = T) |>
+  pluck("perStation") |>
+  mutate(across(where(is.numeric), \(x) round(x, 2))) |>
+  write_excel_csv2("calibration/calibration_indicators.csv")

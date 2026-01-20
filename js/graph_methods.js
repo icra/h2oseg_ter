@@ -66,6 +66,11 @@ const params = {
         low: 1e-6,
         mid: 3e-6,
         high: 8e-6,
+    },
+    gwGain: {
+        low: 0.002,
+        mid: 0.005,
+        high: 0.01
     }
 }
 
@@ -104,6 +109,18 @@ function buildCalibratedParams(baseParams, calibResults) {
         });
     }
 
+    // gwGain -> array mensual
+    for (const t of Object.keys(p.gwGain)) {
+        const baseG = p.gwGain[t]; // m3/s per km (escalar)
+        p.gwGain[t] = Array.from({ length: 12 }, (_, i) => {
+            const month = i + 1;
+            const r = byMonth.get(month);
+            const mul = r?.gwGainMulByType?.[t] ?? 1;
+            return baseG * mul;
+        });
+    }
+
+
     return p;
 }
 
@@ -128,7 +145,7 @@ let RESERVOIR = {
     releaseDemand_m3s: {},
     released_m3s: {},
     releasedVol_hm3: {},
-    initial_storage_hm3: 0
+    initial_storage_hm3: 400
     // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
 
@@ -272,7 +289,7 @@ const calculateNodeContribution = function(node, params){
         .map(m => monthSeconds(2024, m))
 
     flowChangeKeys.forEach((k, i) => {
-        node.data(k, monthContrib[i] * 0.001 / seconds[i])
+        node.data(k, Math.max(monthContrib[i] * 0.001 / seconds[i], 0))
     })
 }
 
@@ -290,19 +307,31 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
         return q_in
     }
 
+    const L_km = edge.data('lengthRiver');
     const L_m = edge.data('lengthRiver') * 1000;
     const type = edge.data('gwType');
-    // k pot ser escalar o array per mes
+
+    // LOSS (exponencial)
     let k = params.gwLoss[type];
     if (Array.isArray(k)) k = k[month - 1]
     k = Number(k) || 0;
 
-    if (L_m <= 0 || k <= 0 || q_in <= 0) {
-        return q_in;
+    let q_after = q_in;
+
+    if (L_m > 0 && k > 0 && q_after > 0) {
+        q_after = q_after * Math.exp(-k * L_m);
     }
 
+    // GAIN (additiu)
+    let g = params.gwGain[type]; // m3/s per km
+    if (Array.isArray(g)) g = g[month - 1];
+    g = Number(g) || 0;
+
+    // guany proporcional a longitud (km)
+    const q_gain = (L_km > 0 && g > 0) ? (g * L_km) : 0;
+
     // q_out = q_in * exp(-k L)
-    return q_in * Math.exp(-k * L_m);
+    return Math.max(0, q_after + q_gain);
 }
 
 const calculateFlow = function(cy, params, errorRef = null, opts = {}){
