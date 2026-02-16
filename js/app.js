@@ -26,14 +26,14 @@ const Hm3ToM3 = function (m3s) {
 }
 
 // HTML dels tooltips
-function nodeTooltipHTML(n, month) {
+function nodeTooltipHTML(n, month, k) {
     if (n.id() === 'DESEMBASSAT') {
         return `
             <div>
               <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
               <div>Tipus: ${n.data('type') ?? '—'}</div>
-              <div>Cabal desembassat: ${fmt(n.data('outflow' + month))}</div>
-              ${month === '0' ? '<div>Total anual: ' + Hm3ToM3(n.data('outflow' + month)) + ' Hm<sup>3</sup></div>' : ''}
+              <div>Cabal desembassat: ${fmt(n.data('outflow' + k))}</div>
+              ${month === '0' ? '<div>Total anual: ' + Hm3ToM3(n.data('outflow' + k)) + ' Hm<sup>3</sup></div>' : ''}
             </div>
         `
     }
@@ -41,34 +41,33 @@ function nodeTooltipHTML(n, month) {
         <div>
           <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
           <div>Tipus: ${n.data('type') ?? '—'}</div>
-          <div>Cabal entrant: ${fmt(n.data('inflow' + month))}</div>
+          <div>Cabal entrant: ${fmt(n.data('inflow' + k))}</div>
           <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
-          <div>Cabal sortint: ${fmt(n.data('outflow' + month))}</div>
+          <div>Cabal sortint: ${fmt(n.data('outflow' + k))}</div>
           ${month === '0' ? '<div>' + (n.data('m' + month) > 0 ? "Aportació" : "Extracció total") + ': ' + Hm3ToM3(n.data('m' + month)) + ' Hm<sup>3</sup></div>' : ''}
-          ${n.data('deficit' + month) < 0 ? '<div>Dèficit: ' + fmt(n.data('deficit' + month), 2) + '</div>' : ''}
         </div>
   `
 }
 
-function edgeTooltipHTML(e, month) {
+function edgeTooltipHTML(e, month, k) {
     return `
     <div>
       <div><strong>${e.data('nomComu') ?? ''}</strong></div>
       <div>${e.data('codiMassa')}</div>
-      <div>Cabal mitjà: ${fmt(e.data('flow' + month))}</div>
+      <div>Cabal mitjà: ${fmt(e.data('flow' + k))}</div>
       <div>Cabal ambiental: ${fmt(e.data('envFlow' + month))}</div>
       <div>Llargada tram: ${+e.data('lengthRiver').toFixed(0)} m</div>
     </div>
   `
 }
 
-function embTooltipHTML(month) {
+function embTooltipHTML(k) {
     return `
     <div>
         <div><strong>Sistema Sau-Susqueda-Pasteral</strong></div>
-        <div>Volum al sistema: ${fmt(gm.RESERVOIR.storage_hm3[month])} Hm<sup>3</sup></div>
-        <div>Cabal mitjà d'entrada: ${fmt(gm.RESERVOIR.inflowSum_m3s[month])} m<sup>3</sup>s</div>
-        <div>Cabal mitjà desembassat: ${fmt(gm.RESERVOIR.released_m3s[month])} m<sup>3</sup>s</div>
+        <div>Volum al sistema: ${fmt(gm.RESERVOIR.storage_hm3[k])} Hm<sup>3</sup></div>
+        <div>Cabal mitjà d'entrada: ${fmt(gm.RESERVOIR.inflowSum_m3s[k])} m<sup>3</sup>s</div>
+        <div>Cabal mitjà desembassat: ${fmt(gm.RESERVOIR.released_m3s[k])} m<sup>3</sup>s</div>
     </div>
     `
 }
@@ -102,56 +101,64 @@ createApp({
         const flowModifiedByMonth = ref(null)
         const errorMsg = ref(null)
         const month = ref('0')
-        const monthSelector = ref(
-            [
-                {value: '0', label: "Total anual"},
-                {value: '1', label: "Gener"},
-                {value: '2', label: "Febrer"},
-                {value: '3', label: "Març"},
-                {value: '4', label: "Abril"},
-                {value: '5', label: "Maig"},
-                {value: '6', label: "Juny"},
-                {value: '7', label: "Juliol"},
-                {value: '8', label: "Agost"},
-                {value: '9', label: "Setembre"},
-                {value: '10', label: "Octubre"},
-                {value: '11', label: "Novembre"},
-                {value: '12', label: "Desembre"},
-            ]
-        )
+        const baseMonths = [
+            {value: '1', label: "Gener"},
+            {value: '2', label: "Febrer"},
+            {value: '3', label: "Març"},
+            {value: '4', label: "Abril"},
+            {value: '5', label: "Maig"},
+            {value: '6', label: "Juny"},
+            {value: '7', label: "Juliol"},
+            {value: '8', label: "Agost"},
+            {value: '9', label: "Setembre"},
+            {value: '10', label: "Octubre"},
+            {value: '11', label: "Novembre"},
+            {value: '12', label: "Desembre"},
+        ]
+        const monthSelector = Vue.computed(() => {
+            if (nYears.value === 1){
+                return [{value: '0', label: "Total anual"}, ...baseMonths]
+            }
+            return baseMonths
+        })
         const nYears = ref(1)
         const nYearsDraft = ref(1)
         const simYear = ref('1')
         const yearSelector = Vue.computed(() => {
             const N = Math.max(1, Math.min(10, Number(nYears.value) || 1))
-            return Array.from({length: N}, (_, i) => ({
+            const options = Array.from({length: N}, (_, i) => ({
                 value: String(i+1),
                 label: `Any ${i+1}`
             }))
+            options.push({value: '0', label: 'Total'})
+            return options
         })
         const yearsDirty = Vue.computed(() => {
             const d = Math.max(1, Math.min(10, Number(nYearsDraft.value) || 1))
             const a = Math.max(1, Math.min(10, Number(nYears.value) || 1))
             return d !== a
         })
-        const K = Vue.computed(() => {
-          return Number(nYears.value) * 12 || 12
+        const selK = Vue.computed(() => {
+            console.log('selK', Number(simYear.value) === 0 ? 0 : (simYear.value - 1) * 12 + Number(month.value), 'simYear', simYear.value)
+            return Number(simYear.value) === 0 ? 0 : (simYear.value - 1) * 12 + Number(month.value)
         })
         const applyYears = async () => {
+            simYear.value = '0'
             const newN = Math.max(1, Math.min(10, Number(nYearsDraft.value) || 1))
             nYears.value = newN
-            if (Number(simYear.value) > newN) simYear.value = String(newN)
+            if (newN > 1 && month.value === '0') month.value = '1'
 
             loading.value = true
             await sleep(1)
             gm.initSimulation(nYears.value)
-            await gm.calculateContribution(cy.value, params, K)
-            await gm.calculateFlow(cy.value, params, errorMsg); // mesos de l'1 al 12
+            await gm.calculateContribution(cy.value, params.value)
+            await gm.calculateFlow(cy.value, params.value, errorMsg); // mesos de l'1 al 12
             await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
         }
+        const params = shallowRef(null)
         const editMode = ref('annual')
         const annualVolume = ref(null)
         const openModal = ref(false)
@@ -227,8 +234,8 @@ createApp({
                 await rainReduction()
             }
 
-            await gm.calculateContribution(cy.value, params)
-            await gm.calculateFlow(cy.value, params, errorMsg); // mesos de l'1 al 12
+            await gm.calculateContribution(cy.value, params.value)
+            await gm.calculateFlow(cy.value, params.value, errorMsg); // mesos de l'1 al 12
             await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -284,7 +291,7 @@ createApp({
                 const canalsGeo = await canalsResp.json()
 
                 const calibResults = await loadCalibResults();
-                const params = gm.buildCalibratedParams(gm.params, calibResults);
+                params.value = gm.buildCalibratedParams(gm.params, calibResults);
 
 
 
@@ -483,7 +490,7 @@ createApp({
                     })
                     layer.on('mouseover', () => {
                         const cn = cy.value.getElementById(n.id())
-                        const html = nodeTooltipHTML(cn, month.value)
+                        const html = nodeTooltipHTML(cn, month.value, selK)
                         const tt = layer.getTooltip()
                         if (tt) tt.setContent(html)
                         layer.openTooltip()
@@ -517,7 +524,7 @@ createApp({
                         })
                         layer.on('mouseover', () => {
                             const ce = cy.value.getElementById(eid)
-                            const html = edgeTooltipHTML(ce, month.value)
+                            const html = edgeTooltipHTML(ce, month.value, selK)
                             const tt = layer.getTooltip()
                             if (tt) tt.setContent(html)
                             layer.openTooltip()
@@ -581,8 +588,8 @@ createApp({
                 }).addTo(map);
                 pptMean.value = gm.calculateMeanPpt(cy.value)
                 gm.initSimulation(nYears.value)
-                gm.calculateContribution(cy.value, params)
-                gm.calculateFlow(cy.value, params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+                gm.calculateContribution(cy.value, params.value)
+                gm.calculateFlow(cy.value, params.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);
@@ -637,7 +644,9 @@ createApp({
             nYearsDraft,
             yearsDirty,
             yearSelector,
+            simYear,
             applyYears,
+            selK,
             loading,
             fmt,
             openModal,

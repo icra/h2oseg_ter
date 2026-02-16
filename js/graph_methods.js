@@ -327,6 +327,8 @@ const calculateNodeContribution = function(node, params){
 }
 
 const calculateContribution = function(cy, params = params){
+    if (!params) throw new Error('parameters required')
+
     cy.nodes().forEach(node => {
         if (node.data('type') === 'massa' || node.data('type') === 'comporta' || node.data('type') === 'aforament') {
             calculateNodeContribution(node, params)
@@ -368,6 +370,8 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
 }
 
 const calculateFlow = function(cy, params, errorRef = null, opts = {}, nYears = 1){
+    if (!params) throw new Error('parameters required')
+
     const K = Number(nYears) * 12 || 12
 
     for (let k = 1; k <= K; k++){
