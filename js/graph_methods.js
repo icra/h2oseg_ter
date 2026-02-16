@@ -1,14 +1,39 @@
 const inNodes = ['NODE_82', 'NODE_33', 'NODE_34', 'NODE_84']
 
-const createMonths = function(preffix){
-    return Array(12).fill().map((e, i) => String(preffix + (1 + i)))
+const createMonths = function(preffix, K){
+    return Array(K).fill().map((e, i) => String(preffix + (1 + i)))
 }
 
-const flowChangeKeys = createMonths('m')
-const inflowKeys = createMonths('inflow')
-const outflowKeys = createMonths('outflow')
-const flowKeys = createMonths('flow')
-const rKeys = createMonths('')
+const monthOfStep = (k) => ((k - 1) % 12) + 1;
+
+const sortBySuffixNumber = (keys, prefix) =>
+    keys.slice().sort((a, b) => {
+        const na = Number(a.slice(prefix.length));
+        const nb = Number(b.slice(prefix.length));
+        return na - nb;
+    });
+
+let SIM = {
+    K: 12,
+    m: [], inflow: [], outflow: [], flow: [], r: []
+};
+
+const initSimulation = function(nYears){
+    SIM.K = Number(nYears) * 12 || 12;
+    console.log("mesos", SIM.K)
+
+    SIM.m      = createMonths('m',      SIM.K);
+    SIM.inflow = createMonths('inflow', SIM.K);
+    SIM.outflow= createMonths('outflow',SIM.K);
+    SIM.flow   = createMonths('flow',   SIM.K);
+    SIM.r      = createMonths('',       SIM.K);
+
+    // si tens RESERVOIR amb sèries, reseteja aquí
+    RESERVOIR.storage_hm3 = {};
+    RESERVOIR.inflowSum_m3s = {};
+    RESERVOIR.released_m3s = {};
+
+}
 
 const lightHours = [9.3, 10.4, 11.7, 13.2, 14.4, 15, 14.8, 13.7, 12.3, 10.8, 9.6, 9]
 const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -185,7 +210,7 @@ const setupEleClickListener = function(cy, selectedEleRef) {
 const setGraphColors = function(month, cy, leafMaps){
     cy.nodes().forEach(node => {
         if (month === '0'){
-            const nodeFaults = rKeys.map(m => setNodeColor(node, m)).filter(e => e === rampPalette[12]).length
+            const nodeFaults = SIM.r.map(m => setNodeColor(node, m)).filter(e => e === rampPalette[12]).length
             applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[nodeFaults])
         } else {
             applyNodeColorToLeaflet(node, month, leafMaps)
@@ -194,7 +219,7 @@ const setGraphColors = function(month, cy, leafMaps){
 
     cy.edges().forEach(edge => {
         if (month === '0'){
-            const edgeFaults = rKeys.map(m => setEdgeColor(edge, m)).filter(e => e === rampPalette[12]).length
+            const edgeFaults = SIM.r.map(m => setEdgeColor(edge, m)).filter(e => e === rampPalette[12]).length
             applyEdgeColorToLeaflet(edge, '0', leafMaps, rampPalette[edgeFaults])
         } else {
             applyEdgeColorToLeaflet(edge, month, leafMaps)
@@ -246,8 +271,10 @@ const ancestorsOf = function(cy, nodeId){
 }
 
 const calculateNodeContribution = function(node, params){
-    const tmit = Object.keys(node.data())
-        .filter(k => k.startsWith('tmit'))
+    const tmit = sortBySuffixNumber(
+        Object.keys(node.data())
+        .filter(k => k.startsWith('tmit')),
+    'tmit')
 
     tmit.forEach(m => {
         node.data(m, Math.max(node.data(m), 0))
@@ -268,12 +295,18 @@ const calculateNodeContribution = function(node, params){
     const kc = aigua.map((_, i) => aigua[i] + regadiu[i] + seca[i] + forestal[i] + prats[i] + urba[i])
     const ET = ETP.map((e, i) => e * kc[i])
 
-    const ppt = Object.keys(node.data())
-        .filter(k => k.startsWith('ppt'))
+    const ppt = sortBySuffixNumber(
+        Object.keys(node.data())
+        .filter(k => k.startsWith('ppt')),
+    'ppt'
+    )
         .map(p => node.data(p))
 
-    const neu = Object.keys(node.data())
-        .filter(k => k.startsWith('neu'))
+    const neu = sortBySuffixNumber(
+        Object.keys(node.data())
+        .filter(k => k.startsWith('neu')),
+        'neu'
+    )
         .map(n => node.data(n))
 
     const deltaNeu = neu.map((n, i) => {
@@ -288,7 +321,7 @@ const calculateNodeContribution = function(node, params){
     const seconds = Array(12).fill().map((e, i) => i + 1)
         .map(m => monthSeconds(2024, m))
 
-    flowChangeKeys.forEach((k, i) => {
+    createMonths('m', 12).forEach((k, i) => {
         node.data(k, Math.max(monthContrib[i] * 0.001 / seconds[i], 0))
     })
 }
@@ -334,10 +367,15 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
     return Math.max(0, q_after + q_gain);
 }
 
-const calculateFlow = function(cy, params, errorRef = null, opts = {}){
-    const months = Array(12).fill().map((e, i) => String(i + 1));
-    for (const m of months){
-        calculateFlowMonth(cy, params, errorRef, {period: {year: 2024, month: m}});
+const calculateFlow = function(cy, params, errorRef = null, opts = {}, nYears = 1){
+    const K = Number(nYears) * 12 || 12
+
+    for (let k = 1; k <= K; k++){
+        const mo = monthOfStep(k); // 1..12
+        calculateFlowMonth(cy, params, errorRef, {
+            period: { year: 2024, month: mo },
+            step: k
+        });
     }
     // Calculem mitjanes anuals per tots els elements
     calculateAnnualValues(cy)
@@ -347,34 +385,36 @@ const calculateAnnualValues = function(cy){
     cy.nodes().forEach(node => {
         const data = node.data();
 
-        const changesMean = flowChangeKeys.map(k => data[k])
-            .reduce((a, b) => a + b, 0) / flowChangeKeys.length;
+        const m = createMonths('m', 12)
+
+        const changesMean = m.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / m.length;
         node.data('m0', changesMean);
 
-        const inflowMean = inflowKeys.map(k => data[k])
-            .reduce((a, b) => a + b, 0) / inflowKeys.length;
+        const inflowMean = SIM.inflow.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / SIM.inflow.length;
         node.data('inflow0', inflowMean);
 
-        const outflowMean = outflowKeys.map(k => data[k])
-            .reduce((a, b) => a + b, 0) / inflowKeys.length;
+        const outflowMean = SIM.outflow.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / SIM.inflow.length;
         node.data('outflow0', outflowMean);
     })
 
     cy.edges().forEach(edge => {
         const data = edge.data();
 
-        const flowMean = flowKeys.map(k => data[k])
-            .reduce((a, b) => a + b, 0) / flowKeys.length;
+        const flowMean = SIM.flow.map(k => data[k])
+            .reduce((a, b) => a + b, 0) / SIM.flow.length;
         edge.data('flow0', flowMean);
     })
 
 
-    RESERVOIR.storage_hm3['0'] = rKeys.map(k => RESERVOIR.storage_hm3[k])
-        .reduce((a, b) => a + b, 0) / rKeys.length;
-    RESERVOIR.inflowSum_m3s['0'] = rKeys.map(k => RESERVOIR.inflowSum_m3s[k])
-        .reduce((a, b) => a + b, 0) / rKeys.length;
-    RESERVOIR.released_m3s['0'] = rKeys.map(k => RESERVOIR.released_m3s[k])
-        .reduce((a, b) => a + b, 0) / rKeys.length;
+    RESERVOIR.storage_hm3['0'] = SIM.r.map(k => RESERVOIR.storage_hm3[k])
+        .reduce((a, b) => a + b, 0) / SIM.r.length;
+    RESERVOIR.inflowSum_m3s['0'] = SIM.r.map(k => RESERVOIR.inflowSum_m3s[k])
+        .reduce((a, b) => a + b, 0) / SIM.r.length;
+    RESERVOIR.released_m3s['0'] = SIM.r.map(k => RESERVOIR.released_m3s[k])
+        .reduce((a, b) => a + b, 0) / SIM.r.length;
 
     // console.log('RESERVOIR complete', RESERVOIR)
 }
@@ -383,18 +423,21 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     let R = RESERVOIR;
 
     const month = opts.period.month
+    const k = opts.step
     const m = Number(month)
+
+    if (!k) throw new Error('Missing opts.step')
 
     const dt_s = opts.period ? monthSeconds(opts.period.year, opts.period.month) : monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1);
 
     if (!opts.resetStorage) {
-        R.storage_hm3[m] = m !== 1 ? R.storage_hm3[m - 1] : R.initial_storage_hm3;
+        R.storage_hm3[k] = k !== 1 ? R.storage_hm3[k - 1] : R.initial_storage_hm3;
     }
-    R.inflowSum_m3s[m] = 0
-    R.inflowVol_hm3[m] = 0
-    R.releaseDemand_m3s[m] = 0
-    R.released_m3s[m] = 0
-    R.releasedVol_hm3[m] = 0
+    R.inflowSum_m3s[k] = 0
+    R.inflowVol_hm3[k] = 0
+    R.releaseDemand_m3s[k] = 0
+    R.released_m3s[k] = 0
+    R.releasedVol_hm3[k] = 0
 
     const damAncestors = ancestorsOf(cy, R.outNode);
 
@@ -418,46 +461,46 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         const incomingEdges = node.incomers('edge');
         let inflow = 0;
         incomingEdges.forEach(edge => {
-            const flow = parseFloat(edge.data('flow' + month)) || 0;
+            const flow = parseFloat(edge.data('flow' + k)) || 0;
             inflow += flow;
         });
 
         // 2. Aplicar el flowChange local del node
-        node.data('inflow' + month, inflow);
+        node.data('inflow' + k, inflow);
         const flowChange = parseFloat(node.data('m' + month)) || 0;
         const rawOutflow = inflow + flowChange;
         const positiveOut = Math.max(0, rawOutflow);
         let outflow = Math.max(0, rawOutflow);
-        node.data('outflow' + month, outflow);
-        node.data('deficit' + month, rawOutflow);
+        node.data('outflow' + k, outflow);
+        node.data('deficit' + k, rawOutflow);
 
         if (R.inNodes && R.inNodes.has(node.id())) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
-            const nouVol = Math.min(R.storage_hm3[m] + add_hm3, R.capacity_hm3);
-            R.inflowSum_m3s[m] += positiveOut;
-            R.inflowVol_hm3[m] += m3sToHm3(R.inflowSum_m3s[m], dt_s)
+            const nouVol = Math.min(R.storage_hm3[k] + add_hm3, R.capacity_hm3);
+            R.inflowSum_m3s[k] += positiveOut;
+            R.inflowVol_hm3[k] += m3sToHm3(R.inflowSum_m3s[k], dt_s)
             // if (month === '5') console.log("inflowVol", m, R.inflowVol_hm3[m]);
-            R.storage_hm3[m] = nouVol;
+            R.storage_hm3[k] = nouVol;
 
             // no propaguem cabal a través dels arcs virtuals
-            node.data('outflow' + month, 0);
-            node.data('storage_after_hm3' + month, R.storage_hm3[m]);
+            node.data('outflow' + k, 0);
+            node.data('storage_after_hm3' + k, R.storage_hm3[k]);
 
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
-                edge.data('flow' + month, 0);
+                edge.data('flow' + k, 0);
             });
             return;
         }
 
         if (R.outNode && R.outNode === node.id()) {
 
-            node.data('outflow' + month, 0);
+            node.data('outflow' + k, 0);
 
             // posa 0 als sortints de l'embassament perquè els successors es calculin sense aportació de l'embassament
-            node.outgoers('edge').forEach(edge => edge.data('flow' + month, 0));
+            node.outgoers('edge').forEach(edge => edge.data('flow' + k, 0));
 
-            node.data('storage_after_hm3' + month, R.storage_hm3[m]);
+            node.data('storage_after_hm3' + k, R.storage_hm3[k]);
 
             return;
         }
@@ -465,8 +508,8 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         // 3. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
-            const qOutEdge = applyGwLossToEdge(outflow, edge, m, params)
-            edge.data('flow' + month, qOutEdge);
+            const qOutEdge = applyGwLossToEdge(outflow, edge, month, params)
+            edge.data('flow' + k, qOutEdge);
         });
     }
 
@@ -483,7 +526,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     succNodes.forEach(n => {
         // la demanda és el cabal que necessita menys el que li entra.
         if (n.data('m' + month) < 0) {
-            const demandaNode = (n.data('m' + month)*(-1) - n.data('inflow' + month))
+            const demandaNode = (n.data('m' + month)*(-1) - n.data('inflow' + k))
             demanda += Math.max(demandaNode, 0)
             // if (month === '1') console.log(n.id(), demandaNode, demanda)
         }
@@ -495,51 +538,51 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     const R_backup = structuredClone(R)
 
     // recalculem cabals sota presa
-    calculateFlowDownstreamDam(cy, demanda, dam, month, dt_s)
+    calculateFlowDownstreamDam(cy, demanda, dam, month, k, dt_s)
 
     // Calcular demanda ambiental, és el màxim de envFlow<m> - flow
     let maxDemandaAmbiental = 0
     dam.successors('edge').forEach(edge => {
-        const demandaAmbiental = edge.data('envFlow' + month) - edge.data('flow' + month)
+        const demandaAmbiental = edge.data('envFlow' + month) - edge.data('flow' + k)
         maxDemandaAmbiental = Math.max(maxDemandaAmbiental, demandaAmbiental)
         // if (month === '1') console.log('demanda ambiental', edge.id(), demandaAmbiental, maxDemandaAmbiental)
     })
 
     Object.assign(RESERVOIR, structuredClone(R_backup));
 
-    calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, dt_s)
+    calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, k, dt_s)
 
     if (errorRef) errorRef.value = null;
 };
 
-const calculateFlowDownstreamDam = function(cy, demanda, dam, month, dt_s){
+const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
     let R = RESERVOIR
     const m = Number(month)
 
     // si l'embassament és ple, allibera com a mínim el cabal d'entrada
-    if (R.storage_hm3[m] >= R.capacity_hm3 - 1e-6) {
+    if (R.storage_hm3[k] >= R.capacity_hm3 - 1e-6) {
         // console.log("Embassament ple al mes", month)
-        demanda = Math.max(demanda, R.inflowSum_m3s[m])
+        demanda = Math.max(demanda, R.inflowSum_m3s[k])
     }
-    const maxPossible_m3s = hm3ToM3s(R.storage_hm3[m], dt_s);
+    const maxPossible_m3s = hm3ToM3s(R.storage_hm3[k], dt_s);
     const release_m3s = Math.min(demanda, maxPossible_m3s);
     const used_hm3 = m3sToHm3(release_m3s, dt_s);
-    R.storage_hm3[m] = Math.max(0, R.storage_hm3[m] - used_hm3);
-    R.releaseDemand_m3s[m] = demanda;
-    R.released_m3s[m] = release_m3s;
-    R.releasedVol_hm3[m] = used_hm3;
+    R.storage_hm3[k] = Math.max(0, R.storage_hm3[k] - used_hm3);
+    R.releaseDemand_m3s[k] = demanda;
+    R.released_m3s[k] = release_m3s;
+    R.releasedVol_hm3[k] = used_hm3;
 
     // console.log(m, "entrada", R.inflowVol_hm3[m], "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
 
-    dam.data('outflow' + month, release_m3s);
-    dam.outgoers('edge').forEach(e => e.data('flow' + month, release_m3s));
+    dam.data('outflow' + k, release_m3s);
+    dam.outgoers('edge').forEach(e => e.data('flow' + k, release_m3s));
 
     // Recalcular tot aigües avall amb el release ja aplicat
     const bfs = cy.elements().bfs({ roots: dam, directed: true });
     bfs.path.nodes().not(dam).forEach(n => {
         // 1) inflow = suma de tots els 'flow<m>' dels edges entrants
         let inflow2 = 0;
-        n.incomers('edge').forEach(ed => { inflow2 += (+ed.data('flow' + month) || 0); });
+        n.incomers('edge').forEach(ed => { inflow2 += (+ed.data('flow' + k) || 0); });
 
         // 2) aplicar m<month> local i clamp a ≥ 0
         const mChange2 = +n.data('m' + month) || 0;
@@ -547,44 +590,98 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, dt_s){
         const out2 = Math.max(0, raw2);
 
         // 3) escriure dades del node
-        n.data('inflow'  + month, inflow2);
-        n.data('outflow' + month, out2);
+        n.data('inflow'  + k, inflow2);
+        n.data('outflow' + k, out2);
 
         // 4) propagar cap avall
-        n.outgoers('edge').forEach(ed => ed.data('flow' + month, out2));
+        n.outgoers('edge').forEach(ed => ed.data('flow' + k, out2));
     });
 }
 
-const modifyFlowChange = function(cy, selectedEle, flowModified, month, errorMsg, period) {
-    if (!selectedEle || !selectedEle.id) return;
+const modifyFlowChange = async function(
+    cy,
+    selectedEle,
+    flowModified,
+    month,             // '1'..'12' (mes climatològic)
+    errorMsg,
+    params,
+    opts = {}
+) {
+    if (!selectedEle?.id) return;
 
     const node = cy.getElementById(selectedEle.id);
-    if (!node || !node.isNode()) return;
+    if (!node?.isNode?.()) return;
 
-    // Temporàriament posem el valor
-    const previousValue = node.data('m' + month);
-    node.data('m' + month, flowModified.value);
+    const mo = Number(month); // 1..12
+    const prev = node.data('m' + mo);
 
-    // Torna a calcular
-    calculateFlowMonth(cy, params, errorMsg, period);
-
-    // Si s’ha generat error, tornem enrere i no modifiquem l’input
-    if (errorMsg.value) {
-        node.data('m' + month, previousValue); // revertim
-        flowModified.value = null
-        calculateFlowMonth(cy, params, errorMsg, period)
+    // valida input
+    const newVal = Number(flowModified.value);
+    if (!Number.isFinite(newVal)) {
+        errorMsg.value = "Introdueix un valor numèric";
         return;
     }
 
-    // Si tot correcte, actualitzem label
-    node.data('label', `${node.id()} (${flowModified.value})`);
-    selectedEle['m' + month] = flowModified.value;
-    selectedEle['flow' + month] = node.data('flow' + month);
+    // aplica input mensual
+    node.data('m' + mo, newVal);
 
-    calculateAnnualValues(cy);
+    try {
+        errorMsg.value = null;
 
-    selectedEle['m0'] = node.data('m0')
-    selectedEle['flow0'] = node.data('flow0');
+        // recalcula tota la simulació (outputs per pas)
+        const nYears = Math.max(1, Math.min(10, Number(opts.nYears) || 1));
+        const K = 12 * nYears;
+
+        // IMPORTANT: inicialitza arrays/keys i neteja RESERVOIR per k
+        // gm.initSimulation(K) si l'has creat; aquí dins gm:
+        initSimulation?.(K);
+
+        for (let k = 1; k <= K; k++) {
+            const moStep = monthOfStep(k);
+            await calculateFlowMonth(cy, params, errorMsg, {
+                period: { year: 2024, month: moStep },
+                step: k,
+                resetStorage: (k === 1) // opcional
+            });
+            if (errorMsg.value) break;
+        }
+
+        if (errorMsg.value) {
+            // revert si hi ha error
+            node.data('m' + mo, prev);
+            initSimulation?.(K);
+            for (let k = 1; k <= K; k++) {
+                const moStep = monthOfStep(k);
+                await calculateFlowMonth(cy, params, errorMsg, {
+                    period: { year: 2024, month: moStep },
+                    step: k,
+                    resetStorage: (k === 1)
+                });
+                if (errorMsg.value) break;
+            }
+            return;
+        }
+
+        calculateAnnualValues(cy);
+
+        // refresca selectedEle perquè la UI vegi el nou input mensual
+        selectedEle['m' + mo] = newVal;
+
+        // si vols refrescar el valor mostrat (any+mes seleccionats)
+        if (opts.year && opts.month && opts.month !== '0') {
+            const y = Number(opts.year);
+            const kSel = (y - 1) * 12 + Number(opts.month);
+            selectedEle['inflow' + kSel]  = node.data('inflow' + kSel);
+            selectedEle['outflow' + kSel] = node.data('outflow' + kSel);
+            selectedEle['deficit' + kSel] = node.data('deficit' + kSel);
+        }
+
+    } catch (e) {
+        console.error(e);
+        // revert en cas d'excepció
+        node.data('m' + mo, prev);
+        errorMsg.value = "Error recalculant la simulació";
+    }
 }
 
 const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {
@@ -631,6 +728,7 @@ const calculateMeanPpt = function(cy){
 
 export default {
     setupEleClickListener,
+    initSimulation,
     calculateContribution,
     calculateFlow,
     calculateFlowMonth,

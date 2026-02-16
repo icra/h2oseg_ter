@@ -739,3 +739,59 @@ button:hover {
     padding: 0;
 }
 
+.time-controls{
+    margin: 0 0 12px 0;
+    padding: 10px 12px;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.time-row{
+    display: flex;
+    gap: 10px;
+    align-items: end;
+}
+
+.time-row + .time-row{
+    margin-top: 8px;
+}
+
+.time-field{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.time-field label{
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.time-select,
+.time-input{
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.12);
+    padding: 0 10px;
+    background: #fff;
+    outline: none;
+}
+
+.time-select:focus,
+.time-input:focus{
+    border-color: rgba(0,0,0,0.28);
+}
+
+.time-row-secondary button{
+    height: 34px;
+    border-radius: 10px;
+    padding: 0 12px;
+}
+
+.time-hint{
+    margin: 8px 0 0;
+    font-size: 0.82rem;
+    opacity: 0.7;
+}

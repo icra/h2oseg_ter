@@ -193,12 +193,47 @@
                 <img src="assets/logo_h20seg.png" alt="Logo H2OSEG" style="height: 50px;" />
                 <span style="padding: 0.5em;">Ter</span>
             </div>
-            <!-- Month selector -->
-            <div class="month-select" v-cloak>
-                <label for="selMonth">Mes:</label>
-                <select id="selMonth" class="month-select" :value="month" v-model="month">
-                    <option v-for="m in monthSelector" :key="m.value" :value="m.value">{{ m.label }}</option>
-                </select>
+            <!-- Temps (Any / Mes) + Anys simulació -->
+            <div class="time-controls" v-cloak>
+                <div class="time-row">
+                    <!-- Selector d'any (només si nYears > 1) -->
+                    <div v-if="Number(nYears) > 1" class="time-field">
+                        <label for="selYear">Any:</label>
+                        <select id="selYear" v-model="simYear" class="time-select">
+                            <option v-for="y in yearSelector" :key="y.value" :value="y.value">
+                                {{ y.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Selector de mes -->
+                    <div class="time-field">
+                        <label for="selMonth">Mes:</label>
+                        <select id="selMonth" v-model="month" class="time-select">
+                            <option v-for="m in monthSelector" :key="m.value" :value="m.value">
+                                {{ m.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="time-row time-row-secondary">
+                    <div class="time-field">
+                        <label for="nYears">Anys de simulació:</label>
+                        <input id="nYears" type="number" min="1" max="10" step="1"
+                               v-model.number="nYearsDraft" class="time-input" />
+                    </div>
+
+                    <button class="btn-primary"
+                            :disabled="!yearsDirty || loading"
+                            @click="applyYears">
+                        Aplica
+                    </button>
+                </div>
+
+                <p v-if="yearsDirty" class="time-hint">
+                    Canviar els anys reinicia la simulació.
+                </p>
             </div>
             <!-- CARD PRINCIPAL DE L'ELEMENT SELECCIONAT -->
             <div v-if="selectedEle" class="res-mini res-stack">

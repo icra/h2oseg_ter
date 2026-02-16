@@ -119,6 +119,39 @@ createApp({
                 {value: '12', label: "Desembre"},
             ]
         )
+        const nYears = ref(1)
+        const nYearsDraft = ref(1)
+        const simYear = ref('1')
+        const yearSelector = Vue.computed(() => {
+            const N = Math.max(1, Math.min(10, Number(nYears.value) || 1))
+            return Array.from({length: N}, (_, i) => ({
+                value: String(i+1),
+                label: `Any ${i+1}`
+            }))
+        })
+        const yearsDirty = Vue.computed(() => {
+            const d = Math.max(1, Math.min(10, Number(nYearsDraft.value) || 1))
+            const a = Math.max(1, Math.min(10, Number(nYears.value) || 1))
+            return d !== a
+        })
+        const K = Vue.computed(() => {
+          return Number(nYears.value) * 12 || 12
+        })
+        const applyYears = async () => {
+            const newN = Math.max(1, Math.min(10, Number(nYearsDraft.value) || 1))
+            nYears.value = newN
+            if (Number(simYear.value) > newN) simYear.value = String(newN)
+
+            loading.value = true
+            await sleep(1)
+            gm.initSimulation(nYears.value)
+            await gm.calculateContribution(cy.value, params, K)
+            await gm.calculateFlow(cy.value, params, errorMsg); // mesos de l'1 al 12
+            await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
+            tick.value++
+
+            loading.value = false
+        }
         const editMode = ref('annual')
         const annualVolume = ref(null)
         const openModal = ref(false)
@@ -195,7 +228,7 @@ createApp({
             }
 
             await gm.calculateContribution(cy.value, params)
-            await gm.calculateFlow(cy.value, params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+            await gm.calculateFlow(cy.value, params, errorMsg); // mesos de l'1 al 12
             await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -547,6 +580,7 @@ createApp({
                     }
                 }).addTo(map);
                 pptMean.value = gm.calculateMeanPpt(cy.value)
+                gm.initSimulation(nYears.value)
                 gm.calculateContribution(cy.value, params)
                 gm.calculateFlow(cy.value, params, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
@@ -599,6 +633,11 @@ createApp({
             reset,
             month,
             monthSelector,
+            nYears,
+            nYearsDraft,
+            yearsDirty,
+            yearSelector,
+            applyYears,
             loading,
             fmt,
             openModal,
