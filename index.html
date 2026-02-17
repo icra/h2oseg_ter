@@ -360,7 +360,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="m in monthSelector.slice(1, 13)" :key="m.value">
+                                    <tr v-for="m in baseMonths" :key="m.value">
                                         <td class="lab">{{ m.label }}</td>
                                         <td class="val">
                                             {{ Number(selectedEle['m' + m.value] || 0).toFixed(2) }}

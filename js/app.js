@@ -152,7 +152,7 @@ createApp({
             await sleep(1)
             gm.initSimulation(nYears.value)
             await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, errorMsg); // mesos de l'1 al 12
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}); // mesos de l'1 al 12
             await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -235,7 +235,7 @@ createApp({
             }
 
             await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, errorMsg); // mesos de l'1 al 12
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg); // mesos de l'1 al 12
             await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -589,7 +589,7 @@ createApp({
                 pptMean.value = gm.calculateMeanPpt(cy.value)
                 gm.initSimulation(nYears.value)
                 gm.calculateContribution(cy.value, params.value)
-                gm.calculateFlow(cy.value, params.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
+                gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
                 gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);
@@ -639,6 +639,7 @@ createApp({
             errorMsg,
             reset,
             month,
+            baseMonths,
             monthSelector,
             nYears,
             nYearsDraft,

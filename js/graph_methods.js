@@ -369,7 +369,7 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
     return Math.max(0, q_after + q_gain);
 }
 
-const calculateFlow = function(cy, params, errorRef = null, opts = {}, nYears = 1){
+const calculateFlow = function(cy, params, nYears = 1, errorRef = null, opts = {}){
     if (!params) throw new Error('parameters required')
 
     const K = Number(nYears) * 12 || 12
@@ -484,6 +484,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
             R.inflowSum_m3s[k] += positiveOut;
             R.inflowVol_hm3[k] += m3sToHm3(R.inflowSum_m3s[k], dt_s)
             // if (month === '5') console.log("inflowVol", m, R.inflowVol_hm3[m]);
+            console.log("save storage_hm3 on k =", k)
             R.storage_hm3[k] = nouVol;
 
             // no propaguem cabal a través dels arcs virtuals
