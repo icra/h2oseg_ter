@@ -207,22 +207,24 @@ const setupEleClickListener = function(cy, selectedEleRef) {
     });
 }
 
-const setGraphColors = function(month, cy, leafMaps){
+const setGraphColors = function(selK, cy, leafMaps){
     cy.nodes().forEach(node => {
-        if (month === '0'){
-            const nodeFaults = SIM.r.map(m => setNodeColor(node, m)).filter(e => e === rampPalette[12]).length
-            applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[nodeFaults])
+        if (selK === 0){
+            const nodeFaults = SIM.r.map(k => setNodeColor(node, k)).filter(e => e === rampPalette[12]).length
+            const idx = Math.round(12 * nodeFaults / SIM.r.length)
+            applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[idx])
         } else {
-            applyNodeColorToLeaflet(node, month, leafMaps)
+            applyNodeColorToLeaflet(node, selK, leafMaps)
         }
     });
 
     cy.edges().forEach(edge => {
-        if (month === '0'){
+        if (selK === 0){
             const edgeFaults = SIM.r.map(m => setEdgeColor(edge, m)).filter(e => e === rampPalette[12]).length
-            applyEdgeColorToLeaflet(edge, '0', leafMaps, rampPalette[edgeFaults])
+            const idx = Math.round(12 * edgeFaults / SIM.r.length)
+            applyEdgeColorToLeaflet(edge, '0', leafMaps, rampPalette[idx])
         } else {
-            applyEdgeColorToLeaflet(edge, month, leafMaps)
+            applyEdgeColorToLeaflet(edge, selK, leafMaps)
         }
     });
 }
@@ -250,15 +252,17 @@ const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
     layer.setStyle({ color }); // mantenim weight/opacity actuals
 };
 
-const setEdgeColor = function(edge, month){
-    return (edge.data('flow' + month) + 0.01) < edge.data('envFlow' + month) ? rampPalette[12] : rampPalette[0]
+const setEdgeColor = function(edge, k){
+    const month = monthOfStep(k)
+    return (edge.data('flow' + k) + 0.01) < edge.data('envFlow' + month) ? rampPalette[12] : rampPalette[0]
 }
 
-const setNodeColor = function(node, month){
+const setNodeColor = function(node, k){
+    const month = monthOfStep(k)
     if (node.incomers().length === 0) {
         return rampPalette[0]; // Si no té edges entrants, és una font
     }
-    return (node.data('inflow' + month) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
+    return (node.data('inflow' + k) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
 }
 
 // utilitat: construir un Set amb tots els ancestres (predecessors) d’un node donat
@@ -369,17 +373,22 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
     return Math.max(0, q_after + q_gain);
 }
 
-const calculateFlow = function(cy, params, nYears = 1, errorRef = null, opts = {}){
+const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, opts = {}, loadingYear){
     if (!params) throw new Error('parameters required')
-
     const K = Number(nYears) * 12 || 12
 
     for (let k = 1; k <= K; k++){
+        if (loadingYear) loadingYear.value = Math.ceil(k / 12)
+
         const mo = monthOfStep(k); // 1..12
         calculateFlowMonth(cy, params, errorRef, {
             period: { year: 2024, month: mo },
             step: k
         });
+
+        if (k % 12 === 0) {
+            await new Promise(requestAnimationFrame)
+        }
     }
     // Calculem mitjanes anuals per tots els elements
     calculateAnnualValues(cy)
@@ -484,7 +493,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
             R.inflowSum_m3s[k] += positiveOut;
             R.inflowVol_hm3[k] += m3sToHm3(R.inflowSum_m3s[k], dt_s)
             // if (month === '5') console.log("inflowVol", m, R.inflowVol_hm3[m]);
-            console.log("save storage_hm3 on k =", k)
             R.storage_hm3[k] = nouVol;
 
             // no propaguem cabal a través dels arcs virtuals

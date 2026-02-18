@@ -139,7 +139,6 @@ createApp({
             return d !== a
         })
         const selK = Vue.computed(() => {
-            console.log('selK', Number(simYear.value) === 0 ? 0 : (simYear.value - 1) * 12 + Number(month.value), 'simYear', simYear.value)
             return Number(simYear.value) === 0 ? 0 : (simYear.value - 1) * 12 + Number(month.value)
         })
         const applyYears = async () => {
@@ -148,16 +147,18 @@ createApp({
             nYears.value = newN
             if (newN > 1 && month.value === '0') month.value = '1'
 
+            loadingYear.value = 1
             loading.value = true
             await sleep(1)
             gm.initSimulation(nYears.value)
             await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}); // mesos de l'1 al 12
-            await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear); // mesos de l'1 al 12
+            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
         }
+        const loadingYear = ref(1)
         const params = shallowRef(null)
         const editMode = ref('annual')
         const annualVolume = ref(null)
@@ -170,6 +171,7 @@ createApp({
         const tick = ref(0)
 
         const applyFlowChanges = async function (ele) {
+            loadingYear.value = 1
             loading.value = true
             await sleep(1)
 
@@ -189,6 +191,7 @@ createApp({
             loading.value = false
         }
         const applyAnnualChange = async function (ele) {
+            loadingYear.value = 1
             loading.value = true
 
             if (annualVolume.value === '' || annualVolume.value === NaN || annualVolume.value === null) {
@@ -223,6 +226,7 @@ createApp({
         }
         const applyScenariosChanges = async function () {
             openModal.value = false
+            loadingYear.value = 1
             loading.value = true
             await sleep(1)
             console.log(activeScenarios.value.rainReduction, rainReductionPerc.value)
@@ -235,8 +239,8 @@ createApp({
             }
 
             await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg); // mesos de l'1 al 12
-            await gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear); // mesos de l'1 al 12
+            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
@@ -587,10 +591,10 @@ createApp({
                     }
                 }).addTo(map);
                 pptMean.value = gm.calculateMeanPpt(cy.value)
-                gm.initSimulation(nYears.value)
-                gm.calculateContribution(cy.value, params.value)
-                gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}); // mesos de l'1 al 12
-                gm.setGraphColors(month.value, cy.value, {nodeLayerById, edgeLayerById});
+                await gm.initSimulation(nYears.value)
+                await gm.calculateContribution(cy.value, params.value)
+                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear); // mesos de l'1 al 12
+                gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);
             } catch (e) {
@@ -621,8 +625,8 @@ createApp({
             }
         }, {immediate: true});
 
-        watch(month, (m) => {
-            gm.setGraphColors(m, cy.value, {nodeLayerById, edgeLayerById})
+        watch(selK, (k) => {
+            gm.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById})
         })
 
         return {
@@ -647,6 +651,7 @@ createApp({
             yearSelector,
             simYear,
             applyYears,
+            loadingYear,
             selK,
             loading,
             fmt,
