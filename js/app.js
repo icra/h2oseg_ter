@@ -27,6 +27,7 @@ const Hm3ToM3 = function (m3s) {
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month, k) {
+    console.log('k tooltip', k)
     if (n.id() === 'DESEMBASSAT') {
         return `
             <div>
@@ -494,7 +495,7 @@ createApp({
                     })
                     layer.on('mouseover', () => {
                         const cn = cy.value.getElementById(n.id())
-                        const html = nodeTooltipHTML(cn, month.value, selK)
+                        const html = nodeTooltipHTML(cn, month.value, selK.value)
                         const tt = layer.getTooltip()
                         if (tt) tt.setContent(html)
                         layer.openTooltip()
@@ -528,7 +529,7 @@ createApp({
                         })
                         layer.on('mouseover', () => {
                             const ce = cy.value.getElementById(eid)
-                            const html = edgeTooltipHTML(ce, month.value, selK)
+                            const html = edgeTooltipHTML(ce, month.value, selK.value)
                             const tt = layer.getTooltip()
                             if (tt) tt.setContent(html)
                             layer.openTooltip()
@@ -561,7 +562,7 @@ createApp({
                             mouseover: (e) => {
                                 const l = e.target;
                                 const tt = l.getTooltip();
-                                if (tt) tt.setContent(embTooltipHTML(month.value)); // passa la feature si ho necessites
+                                if (tt) tt.setContent(embTooltipHTML(selK.value)); // passa la feature si ho necessites
                                 l.openTooltip();
                             },
                             mouseout: (e) => e.target.closeTooltip()
