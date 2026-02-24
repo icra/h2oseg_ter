@@ -171,23 +171,28 @@ createApp({
         const pptMean = ref(null)
         const tick = ref(0)
 
-        const applyFlowChanges = async function (ele) {
+        const applyFlowChanges = async function () {
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
 
-            for (const m of monthSelector.value) {
-                flowModified.value = Number(flowModifiedByMonth.value[m.value])
-
-                await gm.modifyFlowChange(
-                    cy.value,
-                    selectedEle.value,
-                    flowModified,
-                    m.value,
-                    errorMsg,
-                    {period: {year: 2024, month: m.value}}
-                )
+            // IMPORTANT: només mesos 1..12, no '0'
+            const changes = {}
+            for (let mo = 1; mo <= 12; mo++) {
+                changes[String(mo)] = flowModifiedByMonth.value[String(mo)]
             }
+            await gm.modifyFlowChange(
+                cy.value,
+                selectedEle.value,
+                changes,
+                errorMsg,
+                params.value,
+                { nYears: nYears.value },
+                loadingYear
+            )
+
+            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
+            tick.value++
 
             loading.value = false
         }
@@ -221,7 +226,7 @@ createApp({
             })
 
             await sleep(0)
-            await applyFlowChanges(ele)
+            await applyFlowChanges()
 
             loading.value = false
         }

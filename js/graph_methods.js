@@ -432,6 +432,68 @@ const calculateAnnualValues = function(cy){
     // console.log('RESERVOIR complete', RESERVOIR)
 }
 
+const modifyFlowChange = async function(
+    cy,
+    selectedEle,          // selectedEle.value (té .id)
+    flowModifiedByMonth,  // objecte amb claus '1'..'12'
+    errorMsg,
+    params,
+    opts = {},
+    loadingYear
+){
+    if (!selectedEle?.id) return;
+    if (!Number(opts.nYears)) console.error('opts.nYears required as a number');
+
+    const node = cy.getElementById(selectedEle.id);
+    if (!node?.isNode?.()) return;
+
+    // backup per si hi ha error (opcional però recomanat)
+    const prev = {};
+    for (let mo = 1; mo <= 12; mo++) prev[mo] = node.data('m' + mo);
+
+    // 1) aplicar TOTS els mesos (sense recalcular encara)
+    for (let mo = 1; mo <= 12; mo++) {
+        const v = Number(flowModifiedByMonth?.[String(mo)]);
+        if (!Number.isFinite(v)) {
+            errorMsg.value = `Introdueix un valor numèric (mes ${mo})`;
+            return;
+        }
+        node.data('m' + mo, v);
+    }
+
+    // 2) recalcular un sol cop (tots els anys)
+    try {
+        errorMsg.value = null;
+
+        const nYears = opts.nYears || 1;
+        const K = 12 * nYears;
+
+        initSimulation?.(nYears);
+
+        await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear)
+
+        if (errorMsg.value) {
+            // revert si hi ha error
+            for (let mo = 1; mo <= 12; mo++) node.data('m' + mo, prev[mo]);
+
+            initSimulation?.(nYears);
+            await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear)
+        }
+
+        // refresca selectedEle (sidebar) amb els nous inputs
+        for (let mo = 1; mo <= 12; mo++) {
+            selectedEle['m' + mo] = node.data('m' + mo);
+        }
+        selectedEle.m0 = node.data('m0'); // per si mostres volum anual
+
+    } catch (e) {
+        console.error(e);
+        // revert en cas d’excepció
+        for (let mo = 1; mo <= 12; mo++) node.data('m' + mo, prev[mo]);
+        errorMsg.value = "Error recalculant la simulació";
+    }
+};
+
 const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     let R = RESERVOIR;
 
@@ -609,92 +671,6 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
         // 4) propagar cap avall
         n.outgoers('edge').forEach(ed => ed.data('flow' + k, out2));
     });
-}
-
-const modifyFlowChange = async function(
-    cy,
-    selectedEle,
-    flowModified,
-    month,             // '1'..'12' (mes climatològic)
-    errorMsg,
-    params,
-    opts = {}
-) {
-    if (!selectedEle?.id) return;
-
-    const node = cy.getElementById(selectedEle.id);
-    if (!node?.isNode?.()) return;
-
-    const mo = Number(month); // 1..12
-    const prev = node.data('m' + mo);
-
-    // valida input
-    const newVal = Number(flowModified.value);
-    if (!Number.isFinite(newVal)) {
-        errorMsg.value = "Introdueix un valor numèric";
-        return;
-    }
-
-    // aplica input mensual
-    node.data('m' + mo, newVal);
-
-    try {
-        errorMsg.value = null;
-
-        // recalcula tota la simulació (outputs per pas)
-        const nYears = Math.max(1, Math.min(10, Number(opts.nYears) || 1));
-        const K = 12 * nYears;
-
-        // IMPORTANT: inicialitza arrays/keys i neteja RESERVOIR per k
-        // gm.initSimulation(K) si l'has creat; aquí dins gm:
-        initSimulation?.(K);
-
-        for (let k = 1; k <= K; k++) {
-            const moStep = monthOfStep(k);
-            await calculateFlowMonth(cy, params, errorMsg, {
-                period: { year: 2024, month: moStep },
-                step: k,
-                resetStorage: (k === 1) // opcional
-            });
-            if (errorMsg.value) break;
-        }
-
-        if (errorMsg.value) {
-            // revert si hi ha error
-            node.data('m' + mo, prev);
-            initSimulation?.(K);
-            for (let k = 1; k <= K; k++) {
-                const moStep = monthOfStep(k);
-                await calculateFlowMonth(cy, params, errorMsg, {
-                    period: { year: 2024, month: moStep },
-                    step: k,
-                    resetStorage: (k === 1)
-                });
-                if (errorMsg.value) break;
-            }
-            return;
-        }
-
-        calculateAnnualValues(cy);
-
-        // refresca selectedEle perquè la UI vegi el nou input mensual
-        selectedEle['m' + mo] = newVal;
-
-        // si vols refrescar el valor mostrat (any+mes seleccionats)
-        if (opts.year && opts.month && opts.month !== '0') {
-            const y = Number(opts.year);
-            const kSel = (y - 1) * 12 + Number(opts.month);
-            selectedEle['inflow' + kSel]  = node.data('inflow' + kSel);
-            selectedEle['outflow' + kSel] = node.data('outflow' + kSel);
-            selectedEle['deficit' + kSel] = node.data('deficit' + kSel);
-        }
-
-    } catch (e) {
-        console.error(e);
-        // revert en cas d'excepció
-        node.data('m' + mo, prev);
-        errorMsg.value = "Error recalculant la simulació";
-    }
 }
 
 const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {
