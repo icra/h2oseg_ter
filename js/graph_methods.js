@@ -22,6 +22,9 @@ const initSimulation = function(nYears, initialVolume){
     SIM.K = Number(nYears) * 12 || 12;
     console.log("mesos", SIM.K)
 
+    let initVolume = Number(initialVolume) || RESERVOIR.capacity_hm3
+    console.log(initVolume)
+
     SIM.m      = createMonths('m',      SIM.K);
     SIM.inflow = createMonths('inflow', SIM.K);
     SIM.outflow= createMonths('outflow',SIM.K);
@@ -32,7 +35,7 @@ const initSimulation = function(nYears, initialVolume){
     RESERVOIR.storage_hm3 = {};
     RESERVOIR.inflowSum_m3s = {};
     RESERVOIR.released_m3s = {};
-    RESERVOIR.initial_storage = initialVolume
+    RESERVOIR.initial_storage = initVolume
 
 }
 

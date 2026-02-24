@@ -203,6 +203,9 @@
                            v-model.number="volumEmb" class="time-input" />
                     <span class="time-unit">hm<sup>3</sup></span>
                 </div>
+                <p class="res-error" v-if="!Number(volumEmb) || volumEmb > 400 || volumEmb < 0">
+                    El volum ha de ser entre 0 i 400 hm<sup>3</sup>.
+                </p>
                 </div>
                 <div class="time-row">
                     <!-- Selector d'any (només si nYears > 1) -->
@@ -235,7 +238,7 @@
 
                     <button class="btn-primary"
                             @click="applyYears"
-                            :disabled="loading">
+                            :disabled="loading || !Number(volumEmb) || volumEmb > 400 || volumEmb < 0">
                         Aplica
                     </button>
                 </div>
