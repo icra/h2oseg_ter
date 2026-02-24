@@ -151,9 +151,8 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
-            gm.initSimulation(nYears.value)
             await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear); // mesos de l'1 al 12
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
             await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -169,6 +168,7 @@ createApp({
         })
         const rainReductionPerc = ref(0)
         const pptMean = ref(null)
+        const volumEmb = ref(400)
         const tick = ref(0)
 
         const applyFlowChanges = async function () {
@@ -188,7 +188,8 @@ createApp({
                 errorMsg,
                 params.value,
                 { nYears: nYears.value },
-                loadingYear
+                loadingYear,
+                volumEmb.value
             )
 
             await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
@@ -235,7 +236,6 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
-            console.log(activeScenarios.value.rainReduction, rainReductionPerc.value)
             if (activeScenarios.value.rainReduction === false && rainReductionPerc.value !== '0') {
                 console.log("dins inactiu")
                 rainReductionPerc.value = '0'
@@ -245,7 +245,7 @@ createApp({
             }
 
             await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear); // mesos de l'1 al 12
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
             await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -597,9 +597,9 @@ createApp({
                     }
                 }).addTo(map);
                 pptMean.value = gm.calculateMeanPpt(cy.value)
-                await gm.initSimulation(nYears.value)
+                await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
-                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear); // mesos de l'1 al 12
+                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
                 gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);
@@ -668,6 +668,7 @@ createApp({
             pptMean,
             Hm3ToM3,
             rampPalette: gm.rampPalette,
+            volumEmb,
             tick
         }
     }

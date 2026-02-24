@@ -197,6 +197,16 @@
             </div>
             <!-- Temps (Any / Mes) + Anys simulació -->
             <div class="time-controls" v-cloak>
+                <div class="time-field">
+                    <label for="volum-emb">Volum inicial del sistema Sau-Susqueda:</label>                        <div class="time-input-group">
+                    <input id="volum-emb" type="number" min="0" max="400" step="25"
+                           v-model.number="volumEmb" class="time-input" />
+                    <span class="time-unit">hm<sup>3</sup></span>
+                </div>
+                <p class="res-error" v-if="!Number(volumEmb) || volumEmb > 400 || volumEmb < 0">
+                    El volum ha de ser entre 0 i 400 hm<sup>3</sup>.
+                </p>
+                </div>
                 <div class="time-row">
                     <!-- Selector d'any (només si nYears > 1) -->
                     <div v-if="Number(nYears) > 1" class="time-field">
@@ -227,8 +237,8 @@
                     </div>
 
                     <button class="btn-primary"
-                            :disabled="!yearsDirty || loading"
-                            @click="applyYears">
+                            @click="applyYears"
+                            :disabled="loading || !Number(volumEmb) || volumEmb > 400 || volumEmb < 0">
                         Aplica
                     </button>
                 </div>
