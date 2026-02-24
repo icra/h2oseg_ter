@@ -27,6 +27,7 @@
 
             <!-- BODY -->
             <div class="modal-body">
+<!--                Rain Reduction-->
                 <div class="scenario-block">
                     <div class="scenario-header">
                         <label class="scenario-toggle" for="rainReduction">
@@ -43,8 +44,8 @@
                                 v-if="activeScenarios.rainReduction"
                                 class="scenario-chip"
                         >
-                {{ rainReductionPerc }}%
-            </span>
+                            {{ rainReductionPerc }}%
+                        </span>
                     </div>
 
                     <p class="scenario-desc">
@@ -61,12 +62,56 @@
                         />
 
                         <div class="scenario-values">
-                <span class="scenario-value-new">
-                    Nou valor: {{ ((pptMean * (100 + +rainReductionPerc) / 100)).toFixed(0) }} mm
-                </span>
+                            <span class="scenario-value-new">
+                                Nou valor: {{ ((pptMean * (100 + +rainReductionPerc) / 100)).toFixed(0) }} mm
+                            </span>
+                                        <span class="scenario-value-delta">
+                                Canvi: {{ rainReductionPerc }}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+<!--                Temperature increase -->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="temperatureIncrease">
+                            <input
+                                    id="temperatureIncrease"
+                                    type="checkbox"
+                                    v-model="activeScenarios.temperatureIncrease"
+                            />
+                            <span class="scenario-title">Increment de la temperatura mitjana anual</span>
+                        </label>
+
+                        <!-- Xip amb el % quan l'escenari és actiu -->
+                        <span
+                                v-if="activeScenarios.temperatureIncrease"
+                                class="scenario-chip"
+                        >
+                            {{ Number(temperatureIncreaseDegrees).toFixed(0) }} ºC
+                        </span>
+                    </div>
+
+                    <p class="scenario-desc">
+                        Aplica una reducció uniforme a la temperatura mitjana anual
+                        (actualment {{ Number(tmitMean || 0).toFixed(0) }} ºC).
+                    </p>
+
+                    <div v-if="activeScenarios.temperatureIncrease" class="scenario-slider">
+                        <input
+                                type="range"
+                                min="0"
+                                max="10"
+                                v-model="temperatureIncreaseDegrees"
+                        />
+
+                        <div class="scenario-values">
+                            <span class="scenario-value-new">
+                                Nou valor: {{ (tmitMean + Number(temperatureIncreaseDegrees)).toFixed(0) }} ºC
+                            </span>
                             <span class="scenario-value-delta">
-                    Canvi: {{ rainReductionPerc }}%
-                </span>
+                                Canvi: {{ temperatureIncreaseDegrees }} ºC
+                            </span>
                         </div>
                     </div>
                 </div>
