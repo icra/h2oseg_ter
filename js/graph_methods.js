@@ -18,7 +18,7 @@ let SIM = {
     m: [], inflow: [], outflow: [], flow: [], r: []
 };
 
-const initSimulation = function(nYears){
+const initSimulation = function(nYears, initialVolume){
     SIM.K = Number(nYears) * 12 || 12;
     console.log("mesos", SIM.K)
 
@@ -32,6 +32,7 @@ const initSimulation = function(nYears){
     RESERVOIR.storage_hm3 = {};
     RESERVOIR.inflowSum_m3s = {};
     RESERVOIR.released_m3s = {};
+    RESERVOIR.initial_storage = initialVolume
 
 }
 
@@ -169,8 +170,7 @@ let RESERVOIR = {
     inflowVol_hm3: {},
     releaseDemand_m3s: {},
     released_m3s: {},
-    releasedVol_hm3: {},
-    initial_storage_hm3: 400
+    releasedVol_hm3: {}
     // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
 
@@ -373,8 +373,11 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
     return Math.max(0, q_after + q_gain);
 }
 
-const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, opts = {}, loadingYear){
+const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, opts = {}, loadingYear, initialVolume){
     if (!params) throw new Error('parameters required')
+
+    initSimulation(nYears, initialVolume)
+
     const K = Number(nYears) * 12 || 12
 
     for (let k = 1; k <= K; k++){
@@ -439,7 +442,8 @@ const modifyFlowChange = async function(
     errorMsg,
     params,
     opts = {},
-    loadingYear
+    loadingYear,
+    initialVolume
 ){
     if (!selectedEle?.id) return;
     if (!Number(opts.nYears)) console.error('opts.nYears required as a number');
@@ -468,16 +472,13 @@ const modifyFlowChange = async function(
         const nYears = opts.nYears || 1;
         const K = 12 * nYears;
 
-        initSimulation?.(nYears);
-
-        await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear)
+        await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear, initialVolume)
 
         if (errorMsg.value) {
             // revert si hi ha error
             for (let mo = 1; mo <= 12; mo++) node.data('m' + mo, prev[mo]);
 
-            initSimulation?.(nYears);
-            await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear)
+            await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear, initialVolume)
         }
 
         // refresca selectedEle (sidebar) amb els nous inputs
@@ -504,9 +505,11 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     if (!k) throw new Error('Missing opts.step')
 
     const dt_s = opts.period ? monthSeconds(opts.period.year, opts.period.month) : monthSeconds(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1);
-
-    if (!opts.resetStorage) {
-        R.storage_hm3[k] = k !== 1 ? R.storage_hm3[k - 1] : R.initial_storage_hm3;
+    if (R.storage_hm3[k] == null) {
+        const init = Number(R.initial_storage ?? 0)
+        const prev = Number(R.storage_hm3[k - 1])
+        R.storage_hm3[k] = Number.isFinite(prev) ? prev : init
+        console.log("volum inicial mes", k, R.storage_hm3[k])
     }
     R.inflowSum_m3s[k] = 0
     R.inflowVol_hm3[k] = 0
@@ -628,6 +631,8 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, k, dt_s)
 
     if (errorRef) errorRef.value = null;
+
+    console.log("volum final a mes", k, R.storage_hm3[k]);
 };
 
 const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
