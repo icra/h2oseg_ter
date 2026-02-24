@@ -432,7 +432,6 @@ const calculateAnnualValues = function(cy){
     RESERVOIR.released_m3s['0'] = SIM.r.map(k => RESERVOIR.released_m3s[k])
         .reduce((a, b) => a + b, 0) / SIM.r.length;
 
-    // console.log('RESERVOIR complete', RESERVOIR)
 }
 
 const modifyFlowChange = async function(
@@ -509,7 +508,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         const init = Number(R.initial_storage ?? 0)
         const prev = Number(R.storage_hm3[k - 1])
         R.storage_hm3[k] = Number.isFinite(prev) ? prev : init
-        console.log("volum inicial mes", k, R.storage_hm3[k])
     }
     R.inflowSum_m3s[k] = 0
     R.inflowVol_hm3[k] = 0
@@ -557,7 +555,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
             const nouVol = Math.min(R.storage_hm3[k] + add_hm3, R.capacity_hm3);
             R.inflowSum_m3s[k] += positiveOut;
             R.inflowVol_hm3[k] += m3sToHm3(R.inflowSum_m3s[k], dt_s)
-            // if (month === '5') console.log("inflowVol", m, R.inflowVol_hm3[m]);
             R.storage_hm3[k] = nouVol;
 
             // no propaguem cabal a través dels arcs virtuals
@@ -606,7 +603,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         if (n.data('m' + month) < 0) {
             const demandaNode = (n.data('m' + month)*(-1) - n.data('inflow' + k))
             demanda += Math.max(demandaNode, 0)
-            // if (month === '1') console.log(n.id(), demandaNode, demanda)
         }
     });
 
@@ -623,7 +619,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     dam.successors('edge').forEach(edge => {
         const demandaAmbiental = edge.data('envFlow' + month) - edge.data('flow' + k)
         maxDemandaAmbiental = Math.max(maxDemandaAmbiental, demandaAmbiental)
-        // if (month === '1') console.log('demanda ambiental', edge.id(), demandaAmbiental, maxDemandaAmbiental)
     })
 
     Object.assign(RESERVOIR, structuredClone(R_backup));
@@ -631,8 +626,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, k, dt_s)
 
     if (errorRef) errorRef.value = null;
-
-    console.log("volum final a mes", k, R.storage_hm3[k]);
 };
 
 const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
@@ -641,7 +634,6 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
 
     // si l'embassament és ple, allibera com a mínim el cabal d'entrada
     if (R.storage_hm3[k] >= R.capacity_hm3 - 1e-6) {
-        // console.log("Embassament ple al mes", month)
         demanda = Math.max(demanda, R.inflowSum_m3s[k])
     }
     const maxPossible_m3s = hm3ToM3s(R.storage_hm3[k], dt_s);
