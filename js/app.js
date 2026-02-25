@@ -297,7 +297,6 @@ createApp({
                     const newRain = n.data(refppt[i]) * reduction
                     n.data(ppt[i], newRain)
                 }
-                if (n.id() === 'NODE_64') console.log("node_64", n.data())
             })
         }
         const temperatureIncrease = async function () {
