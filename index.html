@@ -93,11 +93,11 @@
                     </div>
 
                     <p class="scenario-desc">
-                        Aplica una reducció uniforme a la temperatura mitjana anual
+                        Aplica un increment uniforme a la temperatura mitjana anual
                         (actualment {{ Number(tmitMean || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
                     </p>
 
-                    <div v-if="scenarios.temperatureIncrease.value" class="scenario-slider">
+                    <div v-if="scenarios.temperatureIncrease.active" class="scenario-slider">
                         <input
                                 type="range"
                                 min="0"
