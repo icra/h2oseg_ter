@@ -2,7 +2,7 @@
 
 import gm from './graph_methods.js'
 
-const {createApp, onMounted, ref, shallowRef, watch, nextTick} = Vue
+const {createApp, onMounted, ref, shallowRef, watch} = Vue
 
 const TT_OPTS = {direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane'}
 
@@ -143,10 +143,16 @@ createApp({
             return Number(simYear.value) === 0 ? 0 : (simYear.value - 1) * 12 + Number(month.value)
         })
         const applyYears = async () => {
-            simYear.value = '0'
             const newN = Math.max(1, Math.min(10, Number(nYearsDraft.value) || 1))
             nYears.value = newN
             if (newN > 1 && month.value === '0') month.value = '1'
+
+            if (newN > 1){
+                simYear.value = '0'
+            } else {
+                simYear.value = '1'
+                month.value = '0'
+            }
 
             loadingYear.value = 1
             loading.value = true
@@ -163,12 +169,20 @@ createApp({
         const editMode = ref('annual')
         const annualVolume = ref(null)
         const openModal = ref(false)
-        const activeScenarios = ref({
-            rainReduction: false,
-            temperatureIncrease: false,
+        const scenarios = ref({
+            rainReduction: {
+                name: "Reducció de pluja",
+                value: '0',
+                units: "%",
+                active: false
+            },
+            temperatureIncrease: {
+                name: "Increment de temperatura",
+                value: '0',
+                units: "ºC",
+                active: false
+            }
         })
-        const rainReductionPerc = ref(0)
-        const temperatureIncreaseDegrees = ref(0)
         const pptMean = ref(null)
         const tmitMean = ref(null)
         const volumEmb = ref(400)
@@ -239,16 +253,16 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
-            if (activeScenarios.value.rainReduction === false && rainReductionPerc.value !== '0') {
-                rainReductionPerc.value = '0'
+            if (scenarios.value.rainReduction.active === false && scenarios.value.rainReduction.value !== '0') {
+                scenarios.value.rainReduction.value = '0'
                 await rainReduction()
-            } else if (activeScenarios.value.rainReduction) {
+            } else if (scenarios.value.rainReduction.active) {
                 await rainReduction()
             }
-            if (activeScenarios.value.temperatureIncrease === false && temperatureIncreaseDegrees !== '0') {
-                temperatureIncreaseDegrees.value = '0'
+            if (scenarios.value.temperatureIncrease.active === false && scenarios.value.temperatureIncrease.value !== '0') {
+                scenarios.value.temperatureIncrease.value = '0'
                 await temperatureIncrease()
-            } else if (activeScenarios.value.temperatureIncrease) {
+            } else if (scenarios.value.temperatureIncrease.active) {
                 await temperatureIncrease()
             }
 
@@ -264,7 +278,7 @@ createApp({
                 console.error("cy not loaded")
                 return
             }
-            const reduction = (100 + Number(rainReductionPerc.value)) / 100
+            const reduction = (100 + Number(scenarios.value.rainReduction.value)) / 100
             const ppt = Array(12).fill().map((e, i) => String('ppt' + (i + 1)))
             const refppt = Array(12).fill().map((e, i) => String('refppt' + (i + 1)))
 
@@ -307,7 +321,7 @@ createApp({
             cy.value.nodes().forEach(n => {
                 if (n.data('tmit1') === undefined) return
                 for (const i in tmit) {
-                    const newTmit = n.data(reftmit[i]) + Number(temperatureIncreaseDegrees.value)
+                    const newTmit = n.data(reftmit[i]) + Number(scenarios.value.temperatureIncrease.value)
                     n.data(tmit[i], newTmit)
                 }
             })
@@ -693,10 +707,8 @@ createApp({
             loading,
             fmt,
             openModal,
-            activeScenarios,
+            scenarios,
             applyScenariosChanges,
-            rainReductionPerc,
-            temperatureIncreaseDegrees,
             pptMean,
             tmitMean,
             Hm3ToM3,
