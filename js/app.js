@@ -2,7 +2,7 @@
 
 import gm from './graph_methods.js'
 
-const {createApp, onMounted, ref, shallowRef, watch, nextTick} = Vue
+const {createApp, onMounted, ref, shallowRef, watch} = Vue
 
 const TT_OPTS = {direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane'}
 
@@ -143,10 +143,16 @@ createApp({
             return Number(simYear.value) === 0 ? 0 : (simYear.value - 1) * 12 + Number(month.value)
         })
         const applyYears = async () => {
-            simYear.value = '0'
             const newN = Math.max(1, Math.min(10, Number(nYearsDraft.value) || 1))
             nYears.value = newN
             if (newN > 1 && month.value === '0') month.value = '1'
+
+            if (newN > 1){
+                simYear.value = '0'
+            } else {
+                simYear.value = '1'
+                month.value = '0'
+            }
 
             loadingYear.value = 1
             loading.value = true
@@ -163,11 +169,22 @@ createApp({
         const editMode = ref('annual')
         const annualVolume = ref(null)
         const openModal = ref(false)
-        const activeScenarios = ref({
-            rainReduction: false
+        const scenarios = ref({
+            rainReduction: {
+                name: "Reducció de pluja",
+                value: '0',
+                units: "%",
+                active: false
+            },
+            temperatureIncrease: {
+                name: "Increment de temperatura",
+                value: '0',
+                units: "ºC",
+                active: false
+            }
         })
-        const rainReductionPerc = ref(0)
         const pptMean = ref(null)
+        const tmitMean = ref(null)
         const volumEmb = ref(400)
         const tick = ref(0)
 
@@ -236,16 +253,21 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
-            if (activeScenarios.value.rainReduction === false && rainReductionPerc.value !== '0') {
-                console.log("dins inactiu")
-                rainReductionPerc.value = '0'
+            if (scenarios.value.rainReduction.active === false && scenarios.value.rainReduction.value !== '0') {
+                scenarios.value.rainReduction.value = '0'
                 await rainReduction()
-            } else if (activeScenarios.value.rainReduction) {
+            } else if (scenarios.value.rainReduction.active) {
                 await rainReduction()
+            }
+            if (scenarios.value.temperatureIncrease.active === false && scenarios.value.temperatureIncrease.value !== '0') {
+                scenarios.value.temperatureIncrease.value = '0'
+                await temperatureIncrease()
+            } else if (scenarios.value.temperatureIncrease.active) {
+                await temperatureIncrease()
             }
 
             await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
             await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -256,8 +278,7 @@ createApp({
                 console.error("cy not loaded")
                 return
             }
-            console.log("rain reduction value", rainReductionPerc.value, typeof rainReductionPerc.value)
-            const reduction = (100 + Number(rainReductionPerc.value)) / 100
+            const reduction = (100 + Number(scenarios.value.rainReduction.value)) / 100
             const ppt = Array(12).fill().map((e, i) => String('ppt' + (i + 1)))
             const refppt = Array(12).fill().map((e, i) => String('refppt' + (i + 1)))
 
@@ -271,14 +292,38 @@ createApp({
             }
 
             cy.value.nodes().forEach(n => {
-                if (n.data('ppt1') === null) return
+                if (n.data('ppt1') === undefined) return
                 for (const i in ppt) {
                     const newRain = n.data(refppt[i]) * reduction
                     n.data(ppt[i], newRain)
                 }
-                if (n.id() === 'NODE_64') console.log("node_64", n.data())
             })
-            loading.value = false
+        }
+        const temperatureIncrease = async function () {
+            if (!cy) {
+                console.error("cy not loaded")
+                return
+            }
+
+            const tmit = Array(12).fill().map((e, i) => String('tmit' + (i + 1)))
+            const reftmit = Array(12).fill().map((e, i) => String('reftmit' + (i + 1)))
+
+            if (cy.value.getElementById('NODE_1').data('reftmit1') === undefined) {
+                cy.value.nodes().forEach(n => {
+                    for (const i in reftmit) {
+                        n.data(reftmit[i], n.data(tmit[i]))
+                    }
+                })
+                console.log("reftmit created")
+            }
+
+            cy.value.nodes().forEach(n => {
+                if (n.data('tmit1') === undefined) return
+                for (const i in tmit) {
+                    const newTmit = n.data(reftmit[i]) + Number(scenarios.value.temperatureIncrease.value)
+                    n.data(tmit[i], newTmit)
+                }
+            })
         }
 
         const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
@@ -360,8 +405,6 @@ createApp({
                     ],
                     layout: {name: 'preset'}
                 })
-
-                console.log("cy", cy.value)
 
                 cy.value.userPanningEnabled(false)
                 cy.value.userZoomingEnabled(false)
@@ -596,7 +639,8 @@ createApp({
                         });
                     }
                 }).addTo(map);
-                pptMean.value = gm.calculateMeanPpt(cy.value)
+                pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
+                tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
                 await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
@@ -662,10 +706,10 @@ createApp({
             loading,
             fmt,
             openModal,
-            activeScenarios,
+            scenarios,
             applyScenariosChanges,
-            rainReductionPerc,
             pptMean,
+            tmitMean,
             Hm3ToM3,
             rampPalette: gm.rampPalette,
             volumEmb,

@@ -27,24 +27,25 @@
 
             <!-- BODY -->
             <div class="modal-body">
+<!--                Rain Reduction-->
                 <div class="scenario-block">
                     <div class="scenario-header">
                         <label class="scenario-toggle" for="rainReduction">
                             <input
                                     id="rainReduction"
                                     type="checkbox"
-                                    v-model="activeScenarios.rainReduction"
+                                    v-model="scenarios.rainReduction.active"
                             />
                             <span class="scenario-title">Reducció de la pluja anual</span>
                         </label>
 
                         <!-- Xip amb el % quan l'escenari és actiu -->
                         <span
-                                v-if="activeScenarios.rainReduction"
+                                v-if="scenarios.rainReduction.active"
                                 class="scenario-chip"
                         >
-                {{ rainReductionPerc }}%
-            </span>
+                            {{ scenarios.rainReduction.value }}{{ scenarios.rainReduction.units }}
+                        </span>
                     </div>
 
                     <p class="scenario-desc">
@@ -52,21 +53,65 @@
                         (actualment {{ Number(pptMean || 0).toFixed(0) }} mm).
                     </p>
 
-                    <div v-if="activeScenarios.rainReduction" class="scenario-slider">
+                    <div v-if="scenarios.rainReduction.active" class="scenario-slider">
                         <input
                                 type="range"
                                 min="-100"
                                 max="0"
-                                v-model="rainReductionPerc"
+                                v-model="scenarios.rainReduction.value"
                         />
 
                         <div class="scenario-values">
-                <span class="scenario-value-new">
-                    Nou valor: {{ ((pptMean * (100 + +rainReductionPerc) / 100)).toFixed(0) }} mm
-                </span>
+                            <span class="scenario-value-new">
+                                Nou valor: {{ ((pptMean * (100 + +scenarios.rainReduction.value) / 100)).toFixed(0) }} mm
+                            </span>
+                                        <span class="scenario-value-delta">
+                                Canvi: {{ scenarios.rainReduction.value }}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+<!--                Temperature increase -->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="temperatureIncrease">
+                            <input
+                                    id="temperatureIncrease"
+                                    type="checkbox"
+                                    v-model="scenarios.temperatureIncrease.active"
+                            />
+                            <span class="scenario-title">Increment de la temperatura mitjana anual</span>
+                        </label>
+
+                        <!-- Xip amb el % quan l'escenari és actiu -->
+                        <span
+                                v-if="scenarios.temperatureIncrease.active"
+                                class="scenario-chip"
+                        >
+                            {{ Number(scenarios.temperatureIncrease.value).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}
+                        </span>
+                    </div>
+
+                    <p class="scenario-desc">
+                        Aplica un increment uniforme a la temperatura mitjana anual
+                        (actualment {{ Number(tmitMean || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
+                    </p>
+
+                    <div v-if="scenarios.temperatureIncrease.active" class="scenario-slider">
+                        <input
+                                type="range"
+                                min="0"
+                                max="10"
+                                v-model="scenarios.temperatureIncrease.value"
+                        />
+
+                        <div class="scenario-values">
+                            <span class="scenario-value-new">
+                                Nou valor: {{ (tmitMean + Number(scenarios.temperatureIncrease.value)).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}
+                            </span>
                             <span class="scenario-value-delta">
-                    Canvi: {{ rainReductionPerc }}%
-                </span>
+                                Canvi: {{ scenarios.temperatureIncrease.value }} {{ scenarios.temperatureIncrease.units }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -434,7 +479,11 @@
                     <div class="res-header-text">
                         <h4>Escenaris de simulació</h4>
                         <ul>
-                            <li v-if="activeScenarios.rainReduction">Reducció de pluja: {{rainReductionPerc}}%</li>
+                            <template v-for="(value, key) in scenarios" :key="key">
+                                <li v-if="value.active">
+                                    {{ value.name }}: {{ value.value }} {{ value.units }}
+                                </li>
+                            </template>
                         </ul>
 
 
@@ -449,7 +498,11 @@
 
             <!-- Embassament -->
             <div v-if="cy" class="res-mini res-stack" :key="tick">
-                <div>Informació del sistema Sau-Susqueda ({{ monthSelector.find(e=> e.value === month).label }}, {{ nYears > 1 ? `any ${simYear}` : '' }})</div>
+                <div>
+                    Informació del sistema Sau-Susqueda
+                    <span v-if="!(month === '0' || simYear === '0')">({{ monthSelector.find(e=> e.value === month).label }}{{ nYears > 1 ? `, any ${simYear}` : '' }})</span>
+                    <span v-else>(Mitjana total)</span>
+                </div>
                 <!-- Línia superior: Volum -->
                 <div class="res-top">
                     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">

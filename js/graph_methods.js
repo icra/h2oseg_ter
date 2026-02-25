@@ -699,21 +699,39 @@ const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) 
     }
 }
 
-const calculateMeanPpt = function(cy){
-    let meanPpt = []
-    let sumArea = 0
-    cy.nodes().forEach(node => {
-        if (node.data('ppt1') === undefined) return
-        const ppt = Object.keys(node.data())
-            .filter(k => k.startsWith('ppt'))
-            .map(p => node.data(p))
+const calculateMeanCy = function (cy, varPrefix, mode = "sum") {
+    let sumWeighted = 0;
+    let sumArea = 0;
 
-        meanPpt.push(ppt.reduce((a, b) => a + b, 0) * node.data('area_m2'))
-        sumArea += node.data('area_m2')
-    })
-    const sumPpt = meanPpt.reduce((a, b) => a + b, 0)
-    return sumPpt / sumArea
-}
+    cy.nodes().forEach((node) => {
+        if (node.data(varPrefix + '1') === undefined) return
+        const area = Number(node.data("area_m2")) || 0;
+        if (!area) return;
+
+        const keys = Object.keys(node.data()).filter((k) => k.startsWith(varPrefix));
+
+        const values = keys
+            .map((k) => Number(node.data(k)))
+            .filter((v) => Number.isFinite(v));
+
+        if (values.length === 0) return;
+
+        const sumMonths = values.reduce((a, b) => a + b, 0);
+
+        const nodeValue =
+            mode === "mean" ? (sumMonths / values.length) : sumMonths; // mean=temperatura, sum=pluja
+
+        sumWeighted += nodeValue * area;
+        sumArea += area;
+    });
+
+    if (sumArea === 0) {
+        console.error('calculateMeanCy: no valid nodes found for prefix', varPrefix);
+        return null;
+    }
+    const mean = sumWeighted / sumArea;
+    return mean;
+};
 
 export default {
     setupEleClickListener,
@@ -724,7 +742,7 @@ export default {
     modifyFlowChange,
     setupZoomLabelControl,
     setGraphColors,
-    calculateMeanPpt,
+    calculateMeanCy,
     RESERVOIR,
     params,
     rampPalette,
