@@ -724,7 +724,6 @@ const calculateMeanCy = function (cy, varPrefix, mode = "sum") {
         sumWeighted += nodeValue * area;
         sumArea += area;
     });
-    console.log(varPrefix, sumWeighted / sumArea);
 
     return sumWeighted / sumArea
 };
