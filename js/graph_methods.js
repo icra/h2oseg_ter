@@ -729,8 +729,6 @@ const calculateMeanCy = function (cy, varPrefix, mode = "sum") {
     return sumWeighted / sumArea
 };
 
-// const calculateMeanTemp = function(cy)
-
 export default {
     setupEleClickListener,
     initSimulation,
