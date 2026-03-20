@@ -729,8 +729,7 @@ const calculateMeanCy = function (cy, varPrefix, mode = "sum") {
         console.error('calculateMeanCy: no valid nodes found for prefix', varPrefix);
         return null;
     }
-    const mean = sumWeighted / sumArea;
-    return mean;
+    return sumWeighted / sumArea;
 };
 
 export default {
