@@ -23,7 +23,7 @@ const initSimulation = function(nYears, initialVolume){
     console.log("mesos", SIM.K)
 
     let initVolume = Number(initialVolume) || RESERVOIR.capacity_hm3
-    console.log(initVolume)
+    console.log('initVolume', initVolume)
 
     SIM.m      = createMonths('m',      SIM.K);
     SIM.inflow = createMonths('inflow', SIM.K);
@@ -43,115 +43,7 @@ const lightHours = [9.3, 10.4, 11.7, 13.2, 14.4, 15, 14.8, 13.7, 12.3, 10.8, 9.6
 const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 // Kc per mes (gen ... des)
 
-// Aigua superficial
-const Kc_aigua = [
-    0.90, 0.95, 1.00, 1.05, 1.15, 1.20,
-    1.20, 1.15, 1.10, 1.00, 0.95, 0.90
-];
-
-// Conreu de regadiu
-const Kc_regadiu = [
-    0.50, 0.60, 0.85, 1.05, 1.15, 1.20,
-    1.20, 1.15, 0.95, 0.80, 0.60, 0.50
-];
-
-// Conreu de secà
-const Kc_seca = [
-    0.35, 0.45, 0.75, 0.95, 1.00, 0.80,
-    0.25, 0.25, 0.45, 0.65, 0.55, 0.35
-]
-
-// Forestal
-const Kc_forestal = [
-    0.60, 0.70, 0.90, 1.05, 1.15, 1.20,
-    1.15, 1.10, 1.00, 0.90, 0.80, 0.60
-]
-
-// Prats / pastures
-const Kc_prats = [
-    0.50, 0.55, 0.75, 0.90, 1.00, 1.05,
-    1.05, 0.95, 0.85, 0.75, 0.60, 0.50
-];
-
-// Urbà
-const Kc_urba = [
-    0.15, 0.15, 0.20, 0.25, 0.35, 0.40,
-    0.40, 0.35, 0.30, 0.25, 0.20, 0.15
-];
-
 const r_neu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18]
-
-const params = {
-    kc: {
-        aigua: Kc_aigua,
-        urba: Kc_urba,
-        forestal: Kc_forestal,
-        seca: Kc_seca,
-        regadiu: Kc_regadiu,
-        prats: Kc_prats
-    },
-    rNeu: r_neu,
-    gwLoss: {
-        low: 1e-6,
-        mid: 3e-6,
-        high: 8e-6,
-    },
-    gwGain: {
-        low: 0.002,
-        mid: 0.005,
-        high: 0.01
-    }
-}
-
-function buildCalibratedParams(baseParams, calibResults) {
-    // index per mes: 1..12
-    const byMonth = new Map(calibResults.map(r => [+r.mes, r]));
-
-    const p = structuredClone(baseParams);
-
-    // kc: array per ús (12)
-    for (const use of Object.keys(p.kc)) {
-        p.kc[use] = p.kc[use].map((baseKc, i) => {
-            const month = i + 1;
-            const r = byMonth.get(month);
-            const mul = r?.kcMulByUse?.[use] ?? 1;
-            return baseKc * mul;
-        });
-    }
-
-    // rNeu: array (12)
-    p.rNeu = p.rNeu.map((base, i) => {
-        const month = i + 1;
-        const r = byMonth.get(month);
-        const mul = r?.rNeuMul ?? 1;
-        return base * mul;
-    });
-
-    // gwLoss: tu el tens escalar; el convertim a array (12) perquè puguis aplicar mul mensual
-    for (const t of Object.keys(p.gwLoss)) {
-        const baseK = p.gwLoss[t]; // escalar
-        p.gwLoss[t] = Array.from({ length: 12 }, (_, i) => {
-            const month = i + 1;
-            const r = byMonth.get(month);
-            const mul = r?.gwMulByType?.[t] ?? 1;
-            return baseK * mul;
-        });
-    }
-
-    // gwGain -> array mensual
-    for (const t of Object.keys(p.gwGain)) {
-        const baseG = p.gwGain[t]; // m3/s per km (escalar)
-        p.gwGain[t] = Array.from({ length: 12 }, (_, i) => {
-            const month = i + 1;
-            const r = byMonth.get(month);
-            const mul = r?.gwGainMulByType?.[t] ?? 1;
-            return baseG * mul;
-        });
-    }
-
-
-    return p;
-}
 
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
 
@@ -277,7 +169,8 @@ const ancestorsOf = function(cy, nodeId){
     return anc;
 }
 
-const calculateNodeContribution = function(node, params){
+const calculateNodeContribution = function(node){
+    // mean temperature
     const tmit = sortBySuffixNumber(
         Object.keys(node.data())
         .filter(k => k.startsWith('tmit')),
@@ -287,27 +180,26 @@ const calculateNodeContribution = function(node, params){
         node.data(m, Math.max(node.data(m), 0))
     })
 
+    // ETP Thornwaite
     const I = tmit.reduce((sum, tmit) => sum + Math.pow(Math.max(node.data(tmit), 0) / 5, 1.514), 0)
     const a = 6.75e-7 * Math.pow(I, 3) - 771e-7 * Math.pow(I, 2) + 1792e-5 * I + 0.49239;
     const ETPsc = tmit.map(tmit => 16 * Math.pow((10 * node.data(tmit))/I, a))
     const ETP = ETPsc.map((e, i) => e * (lightHours[i] / 12) * (monthDays[i] / 30))
 
-    const aigua = params.kc.aigua.map(kc => kc * node.data('us_aigua'))
-    const regadiu = params.kc.regadiu.map(kc => kc * node.data('us_conreu_regadiu'))
-    const seca = params.kc.seca.map(kc => kc * node.data('us_conreu_seca'))
-    const forestal = params.kc.forestal.map(kc => kc * node.data('us_forestal'))
-    const prats = params.kc.prats.map(kc => kc * node.data('us_prats'))
-    const urba = params.kc.urba.map(kc => kc * node.data('us_urba'))
-
-    const kc = aigua.map((_, i) => aigua[i] + regadiu[i] + seca[i] + forestal[i] + prats[i] + urba[i])
-    const ET = ETP.map((e, i) => e * kc[i])
-
+    // Precipitacion
     const ppt = sortBySuffixNumber(
         Object.keys(node.data())
         .filter(k => k.startsWith('ppt')),
     'ppt'
     )
         .map(p => node.data(p))
+
+    // ET according to 3r informe canvi climàtic de Catalunya
+    // ET = PPT * 0.7316 + 0.223 * ln(ETP / P - 0.1643)
+    const ET = ETP.map((etp, i) => ppt[i] * (0.7316 + 0.223 * Math.log(etp / ppt[i] - 0.1643)))
+    // todo: check if there is some NaN
+    ETP.map((e, i) => console.log("node:", node.id(), "mes:", i, "ETP:", ETP[i], "ET:", ET[i], "PPT:", ppt[i]))
+
 
     const neu = sortBySuffixNumber(
         Object.keys(node.data())
@@ -321,7 +213,7 @@ const calculateNodeContribution = function(node, params){
         return n - neu[lag]
     })
 
-    const mmNeu = deltaNeu.map((n, i) => n * params.rNeu[i])
+    const mmNeu = deltaNeu.map((n, i) => n * r_neu[i])
 
     const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]))
 
@@ -333,52 +225,19 @@ const calculateNodeContribution = function(node, params){
     })
 }
 
-const calculateContribution = function(cy, params = params){
-    if (!params) throw new Error('parameters required')
-
+const calculateContribution = function(cy){
     cy.nodes().forEach(node => {
-        if (node.data('type') === 'massa' || node.data('type') === 'comporta' || node.data('type') === 'aforament') {
-            calculateNodeContribution(node, params)
+        if ((node.data('type') === 'massa' || node.data('type') === 'comporta' || node.data('type') === 'aforament') && node.data('area_m2') > 0) {
+            calculateNodeContribution(node)
         }
     })
 }
 
-const applyGwLossToEdge = function(q_in, edge, month, params){
-    if (params === null) {
-        console.error("Params is null")
-        return q_in
-    }
-
-    const L_km = edge.data('lengthRiver');
-    const L_m = edge.data('lengthRiver') * 1000;
-    const type = edge.data('gwType');
-
-    // LOSS (exponencial)
-    let k = params.gwLoss[type];
-    if (Array.isArray(k)) k = k[month - 1]
-    k = Number(k) || 0;
-
-    let q_after = q_in;
-
-    if (L_m > 0 && k > 0 && q_after > 0) {
-        q_after = q_after * Math.exp(-k * L_m);
-    }
-
-    // GAIN (additiu)
-    let g = params.gwGain[type]; // m3/s per km
-    if (Array.isArray(g)) g = g[month - 1];
-    g = Number(g) || 0;
-
-    // guany proporcional a longitud (km)
-    const q_gain = (L_km > 0 && g > 0) ? (g * L_km) : 0;
-
-    // q_out = q_in * exp(-k L)
-    return Math.max(0, q_after + q_gain);
+const applyGwLossToEdge = function(q_in, edge, month){
+    return q_in
 }
 
-const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, opts = {}, loadingYear, initialVolume){
-    if (!params) throw new Error('parameters required')
-
+const calculateFlow = async function(cy, nYears = 1, errorRef = null, opts = {}, loadingYear, initialVolume){
     initSimulation(nYears, initialVolume)
 
     const K = Number(nYears) * 12 || 12
@@ -387,7 +246,7 @@ const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, op
         if (loadingYear) loadingYear.value = Math.ceil(k / 12)
 
         const mo = monthOfStep(k); // 1..12
-        calculateFlowMonth(cy, params, errorRef, {
+        calculateFlowMonth(cy, errorRef, {
             period: { year: 2024, month: mo },
             step: k
         });
@@ -442,7 +301,6 @@ const modifyFlowChange = async function(
     selectedEle,          // selectedEle.value (té .id)
     flowModifiedByMonth,  // objecte amb claus '1'..'12'
     errorMsg,
-    params,
     opts = {},
     loadingYear,
     initialVolume
@@ -474,13 +332,13 @@ const modifyFlowChange = async function(
         const nYears = opts.nYears || 1;
         const K = 12 * nYears;
 
-        await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear, initialVolume)
+        await calculateFlow(cy, nYears, errorMsg, {}, loadingYear, initialVolume)
 
         if (errorMsg.value) {
             // revert si hi ha error
             for (let mo = 1; mo <= 12; mo++) node.data('m' + mo, prev[mo]);
 
-            await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear, initialVolume)
+            await calculateFlow(cy, nYears, errorMsg, {}, loadingYear, initialVolume)
         }
 
         // refresca selectedEle (sidebar) amb els nous inputs
@@ -497,7 +355,7 @@ const modifyFlowChange = async function(
     }
 };
 
-const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
+const calculateFlowMonth = function(cy, errorRef = null, opts = {}) {
     let R = RESERVOIR;
 
     const month = opts.period.month
@@ -586,7 +444,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         // 3. Assignar aquest outflow als edges sortints
         const outgoingEdges = node.outgoers('edge');
         outgoingEdges.forEach(edge => {
-            const qOutEdge = applyGwLossToEdge(outflow, edge, month, params)
+            const qOutEdge = applyGwLossToEdge(outflow, edge, month)
             edge.data('flow' + k, qOutEdge);
         });
     }
@@ -743,7 +601,5 @@ export default {
     setGraphColors,
     calculateMeanCy,
     RESERVOIR,
-    params,
-    rampPalette,
-    buildCalibratedParams
+    rampPalette
 }

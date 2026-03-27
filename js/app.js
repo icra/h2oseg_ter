@@ -157,15 +157,14 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
-            await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
+            await gm.calculateContribution(cy.value)
+            await gm.calculateFlow(cy.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
             await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
         }
         const loadingYear = ref(1)
-        const params = shallowRef(null)
         const editMode = ref('annual')
         const annualVolume = ref(null)
         const openModal = ref(false)
@@ -203,7 +202,6 @@ createApp({
                 selectedEle.value,
                 changes,
                 errorMsg,
-                params.value,
                 { nYears: nYears.value },
                 loadingYear,
                 volumEmb.value
@@ -266,8 +264,8 @@ createApp({
                 await temperatureIncrease()
             }
 
-            await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
+            await gm.calculateContribution(cy.value)
+            await gm.calculateFlow(cy.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
             await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -344,11 +342,6 @@ createApp({
                 const edgesGeo = await edgesResp.json()
                 const embGeo = await embResp.json()
                 const canalsGeo = await canalsResp.json()
-
-                const calibResults = await loadCalibResults();
-                params.value = gm.buildCalibratedParams(gm.params, calibResults);
-
-
 
                 const cyNodes = nodesGeo.features.map(n => {
                     const nodeData = Object.keys(n.properties).reduce((acc, key) => {
@@ -642,8 +635,8 @@ createApp({
                 pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
                 tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
                 await gm.initSimulation(nYears.value, volumEmb.value)
-                await gm.calculateContribution(cy.value, params.value)
-                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
+                await gm.calculateContribution(cy.value)
+                await gm.calculateFlow(cy.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
                 gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);
