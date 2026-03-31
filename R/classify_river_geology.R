@@ -46,11 +46,18 @@ p_aluvial <- geologic |>
   select(is_aluvial, id) %>%
   mutate(area = st_area(.)) |>
   st_drop_geometry() |>
-  mutate(p_aluvial = as.numeric(area / sum(area)), .by = id) |>
+  mutate(
+    total = sum(area),
+    .by = c(id)
+  ) |>
+  summarize(
+    p_aluvial = as.numeric(sum(area) / sum(total)),
+    .by = c(id, is_aluvial)
+  ) |>
   filter(is_aluvial == TRUE) |>
   select(id, p_aluvial)
 
-agrifuturs <- "C:/Users/jpueyo/Documents/git_icra/agrifutures/data"
+agrifuturs <- "C:/Users/jpueyo/Documents/git_icra/agrifutures_cat/data"
 
 mde <- rast(file.path(agrifuturs, "terrain/mde.tif"))
 

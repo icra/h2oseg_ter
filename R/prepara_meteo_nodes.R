@@ -5,7 +5,7 @@ library(terra)
 library(sf)
 
 
-conques <- read_sf("data_raw/arees_drenatge_v03.gpkg") |>
+conques <- read_sf("data_raw/arees_drenatge_v04.gpkg") |>
   summarise(.by = codi_sad, across(geom, st_union))
 
 nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg")
@@ -125,11 +125,13 @@ cat(
 
 stopifnot(
   conques |>
+    st_drop_geometry() |>
     rowwise() |>
     mutate(area_usos = sum(c_across(starts_with("us_")))) |>
     ungroup() |>
     mutate(rel_diff = (area_usos - area_m2) / area_usos * 100) |>
     filter(rel_diff > 0.2) |>
+    select(codi_sad, area_usos, area_m2, rel_diff) |>
     nrow() ==
     0
 )

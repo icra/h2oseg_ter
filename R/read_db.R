@@ -13,14 +13,14 @@ data <- fromJSON(db$text) |>
   clean_names() |>
   mutate(valor_cabal = as.numeric(valor_cabal)) |>
   mutate(
-    codi_sad = case_match(
+    codi_sad = recode_values(
       codi_sad,
       "ABASTAMENT_ATL" ~ "ATL",
       "ETAP_MONTFULLA" ~ "ETAP_MONFULLA",
       "EDAR_STJOANABADESSES" ~ "EDAR_STJOAN",
       "EDAR_PLANESHOSTOLES" ~ "EDAR_HOSTOLES",
       "EDAR_GESTORELLO" ~ "EDAR_TORELLO",
-      .default = codi_sad
+      default = codi_sad
     )
   )
 

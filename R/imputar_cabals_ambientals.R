@@ -42,7 +42,15 @@ qtm(
 capcaleres <- edges_tbl |>
   st_drop_geometry() |>
   filter(!(from %in% to)) |>
-  filter(from != 126)
+  filter(from != 126) |>
+  left_join(edges, by = 'NOM_COMU', suffix = c("", ".y")) |>
+  select(nom_correlatiu, nom_correlatiu.y, NOM_COMU, river_length.y, gen:des) |>
+  arrange(NOM_COMU) |>
+  summarize(
+    river_length = sum(river_length.y),
+    across(gen:des, \(x) mean(x)),
+    .by = NOM_COMU
+  )
 
 capcaleres |>
   arrange(desc(gen)) |>
@@ -71,25 +79,29 @@ models <- month_cols |>
 
 stopifnot(all(
   edges_tbl[
-    which(edges_tbl$nom_correlatiu %in% capcaleres$nom_correlatiu),
-    "nom_correlatiu",
+    which(edges_tbl$NOM_COMU %in% capcaleres$NOM_COMU),
+    "NOM_COMU",
     drop = TRUE
-  ] ==
-    capcaleres$nom_correlatiu
+  ] %in%
+    capcaleres$NOM_COMU
 ))
 
+selector <- edges_tbl$NOM_COMU %in% capcaleres$NOM_COMU
+
+edges_tbl <- edges_tbl |>
+  mutate(massa_length = sum(river_length), .by = NOM_COMU)
+
 for (m in models$mes) {
-  edges_tbl[
-    which(edges_tbl$nom_correlatiu %in% capcaleres$nom_correlatiu),
-    m
-  ] <- if_else(
-    is.na(capcaleres[[m]]),
+  edges_tbl[selector, m] <- if_else(
+    is.na(edges_tbl[selector, m, drop = T]),
     models |>
       filter(mes == m) |>
       pull(beta) *
-      as.numeric(capcaleres$river_length),
-    capcaleres[[m]]
+      as.numeric(edges_tbl[selector, 'massa_length', drop = T]),
+    edges_tbl[selector, m, drop = T] |> as.numeric()
   )
+  # Comprovem que els que no eren NA no modifiquen el valor original
+  stopifnot(all(is.na(edges[[m]]) | edges[[m]] == edges_tbl[[m]]))
 }
 
 qtm(

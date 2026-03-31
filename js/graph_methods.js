@@ -41,8 +41,14 @@ const initSimulation = function(nYears, initialVolume){
 
 const lightHours = [9.3, 10.4, 11.7, 13.2, 14.4, 15, 14.8, 13.7, 12.3, 10.8, 9.6, 9]
 const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-// Kc per mes (gen ... des)
-
+const w = {
+    us_conreu_seca: 0.75,
+    us_conreu_regadiu: 1.5,
+    us_prats: 1,
+    us_forestal: 1.75,
+    us_urba: 0,
+    us_aigua: 0
+}
 const r_neu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18]
 
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
@@ -169,41 +175,43 @@ const ancestorsOf = function(cy, nodeId){
     return anc;
 }
 
-const calculateNodeContribution = function(node){
+const calculateNodeContribution = function(node) {
     // mean temperature
     const tmit = sortBySuffixNumber(
         Object.keys(node.data())
-        .filter(k => k.startsWith('tmit')),
-    'tmit')
+            .filter(k => k.startsWith('tmit')),
+        'tmit')
 
     tmit.forEach(m => {
         node.data(m, Math.max(node.data(m), 0))
     })
 
-    // ETP Thornwaite
-    const I = tmit.reduce((sum, tmit) => sum + Math.pow(Math.max(node.data(tmit), 0) / 5, 1.514), 0)
-    const a = 6.75e-7 * Math.pow(I, 3) - 771e-7 * Math.pow(I, 2) + 1792e-5 * I + 0.49239;
-    const ETPsc = tmit.map(tmit => 16 * Math.pow((10 * node.data(tmit))/I, a))
-    const ETP = ETPsc.map((e, i) => e * (lightHours[i] / 12) * (monthDays[i] / 30))
-
-    // Precipitacion
     const ppt = sortBySuffixNumber(
         Object.keys(node.data())
-        .filter(k => k.startsWith('ppt')),
-    'ppt'
+            .filter(k => k.startsWith('ppt')),
+        'ppt'
     )
         .map(p => node.data(p))
 
-    // ET according to 3r informe canvi climàtic de Catalunya
-    // ET = PPT * 0.7316 + 0.223 * ln(ETP / P - 0.1643)
-    const ET = ETP.map((etp, i) => ppt[i] * (0.7316 + 0.223 * Math.log(etp / ppt[i] - 0.1643)))
-    // todo: check if there is some NaN
-    ETP.map((e, i) => console.log("node:", node.id(), "mes:", i, "ETP:", ETP[i], "ET:", ET[i], "PPT:", ppt[i]))
+    // ETP Thornwaite
+    const I = tmit.reduce((sum, tmit) => sum + Math.pow(Math.max(node.data(tmit), 0) / 5, 1.514), 0)
+    const a = 6.75e-7 * Math.pow(I, 3) - 771e-7 * Math.pow(I, 2) + 1792e-5 * I + 0.49239;
+    const ETPsc = tmit.map(tmit => 16 * Math.pow((10 * node.data(tmit)) / I, a))
+    const ETP = ETPsc.map((e, i) => e * (lightHours[i] / 12) * (monthDays[i] / 30))
 
+    // Equació de Zhang et al 2021 amb valors de w segons el 3r informe de canvi climàtic (pp 172-173)
+    const ET = ETP.map((etp, i) => {
+        if (ppt[i] <= 0) return 0;
+        const ai = etp / ppt[i]
+        const inv_ai = ai ** -1
+
+        return Object.keys(w).map(us => node.data(us) * ppt[i] * (1 + w[us] * ai) / (1 + w[us] * ai + inv_ai))
+            .reduce((a, b) => a + b, 0)
+    })
 
     const neu = sortBySuffixNumber(
         Object.keys(node.data())
-        .filter(k => k.startsWith('neu')),
+            .filter(k => k.startsWith('neu')),
         'neu'
     )
         .map(n => node.data(n))
@@ -215,7 +223,8 @@ const calculateNodeContribution = function(node){
 
     const mmNeu = deltaNeu.map((n, i) => n * r_neu[i])
 
-    const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]))
+    // contribution = Area * (PPT - ET - Snowpack) - INFILTRATION (10%)
+    const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]) * 0.9)
 
     const seconds = Array(12).fill().map((e, i) => i + 1)
         .map(m => monthSeconds(2024, m))
