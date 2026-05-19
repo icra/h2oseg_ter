@@ -157,14 +157,15 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
-            await gm.calculateContribution(cy.value)
-            await gm.calculateFlow(cy.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
+            await gm.calculateContribution(cy.value, params.value)
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
             await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
         }
         const loadingYear = ref(1)
+        const params = shallowRef(null)
         const editMode = ref('annual')
         const annualVolume = ref(null)
         const openModal = ref(false)
@@ -187,6 +188,36 @@ createApp({
         const volumEmb = ref(400)
         const tick = ref(0)
 
+        const downloadData = function() {
+            if (!cy.value) {
+                console.error("Cytoscape no està inicialitzat");
+                return;
+            }
+
+            const dades = {
+                nodes: cy.value.nodes().map(node => ({
+                    data: node.data(),
+                    position: node.position()
+                })),
+                edges: cy.value.edges().map(edge => ({
+                    data: edge.data()
+                }))
+            };
+
+            const jsonString = JSON.stringify(dades, null, 2);
+            const blob = new Blob([jsonString], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "dades_h2oseg_ter.json";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
+        }
+
         const applyFlowChanges = async function () {
             loadingYear.value = 1
             loading.value = true
@@ -202,6 +233,7 @@ createApp({
                 selectedEle.value,
                 changes,
                 errorMsg,
+                params.value,
                 { nYears: nYears.value },
                 loadingYear,
                 volumEmb.value
@@ -264,8 +296,8 @@ createApp({
                 await temperatureIncrease()
             }
 
-            await gm.calculateContribution(cy.value)
-            await gm.calculateFlow(cy.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
+            await gm.calculateContribution(cy.value, params.value)
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
             await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
@@ -342,6 +374,11 @@ createApp({
                 const edgesGeo = await edgesResp.json()
                 const embGeo = await embResp.json()
                 const canalsGeo = await canalsResp.json()
+
+                const calibResults = await loadCalibResults();
+                params.value = gm.buildCalibratedParams(gm.params, calibResults);
+
+
 
                 const cyNodes = nodesGeo.features.map(n => {
                     const nodeData = Object.keys(n.properties).reduce((acc, key) => {
@@ -635,8 +672,8 @@ createApp({
                 pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
                 tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
                 await gm.initSimulation(nYears.value, volumEmb.value)
-                await gm.calculateContribution(cy.value)
-                await gm.calculateFlow(cy.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
+                await gm.calculateContribution(cy.value, params.value)
+                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
                 gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
                 gm.setupEleClickListener(cy.value, selectedEle)
                 gm.setupZoomLabelControl(cy.value, leaf.value, 12);
@@ -706,7 +743,8 @@ createApp({
             Hm3ToM3,
             rampPalette: gm.rampPalette,
             volumEmb,
-            tick
+            tick,
+            downloadData
         }
     }
 }).mount('#app')
