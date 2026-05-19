@@ -20,6 +20,8 @@ const fmt = (v) => {
     return Number.isFinite(+v) ? (+v).toFixed(d) + ' ' + unit : '—'
 }
 
+const fmtHm3 = v => Number.isFinite(+v) ? (+v).toFixed(1) + ' Hm³' : '—'
+
 const Hm3ToM3 = function (m3s) {
     const s = 365 * 24 * 3600
     return (+m3s * s / 1000000).toFixed(1)
@@ -57,7 +59,7 @@ function edgeTooltipHTML(e, month, k) {
       <div>${e.data('codiMassa')}</div>
       <div>Cabal mitjà: ${fmt(e.data('flow' + k))}</div>
       <div>Cabal ambiental: ${fmt(e.data('envFlow' + month))}</div>
-      <div>Llargada tram: ${+e.data('lengthRiver').toFixed(0)} m</div>
+      <div>Llargada tram: ${+e.data('lengthRiver').toFixed(0)} km</div>
     </div>
   `
 }
@@ -66,9 +68,9 @@ function embTooltipHTML(k) {
     return `
     <div>
         <div><strong>Sistema Sau-Susqueda-Pasteral</strong></div>
-        <div>Volum al sistema: ${fmt(gm.RESERVOIR.storage_hm3[k])} Hm<sup>3</sup></div>
-        <div>Cabal mitjà d'entrada: ${fmt(gm.RESERVOIR.inflowSum_m3s[k])} m<sup>3</sup>s</div>
-        <div>Cabal mitjà desembassat: ${fmt(gm.RESERVOIR.released_m3s[k])} m<sup>3</sup>s</div>
+        <div>Volum al sistema: ${fmtHm3(gm.RESERVOIR.storage_hm3[k])}</div>
+        <div>Cabal mitjà d'entrada: ${fmt(gm.RESERVOIR.inflowSum_m3s[k])}</div>
+        <div>Cabal mitjà desembassat: ${fmt(gm.RESERVOIR.released_m3s[k])}</div>
     </div>
     `
 }
@@ -539,8 +541,8 @@ createApp({
                 embPane.style.pointerEvents = 'auto'
 
                 const canalsPane = map.createPane('canalsPane')
-                embPane.style.zIndex = 800
-                embPane.style.pointerEvents = 'auto'
+                canalsPane.style.zIndex = 800
+                canalsPane.style.pointerEvents = 'auto'
 
                 // pane per a tooltips per SOBRE dels nodes
                 const tipPane = map.createPane('tipPane')

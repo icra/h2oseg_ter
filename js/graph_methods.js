@@ -38,6 +38,7 @@ const initSimulation = function(nYears, initialVolume){
     RESERVOIR.inflowSum_m3s = {};
     RESERVOIR.released_m3s = {};
     RESERVOIR.initial_storage = initVolume
+    RESERVOIR. overflowSum_m3s = {}
 
 }
 
@@ -124,6 +125,8 @@ let RESERVOIR = {
     capacity_hm3: 400,
     inflowSum_m3s: {},
     inflowVol_hm3: {},
+    overflowSum_m3s: {},
+    overflowVol_hm3: {},
     releaseDemand_m3s: {},
     released_m3s: {},
     releasedVol_hm3: {}
@@ -289,12 +292,10 @@ const calculateNodeContribution = function(node, params) {
     const rNeu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18]
 
     // anul·lem calibració neu
-    const mmNeu = deltaNeu.map((n, i) => n * rNeu[i] * 0)
-
-    console.log("Contribució de la neu", node.id(), mmNeu.map((n, i) => 100 * n / (ppt[i] - ET[i])))
+    const mmNeu = deltaNeu.map((n, i) => n * params.rNeu[i])
 
     // contribution = Area * (PPT - ET - Snowpack) - INFILTRATION (10%)
-    const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]) * 0.8)
+    const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]) * 0.9)
 
     const seconds = Array(12).fill().map((e, i) => i + 1)
         .map(m => monthSeconds(2024, m))
@@ -304,7 +305,7 @@ const calculateNodeContribution = function(node, params) {
     })
 }
 
-const calculateContribution = function(cy, params = params){
+const calculateContribution = function(cy, params){
     if (!params) throw new Error('parameters required')
 
     cy.nodes().forEach(node => {
@@ -315,9 +316,6 @@ const calculateContribution = function(cy, params = params){
 }
 
 const applyGwLossToEdge = function(q_in, edge, month, params){
-    return q_in
-
-    console.error("Entrant a interacció aqüífer")
 
     if (params === null) {
         console.error("Params is null")
@@ -345,7 +343,7 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
     g = Number(g) || 0;
 
     // guany proporcional a longitud (km)
-    const q_gain = (L_km > 0 && g > 0) ? (g * L_km) : 0;
+    const q_gain = g * L_km
 
     // q_out = q_in * exp(-k L)
     return Math.max(0, q_after + q_gain);
@@ -489,6 +487,8 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     }
     R.inflowSum_m3s[k] = 0
     R.inflowVol_hm3[k] = 0
+    R.overflowSum_m3s[k] = 0
+    R.overflowVol_hm3[k] = 0
     R.releaseDemand_m3s[k] = 0
     R.released_m3s[k] = 0
     R.releasedVol_hm3[k] = 0
@@ -530,10 +530,21 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
         if (R.inNodes && R.inNodes.has(node.id())) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
-            const nouVol = Math.min(R.storage_hm3[k] + add_hm3, R.capacity_hm3);
+
+            const storageBefore = R.storage_hm3[k] || 0;
+            const storageRaw = storageBefore + add_hm3;
+
+            const overflow_hm3 = Math.max(0, storageRaw - R.capacity_hm3)
+            const stored_hm3 = Math.min(storageRaw, R.capacity_hm3)
+
+            // const nouVol = Math.min(R.storage_hm3[k] + add_hm3, R.capacity_hm3);
             R.inflowSum_m3s[k] += positiveOut;
-            R.inflowVol_hm3[k] += m3sToHm3(R.inflowSum_m3s[k], dt_s)
-            R.storage_hm3[k] = nouVol;
+            R.inflowVol_hm3[k] += add_hm3
+
+            R.overflowVol_hm3[k] += overflow_hm3;
+            R.overflowSum_m3s[k] += hm3ToM3s(overflow_hm3, dt_s)
+
+            R.storage_hm3[k] = stored_hm3;
 
             // no propaguem cabal a través dels arcs virtuals
             node.data('outflow' + k, 0);
@@ -590,7 +601,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     const R_backup = structuredClone(R)
 
     // recalculem cabals sota presa
-    calculateFlowDownstreamDam(cy, demanda, dam, month, k, dt_s)
+    calculateFlowDownstreamDam(cy, demanda, dam, month, k, dt_s, params)
 
     // Calcular demanda ambiental, és el màxim de envFlow<m> - flow
     let maxDemandaAmbiental = 0
@@ -601,12 +612,12 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
     Object.assign(RESERVOIR, structuredClone(R_backup));
 
-    calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, k, dt_s)
+    calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, k, dt_s, params)
 
     if (errorRef) errorRef.value = null;
 };
 
-const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
+const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, params){
     let R = RESERVOIR
     const m = Number(month)
 
@@ -644,7 +655,10 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
         n.data('outflow' + k, out2);
 
         // 4) propagar cap avall
-        n.outgoers('edge').forEach(ed => ed.data('flow' + k, out2));
+        n.outgoers('edge').forEach(ed => {
+            const q = applyGwLossToEdge(out2, ed, month, params)
+            ed.data('flow' + k, q)
+        });
     });
 }
 
