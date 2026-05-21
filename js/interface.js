@@ -1,0 +1,88 @@
+import {SIM, monthOfStep} from './graph_methods.js'
+
+const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
+
+const setupEleClickListener = function(cy, selectedEleRef, k) {
+    cy.on('tap', evt => {
+        const ele = evt.target;
+
+        // Si no és ni node ni edge, és fons o un element sense interès
+        if (!ele.isNode?.() && !ele.isEdge?.()) {
+            selectedEleRef.value = null;
+            cy.elements().removeClass('selected');
+            return;
+        }
+
+        console.log("selectedEle", ele.data())
+
+        // Si és node o edge
+        cy.elements().removeClass('selected');
+        ele.addClass('selected');
+        selectedEleRef.value = ele.data();
+        selectedEleRef.value.eleType = ele.isNode() ? 'punt' : 'tram';
+    });
+}
+
+const setGraphColors = function(selK, cy, leafMaps){
+    cy.nodes().forEach(node => {
+        if (selK === 0){
+            const nodeFaults = SIM.r.map(k => setNodeColor(node, k)).filter(e => e === rampPalette[12]).length
+            const idx = Math.round(12 * nodeFaults / SIM.r.length)
+            applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[idx])
+        } else {
+            applyNodeColorToLeaflet(node, selK, leafMaps)
+        }
+    });
+
+    cy.edges().forEach(edge => {
+        if (selK === 0){
+            const edgeFaults = SIM.r.map(m => setEdgeColor(edge, m)).filter(e => e === rampPalette[12]).length
+            const idx = Math.round(12 * edgeFaults / SIM.r.length)
+            applyEdgeColorToLeaflet(edge, '0', leafMaps, rampPalette[idx])
+        } else {
+            applyEdgeColorToLeaflet(edge, selK, leafMaps)
+        }
+    });
+}
+
+const applyNodeColorToLeaflet = (node, month, leafMaps, customColor = null) => {
+    const layer = leafMaps.nodeLayerById.get(node.id());
+
+    if (!layer) {
+        console.error("No s'ha trobat la capa on aplicar color als nodes")
+        return;
+    }
+
+
+    const color = customColor || setNodeColor(node, month);
+    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
+};
+
+const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
+    const layer = leafMaps?.edgeLayerById?.get(edge.id());
+    if (!layer) {
+        if (!(/^v_\d+/.test(edge.id()))) console.error("No s'ha trobat la capa on aplicar color als trams")
+        return;
+    }
+    const color = customColor || setEdgeColor(edge, month);
+    layer.setStyle({ color }); // mantenim weight/opacity actuals
+};
+
+const setEdgeColor = function(edge, k){
+    const month = monthOfStep(k)
+    return (edge.data('flow' + k) + 0.01) < edge.data('envFlow' + month) ? rampPalette[12] : rampPalette[0]
+}
+
+const setNodeColor = function(node, k){
+    const month = monthOfStep(k)
+    if (node.incomers().length === 0) {
+        return rampPalette[0]; // Si no té edges entrants, és una font
+    }
+    return (node.data('inflow' + k) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
+}
+
+export default {
+    rampPalette,
+    setupEleClickListener,
+    setGraphColors
+}

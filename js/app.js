@@ -1,6 +1,8 @@
 // noinspection JSVoidFunctionReturnValueUsed
 
 import gm from './graph_methods.js'
+import int from './interface.js'
+import scen from './scenarios.js'
 
 const {createApp, onMounted, ref, shallowRef, watch} = Vue
 
@@ -161,7 +163,7 @@ createApp({
             await sleep(1)
             await gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
-            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
@@ -241,7 +243,7 @@ createApp({
                 volumEmb.value
             )
 
-            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
+            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
             tick.value++
 
             loading.value = false
@@ -287,75 +289,23 @@ createApp({
             await sleep(1)
             if (scenarios.value.rainReduction.active === false && scenarios.value.rainReduction.value !== '0') {
                 scenarios.value.rainReduction.value = '0'
-                await rainReduction()
+                await scen.rainReduction(cy.value, scenarios.value.rainReduction.value)
             } else if (scenarios.value.rainReduction.active) {
-                await rainReduction()
+                await scen.rainReduction(cy.value, scenarios.value.rainReduction.value)
             }
             if (scenarios.value.temperatureIncrease.active === false && scenarios.value.temperatureIncrease.value !== '0') {
                 scenarios.value.temperatureIncrease.value = '0'
-                await temperatureIncrease()
+                await scen.temperatureIncrease(cy.value, scenarios.value.temperatureIncrease.value)
             } else if (scenarios.value.temperatureIncrease.active) {
-                await temperatureIncrease()
+                await scen.temperatureIncrease(cy.value, scenarios.value.temperatureIncrease.value)
             }
 
             await gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
-            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
-        }
-        const rainReduction = async function () {
-            if (!cy) {
-                console.error("cy not loaded")
-                return
-            }
-            const reduction = (100 + Number(scenarios.value.rainReduction.value)) / 100
-            const ppt = Array(12).fill().map((e, i) => String('ppt' + (i + 1)))
-            const refppt = Array(12).fill().map((e, i) => String('refppt' + (i + 1)))
-
-            if (cy.value.getElementById('NODE_1').data('refppt1') === undefined) {
-                console.log("refppt created")
-                cy.value.nodes().forEach(n => {
-                    for (const i in refppt) {
-                        n.data(refppt[i], n.data(ppt[i]))
-                    }
-                })
-            }
-
-            cy.value.nodes().forEach(n => {
-                if (n.data('ppt1') === undefined) return
-                for (const i in ppt) {
-                    const newRain = n.data(refppt[i]) * reduction
-                    n.data(ppt[i], newRain)
-                }
-            })
-        }
-        const temperatureIncrease = async function () {
-            if (!cy) {
-                console.error("cy not loaded")
-                return
-            }
-
-            const tmit = Array(12).fill().map((e, i) => String('tmit' + (i + 1)))
-            const reftmit = Array(12).fill().map((e, i) => String('reftmit' + (i + 1)))
-
-            if (cy.value.getElementById('NODE_1').data('reftmit1') === undefined) {
-                cy.value.nodes().forEach(n => {
-                    for (const i in reftmit) {
-                        n.data(reftmit[i], n.data(tmit[i]))
-                    }
-                })
-                console.log("reftmit created")
-            }
-
-            cy.value.nodes().forEach(n => {
-                if (n.data('tmit1') === undefined) return
-                for (const i in tmit) {
-                    const newTmit = n.data(reftmit[i]) + Number(scenarios.value.temperatureIncrease.value)
-                    n.data(tmit[i], newTmit)
-                }
-            })
         }
 
         const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
@@ -676,9 +626,8 @@ createApp({
                 await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
-                gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
-                gm.setupEleClickListener(cy.value, selectedEle)
-                gm.setupZoomLabelControl(cy.value, leaf.value, 12);
+                int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+                int.setupEleClickListener(cy.value, selectedEle)
             } catch (e) {
                 console.error(e);
             } finally {
@@ -708,7 +657,7 @@ createApp({
         }, {immediate: true});
 
         watch(selK, (k) => {
-            gm.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById})
+            int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById})
         })
 
         return {
@@ -743,7 +692,7 @@ createApp({
             pptMean,
             tmitMean,
             Hm3ToM3,
-            rampPalette: gm.rampPalette,
+            rampPalette: int.rampPalette,
             volumEmb,
             tick,
             downloadData

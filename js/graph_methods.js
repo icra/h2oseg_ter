@@ -4,8 +4,6 @@ const createMonths = function(preffix, K){
     return Array(K).fill().map((e, i) => String(preffix + (1 + i)))
 }
 
-
-
 const monthOfStep = (k) => ((k - 1) % 12) + 1;
 
 const sortBySuffixNumber = (keys, prefix) =>
@@ -19,6 +17,8 @@ let SIM = {
     K: 12,
     m: [], inflow: [], outflow: [], flow: [], r: []
 };
+
+
 
 const initSimulation = function(nYears, initialVolume){
     SIM.K = Number(nYears) * 12 || 12;
@@ -105,8 +105,6 @@ function buildCalibratedParams(baseParams, calibResults) {
     return p;
 }
 
-const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
-
 function monthSeconds(year, month /* 1..12 */) {
     const start = new Date(Date.UTC(year, month - 1, 1));
     const end   = new Date(Date.UTC(year, month, 1));
@@ -130,97 +128,6 @@ let RESERVOIR = {
     releasedVol_hm3: {}
     // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
-
-const setupEleClickListener = function(cy, selectedEleRef) {
-    cy.on('tap', evt => {
-        const ele = evt.target;
-
-        // Si no és ni node ni edge, és fons o un element sense interès
-        if (!ele.isNode?.() && !ele.isEdge?.()) {
-            selectedEleRef.value = null;
-            cy.elements().removeClass('selected');
-            cy.nodes().forEach(node => {
-                node.style('background-color', setNodeColor(node));
-            })
-            cy.edges().forEach(edge => {
-                edge.style('line-color', setEdgeColor(edge));
-            });
-            return;
-        }
-
-        console.log("selectedEle", ele.data())
-
-        // Si és node o edge
-        cy.elements().removeClass('selected');
-        cy.nodes().forEach(node => {
-            node.style('background-color', setNodeColor(node));
-        })
-        cy.edges().forEach(edge => {
-            edge.style('line-color', setEdgeColor(edge));
-        });
-        ele.addClass('selected');
-        selectedEleRef.value = ele.data();
-        selectedEleRef.value.eleType = ele.isNode() ? 'punt' : 'tram';
-    });
-}
-
-const setGraphColors = function(selK, cy, leafMaps){
-    cy.nodes().forEach(node => {
-        if (selK === 0){
-            const nodeFaults = SIM.r.map(k => setNodeColor(node, k)).filter(e => e === rampPalette[12]).length
-            const idx = Math.round(12 * nodeFaults / SIM.r.length)
-            applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[idx])
-        } else {
-            applyNodeColorToLeaflet(node, selK, leafMaps)
-        }
-    });
-
-    cy.edges().forEach(edge => {
-        if (selK === 0){
-            const edgeFaults = SIM.r.map(m => setEdgeColor(edge, m)).filter(e => e === rampPalette[12]).length
-            const idx = Math.round(12 * edgeFaults / SIM.r.length)
-            applyEdgeColorToLeaflet(edge, '0', leafMaps, rampPalette[idx])
-        } else {
-            applyEdgeColorToLeaflet(edge, selK, leafMaps)
-        }
-    });
-}
-
-const applyNodeColorToLeaflet = (node, month, leafMaps, customColor = null) => {
-    const layer = leafMaps.nodeLayerById.get(node.id());
-
-    if (!layer) {
-        console.error("No s'ha trobat la capa on aplicar color als nodes")
-        return;
-    }
-
-
-    const color = customColor || setNodeColor(node, month);
-    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
-};
-
-const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
-    const layer = leafMaps?.edgeLayerById?.get(edge.id());
-    if (!layer) {
-        if (!(/^v_\d+/.test(edge.id()))) console.error("No s'ha trobat la capa on aplicar color als trams")
-        return;
-    }
-    const color = customColor || setEdgeColor(edge, month);
-    layer.setStyle({ color }); // mantenim weight/opacity actuals
-};
-
-const setEdgeColor = function(edge, k){
-    const month = monthOfStep(k)
-    return (edge.data('flow' + k) + 0.01) < edge.data('envFlow' + month) ? rampPalette[12] : rampPalette[0]
-}
-
-const setNodeColor = function(node, k){
-    const month = monthOfStep(k)
-    if (node.incomers().length === 0) {
-        return rampPalette[0]; // Si no té edges entrants, és una font
-    }
-    return (node.data('inflow' + k) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
-}
 
 // utilitat: construir un Set amb tots els ancestres (predecessors) d’un node donat
 const ancestorsOf = function(cy, nodeId){
@@ -439,7 +346,6 @@ const modifyFlowChange = async function(
         errorMsg.value = null;
 
         const nYears = opts.nYears || 1;
-        const K = 12 * nYears;
 
         await calculateFlow(cy, params, nYears, errorMsg, {}, loadingYear, initialVolume)
 
@@ -469,7 +375,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
     const month = opts.period.month
     const k = opts.step
-    const m = Number(month)
 
     if (!k) throw new Error('Missing opts.step')
 
@@ -659,32 +564,6 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
     });
 }
 
-const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {
-    if (!leafletInstance || !leafletInstance.map) {
-        console.warn('[ZoomLabel] Leaflet map no disponible');
-        return;
-    }
-
-    // Listener de zoom del mapa
-    leafletInstance.map.on('zoomend', () => {
-        const currentZoom = leafletInstance.map.getZoom();
-
-        if (currentZoom >= zoomThreshold) {
-            cy.nodes().addClass('show-label');
-            cy.edges().addClass('show-label');
-        } else {
-            cy.nodes().removeClass('show-label');
-            cy.edges().removeClass('show-label');
-        }
-    });
-
-    // Establir estat inicial
-    const initialZoom = leafletInstance.map.getZoom();
-    if (initialZoom >= zoomThreshold) {
-        cy.nodes().addClass('show-label');
-    }
-}
-
 const calculateMeanCy = function (cy, varPrefix, mode = "sum") {
     let sumWeighted = 0;
     let sumArea = 0;
@@ -718,18 +597,16 @@ const calculateMeanCy = function (cy, varPrefix, mode = "sum") {
     return sumWeighted / sumArea;
 };
 
+export {SIM, monthOfStep}
+
 export default {
-    setupEleClickListener,
     initSimulation,
     calculateContribution,
     calculateFlow,
     calculateFlowMonth,
     modifyFlowChange,
-    setupZoomLabelControl,
-    setGraphColors,
     calculateMeanCy,
     RESERVOIR,
     params,
-    rampPalette,
     buildCalibratedParams
 }
