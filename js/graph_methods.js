@@ -36,7 +36,7 @@ const initSimulation = function(nYears, initialVolume){
     RESERVOIR.inflowSum_m3s = {};
     RESERVOIR.released_m3s = {};
     RESERVOIR.initial_storage = initVolume
-    RESERVOIR. overflowSum_m3s = {}
+    RESERVOIR.overflowSum_m3s = {}
 
 }
 
