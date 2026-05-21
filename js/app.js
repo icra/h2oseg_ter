@@ -308,7 +308,6 @@ createApp({
             loading.value = false
         }
 
-
         const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
 
         const edgeLayerById = new Map()
