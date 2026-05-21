@@ -3,11 +3,11 @@ use('janitor', 'clean_names')
 library(jsonlite)
 
 cabals <- read_json("calibration/calibration_results.json") |>
-  imap(\(x, i) {
+  map(\(x) {
     x$stations |>
       map(\(y) as_tibble(y)) |>
       list_rbind() |>
-      mutate(mes = i)
+      mutate(mes = x$mes)
   }) |>
   list_rbind()
 
@@ -22,6 +22,23 @@ cabals |>
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
   )
+
+cabals |>
+  pivot_longer(c(meanObs_m3s, meanMod_m3s)) |>
+  ggplot(aes(x = mes, y = value, color = name, group = name)) +
+  geom_line() +
+  facet_wrap(~codi_sad, scales = "free_y")
+
+read_json(
+  "calibration/dades_h2oseg_ter_calibrades.json",
+  simplifyVector = T
+)$nodes$data |>
+  as_tibble() |>
+  select(id, starts_with('inflow')) |>
+  pivot_longer(-id) |>
+  mutate(name = str_extract(name, '\\d+') |> as.integer()) |>
+  inner_join(cabals, by = join_by(id == codi_sad, name == mes)) |>
+  select(id, value, meanMod_m3s, name)
 
 cabals |>
   ggplot(aes(x = codi_sad, y = bias, fill = codi_sad)) +
@@ -45,12 +62,6 @@ read_json("calibration/calibration_results.json") |>
   map(\(x) {
     tibble(
       mes = x$mes,
-      kc_aiga = x$kcMulByUse$aigua,
-      kc_urba = x$kcMulByUse$urba,
-      kc_forestal = x$kcMulByUse$forestal,
-      kc_seca = x$kcMulByUse$seca,
-      kc_regadiu = x$kcMulByUse$regadiu,
-      kc_prats = x$kcMulByUse$prats,
       rneu = x$rNeuMul
     )
   }) |>
@@ -105,3 +116,5 @@ read_json("calibration/calibration_indicators.json", simplifyVector = T) |>
   pluck("perStation") |>
   mutate(across(where(is.numeric), \(x) round(x, 2))) |>
   write_excel_csv2("calibration/calibration_indicators.csv")
+
+# cabals -----------------------------------------------------------

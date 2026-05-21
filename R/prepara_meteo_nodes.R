@@ -147,19 +147,33 @@ conques |>
 
 # Helpers rasters meteo ------------------------------------------------
 
-zonal_month <- function(r, preffix) {
-  zonal(rast(r), vect(conques), na.rm = T) |>
-    as_tibble() |>
-    rename_with(\(x) create_month_index(str_to_lower(x), preffix))
+zonal_month <- function(r, preffix = NULL, name = NULL) {
+  res <- zonal(rast(r), vect(conques), na.rm = T) |>
+    as_tibble()
+  if (!is.null(preffix)) {
+    res <- res |> rename_with(\(x) create_month_index(str_to_lower(x), preffix))
+  } else if (!is.null(name)) {
+    names(res) <- name
+  } else {
+    rlang::abort("Cal definir name o preffix")
+  }
+
+  res
 }
 
 # Temperatura mitjana ----------------------------------------
 
-tmit_files <- file.path("data_raw", "tmit", list.files("data_raw/tmit"))
+tmit_files <- file.path(
+  "data_raw",
+  "tmit_07_26",
+  list.files("data_raw/tmit_07_26")
+)
 
 cols <- paste0("tmit", 1:12)
 
-tmit_conques <- map(tmit_files, \(r) zonal_month(r, "tmit")) |>
+tmit_conques <- map2(tmit_files, cols, \(r, .name) {
+  zonal_month(r, name = .name)
+}) |>
   list_cbind() |>
   select(all_of(cols)) |>
   mutate(codi_sad = conques$codi_sad)
@@ -169,11 +183,15 @@ conques <- conques |>
 
 # Precipitació ------------------------------------------------------------
 
-ppt_files <- file.path("data_raw", "ppt", list.files("data_raw/ppt"))
+ppt_files <- file.path(
+  "data_raw",
+  "ppt_07_26",
+  list.files("data_raw/ppt_07_26")
+)
 
 cols <- paste0("ppt", 1:12)
 
-ppt_conques <- map(ppt_files, \(r) zonal_month(r, "ppt")) |>
+ppt_conques <- map2(ppt_files, cols, \(r, n) zonal_month(r, name = n)) |>
   list_cbind() |>
   select(all_of(cols)) |>
   mutate(codi_sad = conques$codi_sad)

@@ -22,10 +22,8 @@ let SIM = {
 
 const initSimulation = function(nYears, initialVolume){
     SIM.K = Number(nYears) * 12 || 12;
-    console.log("mesos", SIM.K)
 
     let initVolume = Number(initialVolume) || RESERVOIR.capacity_hm3
-    console.log('initVolume', initVolume)
 
     SIM.m      = createMonths('m',      SIM.K);
     SIM.inflow = createMonths('inflow', SIM.K);
@@ -289,9 +287,6 @@ const calculateNodeContribution = function(node, params) {
         return n - neu[lag]
     })
 
-    const rNeu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18]
-
-    // anul·lem calibració neu
     const mmNeu = deltaNeu.map((n, i) => n * params.rNeu[i])
 
     // contribution = Area * (PPT - ET - Snowpack) - INFILTRATION (10%)
@@ -316,7 +311,6 @@ const calculateContribution = function(cy, params){
 }
 
 const applyGwLossToEdge = function(q_in, edge, month, params){
-
     if (params === null) {
         console.error("Params is null")
         return q_in
@@ -619,19 +613,22 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
 const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, params){
     let R = RESERVOIR
-    const m = Number(month)
 
-    // si l'embassament és ple, allibera com a mínim el cabal d'entrada
-    if (R.storage_hm3[k] >= R.capacity_hm3 - 1e-6) {
-        demanda = Math.max(demanda, R.inflowSum_m3s[k])
-    }
-    const maxPossible_m3s = hm3ToM3s(R.storage_hm3[k], dt_s);
-    const release_m3s = Math.min(demanda, maxPossible_m3s);
-    const used_hm3 = m3sToHm3(release_m3s, dt_s);
+    const overflow_m3s = Number(R.overflowSum_m3s[k]) || 0;
+    const maxPossible_m3s = hm3ToM3s(R.storage_hm3[k], dt_s)
+
+    // La demanda consumeix volum embassat.
+    // El sobreeiximent s'afegeix al cabal alliberat, però no consumeix volum,
+    // perquè és aigua que no cabia dins l'embassament.
+    const demandRelease_m3s = Math.min(demanda, maxPossible_m3s);
+    const release_m3s = demandRelease_m3s + overflow_m3s;
+
+    const used_hm3 = m3sToHm3(demandRelease_m3s, dt_s);
+
     R.storage_hm3[k] = Math.max(0, R.storage_hm3[k] - used_hm3);
-    R.releaseDemand_m3s[k] = demanda;
+    R.releaseDemand_m3s[k] = demanda + overflow_m3s;
     R.released_m3s[k] = release_m3s;
-    R.releasedVol_hm3[k] = used_hm3;
+    R.releasedVol_hm3[k] = m3sToHm3(release_m3s, dt_s);
 
     // console.log(m, "entrada", R.inflowVol_hm3[m], "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
 

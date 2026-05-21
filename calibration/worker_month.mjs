@@ -89,7 +89,7 @@ function buildContext() {
         return Math.pow(Math.max(Math.abs(q_obs), eps), p);
     }
 
-    function sseForMonth_byUse(month, mults) {
+    function sseForMonth(month, mults) {
         const i = month - 1;
         const p = structuredClone(gm.params);
 
@@ -107,11 +107,6 @@ function buildContext() {
             return USE_LOG ? Math.log(q) : Math.sqrt(q);
         }
 
-        // kc per ús (només mes i)
-        for (const k of Object.keys(p.kc)) {
-            const mul = mults.kcMulByUse?.[k] ?? 1;
-            p.kc[k][i] *= mul;
-        }
         p.rNeu[i] *= mults.rNeuMul;
         for (const t of Object.keys(p.gwLoss)) {
             const mul = mults.gwMulByType?.[t] ?? 1;
@@ -123,17 +118,8 @@ function buildContext() {
         }
 
         gm.calculateContribution(cy, p);
-
-        cy.nodes().forEach(n => {
-            n.data('inflow' + month, 0);
-            n.data('outflow' + month, 0);
-            n.data('deficit' + month, 0);
-        });
-        cy.edges().forEach(e => {
-            e.data('flow' + month, 0);
-        });
-
-        gm.calculateFlowMonth(cy, p, null, { period: { year: 2024, month }, resetStorage: true });
+        gm.initSimulation(1, gm.RESERVOIR.capacity_hm3);
+        gm.calculateFlowMonth(cy, p, null, { period: { year: 2024, month }, step: month });
 
         const obsMap = obsMapByMonth.get(month) || new Map();
 
@@ -195,13 +181,9 @@ function buildContext() {
         // cost combinat
         const rmseCombo = ALPHA * rmseLin + (1 - ALPHA) * rmseT;
 
-        // regularització log^2 suau per evitar límits (per ús + neu)
+        // regularització log^2 suau per evitar valors extrems en neu i aqüífer
         const L = 0.01; // prova 0.003..0.03
         let reg = 0;
-        for (const k of Object.keys(p.kc)) {
-            const mul = mults.kcMulByUse?.[k] ?? 1;
-            reg += logMulPenalty(mul);
-        }
         reg += logMulPenalty(mults.rNeuMul ?? 1);
         for (const t of Object.keys(p.gwLoss)) {
             const mul = mults.gwMulByType?.[t] ?? 1;
@@ -215,11 +197,11 @@ function buildContext() {
     }
 
 
-    function rmseOnlyForMonth_byUse(month, mults) {
+    function rmseOnlyForMonth(month, mults) {
         const i = month - 1;
         const p = structuredClone(gm.params);
 
-        // === Mateixa configuració que a sseForMonth_byUse ===
+        // === Mateixa configuració que a sseForMonth ===
         const EPS_LOG = 1e-6;   // prova: 1e-6 .. 1e-3
         const ALPHA = 0.5;      // 0.5 = 50/50
         const USE_LOG = true;   // false => sqrt
@@ -233,10 +215,6 @@ function buildContext() {
             return USE_LOG ? Math.log(q) : Math.sqrt(q);
         }
 
-        for (const k of Object.keys(p.kc)) {
-            const mul = mults.kcMulByUse?.[k] ?? 1;
-            p.kc[k][i] *= mul;
-        }
         p.rNeu[i] *= mults.rNeuMul;
         for (const t of Object.keys(p.gwLoss)) {
             const mul = mults.gwMulByType?.[t] ?? 1;
@@ -248,7 +226,8 @@ function buildContext() {
         }
 
         gm.calculateContribution(cy, p);
-        gm.calculateFlow(cy, p, null, { period: { year: 2024, month } });
+        gm.initSimulation(1, gm.RESERVOIR.capacity_hm3);
+        gm.calculateFlowMonth(cy, p, null, { period: { year: 2024, month }, step: month });
 
         const obsMap = obsMapByMonth.get(month) || new Map();
 
@@ -319,15 +298,12 @@ function buildContext() {
         return !damDownstream.has(node.id());
     }
 
-    function stationErrorsForMonth_byUse(month, mults) {
+    function stationErrorsForMonth(month, mults) {
         const m = Number(month);
         const i = m - 1;
 
         const p = structuredClone(gm.params);
-        for (const k of Object.keys(p.kc)) {
-            const mul = mults.kcMulByUse?.[k] ?? 1;
-            p.kc[k][i] *= mul;
-        }
+
         p.rNeu[i] *= mults.rNeuMul;
         for (const t of Object.keys(p.gwLoss)) {
             const mul = mults.gwMulByType?.[t] ?? 1;
@@ -339,7 +315,8 @@ function buildContext() {
         }
 
         gm.calculateContribution(cy, p);
-        gm.calculateFlow(cy, p, null, { period: { year: 2024, month: m } });
+        gm.initSimulation(1, gm.RESERVOIR.capacity_hm3);
+        gm.calculateFlowMonth(cy, p, null, { period: { year: 2024, month: m }, step: m });
 
         const obsMap = obsMapByMonth.get(m) || new Map();
 
@@ -384,10 +361,8 @@ function buildContext() {
         }
         if (!usable.length) throw new Error(`No usable observations for month ${month}`);
 
-        const uses = Object.keys(gm.params.kc); // ["aigua","urba","forestal","seca","regadiu","prats"] etc
         const gwTypes = Object.keys(gm.params.gwLoss);
         const paramsList = [
-            ...uses.map(u => "kc:" + u),
             "rNeuMul",
             ...gwTypes.map(t => "gwLoss:" + t),
             ...gwTypes.map(t => "gwGain:" + t)
@@ -403,13 +378,12 @@ function buildContext() {
         const grid = Array.from({ length }, (_, i) => start + i * step);
 
         let bestMults = {
-            kcMulByUse: Object.fromEntries(uses.map(u => [u, 1])),
             rNeuMul: 1,
             gwMulByType: Object.fromEntries(gwTypes.map(t => [t, 1])),
             gwGainMulByType: Object.fromEntries(gwTypes.map(t => [t, 1]))
         };
 
-        let bestCost = sseForMonth_byUse(month, bestMults);
+        let bestCost = sseForMonth(month, bestMults);
 
         const maxIters = 10;
         for (let it = 0; it < maxIters; it++) {
@@ -424,9 +398,6 @@ function buildContext() {
 
                     if (key === "rNeuMul") {
                         trial.rNeuMul = clamp(v, 0, MUL_MAX);
-                    } else if (key.startsWith("kc:")) {
-                        const use = key.slice(3);
-                        trial.kcMulByUse[use] = clamp(v, MUL_MIN, MUL_MAX);
                     } else if (key.startsWith("gwLoss:")) {
                         const t = key.slice(7);
                         trial.gwMulByType[t] = clamp(v, MUL_MIN, MUL_MAX);
@@ -437,7 +408,7 @@ function buildContext() {
                         throw new Error(`Unrecognized key: ${key}`);
                     }
 
-                    const cost = sseForMonth_byUse(month, trial);
+                    const cost = sseForMonth(month, trial);
                     if (cost < localBestCost) {
                         localBestCost = cost;
                         localBest = trial;
@@ -468,11 +439,6 @@ function buildContext() {
                     const v = trial.rNeuMul * f;
                     if (v <= 1e-4) continue;
                     trial.rNeuMul = clamp(v,0, MUL_MAX);
-                } else if (key.startsWith("kc:")) {
-                    const use = key.slice(3);
-                    const v = trial.kcMulByUse[use] * f;
-                    if (v <= 1e-4) continue;
-                    trial.kcMulByUse[use] = clamp(v, MUL_MIN, MUL_MAX);
                 } else if (key.startsWith("gwLoss:")) {
                     const t = key.slice(7);
                     const v = trial.gwMulByType[t] * f;
@@ -485,7 +451,7 @@ function buildContext() {
                     trial.gwGainMulByType[t] = clamp(v, MUL_MIN, MUL_MAX_GAIN);
                 }
 
-                const cost = sseForMonth_byUse(month, trial);
+                const cost = sseForMonth(month, trial);
                 if (cost < localBestCost) {
                     localBestCost = cost;
                     localBest = trial;
@@ -498,9 +464,9 @@ function buildContext() {
             }
         }
 
-        const stations = stationErrorsForMonth_byUse(month, bestMults);
+        const stations = stationErrorsForMonth(month, bestMults);
         const nUsed = stations.reduce((s, st) => s + (st.n || 0), 0);
-        const metrics = rmseOnlyForMonth_byUse(month, bestMults);
+        const metrics = rmseOnlyForMonth(month, bestMults);
 
         return { mes: month, ...bestMults, metrics, cost: bestCost, nUsed, stations };
     }

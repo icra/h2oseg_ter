@@ -1,6 +1,7 @@
 library(tidyverse)
 use('janitor', 'clean_names')
 library(jsonlite)
+source('R/helpers.R')
 
 afor <- read_json("calibration/cabals_aforament.json", simplifyVector = T)
 
@@ -19,6 +20,10 @@ get_nodes_afor <- function(json_path) {
 amb_neu <- get_nodes_afor("calibration/dades_h2oseg_ter_amb_neu.json")
 sense_neu <- get_nodes_afor("calibration/dades_h2oseg_ter_sense_neu.json")
 infilt_20 <- get_nodes_afor("calibration/dades_h2oseg_ter_20_infil.json")
+cabals_07_26 <- get_nodes_afor("calibration/dades_h2oseg_ter_07_26.json")
+cabals_90_20 <- get_nodes_afor("calibration/dades_h2oseg_ter_90_20.json")
+
+# Comparacio amb neu i sense ----------------------------------------------
 
 afor |>
   inner_join(
@@ -110,3 +115,106 @@ nodes |>
   summarize(value = mean(value), .by = c(variable, mes)) |>
   ggplot(aes(x = mes, y = value, color = variable, group = variable)) +
   geom_line()
+
+# Comparació amb dades de diferents anys ------------------------------------------
+
+periodes <- afor |>
+  inner_join(
+    cabals_07_26,
+    by = join_by(codi_sad == id, mes == name)
+  ) |>
+  inner_join(
+    cabals_90_20,
+    by = join_by(codi_sad == id, mes == name),
+    suffix = c("_07_26", "_90_20")
+  ) |>
+  as_tibble() |>
+  rename(
+    observat = cabal_m3s
+  ) %>%
+  assertr::verify(nrow(.) == nrow(afor))
+
+periodes |>
+  pivot_longer(starts_with('value')) |>
+  mutate(error = sqrt((value - observat)^2)) |>
+  summarize(error = mean(error), .by = name)
+
+periodes |>
+  pivot_longer(c(observat, starts_with("value"))) |>
+  mutate(
+    name = case_when(
+      name == 'observat' ~ 'Observat',
+      .default = str_extract(name, "\\d+_\\d+") |> str_replace("_", "-")
+    )
+  ) |>
+  mutate(mes = fct(as.character(mes))) |>
+  ggplot(aes(x = mes)) +
+  facet_wrap(~codi_sad, scales = "free_y") +
+  geom_line(aes(
+    y = value,
+    color = name,
+    group = name,
+    linetype = name
+  )) +
+  scale_color_manual(values = c("darkred", "blue", "black")) +
+  scale_linetype_manual(
+    values = c(
+      "Observat" = "solid",
+      "07-26" = "22",
+      "90-20" = "22"
+    ),
+    guide = "none"
+  )
+
+# Comparació pluges per períodes ------------------------------------------
+
+conques <- read_sf("data_raw/arees_drenatge_v04.gpkg") |>
+  summarise(across(geom, st_union)) |>
+  vect()
+
+f <- "data_raw/ppt_07_26/ppt_clim_01.tif"
+
+zonal_month <- function(r, preffix = NULL, name = NULL) {
+  res <- zonal(rast(r), conques, na.rm = T) |>
+    as_tibble()
+  if (!is.null(preffix)) {
+    res <- res |> rename_with(\(x) create_month_index(str_to_lower(x), preffix))
+  } else if (!is.null(name)) {
+    names(res) <- name
+  } else {
+    rlang::abort("Cal definir name o preffix")
+  }
+
+  res
+}
+
+ppt_90_20_path <- "data_raw/ppt_90_20"
+ppt_90_20_files <- file.path(ppt_90_20_path, list.files(ppt_90_20_path))
+
+cols <- paste0("ppt", 1:12)
+
+ppt_90_20 <- map(ppt_files, \(r) zonal_month(r, preffix = 'ppt')) |>
+  list_cbind() |>
+  select(all_of(cols))
+
+ppt_07_26_path <- "data_raw/ppt_07_26"
+ppt_07_26_files <- file.path(ppt_07_26_path, list.files(ppt_07_26_path))
+
+cols <- paste0("ppt", 1:12)
+
+ppt_conques <- map2(ppt_files, cols, \(r, n) zonal_month(r, name = n)) |>
+  list_cbind() |>
+  select(all_of(cols))
+
+# Comparació períodes --------------------------------------------------------
+
+library(sf)
+
+nodes_90_20 <- read_sf(
+  "calibration/nodes_90_20.geojson"
+)
+
+nodes_07_26 <- read_sf("assets/nodes.geojson") |>
+  filter(type == "massa")
+
+all.equal(nodes_90_20, nodes_07_26)
