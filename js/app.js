@@ -313,7 +313,7 @@ createApp({
             }
             if (scenarios.value.urbanDemand.active === false && scenarios.value.urbanDemand.value !== '0') {
                 scenarios.value.urbanDemand.value = '0'
-                await scen.urbanDemand(cy.value, scenarios.value.urbanDemand.value)
+                await scen.urbanDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
             } else if (scenarios.value.urbanDemand.active) {
                 await scen.urbanDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
             }
