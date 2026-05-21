@@ -50,7 +50,7 @@
 
                     <p class="scenario-desc">
                         {{scenarios.rainReduction.description}}
-                        (actualment {{ Number(pptMean || 0).toFixed(0) }} mm).
+                        (valor inicial: {{ Number(pptMean || 0).toFixed(0) }} mm).
                     </p>
 
                     <div v-if="scenarios.rainReduction.active" class="scenario-slider">
@@ -94,7 +94,7 @@
 
                     <p class="scenario-desc">
                         {{ scenarios.temperatureIncrease.description }}
-                        (actualment {{ Number(tmitMean || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
+                        (valor inicial: {{ Number(tmitMean || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
                     </p>
 
                     <div v-if="scenarios.temperatureIncrease.active" class="scenario-slider">
@@ -138,7 +138,7 @@
 
                     <p class="scenario-desc">
                         {{scenarios.urbanDemand.description}}
-                        (actualment {{ Number(urbanDemandMean || 0).toFixed(0) }} Hm<sup>3</sup> anuals).
+                        (valor inicial: {{ Number(urbanDemandMean || 0).toFixed(0) }} Hm<sup>3</sup> anuals).
                     </p>
 
                     <div v-if="scenarios.urbanDemand.active" class="scenario-slider">
@@ -182,7 +182,7 @@
 
                     <p class="scenario-desc">
                         {{scenarios.agriDemand.description}}
-                        (actualment {{ Number(agriDemandMean || 0).toFixed(0) }} Hm<sup>3</sup> anuals).
+                        (valor inicial: {{ Number(agriDemandMean || 0).toFixed(0) }} Hm<sup>3</sup> anuals).
                     </p>
 
                     <div v-if="scenarios.agriDemand.active" class="scenario-slider">
@@ -199,6 +199,50 @@
                             </span>
                             <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.agriDemand.value }}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+<!--                Superfície forestal-->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="forestSurface">
+                            <input
+                                    id="forestSurface"
+                                    type="checkbox"
+                                    v-model="scenarios.forestSurface.active"
+                            />
+                            <span class="scenario-title">Modificació de la superfície forestal</span>
+                        </label>
+
+                        <!-- Xip amb el % quan l'escenari és actiu -->
+                        <span
+                                v-if="scenarios.forestSurface.active"
+                                class="scenario-chip"
+                        >
+                            {{ scenarios.forestSurface.value }}{{ scenarios.forestSurface.units }}
+                        </span>
+                    </div>
+
+                    <p class="scenario-desc">
+                        {{scenarios.forestSurface.description}}
+                        (valor inicial: {{ Number(forestSurface || 0).toFixed(0) }} km<sup>2</sup>).
+                    </p>
+
+                    <div v-if="scenarios.forestSurface.active" class="scenario-slider">
+                        <input
+                                type="range"
+                                min="-100"
+                                max="100"
+                                v-model="scenarios.forestSurface.value"
+                        />
+
+                        <div class="scenario-values">
+                            <span class="scenario-value-new">
+                                Nou valor aproximat: {{ ((forestSurface * (100 + +scenarios.forestSurface.value) / 100)).toFixed(0) }} km<sup>2</sup>.
+                            </span>
+                            <span class="scenario-value-delta">
+                                Canvi: {{ scenarios.forestSurface.value }}%
                             </span>
                         </div>
                     </div>
