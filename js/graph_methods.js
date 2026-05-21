@@ -648,6 +648,18 @@ const calculateDemand = function(cy, types){
     return demandaAnual
 }
 
+const calculateSurface = function(cy, us){
+    if (!cy) {
+        console.error("cy not loaded")
+        return 0
+    }
+
+    return cy.nodes()
+        .filter(n => n.data(us) != null)
+        .map((n) => n.data('area_m2') * n.data(us) / 1000000)
+        .reduce((a, b) => a + b, 0)
+}
+
 export {SIM, monthOfStep}
 
 export default {
@@ -658,6 +670,7 @@ export default {
     modifyFlowChange,
     calculateMeanCy,
     calculateDemand,
+    calculateSurface,
     RESERVOIR,
     params,
     buildCalibratedParams

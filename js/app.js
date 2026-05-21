@@ -204,12 +204,20 @@ createApp({
                 units: "%",
                 description: "Augmenta proporcionalment totes les captacions per a ús agrícola",
                 active: false
+            },
+            forestSurface: {
+                name: "Modificació de la superfície forestal",
+                value: '0',
+                units: "%",
+                description: "Substitueix proporcionalment boscos per conreus de secà i prats i a la inversa",
+                active: false
             }
         })
         const pptMean = ref(null)
         const tmitMean = ref(null)
         const urbanDemandMean = ref(null)
         const agriDemandMean = ref(null)
+        const forestSurface = ref(null)
         const volumEmb = ref(400)
         const tick = ref(0)
 
@@ -332,10 +340,21 @@ createApp({
             } else if (scenarios.value.agriDemand.active) {
                 await scen.modifyDemand(cy.value, scenarios.value.agriDemand.value, agriDemandTypes)
             }
+            if (scenarios.value.forestSurface.active === false && scenarios.value.forestSurface.value !== '0') {
+                scenarios.value.forestSurface.value = '0'
+                await scen.modifyForest(cy.value, scenarios.value.forestSurface.value)
+            } else if (scenarios.value.forestSurface.active) {
+                await scen.modifyForest(cy.value, scenarios.value.forestSurface.value)
+            }
 
             await gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
             await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+            pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
+            tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
+            urbanDemandMean.value = gm.calculateDemand(cy.value, urbanDemandTypes)
+            agriDemandMean.value = gm.calculateDemand(cy.value, agriDemandTypes)
+            forestSurface.value = gm.calculateSurface(cy.value, 'us_forestal')
             tick.value++
 
             loading.value = false
@@ -659,6 +678,7 @@ createApp({
                 tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
                 urbanDemandMean.value = gm.calculateDemand(cy.value, urbanDemandTypes)
                 agriDemandMean.value = gm.calculateDemand(cy.value, agriDemandTypes)
+                forestSurface.value = gm.calculateSurface(cy.value, 'us_forestal')
 
                 await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
@@ -730,6 +750,7 @@ createApp({
             tmitMean,
             urbanDemandMean,
             agriDemandMean,
+            forestSurface,
             Hm3ToM3,
             rampPalette: int.rampPalette,
             volumEmb,
