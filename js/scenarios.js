@@ -86,6 +86,7 @@ const modifyDemand = async function(cy, deltaUrbanDemand, types) {
 const modifyForest = async function(cy, deltaForest){
     if (!cy) {
         console.error("cy not loaded")
+        return
     }
     const change = (100 + Number(deltaForest)) / 100
 
@@ -102,7 +103,6 @@ const modifyForest = async function(cy, deltaForest){
 
         // Guardem valors de referència la primera vegada
         if (n.data('ref_' + forestKey) == null) {
-            console.log("creat ref_" + forestKey)
             n.data('ref_' + forestKey, forest)
             n.data('ref_' + dryKey, dry)
             n.data('ref_' + grassKey, grass)

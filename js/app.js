@@ -350,11 +350,6 @@ createApp({
             await gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
             await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
-            pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
-            tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
-            urbanDemandMean.value = gm.calculateDemand(cy.value, urbanDemandTypes)
-            agriDemandMean.value = gm.calculateDemand(cy.value, agriDemandTypes)
-            forestSurface.value = gm.calculateSurface(cy.value, 'us_forestal')
             tick.value++
 
             loading.value = false
