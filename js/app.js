@@ -29,6 +29,8 @@ const Hm3ToM3 = function (m3s) {
     return (+m3s * s / 1000000).toFixed(1)
 }
 
+const urbanDemandTypes = ['ATL', 'ETAP']
+
 // HTML dels tooltips
 function nodeTooltipHTML(n, month, k) {
     console.log('k tooltip', k)
@@ -178,17 +180,27 @@ createApp({
                 name: "Reducció de pluja",
                 value: '0',
                 units: "%",
+                description: "Aplica una reducció uniforme a la precipitació mitjana anual",
                 active: false
             },
             temperatureIncrease: {
                 name: "Increment de temperatura",
                 value: '0',
                 units: "ºC",
+                description: "Aplica un increment uniforme a la temperatura mitjana anual",
+                active: false
+            },
+            urbanDemand: {
+                name: "Modificació de la demanda per a ús urbà",
+                value: '0',
+                units: "%",
+                description: "Augmenta proporcionalment totes les captacions per a ús urbà",
                 active: false
             }
         })
         const pptMean = ref(null)
         const tmitMean = ref(null)
+        const urbanDemandMean = ref(null)
         const volumEmb = ref(400)
         const tick = ref(0)
 
@@ -243,7 +255,7 @@ createApp({
                 volumEmb.value
             )
 
-            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
+            int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
             tick.value++
 
             loading.value = false
@@ -274,7 +286,7 @@ createApp({
             }
 
             months.forEach((m, idx) => {
-                flowModifiedByMonth.value[m] = newVals[idx]
+                flowModifiedByMonth.value[m] = Number(Number(newVals[idx]).toFixed(2))
             })
 
             await sleep(0)
@@ -298,6 +310,12 @@ createApp({
                 await scen.temperatureIncrease(cy.value, scenarios.value.temperatureIncrease.value)
             } else if (scenarios.value.temperatureIncrease.active) {
                 await scen.temperatureIncrease(cy.value, scenarios.value.temperatureIncrease.value)
+            }
+            if (scenarios.value.urbanDemand.active === false && scenarios.value.urbanDemand.value !== '0') {
+                scenarios.value.urbanDemand.value = '0'
+                await scen.urbanDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
+            } else if (scenarios.value.urbanDemand.active) {
+                await scen.urbanDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
             }
 
             await gm.calculateContribution(cy.value, params.value)
@@ -621,8 +639,11 @@ createApp({
                         });
                     }
                 }).addTo(map);
+
                 pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
                 tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
+                urbanDemandMean.value = gm.calculateDemand(cy.value, urbanDemandTypes)
+
                 await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
@@ -691,6 +712,7 @@ createApp({
             applyScenariosChanges,
             pptMean,
             tmitMean,
+            urbanDemandMean,
             Hm3ToM3,
             rampPalette: int.rampPalette,
             volumEmb,
