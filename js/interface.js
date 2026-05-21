@@ -2,7 +2,7 @@ import {SIM, monthOfStep} from './graph_methods.js'
 
 const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BDC334', '#E3D414', '#E7B010', '#EC8D0D', '#F16A0A', '#F54606', '#FA2303', '#FF0000']
 
-const setupEleClickListener = function(cy, selectedEleRef) {
+const setupEleClickListener = function(cy, selectedEleRef, k) {
     cy.on('tap', evt => {
         const ele = evt.target;
 
@@ -10,12 +10,6 @@ const setupEleClickListener = function(cy, selectedEleRef) {
         if (!ele.isNode?.() && !ele.isEdge?.()) {
             selectedEleRef.value = null;
             cy.elements().removeClass('selected');
-            cy.nodes().forEach(node => {
-                node.style('background-color', setNodeColor(node));
-            })
-            cy.edges().forEach(edge => {
-                edge.style('line-color', setEdgeColor(edge));
-            });
             return;
         }
 
@@ -23,12 +17,6 @@ const setupEleClickListener = function(cy, selectedEleRef) {
 
         // Si és node o edge
         cy.elements().removeClass('selected');
-        cy.nodes().forEach(node => {
-            node.style('background-color', setNodeColor(node));
-        })
-        cy.edges().forEach(edge => {
-            edge.style('line-color', setEdgeColor(edge));
-        });
         ele.addClass('selected');
         selectedEleRef.value = ele.data();
         selectedEleRef.value.eleType = ele.isNode() ? 'punt' : 'tram';
