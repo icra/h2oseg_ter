@@ -178,17 +178,17 @@ createApp({
         const openModal = ref(false)
         const scenarios = ref({
             rainReduction: {
-                name: "Reducció de pluja",
+                name: "Modificació de pluja",
                 value: '0',
                 units: "%",
-                description: "Aplica una reducció uniforme a la precipitació mitjana anual",
+                description: "Aplica una modificació proporcional a la precipitació mitjana anual",
                 active: false
             },
             temperatureIncrease: {
-                name: "Increment de temperatura",
+                name: "Modificació de temperatura",
                 value: '0',
                 units: "ºC",
-                description: "Aplica un increment uniforme a la temperatura mitjana anual",
+                description: "Aplica una modificació uniforme a la temperatura mitjana anual",
                 active: false
             },
             urbanDemand: {
