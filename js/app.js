@@ -541,7 +541,7 @@ createApp({
                 embPane.style.pointerEvents = 'auto'
 
                 const canalsPane = map.createPane('canalsPane')
-                canalsPane.style.zIndex = 800
+                canalsPane.style.zIndex = 500
                 canalsPane.style.pointerEvents = 'auto'
 
                 // pane per a tooltips per SOBRE dels nodes
