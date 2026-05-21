@@ -249,7 +249,7 @@
                            v-model.number="volumEmb" class="time-input" />
                     <span class="time-unit">hm<sup>3</sup></span>
                 </div>
-                <p class="res-error" v-if="!Number(volumEmb)">
+                <p class="res-error" v-if="volumEmb === null || volumEmb === '' || Number.isNaN(volumEmb) || volumEmb > 400 || volumEmb < 0">
                     El volum ha de ser entre 0 i 400 hm<sup>3</sup>.
                 </p>
                 </div>
