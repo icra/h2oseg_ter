@@ -1,6 +1,7 @@
 // noinspection JSVoidFunctionReturnValueUsed
 
 import gm from './graph_methods.js'
+import int from './interface.js'
 
 const {createApp, onMounted, ref, shallowRef, watch} = Vue
 
@@ -161,7 +162,7 @@ createApp({
             await sleep(1)
             await gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
-            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
@@ -241,7 +242,7 @@ createApp({
                 volumEmb.value
             )
 
-            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
+            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
             tick.value++
 
             loading.value = false
@@ -300,7 +301,7 @@ createApp({
 
             await gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
-            await gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
             tick.value++
 
             loading.value = false
@@ -676,9 +677,9 @@ createApp({
                 await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
-                gm.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
-                gm.setupEleClickListener(cy.value, selectedEle)
-                gm.setupZoomLabelControl(cy.value, leaf.value, 12);
+                int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+                int.setupEleClickListener(cy.value, selectedEle)
+                int.setupZoomLabelControl(cy.value, leaf.value, 12);
             } catch (e) {
                 console.error(e);
             } finally {
@@ -708,7 +709,7 @@ createApp({
         }, {immediate: true});
 
         watch(selK, (k) => {
-            gm.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById})
+            int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById})
         })
 
         return {
@@ -743,7 +744,7 @@ createApp({
             pptMean,
             tmitMean,
             Hm3ToM3,
-            rampPalette: gm.rampPalette,
+            rampPalette: int.rampPalette,
             volumEmb,
             tick,
             downloadData
