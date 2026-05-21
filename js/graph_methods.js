@@ -503,15 +503,43 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     calculateFlowDownstreamDam(cy, demanda, dam, month, k, dt_s, params)
 
     // Calcular demanda ambiental, és el màxim de envFlow<m> - flow
-    let maxDemandaAmbiental = 0
-    dam.successors('edge').forEach(edge => {
-        const demandaAmbiental = edge.data('envFlow' + month) - edge.data('flow' + k)
-        maxDemandaAmbiental = Math.max(maxDemandaAmbiental, demandaAmbiental)
-    })
+    let demandaTotal = demanda
+    const tol = 1e-4
+    const maxIter = 10
 
-    Object.assign(RESERVOIR, structuredClone(R_backup));
+    for (let iter = 0; iter < maxIter; iter++) {
+        Object.assign(RESERVOIR, structuredClone(R_backup))
 
-    calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, k, dt_s, params)
+        calculateFlowDownstreamDam(
+            cy,
+            demandaTotal,
+            dam,
+            month,
+            k,
+            dt_s,
+            params
+        )
+
+        let maxDeficitAmbiental = 0
+
+        dam.successors('edge').forEach(edge => {
+            const env = Number(edge.data('envFlow' + month)) || 0
+            const flow = Number(edge.data('flow' + k)) || 0
+            const deficit = env - flow
+
+            if (deficit > maxDeficitAmbiental) {
+                maxDeficitAmbiental = deficit
+            }
+        })
+
+        if (maxDeficitAmbiental <= tol) {
+            break
+        }
+
+        // Factor de seguretat perquè si hi ha pèrdues en trams intermedis,
+        // no ens quedem curts.
+        demandaTotal += maxDeficitAmbiental * 1.05
+    }
 
     if (errorRef) errorRef.value = null;
 };
