@@ -81,35 +81,8 @@ const setNodeColor = function(node, k){
     return (node.data('inflow' + k) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
 }
 
-const setupZoomLabelControl = function(cy, leafletInstance, zoomThreshold = 10) {
-    if (!leafletInstance || !leafletInstance.map) {
-        console.warn('[ZoomLabel] Leaflet map no disponible');
-        return;
-    }
-
-    // Listener de zoom del mapa
-    leafletInstance.map.on('zoomend', () => {
-        const currentZoom = leafletInstance.map.getZoom();
-
-        if (currentZoom >= zoomThreshold) {
-            cy.nodes().addClass('show-label');
-            cy.edges().addClass('show-label');
-        } else {
-            cy.nodes().removeClass('show-label');
-            cy.edges().removeClass('show-label');
-        }
-    });
-
-    // Establir estat inicial
-    const initialZoom = leafletInstance.map.getZoom();
-    if (initialZoom >= zoomThreshold) {
-        cy.nodes().addClass('show-label');
-    }
-}
-
 export default {
     rampPalette,
     setupEleClickListener,
-    setGraphColors,
-    setupZoomLabelControl
+    setGraphColors
 }

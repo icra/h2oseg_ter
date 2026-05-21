@@ -628,7 +628,6 @@ createApp({
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
                 int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
                 int.setupEleClickListener(cy.value, selectedEle)
-                int.setupZoomLabelControl(cy.value, leaf.value, 12);
             } catch (e) {
                 console.error(e);
             } finally {
