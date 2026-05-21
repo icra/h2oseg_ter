@@ -17,7 +17,7 @@ const rainReduction = async function (cy, deltaPpt) {
     }
 
     cy.nodes().forEach(n => {
-        if (n.data('ppt1') === undefined) return
+        if (n.data('ppt1') == null) return
         for (const i in ppt) {
             const newRain = n.data(refppt[i]) * reduction
             n.data(ppt[i], newRain)
@@ -43,7 +43,7 @@ const temperatureIncrease = async function (cy, deltaTmit) {
     }
 
     cy.nodes().forEach(n => {
-        if (n.data('tmit1') === undefined) return
+        if (n.data('tmit1') == null) return
         for (const i in tmit) {
             const newTmit = n.data(reftmit[i]) + Number(deltaTmit)
             n.data(tmit[i], newTmit)
