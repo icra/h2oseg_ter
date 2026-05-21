@@ -629,6 +629,25 @@ const calculateMeanCy = function (cy, varPrefix, mode = "sum") {
     return sumWeighted / sumArea;
 };
 
+const calculateDemand = function(cy, types){
+    const demandaAnual = cy.nodes()
+            .filter(n => types.includes(n.data('type')))
+            .reduce((sumNodes, n) => {
+                const nodeAnnualHm3 = Array.from({length: 12}, (_, i) => {
+                    const month = i + 1
+                    const q = Number(n.data('m' + month)) || 0
+                    const dt_s = monthSeconds(2024, month)
+
+                    // Si les demandes són negatives, les convertim a volum positiu
+                    const demanda = m3sToHm3(-q, dt_s)
+                    return demanda
+                }).reduce((a, b) => a + b, 0)
+
+                return sumNodes + nodeAnnualHm3
+            }, 0)
+    return demandaAnual
+}
+
 export {SIM, monthOfStep}
 
 export default {
@@ -638,6 +657,7 @@ export default {
     calculateFlowMonth,
     modifyFlowChange,
     calculateMeanCy,
+    calculateDemand,
     RESERVOIR,
     params,
     buildCalibratedParams
