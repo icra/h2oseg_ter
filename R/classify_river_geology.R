@@ -5,6 +5,7 @@ library(sf)
 library(terra)
 library(lwgeom)
 library(tmap)
+tmap_mode('view')
 
 rivers <- read_sf("assets/edges.geojson") |>
   st_transform(25831)
@@ -46,11 +47,18 @@ p_aluvial <- geologic |>
   select(is_aluvial, id) %>%
   mutate(area = st_area(.)) |>
   st_drop_geometry() |>
-  mutate(p_aluvial = as.numeric(area / sum(area)), .by = id) |>
+  mutate(
+    total = sum(area),
+    .by = c(id)
+  ) |>
+  summarize(
+    p_aluvial = as.numeric(sum(area) / sum(total)),
+    .by = c(id, is_aluvial)
+  ) |>
   filter(is_aluvial == TRUE) |>
   select(id, p_aluvial)
 
-agrifuturs <- "C:/Users/jpueyo/Documents/git_icra/agrifutures/data"
+agrifuturs <- "C:/Users/jpueyo/Documents/git_icra/agrifutures_cat/data"
 
 mde <- rast(file.path(agrifuturs, "terrain/mde.tif"))
 
@@ -88,11 +96,12 @@ scale_01 <- function(x) {
 }
 
 rivers |>
-  st_drop_geometry() |>
+  # st_drop_geometry() |>
   select(id) |>
   left_join(p_aluvial, by = "id") |>
   mutate(p_aluvial = replace_na(p_aluvial, 0)) |>
-  left_join(pendent, by = "id") |>
+  qtm(col = "p_aluvial")
+left_join(pendent, by = "id") |>
   verify(not_na(pendent)) |>
   left_join(index_sol, by = "id") |>
   verify(not_na(index_sol)) |>

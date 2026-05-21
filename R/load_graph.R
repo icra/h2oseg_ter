@@ -9,9 +9,7 @@ nodes <- read_sf("data_raw/nodes_natural_antropic.gpkg") |>
   bind_rows(
     read_sf("data_raw/aforaments.gpkg") |>
       select(codi_sad, type, nom)
-  )
-
-nodes <- nodes |>
+  ) |>
   left_join(read_rds("data_raw/conques_dades_cabal.rds"), by = 'codi_sad') |>
   left_join(read_rds("data_raw/cabals_antropic.rds"), by = 'codi_sad')
 

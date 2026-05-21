@@ -4,6 +4,8 @@ const createMonths = function(preffix, K){
     return Array(K).fill().map((e, i) => String(preffix + (1 + i)))
 }
 
+
+
 const monthOfStep = (k) => ((k - 1) % 12) + 1;
 
 const sortBySuffixNumber = (keys, prefix) =>
@@ -20,10 +22,8 @@ let SIM = {
 
 const initSimulation = function(nYears, initialVolume){
     SIM.K = Number(nYears) * 12 || 12;
-    console.log("mesos", SIM.K)
 
     let initVolume = Number(initialVolume) || RESERVOIR.capacity_hm3
-    console.log(initVolume)
 
     SIM.m      = createMonths('m',      SIM.K);
     SIM.inflow = createMonths('inflow', SIM.K);
@@ -36,61 +36,23 @@ const initSimulation = function(nYears, initialVolume){
     RESERVOIR.inflowSum_m3s = {};
     RESERVOIR.released_m3s = {};
     RESERVOIR.initial_storage = initVolume
+    RESERVOIR.overflowSum_m3s = {}
 
 }
 
 const lightHours = [9.3, 10.4, 11.7, 13.2, 14.4, 15, 14.8, 13.7, 12.3, 10.8, 9.6, 9]
 const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-// Kc per mes (gen ... des)
-
-// Aigua superficial
-const Kc_aigua = [
-    0.90, 0.95, 1.00, 1.05, 1.15, 1.20,
-    1.20, 1.15, 1.10, 1.00, 0.95, 0.90
-];
-
-// Conreu de regadiu
-const Kc_regadiu = [
-    0.50, 0.60, 0.85, 1.05, 1.15, 1.20,
-    1.20, 1.15, 0.95, 0.80, 0.60, 0.50
-];
-
-// Conreu de secà
-const Kc_seca = [
-    0.35, 0.45, 0.75, 0.95, 1.00, 0.80,
-    0.25, 0.25, 0.45, 0.65, 0.55, 0.35
-]
-
-// Forestal
-const Kc_forestal = [
-    0.60, 0.70, 0.90, 1.05, 1.15, 1.20,
-    1.15, 1.10, 1.00, 0.90, 0.80, 0.60
-]
-
-// Prats / pastures
-const Kc_prats = [
-    0.50, 0.55, 0.75, 0.90, 1.00, 1.05,
-    1.05, 0.95, 0.85, 0.75, 0.60, 0.50
-];
-
-// Urbà
-const Kc_urba = [
-    0.15, 0.15, 0.20, 0.25, 0.35, 0.40,
-    0.40, 0.35, 0.30, 0.25, 0.20, 0.15
-];
-
-const r_neu = [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18]
+const w = {
+    us_conreu_seca: 0.75,
+    us_conreu_regadiu: 1.5,
+    us_prats: 1,
+    us_forestal: 1.75,
+    us_urba: 0,
+    us_aigua: 0
+}
 
 const params = {
-    kc: {
-        aigua: Kc_aigua,
-        urba: Kc_urba,
-        forestal: Kc_forestal,
-        seca: Kc_seca,
-        regadiu: Kc_regadiu,
-        prats: Kc_prats
-    },
-    rNeu: r_neu,
+    rNeu: [0.18,0.20,0.23,0.28,0.35,0.40,0.40,0.35,0.30,0.22,0.20,0.18],
     gwLoss: {
         low: 1e-6,
         mid: 3e-6,
@@ -101,23 +63,13 @@ const params = {
         mid: 0.005,
         high: 0.01
     }
-}
+};
 
 function buildCalibratedParams(baseParams, calibResults) {
     // index per mes: 1..12
     const byMonth = new Map(calibResults.map(r => [+r.mes, r]));
 
     const p = structuredClone(baseParams);
-
-    // kc: array per ús (12)
-    for (const use of Object.keys(p.kc)) {
-        p.kc[use] = p.kc[use].map((baseKc, i) => {
-            const month = i + 1;
-            const r = byMonth.get(month);
-            const mul = r?.kcMulByUse?.[use] ?? 1;
-            return baseKc * mul;
-        });
-    }
 
     // rNeu: array (12)
     p.rNeu = p.rNeu.map((base, i) => {
@@ -171,6 +123,8 @@ let RESERVOIR = {
     capacity_hm3: 400,
     inflowSum_m3s: {},
     inflowVol_hm3: {},
+    overflowSum_m3s: {},
+    overflowVol_hm3: {},
     releaseDemand_m3s: {},
     released_m3s: {},
     releasedVol_hm3: {}
@@ -277,41 +231,53 @@ const ancestorsOf = function(cy, nodeId){
     return anc;
 }
 
-const calculateNodeContribution = function(node, params){
+const calculateNodeContribution = function(node, params) {
+    // mean temperature
     const tmit = sortBySuffixNumber(
         Object.keys(node.data())
-        .filter(k => k.startsWith('tmit')),
-    'tmit')
+            .filter(k => k.startsWith('tmit')),
+        'tmit')
 
     tmit.forEach(m => {
         node.data(m, Math.max(node.data(m), 0))
     })
 
-    const I = tmit.reduce((sum, tmit) => sum + Math.pow(Math.max(node.data(tmit), 0) / 5, 1.514), 0)
-    const a = 6.75e-7 * Math.pow(I, 3) - 771e-7 * Math.pow(I, 2) + 1792e-5 * I + 0.49239;
-    const ETPsc = tmit.map(tmit => 16 * Math.pow((10 * node.data(tmit))/I, a))
-    const ETP = ETPsc.map((e, i) => e * (lightHours[i] / 12) * (monthDays[i] / 30))
-
-    const aigua = params.kc.aigua.map(kc => kc * node.data('us_aigua'))
-    const regadiu = params.kc.regadiu.map(kc => kc * node.data('us_conreu_regadiu'))
-    const seca = params.kc.seca.map(kc => kc * node.data('us_conreu_seca'))
-    const forestal = params.kc.forestal.map(kc => kc * node.data('us_forestal'))
-    const prats = params.kc.prats.map(kc => kc * node.data('us_prats'))
-    const urba = params.kc.urba.map(kc => kc * node.data('us_urba'))
-
-    const kc = aigua.map((_, i) => aigua[i] + regadiu[i] + seca[i] + forestal[i] + prats[i] + urba[i])
-    const ET = ETP.map((e, i) => e * kc[i])
-
     const ppt = sortBySuffixNumber(
         Object.keys(node.data())
-        .filter(k => k.startsWith('ppt')),
-    'ppt'
+            .filter(k => k.startsWith('ppt')),
+        'ppt'
     )
         .map(p => node.data(p))
 
+    // ETP Thornwaite
+    const I = tmit.reduce((sum, tmit) => sum + Math.pow(Math.max(node.data(tmit), 0) / 5, 1.514), 0)
+    const a = 6.75e-7 * Math.pow(I, 3) - 771e-7 * Math.pow(I, 2) + 1792e-5 * I + 0.49239;
+    const ETPsc = tmit.map(tmit => 16 * Math.pow((10 * node.data(tmit)) / I, a))
+    const ETP = ETPsc.map((e, i) => e * (lightHours[i] / 12) * (monthDays[i] / 30))
+
+    createMonths('etp', 12).forEach((k, i) => {
+        node.data(k, ETP[i])
+    })
+
+
+    // Equació de Zhang et al 2021 amb valors de w segons el 3r informe de canvi climàtic (pp 172-173)
+    const ET = ETP.map((etp, i) => {
+        if (ppt[i] <= 0) return 0;
+        const ai = etp / ppt[i]
+        const inv_ai = ai ** -1
+
+        return Object.keys(w).map(us => node.data(us) * ppt[i] * (1 + w[us] * ai) / (1 + w[us] * ai + inv_ai))
+            .reduce((a, b) => a + b, 0)
+    })
+
+    createMonths('et', 12).forEach((k, i) => {
+        node.data(k, ET[i])
+    })
+
+
     const neu = sortBySuffixNumber(
         Object.keys(node.data())
-        .filter(k => k.startsWith('neu')),
+            .filter(k => k.startsWith('neu')),
         'neu'
     )
         .map(n => node.data(n))
@@ -323,7 +289,8 @@ const calculateNodeContribution = function(node, params){
 
     const mmNeu = deltaNeu.map((n, i) => n * params.rNeu[i])
 
-    const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]))
+    // contribution = Area * (PPT - ET - Snowpack) - INFILTRATION (10%)
+    const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]) * 0.9)
 
     const seconds = Array(12).fill().map((e, i) => i + 1)
         .map(m => monthSeconds(2024, m))
@@ -333,11 +300,11 @@ const calculateNodeContribution = function(node, params){
     })
 }
 
-const calculateContribution = function(cy, params = params){
+const calculateContribution = function(cy, params){
     if (!params) throw new Error('parameters required')
 
     cy.nodes().forEach(node => {
-        if (node.data('type') === 'massa' || node.data('type') === 'comporta' || node.data('type') === 'aforament') {
+        if ((node.data('type') === 'massa' || node.data('type') === 'comporta' || node.data('type') === 'aforament') && node.data('area_m2') > 0) {
             calculateNodeContribution(node, params)
         }
     })
@@ -370,7 +337,7 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
     g = Number(g) || 0;
 
     // guany proporcional a longitud (km)
-    const q_gain = (L_km > 0 && g > 0) ? (g * L_km) : 0;
+    const q_gain = g * L_km
 
     // q_out = q_in * exp(-k L)
     return Math.max(0, q_after + q_gain);
@@ -514,6 +481,8 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     }
     R.inflowSum_m3s[k] = 0
     R.inflowVol_hm3[k] = 0
+    R.overflowSum_m3s[k] = 0
+    R.overflowVol_hm3[k] = 0
     R.releaseDemand_m3s[k] = 0
     R.released_m3s[k] = 0
     R.releasedVol_hm3[k] = 0
@@ -555,10 +524,21 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
         if (R.inNodes && R.inNodes.has(node.id())) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
-            const nouVol = Math.min(R.storage_hm3[k] + add_hm3, R.capacity_hm3);
+
+            const storageBefore = R.storage_hm3[k] || 0;
+            const storageRaw = storageBefore + add_hm3;
+
+            const overflow_hm3 = Math.max(0, storageRaw - R.capacity_hm3)
+            const stored_hm3 = Math.min(storageRaw, R.capacity_hm3)
+
+            // const nouVol = Math.min(R.storage_hm3[k] + add_hm3, R.capacity_hm3);
             R.inflowSum_m3s[k] += positiveOut;
-            R.inflowVol_hm3[k] += m3sToHm3(R.inflowSum_m3s[k], dt_s)
-            R.storage_hm3[k] = nouVol;
+            R.inflowVol_hm3[k] += add_hm3
+
+            R.overflowVol_hm3[k] += overflow_hm3;
+            R.overflowSum_m3s[k] += hm3ToM3s(overflow_hm3, dt_s)
+
+            R.storage_hm3[k] = stored_hm3;
 
             // no propaguem cabal a través dels arcs virtuals
             node.data('outflow' + k, 0);
@@ -615,7 +595,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     const R_backup = structuredClone(R)
 
     // recalculem cabals sota presa
-    calculateFlowDownstreamDam(cy, demanda, dam, month, k, dt_s)
+    calculateFlowDownstreamDam(cy, demanda, dam, month, k, dt_s, params)
 
     // Calcular demanda ambiental, és el màxim de envFlow<m> - flow
     let maxDemandaAmbiental = 0
@@ -626,26 +606,29 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
     Object.assign(RESERVOIR, structuredClone(R_backup));
 
-    calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, k, dt_s)
+    calculateFlowDownstreamDam(cy, demanda + maxDemandaAmbiental, dam, month, k, dt_s, params)
 
     if (errorRef) errorRef.value = null;
 };
 
-const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
+const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, params){
     let R = RESERVOIR
-    const m = Number(month)
 
-    // si l'embassament és ple, allibera com a mínim el cabal d'entrada
-    if (R.storage_hm3[k] >= R.capacity_hm3 - 1e-6) {
-        demanda = Math.max(demanda, R.inflowSum_m3s[k])
-    }
-    const maxPossible_m3s = hm3ToM3s(R.storage_hm3[k], dt_s);
-    const release_m3s = Math.min(demanda, maxPossible_m3s);
-    const used_hm3 = m3sToHm3(release_m3s, dt_s);
+    const overflow_m3s = Number(R.overflowSum_m3s[k]) || 0;
+    const maxPossible_m3s = hm3ToM3s(R.storage_hm3[k], dt_s)
+
+    // La demanda consumeix volum embassat.
+    // El sobreeiximent s'afegeix al cabal alliberat, però no consumeix volum,
+    // perquè és aigua que no cabia dins l'embassament.
+    const demandRelease_m3s = Math.min(demanda, maxPossible_m3s);
+    const release_m3s = demandRelease_m3s + overflow_m3s;
+
+    const used_hm3 = m3sToHm3(demandRelease_m3s, dt_s);
+
     R.storage_hm3[k] = Math.max(0, R.storage_hm3[k] - used_hm3);
-    R.releaseDemand_m3s[k] = demanda;
+    R.releaseDemand_m3s[k] = demanda + overflow_m3s;
     R.released_m3s[k] = release_m3s;
-    R.releasedVol_hm3[k] = used_hm3;
+    R.releasedVol_hm3[k] = m3sToHm3(release_m3s, dt_s);
 
     // console.log(m, "entrada", R.inflowVol_hm3[m], "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
 
@@ -669,7 +652,10 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s){
         n.data('outflow' + k, out2);
 
         // 4) propagar cap avall
-        n.outgoers('edge').forEach(ed => ed.data('flow' + k, out2));
+        n.outgoers('edge').forEach(ed => {
+            const q = applyGwLossToEdge(out2, ed, month, params)
+            ed.data('flow' + k, q)
+        });
     });
 }
 
