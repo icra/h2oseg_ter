@@ -499,9 +499,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
     const R_backup = structuredClone(R)
 
-    // recalculem cabals sota presa
-    calculateFlowDownstreamDam(cy, demanda, dam, month, k, dt_s, params)
-
     // Calcular demanda ambiental, és el màxim de envFlow<m> - flow
     let demandaTotal = demanda
     const tol = 1e-4
@@ -533,6 +530,13 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         })
 
         if (maxDeficitAmbiental <= tol) {
+            break
+        }
+
+        const maxPossible_m3s = hm3ToM3s(R_backup.storage_hm3[k], dt_s)
+        const alreadyAtLimit = demandaTotal >= maxPossible_m3s - tol
+
+        if (alreadyAtLimit) {
             break
         }
 
