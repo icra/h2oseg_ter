@@ -159,6 +159,50 @@
                         </div>
                     </div>
                 </div>
+<!--                Demanda agrícola-->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="agriDemand">
+                            <input
+                                    id="agriDemand"
+                                    type="checkbox"
+                                    v-model="scenarios.agriDemand.active"
+                            />
+                            <span class="scenario-title">Modificació de la demanda agrícola</span>
+                        </label>
+
+                        <!-- Xip amb el % quan l'escenari és actiu -->
+                        <span
+                                v-if="scenarios.agriDemand.active"
+                                class="scenario-chip"
+                        >
+                            {{ scenarios.agriDemand.value }}{{ scenarios.agriDemand.units }}
+                        </span>
+                    </div>
+
+                    <p class="scenario-desc">
+                        {{scenarios.agriDemand.description}}
+                        (actualment {{ Number(agriDemandMean || 0).toFixed(0) }} Hm<sup>3</sup> anuals).
+                    </p>
+
+                    <div v-if="scenarios.agriDemand.active" class="scenario-slider">
+                        <input
+                                type="range"
+                                min="-100"
+                                max="100"
+                                v-model="scenarios.agriDemand.value"
+                        />
+
+                        <div class="scenario-values">
+                            <span class="scenario-value-new">
+                                Nou valor: {{ ((agriDemandMean * (100 + +scenarios.agriDemand.value) / 100)).toFixed(0) }} Hm<sup>3</sup>
+                            </span>
+                            <span class="scenario-value-delta">
+                                Canvi: {{ scenarios.agriDemand.value }}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
 

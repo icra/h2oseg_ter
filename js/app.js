@@ -30,6 +30,7 @@ const Hm3ToM3 = function (m3s) {
 }
 
 const urbanDemandTypes = ['ATL', 'ETAP']
+const agriDemandTypes = ['Comunitat de regants']
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month, k) {
@@ -196,11 +197,19 @@ createApp({
                 units: "%",
                 description: "Augmenta proporcionalment totes les captacions per a ús urbà",
                 active: false
+            },
+            agriDemand: {
+                name: "Modificació de la demanda per a ús agrícola",
+                value: '0',
+                units: "%",
+                description: "Augmenta proporcionalment totes les captacions per a ús agrícola",
+                active: false
             }
         })
         const pptMean = ref(null)
         const tmitMean = ref(null)
         const urbanDemandMean = ref(null)
+        const agriDemandMean = ref(null)
         const volumEmb = ref(400)
         const tick = ref(0)
 
@@ -313,9 +322,15 @@ createApp({
             }
             if (scenarios.value.urbanDemand.active === false && scenarios.value.urbanDemand.value !== '0') {
                 scenarios.value.urbanDemand.value = '0'
-                await scen.urbanDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
+                await scen.modifyDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
             } else if (scenarios.value.urbanDemand.active) {
-                await scen.urbanDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
+                await scen.modifyDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
+            }
+            if (scenarios.value.agriDemand.active === false && scenarios.value.agriDemand.value !== '0') {
+                scenarios.value.agriDemand.value = '0'
+                await scen.modifyDemand(cy.value, scenarios.value.agriDemand.value, agriDemandTypes)
+            } else if (scenarios.value.agriDemand.active) {
+                await scen.modifyDemand(cy.value, scenarios.value.agriDemand.value, agriDemandTypes)
             }
 
             await gm.calculateContribution(cy.value, params.value)
@@ -643,6 +658,7 @@ createApp({
                 pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
                 tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
                 urbanDemandMean.value = gm.calculateDemand(cy.value, urbanDemandTypes)
+                agriDemandMean.value = gm.calculateDemand(cy.value, agriDemandTypes)
 
                 await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
@@ -713,6 +729,7 @@ createApp({
             pptMean,
             tmitMean,
             urbanDemandMean,
+            agriDemandMean,
             Hm3ToM3,
             rampPalette: int.rampPalette,
             volumEmb,

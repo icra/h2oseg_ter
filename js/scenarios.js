@@ -51,7 +51,7 @@ const temperatureIncrease = async function (cy, deltaTmit) {
     })
 }
 
-const urbanDemand = async function(cy, deltaUrbanDemand, types) {
+const modifyDemand = async function(cy, deltaUrbanDemand, types) {
     if (!cy) {
         console.error("cy not loaded")
         return
@@ -60,8 +60,12 @@ const urbanDemand = async function(cy, deltaUrbanDemand, types) {
     const flow = Array(12).fill().map((e, i) => String('m' + (i + 1)))
     const refFlow = Array(12).fill().map((e, i) => String('refFlow' + (i + 1)))
 
-    if (cy.getElementById('ATL').data('refFlow1') === undefined) {
-        console.log("refFlow created")
+    const refNode = cy.nodes()
+        .filter(n => types.includes(n.data('type')))
+        .first()
+
+    if (refNode.nonempty() && refNode.data('refFlow1') === undefined) {
+        console.log("refFlow created for ", types.toString())
         cy.nodes().forEach(n => {
             if (!types.includes(n.data('type'))) return
             for (const i in refFlow) {
@@ -81,8 +85,10 @@ const urbanDemand = async function(cy, deltaUrbanDemand, types) {
 
 }
 
+
+
 export default {
     rainReduction,
     temperatureIncrease,
-    urbanDemand
+    modifyDemand
 }
