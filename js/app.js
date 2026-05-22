@@ -224,6 +224,7 @@ createApp({
         const forestSurface = ref(null)
         const volumEmb = ref(400)
         const tick = ref(0)
+        const legendCollapsed = ref(true)
         const downloadData = function() {
             if (!cy.value) {
                 console.error("Cytoscape no està inicialitzat");
@@ -768,6 +769,7 @@ createApp({
             rampPalette: int.rampPalette,
             volumEmb,
             tick,
+            legendCollapsed,
             downloadData,
             nodeTypeSymbols: int.nodeTypeSymbols,
             nodeSVG: int.nodeSymbolSVG
