@@ -39,7 +39,6 @@ const agriDemandTypes = ['Comunitat de regants']
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month, k) {
-    console.log('k tooltip', k)
     if (n.id() === 'DESEMBASSAT') {
         return `
             <div>
@@ -531,7 +530,6 @@ createApp({
 
                 // Afegir-lo al mapa
                 map.addControl(new homeControl());
-                console.log("month", month.value)
                 leaf.value.fit()
 
                 const edgePane = map.createPane('edgePane')
@@ -557,8 +555,6 @@ createApp({
 
                 const edgeNormalStyle = {weight: 3, opacity: 1}
                 const edgeHiStyle = {weight: 5, opacity: 1.0}
-                const nodeNormalStyle = {radius: 4, weight: 2, opacity: 1, fillOpacity: 1}
-                const nodeHiStyle = {radius: 6, weight: 3, opacity: 1, fillOpacity: 1}
 
                 map.on('click', () => {
                     selectedEle.value = null;
@@ -722,7 +718,6 @@ createApp({
                 flowModifiedByMonth.value = init
 
                 const rawAnnual = Hm3ToM3(val['m0'])
-                console.log("rawAnnual", rawAnnual)
                 const annualNum = Number.isFinite(+rawAnnual) ? Number(rawAnnual) : 0
                 annualVolume.value = Number(annualNum)
             } else {

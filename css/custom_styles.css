@@ -781,17 +781,14 @@ button:hover {
 }
 
 .legend-tiny-triangle {
-    width: 10px;
-    height: 8px;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     line-height: 0;
+    height: 8px;
 }
 
 .legend-tiny-triangle svg {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
     display: block;
 }
 

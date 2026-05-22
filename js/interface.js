@@ -180,7 +180,7 @@ const nodeSymbolSVG = function(shape, color = '#999', selected = false, withStro
         `
     }
 
-    return nodeSymbolSVG('circle', color, selected)
+    return nodeSymbolSVG('circle', color, selected, withStroke)
 }
 
 const nodeIcon = function(L, type, color, selected = false) {
