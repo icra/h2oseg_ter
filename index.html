@@ -282,11 +282,17 @@
                 <div class="legend-block">
                     <div class="legend-header" @click="legendCollapsed = !legendCollapsed">
                         <span class="legend-title">Llegenda</span>
-                        <button class="legend-toggle" type="button">
+                        <button
+                            class="legend-toggle"
+                            type="button"
+                            :aria-expanded="(!legendCollapsed).toString()"
+                            aria-controls="map-legend-content"
+                            aria-label="Mostra o amaga la llegenda"
+                        >
                             {{ legendCollapsed ? '▲' : '▼' }}
                         </button>
                     </div>
-                    <div v-show="!legendCollapsed" class="legend-content">
+                    <div id="map-legend-content" v-show="!legendCollapsed" class="legend-content">
                     <!-- Mode TOTAL ANUAL -->
                         <div v-if="selK === 0">
                             <div class="legend-block-annual legend-annual-grid">
