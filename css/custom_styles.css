@@ -279,12 +279,6 @@ button:hover {
     gap: 0.75rem;
 }
 
-.res-actions button {
-    padding: 4px 10px;
-    border-radius: .25rem;
-    border: 1px solid #d1d5db;
-    cursor: pointer;
-}
 
 .res-error {
     color: red;
@@ -374,11 +368,10 @@ button:hover {
 
 .btn-primary,
 .btn-secondary {
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: none;
+    padding: 4px 10px;
+    border-radius: .25rem;
+    border: 1px solid #d1d5db;
     cursor: pointer;
-    font-size: 0.85rem;
 }
 
 .btn-primary {
@@ -833,7 +826,7 @@ button:hover {
 
 .time-select,
 .time-input{
-    height: 34px;
+    height: 25px;
     border-radius: 10px;
     border: 1px solid rgba(0,0,0,0.12);
     padding: 0 10px;
@@ -846,11 +839,9 @@ button:hover {
     border-color: rgba(0,0,0,0.28);
 }
 
-.time-row-secondary button{
-    height: 34px;
-    border-radius: 10px;
-    padding: 0 12px;
-}
+/*.time-row-secondary button{*/
+/*    height: 34px;*/
+/*}*/
 
 .time-hint{
     margin: 8px 0 0;
