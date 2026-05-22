@@ -279,144 +279,144 @@
 
             <!-- Llegenda flotant -->
             <div class="map-legend" v-cloak>
+                <div class="legend-block">
+                    <div class="legend-header" @click="legendCollapsed = !legendCollapsed">
+                        <span class="legend-title">Llegenda</span>
+                        <button class="legend-toggle" type="button">
+                            {{ legendCollapsed ? '▲' : '▼' }}
+                        </button>
+                    </div>
+                    <div v-show="!legendCollapsed" class="legend-content">
+                    <!-- Mode TOTAL ANUAL -->
+                        <div v-if="selK === 0">
+                            <div class="legend-block-annual legend-annual-grid">
 
-                <!-- Mode TOTAL ANUAL -->
-                <div v-if="selK === 0">
-                    <div class="legend-block legend-block-annual">
-                        <div class="legend-title">Llegenda</div>
+                                <!-- COL 1 — Simbologia -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">Tipus de punt</div>
 
-                        <div class="legend-annual-grid">
+                                    <div class="legend-symbol-list">
+                                        <div
+                                                v-for="item in nodeTypeSymbols"
+                                                :key="item.label"
+                                                class="legend-symbol-row"
+                                        >
+                                <span
+                                        class="legend-node-symbol"
+                                        v-html="nodeSVG(item.shape, '#999', false)"
+                                ></span>
+                                            <span>{{ item.label }}</span>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <!-- COL 1 — Simbologia -->
-                            <div class="legend-category">
-                                <div class="legend-subtitle">Tipus de punt</div>
+                                <!-- COL 2 — Cabal ambiental -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">Incompliment cabal ambiental</div>
+                                    <div class="legend-multi-row">
+                                        <div class="legend-multi-column">
+                                <span
+                                        v-for="(c, idx) in rampPalette"
+                                        :key="'env-'+idx"
+                                        class="legend-tiny-line"
+                                        :style="{ borderTopColor: c }"
+                                ></span>
+                                        </div>
+                                        <div class="legend-scale">
+                                            <span>{{ nYears * 12 }} mesos</span>
+                                            <span>0 mesos</span>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                <div class="legend-symbol-list">
-                                    <div
-                                            v-for="item in nodeTypeSymbols"
-                                            :key="item.label"
-                                            class="legend-symbol-row"
-                                    >
+                                <!-- COL 3 — Demanda no satisfeta -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">Demanda no satisfeta</div>
+                                    <div class="legend-multi-row">
+                                        <div class="legend-multi-column">
+                                <span
+                                        v-for="(c, idx) in rampPalette"
+                                        :key="'dem-'+idx"
+                                        class="legend-tiny-triangle"
+                                        v-html="nodeSVG('triangle', c, false, false)"
+                                ></span>
+                                        </div>
+                                        <div class="legend-scale">
+                                            <span>{{ nYears * 12 }} mesos</span>
+                                            <span>0 mesos</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                    </div>
+
+                    <!-- Mode UN SOL MES -->
+                        <div v-else>
+                            <div class="legend-grid-month">
+
+                                <!-- COL 1 — Simbologia -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">Tipus de punt</div>
+
+                                    <div class="legend-symbol-list">
+                                        <div
+                                                v-for="item in nodeTypeSymbols"
+                                                :key="item.label"
+                                                class="legend-symbol-row"
+                                        >
+                                <span
+                                        class="legend-node-symbol"
+                                        v-html="nodeSVG(item.shape, '#999', false)"
+                                ></span>
+                                            <span>{{ item.label }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- COL 2 — Estat -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">Estat</div>
+
+                                    <div class="legend-symbol">
+                                        <span class="legend-line blue"></span>
+                                        <span class="legend-label">
+                                Compleix el cabal ambiental
+                            </span>
+                                    </div>
+
+                                    <div class="legend-symbol">
+                                        <span class="legend-line red"></span>
+                                        <span class="legend-label">
+                                No compleix el cabal ambiental
+                            </span>
+                                    </div>
+
+                                    <div class="legend-symbol">
                             <span
                                     class="legend-node-symbol"
-                                    v-html="nodeSVG(item.shape, '#999', false)"
+                                    v-html="nodeSVG('triangle', '#0074D9', false, false)"
                             ></span>
-                                        <span>{{ item.label }}</span>
+                                        <span class="legend-label">
+                                Demanda satisfeta
+                            </span>
                                     </div>
-                                </div>
-                            </div>
 
-                            <!-- COL 2 — Cabal ambiental -->
-                            <div class="legend-category">
-                                <div class="legend-subtitle">Incompliment cabal ambiental</div>
-                                <div class="legend-multi-row">
-                                    <div class="legend-multi-column">
-                            <span
-                                    v-for="(c, idx) in rampPalette"
-                                    :key="'env-'+idx"
-                                    class="legend-tiny-line"
-                                    :style="{ borderTopColor: c }"
-                            ></span>
-                                    </div>
-                                    <div class="legend-scale">
-                                        <span>{{ nYears * 12 }} mesos</span>
-                                        <span>0 mesos</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- COL 3 — Demanda no satisfeta -->
-                            <div class="legend-category">
-                                <div class="legend-subtitle">Demanda no satisfeta</div>
-                                <div class="legend-multi-row">
-                                    <div class="legend-multi-column">
-                            <span
-                                    v-for="(c, idx) in rampPalette"
-                                    :key="'dem-'+idx"
-                                    class="legend-tiny-triangle"
-                                    v-html="nodeSVG('triangle', c, false, false)"
-                            ></span>
-                                    </div>
-                                    <div class="legend-scale">
-                                        <span>{{ nYears * 12 }} mesos</span>
-                                        <span>0 mesos</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mode UN SOL MES -->
-                <div v-else>
-                    <div class="legend-block">
-                        <div class="legend-title">Llegenda</div>
-
-                        <div class="legend-grid-month">
-
-                            <!-- COL 1 — Simbologia -->
-                            <div class="legend-category">
-                                <div class="legend-subtitle">Tipus de punt</div>
-
-                                <div class="legend-symbol-list">
-                                    <div
-                                            v-for="item in nodeTypeSymbols"
-                                            :key="item.label"
-                                            class="legend-symbol-row"
-                                    >
+                                    <div class="legend-symbol">
                             <span
                                     class="legend-node-symbol"
-                                    v-html="nodeSVG(item.shape, '#999', false)"
+                                    v-html="nodeSVG('triangle', '#FF0000', false, false)"
                             ></span>
-                                        <span>{{ item.label }}</span>
+                                        <span class="legend-label">
+                                Demanda no satisfeta
+                            </span>
                                     </div>
                                 </div>
+
                             </div>
-
-                            <!-- COL 2 — Estat -->
-                            <div class="legend-category">
-                                <div class="legend-subtitle">Estat</div>
-
-                                <div class="legend-symbol">
-                                    <span class="legend-line blue"></span>
-                                    <span class="legend-label">
-                            Compleix el cabal ambiental
-                        </span>
-                                </div>
-
-                                <div class="legend-symbol">
-                                    <span class="legend-line red"></span>
-                                    <span class="legend-label">
-                            No compleix el cabal ambiental
-                        </span>
-                                </div>
-
-                                <div class="legend-symbol">
-                        <span
-                                class="legend-node-symbol"
-                                v-html="nodeSVG('triangle', '#0074D9', false, false)"
-                        ></span>
-                                    <span class="legend-label">
-                            Demanda satisfeta
-                        </span>
-                                </div>
-
-                                <div class="legend-symbol">
-                        <span
-                                class="legend-node-symbol"
-                                v-html="nodeSVG('triangle', '#FF0000', false, false)"
-                        ></span>
-                                    <span class="legend-label">
-                            Demanda no satisfeta
-                        </span>
-                                </div>
-                            </div>
-
-                        </div>
+                    </div>
                     </div>
                 </div>
-
             </div>
 
             <div id="cy"></div>

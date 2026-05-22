@@ -494,7 +494,7 @@ button:hover {
     position: absolute;
     left: 10px;
     bottom: 10px;
-    z-index: 10;
+    z-index: 2000;
     font-size: 0.8rem;
     color: #111827;
     pointer-events: none; /* no bloqueja el mapa */
@@ -506,16 +506,32 @@ button:hover {
     border: 1px solid #e5e7eb;
     box-shadow: 0 6px 18px rgba(0,0,0,0.12);
     padding: 6px 6px 6px 8px;   /* compacte, poca dreta */
-    margin-top: 6px;
     min-width: auto;
     width: auto;
     pointer-events: auto;
 }
 
+.legend-header {
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.96);
+    justify-content: space-between;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.legend-toggle {
+    cursor: pointer;
+    border: 0px;
+    background: white;
+    font-size: 12px;
+}
+
 .legend-title {
     font-weight: 600;
     font-size: 0.8rem;
-    margin-bottom: 4px;
+    cursor: pointer;
 }
 
 /* ---------- LLEGENDES PER A UN SOL MES (línies/punts blau/vermell) ---------- */
