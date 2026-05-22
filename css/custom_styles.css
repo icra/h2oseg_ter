@@ -750,6 +750,54 @@ button:hover {
     padding: 0;
 }
 
+.legend-symbol-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.legend-symbol-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+.legend-node-symbol {
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 14px;
+}
+
+.legend-node-symbol svg {
+    width: 12px;
+    height: 12px;
+    display: block;
+}
+
+.legend-tiny-triangle {
+    display: inline-flex;
+    line-height: 0;
+    height: 8px;
+}
+
+.legend-tiny-triangle svg {
+    width: 8px;
+    height: 8px;
+    display: block;
+}
+
+.legend-multi-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
 .time-controls{
     margin: 0 0 12px 0;
     padding: 10px 12px;

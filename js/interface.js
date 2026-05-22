@@ -23,15 +23,25 @@ const setupEleClickListener = function(cy, selectedEleRef, k) {
     });
 }
 
+const getNodeDisplayColor = function(node, selK) {
+    if (Number(selK) === 0) {
+        const nodeFaults = SIM.r
+            .map(k => setNodeColor(node, k))
+            .filter(c => c === rampPalette[12])
+            .length
+
+        const idx = Math.round(12 * nodeFaults / SIM.r.length)
+        return rampPalette[idx]
+    }
+
+    return setNodeColor(node, selK)
+}
+
 const setGraphColors = function(selK, cy, leafMaps){
     cy.nodes().forEach(node => {
-        if (selK === 0){
-            const nodeFaults = SIM.r.map(k => setNodeColor(node, k)).filter(e => e === rampPalette[12]).length
-            const idx = Math.round(12 * nodeFaults / SIM.r.length)
-            applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[idx])
-        } else {
-            applyNodeColorToLeaflet(node, selK, leafMaps)
-        }
+        const color = getNodeDisplayColor(node, selK)
+        applyNodeColorToLeaflet(node, selK, leafMaps, color)
+
     });
 
     cy.edges().forEach(edge => {
@@ -55,7 +65,8 @@ const applyNodeColorToLeaflet = (node, month, leafMaps, customColor = null) => {
 
 
     const color = customColor || setNodeColor(node, month);
-    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
+    const selected = leafMaps.currentSel?.id === node.id() && leafMaps.currentSel?.kind === 'node';
+    layer.setIcon(nodeIcon(leafMaps.L, node.data('type'), color, selected)); // mantenim radius/weight actuals
 };
 
 const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
@@ -80,7 +91,6 @@ const setNodeColor = function(node, k){
     }
     return (node.data('inflow' + k) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
 }
-
 
 export default {
     rampPalette,
