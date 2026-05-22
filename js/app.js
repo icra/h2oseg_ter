@@ -453,7 +453,11 @@ createApp({
                     currentSel.kind = kind
 
                     edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle))
-                    nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle))
+                    nodeLayerById.forEach((layer, id) => {
+                        const n = cy.value.getElementById(id)
+                        const color = int.getNodeDisplayColor(n, selK.value)
+                        layer.setIcon(int.nodeIcon(L, n.data('type'), color, false))
+                    })
 
                     // aplica ressaltat
                     if (kind === 'edge') {
@@ -461,7 +465,12 @@ createApp({
                         if (l) l.setStyle(edgeHiStyle)
                     } else {
                         const l = nodeLayerById.get(id)
-                        if (l) l.setStyle(nodeHiStyle)
+                        const n = cy.value.getElementById(id)
+
+                        if (l && n.nonempty()) {
+                            const color = int.getNodeDisplayColor(n, selK.value)
+                            l.setIcon(int.nodeIcon(L, n.data('type'), color, true))
+                        }
                     }
                 }
 
@@ -526,7 +535,7 @@ createApp({
                 edgePane.style.pointerEvents = 'auto'
 
                 const nodePane = map.createPane('nodePane')
-                nodePane.style.zIndex = 660   // per SOBRE dels edges
+                nodePane.style.zIndex = 900   // per SOBRE dels edges
                 nodePane.style.pointerEvents = 'auto'
 
                 const embPane = map.createPane('embPane')
@@ -555,13 +564,23 @@ createApp({
                     cy.value.elements().removeClass('selected');
 
                     edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle));
-                    nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle));
+                    nodeLayerById.forEach((layer, id) => {
+                        const n = cy.value.getElementById(id)
+                        const color = int.getNodeDisplayColor(n, selK.value)
+
+                        layer.setIcon(
+                            int.nodeIcon(L, n.data('type'), color, false)
+                        )
+                    })
                 })
 
                 const addNodeLayer = function (n) {
                     const ll = [n.data('lat'), n.data('lng')]
-                    const layer = L.circleMarker(ll, {...nodeNormalStyle, pane: 'nodePane'})
-                        .bindTooltip('', TT_OPTS)
+                    const color = int.getNodeDisplayColor(n, selK.value)
+                    const layer = L.marker(ll, {
+                        pane: 'nodePane',
+                        icon: int.nodeIcon(L, n.data('type'), color, false)
+                    }).bindTooltip('', TT_OPTS)
                     layer.on('click', (e) => {
                         L.DomEvent.stopPropagation(e)
                         selectById(n.id(), 'node')
@@ -571,15 +590,19 @@ createApp({
                         const html = nodeTooltipHTML(cn, month.value, selK.value)
                         const tt = layer.getTooltip()
                         if (tt) tt.setContent(html)
+                        const color = int.getNodeDisplayColor(n, selK.value)
+                        layer.setIcon(int.nodeIcon(L, cn.data('type'), color, true))
                         layer.openTooltip()
-                        layer.setStyle(nodeHiStyle)
                     });
                     layer.on('mouseout', () => {
                         layer.closeTooltip()
+                        const cn = cy.value.getElementById(n.id())
+                        const color = int.getNodeDisplayColor(cn, selK.value)
+
                         if (currentSel.id === n.id() && currentSel.kind === 'node') {
-                            layer.setStyle(nodeHiStyle)
+                            layer.setIcon(int.nodeIcon(L, cn.data('type'), color, true))
                         } else {
-                            layer.setStyle(nodeNormalStyle)
+                            layer.setIcon(int.nodeIcon(L, cn.data('type'), color, false))
                         }
                     })
                     layer.addTo(map)

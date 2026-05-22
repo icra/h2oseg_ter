@@ -23,15 +23,25 @@ const setupEleClickListener = function(cy, selectedEleRef, k) {
     });
 }
 
+const getNodeDisplayColor = function(node, selK) {
+    if (Number(selK) === 0) {
+        const nodeFaults = SIM.r
+            .map(k => setNodeColor(node, k))
+            .filter(c => c === rampPalette[12])
+            .length
+
+        const idx = Math.round(12 * nodeFaults / SIM.r.length)
+        return rampPalette[idx]
+    }
+
+    return setNodeColor(node, selK)
+}
+
 const setGraphColors = function(selK, cy, leafMaps){
     cy.nodes().forEach(node => {
-        if (selK === 0){
-            const nodeFaults = SIM.r.map(k => setNodeColor(node, k)).filter(e => e === rampPalette[12]).length
-            const idx = Math.round(12 * nodeFaults / SIM.r.length)
-            applyNodeColorToLeaflet(node, '0', leafMaps, rampPalette[idx])
-        } else {
-            applyNodeColorToLeaflet(node, selK, leafMaps)
-        }
+        const color = getNodeDisplayColor(node, selK)
+        applyNodeColorToLeaflet(node, selK, leafMaps, color)
+
     });
 
     cy.edges().forEach(edge => {
@@ -55,7 +65,7 @@ const applyNodeColorToLeaflet = (node, month, leafMaps, customColor = null) => {
 
 
     const color = customColor || setNodeColor(node, month);
-    layer.setStyle({ color, fillColor: color }); // mantenim radius/weight actuals
+    layer.setIcon(nodeIcon(L, node.data('type'), color, false)); // mantenim radius/weight actuals
 };
 
 const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
@@ -81,9 +91,96 @@ const setNodeColor = function(node, k){
     return (node.data('inflow' + k) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
 }
 
+const nodeShapeByType = function(type) {
+    if (type === 'massa') return 'circle'
+
+    if (['ETAP', 'ATL', 'Comunitat de regants', 'Cabal ambiental'].includes(type)) {
+        return 'triangle'
+    }
+
+    if (['EDAR', 'comporta', 'entrada'].includes(type)) {
+        return 'square'
+    }
+
+    if (type === 'aforament') return 'diamond'
+
+    return 'circle'
+}
+
+const nodeIcon = function(L, type, color, selected = false) {
+    const shape = nodeShapeByType(type)
+    const size = selected ? 18 : 14
+    const stroke = selected ? 3 : 2
+    const half = size / 2
+
+    let html
+
+    if (shape === 'circle') {
+        html = `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <circle
+                    cx="${half}"
+                    cy="${half}"
+                    r="${half - stroke / 2}"
+                    fill="${color}"
+                    stroke="#222"
+                    stroke-width="${stroke}"
+                />
+            </svg>
+        `
+    } else if (shape === 'square') {
+        html = `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <rect
+                    x="${stroke / 2}"
+                    y="${stroke / 2}"
+                    width="${size - stroke}"
+                    height="${size - stroke}"
+                    fill="${color}"
+                    stroke="#222"
+                    stroke-width="${stroke}"
+                />
+            </svg>
+        `
+    } else if (shape === 'triangle') {
+        html = `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <polygon
+                    points="${half},${stroke / 2} ${size - stroke / 2},${size - stroke / 2} ${stroke / 2},${size - stroke / 2}"
+                    fill="${color}"
+                    stroke="#222"
+                    stroke-width="${stroke}"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        `
+    } else if (shape === 'diamond') {
+        html = `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <polygon
+                    points="${half},${stroke / 2} ${size - stroke / 2},${half} ${half},${size - stroke / 2} ${stroke / 2},${half}"
+                    fill="${color}"
+                    stroke="#222"
+                    stroke-width="${stroke}"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        `
+    }
+
+    return L.divIcon({
+        className: 'node-symbol',
+        html,
+        iconSize: [size, size],
+        iconAnchor: [half, half]
+    })
+}
+
 
 export default {
     rampPalette,
     setupEleClickListener,
-    setGraphColors
+    setGraphColors,
+    nodeIcon,
+    getNodeDisplayColor
 }
