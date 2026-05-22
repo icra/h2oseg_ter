@@ -780,6 +780,27 @@ button:hover {
     display: block;
 }
 
+.legend-tiny-triangle {
+    width: 10px;
+    height: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+.legend-tiny-triangle svg {
+    width: 9px;
+    height: 9px;
+    display: block;
+}
+
+.legend-multi-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
 .time-controls{
     margin: 0 0 12px 0;
     padding: 10px 12px;

@@ -65,7 +65,8 @@ const applyNodeColorToLeaflet = (node, month, leafMaps, customColor = null) => {
 
 
     const color = customColor || setNodeColor(node, month);
-    layer.setIcon(nodeIcon(L, node.data('type'), color, false)); // mantenim radius/weight actuals
+    const selected = leafMaps.currentSel?.id === node.id() && leafMaps.currentSel?.kind === 'node';
+    layer.setIcon(nodeIcon(leafMaps.L, node.data('type'), color, selected)); // mantenim radius/weight actuals
 };
 
 const applyEdgeColorToLeaflet = (edge, month, leafMaps, customColor = null) => {
@@ -118,10 +119,11 @@ const nodeShapeByType = function(type) {
     return nodeTypeSymbols.find(group => group.types.includes(type))?.shape ?? 'circle'
 }
 
-const nodeSymbolSVG = function(shape, color = '#999', selected = false) {
+const nodeSymbolSVG = function(shape, color = '#999', selected = false, withStroke = true) {
     const size = selected ? 16 : 12
-    const stroke = selected ? 3 : 2
+    const stroke = withStroke ? (selected ? 3 : 2) : 0
     const half = size / 2
+    const strokeAttr = withStroke ? `stroke="#222" stroke-width="${stroke}"` : `stroke="none"`
 
     if (shape === 'circle') {
         return `
@@ -131,8 +133,7 @@ const nodeSymbolSVG = function(shape, color = '#999', selected = false) {
                     cy="${half}"
                     r="${half - stroke / 2}"
                     fill="${color}"
-                    stroke="#222"
-                    stroke-width="${stroke}"
+                    ${strokeAttr}
                 />
             </svg>
         `
@@ -147,8 +148,7 @@ const nodeSymbolSVG = function(shape, color = '#999', selected = false) {
                     width="${size - stroke}"
                     height="${size - stroke}"
                     fill="${color}"
-                    stroke="#222"
-                    stroke-width="${stroke}"
+                    ${strokeAttr}
                 />
             </svg>
         `
@@ -160,8 +160,7 @@ const nodeSymbolSVG = function(shape, color = '#999', selected = false) {
                 <polygon
                     points="${half},${stroke / 2} ${size - stroke / 2},${size - stroke / 2} ${stroke / 2},${size - stroke / 2}"
                     fill="${color}"
-                    stroke="#222"
-                    stroke-width="${stroke}"
+                    ${strokeAttr}
                     stroke-linejoin="round"
                 />
             </svg>
@@ -174,8 +173,7 @@ const nodeSymbolSVG = function(shape, color = '#999', selected = false) {
                 <polygon
                     points="${half},${stroke / 2} ${size - stroke / 2},${half} ${half},${size - stroke / 2} ${stroke / 2},${half}"
                     fill="${color}"
-                    stroke="#222"
-                    stroke-width="${stroke}"
+                    ${strokeAttr}
                     stroke-linejoin="round"
                 />
             </svg>

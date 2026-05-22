@@ -287,7 +287,26 @@
 
                         <div class="legend-annual-grid">
 
-                            <!-- COL 1 — Cabal ambiental -->
+                            <!-- COL 1 — Simbologia -->
+                            <div class="legend-category">
+                                <div class="legend-subtitle">Tipus de punt</div>
+
+                                <div class="legend-symbol-list">
+                                    <div
+                                            v-for="item in nodeTypeSymbols"
+                                            :key="item.label"
+                                            class="legend-symbol-row"
+                                    >
+                            <span
+                                    class="legend-node-symbol"
+                                    v-html="nodeSVG(item.shape, '#999', false)"
+                            ></span>
+                                        <span>{{ item.label }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- COL 2 — Cabal ambiental -->
                             <div class="legend-category">
                                 <div class="legend-subtitle">Incompliment cabal ambiental</div>
                                 <div class="legend-multi-row">
@@ -306,7 +325,7 @@
                                 </div>
                             </div>
 
-                            <!-- COL 2 — Demanda no satisfeta -->
+                            <!-- COL 3 — Demanda no satisfeta -->
                             <div class="legend-category">
                                 <div class="legend-subtitle">Demanda no satisfeta</div>
                                 <div class="legend-multi-row">
@@ -314,8 +333,8 @@
                             <span
                                     v-for="(c, idx) in rampPalette"
                                     :key="'dem-'+idx"
-                                    class="legend-tiny-point"
-                                    :style="{ backgroundColor: c }"
+                                    class="legend-tiny-triangle"
+                                    v-html="nodeSVG('triangle', c, false, false)"
                             ></span>
                                     </div>
                                     <div class="legend-scale">
@@ -325,7 +344,18 @@
                                 </div>
                             </div>
 
-                            <!-- COL 3 — Simbologia -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mode UN SOL MES -->
+                <div v-else>
+                    <div class="legend-block">
+                        <div class="legend-title">Llegenda</div>
+
+                        <div class="legend-grid-month">
+
+                            <!-- COL 1 — Simbologia -->
                             <div class="legend-category">
                                 <div class="legend-subtitle">Tipus de punt</div>
 
@@ -344,18 +374,7 @@
                                 </div>
                             </div>
 
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mode UN SOL MES -->
-                <div v-else>
-                    <div class="legend-block">
-                        <div class="legend-title">Llegenda</div>
-
-                        <div class="legend-grid-month">
-
-                            <!-- COL 1 — Estat hidrològic -->
+                            <!-- COL 2 — Estat -->
                             <div class="legend-category">
                                 <div class="legend-subtitle">Estat</div>
 
@@ -374,36 +393,23 @@
                                 </div>
 
                                 <div class="legend-symbol">
-                                    <span class="legend-point blue"></span>
+                        <span
+                                class="legend-node-symbol"
+                                v-html="nodeSVG('triangle', '#0074D9', false, false)"
+                        ></span>
                                     <span class="legend-label">
                             Demanda satisfeta
                         </span>
                                 </div>
 
                                 <div class="legend-symbol">
-                                    <span class="legend-point red"></span>
+                        <span
+                                class="legend-node-symbol"
+                                v-html="nodeSVG('triangle', '#FF0000', false, false)"
+                        ></span>
                                     <span class="legend-label">
                             Demanda no satisfeta
                         </span>
-                                </div>
-                            </div>
-
-                            <!-- COL 2 — Simbologia -->
-                            <div class="legend-category">
-                                <div class="legend-subtitle">Tipus de punt</div>
-
-                                <div class="legend-symbol-list">
-                                    <div
-                                            v-for="item in nodeTypeSymbols"
-                                            :key="item.label"
-                                            class="legend-symbol-row"
-                                    >
-                            <span
-                                    class="legend-node-symbol"
-                                    v-html="nodeSVG(item.shape, '#999', false)"
-                            ></span>
-                                        <span>{{ item.label }}</span>
-                                    </div>
                                 </div>
                             </div>
 
