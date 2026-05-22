@@ -773,7 +773,9 @@ createApp({
             rampPalette: int.rampPalette,
             volumEmb,
             tick,
-            downloadData
+            downloadData,
+            nodeTypeSymbols: int.nodeTypeSymbols,
+            nodeSVG: int.nodeSymbolSVG
         }
     }
 }).mount('#app')
