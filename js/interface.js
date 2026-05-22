@@ -121,7 +121,7 @@ const nodeShapeByType = function(type) {
 
 const nodeSymbolSVG = function(shape, color = '#999', selected = false, withStroke = true) {
     const size = selected ? 16 : 12
-    const stroke = withStroke ? (selected ? 3 : 2) : 0
+    const stroke = withStroke ? (selected ? 2 : 1) : 0
     const half = size / 2
     const strokeAttr = withStroke ? `stroke="#222" stroke-width="${stroke}"` : `stroke="none"`
 
