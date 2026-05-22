@@ -494,7 +494,7 @@ button:hover {
     position: absolute;
     left: 10px;
     bottom: 10px;
-    z-index: 2000;
+    z-index: 1100;
     font-size: 0.8rem;
     color: #111827;
     pointer-events: none; /* no bloqueja el mapa */
