@@ -92,8 +92,119 @@ const setNodeColor = function(node, k){
     return (node.data('inflow' + k) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
 }
 
+const nodeTypeSymbols = [
+    {
+        label: 'Àrea de drenatge',
+        shape: 'circle',
+        types: ['massa']
+    },
+    {
+        label: 'Captació',
+        shape: 'triangle',
+        types: ['ETAP', 'ATL', 'Comunitat de regants', 'Cabal ambiental']
+    },
+    {
+        label: 'Retorn',
+        shape: 'square',
+        types: ['EDAR', 'comporta', 'entrada']
+    },
+    {
+        label: "Estació d'aforament",
+        shape: 'diamond',
+        types: ['aforament']
+    }
+]
+
+const nodeShapeByType = function(type) {
+    return nodeTypeSymbols.find(group => group.types.includes(type))?.shape ?? 'circle'
+}
+
+const nodeSymbolSVG = function(shape, color = '#999', selected = false, withStroke = true) {
+    const size = selected ? 16 : 12
+    const stroke = withStroke ? (selected ? 3 : 2) : 0
+    const half = size / 2
+    const strokeAttr = withStroke ? `stroke="#222" stroke-width="${stroke}"` : `stroke="none"`
+
+    if (shape === 'circle') {
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <circle
+                    cx="${half}"
+                    cy="${half}"
+                    r="${half - stroke / 2}"
+                    fill="${color}"
+                    ${strokeAttr}
+                />
+            </svg>
+        `
+    }
+
+    if (shape === 'square') {
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <rect
+                    x="${stroke / 2}"
+                    y="${stroke / 2}"
+                    width="${size - stroke}"
+                    height="${size - stroke}"
+                    fill="${color}"
+                    ${strokeAttr}
+                />
+            </svg>
+        `
+    }
+
+    if (shape === 'triangle') {
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <polygon
+                    points="${half},${stroke / 2} ${size - stroke / 2},${size - stroke / 2} ${stroke / 2},${size - stroke / 2}"
+                    fill="${color}"
+                    ${strokeAttr}
+                    stroke-linejoin="round"
+                />
+            </svg>
+        `
+    }
+
+    if (shape === 'diamond') {
+        return `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <polygon
+                    points="${half},${stroke / 2} ${size - stroke / 2},${half} ${half},${size - stroke / 2} ${stroke / 2},${half}"
+                    fill="${color}"
+                    ${strokeAttr}
+                    stroke-linejoin="round"
+                />
+            </svg>
+        `
+    }
+
+    return nodeSymbolSVG('circle', color, selected, withStroke)
+}
+
+const nodeIcon = function(L, type, color, selected = false) {
+    const shape = nodeShapeByType(type)
+    const size = selected ? 18 : 14
+    const half = size / 2
+
+    return L.divIcon({
+        className: 'node-symbol',
+        html: nodeSymbolSVG(shape, color, selected),
+        iconSize: [size, size],
+        iconAnchor: [half, half]
+    })
+}
+
+
+
+
 export default {
     rampPalette,
     setupEleClickListener,
-    setGraphColors
+    setGraphColors,
+    nodeIcon,
+    getNodeDisplayColor,
+    nodeTypeSymbols,
+    nodeSymbolSVG,
 }
