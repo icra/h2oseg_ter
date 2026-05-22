@@ -4,11 +4,16 @@ import gm from './graph_methods.js'
 import int from './interface.js'
 import scen from './scenarios.js'
 
-const {createApp, onMounted, ref, shallowRef, watch} = Vue
+const {createApp, onMounted, ref, shallowRef, watch, nextTick} = Vue
 
 const TT_OPTS = {direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane'}
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const waitForPaint = async function () {
+    await nextTick()
+    await new Promise(resolve => requestAnimationFrame(resolve))
+    await new Promise(resolve => requestAnimationFrame(resolve))
+}
 
 const fmt = (v) => {
     let unit = 'm³/s'
@@ -252,8 +257,7 @@ createApp({
         const applyFlowChanges = async function () {
             loadingYear.value = 1
             loading.value = true
-            await sleep(1)
-
+            await waitForPaint()
             // IMPORTANT: només mesos 1..12, no '0'
             const changes = {}
             for (let mo = 1; mo <= 12; mo++) {

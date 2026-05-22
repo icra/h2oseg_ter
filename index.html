@@ -519,6 +519,7 @@
                                                     step="0.1"
                                                     v-model="annualVolume"
                                                     class="res-input"
+                                                    v-on:keyup.enter="applyAnnualChange(selectedEle)"
                                             />
                                         </td>
                                     </tr>
@@ -561,6 +562,7 @@
                                                     v-model.number="flowModifiedByMonth[m.value]"
                                                     @blur="flowModifiedByMonth[m.value] = Number(flowModifiedByMonth[m.value]).toFixed(2)"
                                                     class="res-input"
+                                                    v-on:keyup.enter="applyFlowChanges(selectedEle)"
                                             />
                                         </td>
                                     </tr>
