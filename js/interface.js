@@ -81,6 +81,7 @@ const setNodeColor = function(node, k){
     return (node.data('inflow' + k) + 0.01) + node.data('m' + month) < 0 ? rampPalette[12] : rampPalette[0]
 }
 
+
 export default {
     rampPalette,
     setupEleClickListener,

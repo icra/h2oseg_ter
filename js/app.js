@@ -220,7 +220,6 @@ createApp({
         const forestSurface = ref(null)
         const volumEmb = ref(400)
         const tick = ref(0)
-
         const downloadData = function() {
             if (!cy.value) {
                 console.error("Cytoscape no està inicialitzat");
@@ -250,7 +249,6 @@ createApp({
 
             URL.revokeObjectURL(url);
         }
-
         const applyFlowChanges = async function () {
             loadingYear.value = 1
             loading.value = true
@@ -376,8 +374,6 @@ createApp({
 
                 const calibResults = await loadCalibResults();
                 params.value = gm.buildCalibratedParams(gm.params, calibResults);
-
-
 
                 const cyNodes = nodesGeo.features.map(n => {
                     const nodeData = Object.keys(n.properties).reduce((acc, key) => {
