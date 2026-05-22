@@ -4,11 +4,16 @@ import gm from './graph_methods.js'
 import int from './interface.js'
 import scen from './scenarios.js'
 
-const {createApp, onMounted, ref, shallowRef, watch} = Vue
+const {createApp, onMounted, ref, shallowRef, watch, nextTick} = Vue
 
 const TT_OPTS = {direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane'}
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const waitForPaint = async function () {
+    await nextTick()
+    await new Promise(resolve => requestAnimationFrame(resolve))
+    await new Promise(resolve => requestAnimationFrame(resolve))
+}
 
 const fmt = (v) => {
     let unit = 'm³/s'
@@ -34,7 +39,6 @@ const agriDemandTypes = ['Comunitat de regants']
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month, k) {
-    console.log('k tooltip', k)
     if (n.id() === 'DESEMBASSAT') {
         return `
             <div>
@@ -166,7 +170,7 @@ createApp({
             await sleep(1)
             await gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
-            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel});
             tick.value++
 
             loading.value = false
@@ -220,7 +224,6 @@ createApp({
         const forestSurface = ref(null)
         const volumEmb = ref(400)
         const tick = ref(0)
-
         const downloadData = function() {
             if (!cy.value) {
                 console.error("Cytoscape no està inicialitzat");
@@ -250,12 +253,10 @@ createApp({
 
             URL.revokeObjectURL(url);
         }
-
         const applyFlowChanges = async function () {
             loadingYear.value = 1
             loading.value = true
-            await sleep(1)
-
+            await waitForPaint()
             // IMPORTANT: només mesos 1..12, no '0'
             const changes = {}
             for (let mo = 1; mo <= 12; mo++) {
@@ -272,7 +273,7 @@ createApp({
                 volumEmb.value
             )
 
-            int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById})
+            int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
             tick.value++
 
             loading.value = false
@@ -349,7 +350,7 @@ createApp({
 
             await gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
-            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel});
             tick.value++
 
             loading.value = false
@@ -376,8 +377,6 @@ createApp({
 
                 const calibResults = await loadCalibResults();
                 params.value = gm.buildCalibratedParams(gm.params, calibResults);
-
-
 
                 const cyNodes = nodesGeo.features.map(n => {
                     const nodeData = Object.keys(n.properties).reduce((acc, key) => {
@@ -457,7 +456,11 @@ createApp({
                     currentSel.kind = kind
 
                     edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle))
-                    nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle))
+                    nodeLayerById.forEach((layer, id) => {
+                        const n = cy.value.getElementById(id)
+                        const color = int.getNodeDisplayColor(n, selK.value)
+                        layer.setIcon(int.nodeIcon(L, n.data('type'), color, false))
+                    })
 
                     // aplica ressaltat
                     if (kind === 'edge') {
@@ -465,7 +468,12 @@ createApp({
                         if (l) l.setStyle(edgeHiStyle)
                     } else {
                         const l = nodeLayerById.get(id)
-                        if (l) l.setStyle(nodeHiStyle)
+                        const n = cy.value.getElementById(id)
+
+                        if (l && n.nonempty()) {
+                            const color = int.getNodeDisplayColor(n, selK.value)
+                            l.setIcon(int.nodeIcon(L, n.data('type'), color, true))
+                        }
                     }
                 }
 
@@ -522,7 +530,6 @@ createApp({
 
                 // Afegir-lo al mapa
                 map.addControl(new homeControl());
-                console.log("month", month.value)
                 leaf.value.fit()
 
                 const edgePane = map.createPane('edgePane')
@@ -530,7 +537,7 @@ createApp({
                 edgePane.style.pointerEvents = 'auto'
 
                 const nodePane = map.createPane('nodePane')
-                nodePane.style.zIndex = 660   // per SOBRE dels edges
+                nodePane.style.zIndex = 900   // per SOBRE dels edges
                 nodePane.style.pointerEvents = 'auto'
 
                 const embPane = map.createPane('embPane')
@@ -548,8 +555,6 @@ createApp({
 
                 const edgeNormalStyle = {weight: 3, opacity: 1}
                 const edgeHiStyle = {weight: 5, opacity: 1.0}
-                const nodeNormalStyle = {radius: 4, weight: 2, opacity: 1, fillOpacity: 1}
-                const nodeHiStyle = {radius: 6, weight: 3, opacity: 1, fillOpacity: 1}
 
                 map.on('click', () => {
                     selectedEle.value = null;
@@ -559,13 +564,23 @@ createApp({
                     cy.value.elements().removeClass('selected');
 
                     edgeLayerById.forEach(l => l.setStyle(edgeNormalStyle));
-                    nodeLayerById.forEach(l => l.setStyle(nodeNormalStyle));
+                    nodeLayerById.forEach((layer, id) => {
+                        const n = cy.value.getElementById(id)
+                        const color = int.getNodeDisplayColor(n, selK.value)
+
+                        layer.setIcon(
+                            int.nodeIcon(L, n.data('type'), color, false)
+                        )
+                    })
                 })
 
                 const addNodeLayer = function (n) {
                     const ll = [n.data('lat'), n.data('lng')]
-                    const layer = L.circleMarker(ll, {...nodeNormalStyle, pane: 'nodePane'})
-                        .bindTooltip('', TT_OPTS)
+                    const color = int.getNodeDisplayColor(n, selK.value)
+                    const layer = L.marker(ll, {
+                        pane: 'nodePane',
+                        icon: int.nodeIcon(L, n.data('type'), color, false)
+                    }).bindTooltip('', TT_OPTS)
                     layer.on('click', (e) => {
                         L.DomEvent.stopPropagation(e)
                         selectById(n.id(), 'node')
@@ -575,15 +590,19 @@ createApp({
                         const html = nodeTooltipHTML(cn, month.value, selK.value)
                         const tt = layer.getTooltip()
                         if (tt) tt.setContent(html)
+                        const color = int.getNodeDisplayColor(n, selK.value)
+                        layer.setIcon(int.nodeIcon(L, cn.data('type'), color, true))
                         layer.openTooltip()
-                        layer.setStyle(nodeHiStyle)
                     });
                     layer.on('mouseout', () => {
                         layer.closeTooltip()
+                        const cn = cy.value.getElementById(n.id())
+                        const color = int.getNodeDisplayColor(cn, selK.value)
+
                         if (currentSel.id === n.id() && currentSel.kind === 'node') {
-                            layer.setStyle(nodeHiStyle)
+                            layer.setIcon(int.nodeIcon(L, cn.data('type'), color, true))
                         } else {
-                            layer.setStyle(nodeNormalStyle)
+                            layer.setIcon(int.nodeIcon(L, cn.data('type'), color, false))
                         }
                     })
                     layer.addTo(map)
@@ -678,7 +697,7 @@ createApp({
                 await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
-                int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById});
+                int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById,  L, currentSel});
                 int.setupEleClickListener(cy.value, selectedEle)
             } catch (e) {
                 console.error(e);
@@ -699,7 +718,6 @@ createApp({
                 flowModifiedByMonth.value = init
 
                 const rawAnnual = Hm3ToM3(val['m0'])
-                console.log("rawAnnual", rawAnnual)
                 const annualNum = Number.isFinite(+rawAnnual) ? Number(rawAnnual) : 0
                 annualVolume.value = Number(annualNum)
             } else {
@@ -709,7 +727,7 @@ createApp({
         }, {immediate: true});
 
         watch(selK, (k) => {
-            int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById})
+            int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
         })
 
         return {
@@ -750,7 +768,9 @@ createApp({
             rampPalette: int.rampPalette,
             volumEmb,
             tick,
-            downloadData
+            downloadData,
+            nodeTypeSymbols: int.nodeTypeSymbols,
+            nodeSVG: int.nodeSymbolSVG
         }
     }
 }).mount('#app')
