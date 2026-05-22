@@ -660,6 +660,74 @@ const calculateSurface = function(cy, us){
         .reduce((a, b) => a + b, 0)
 }
 
+const accumulateUpstream = function(cy, id, variable, operand = 'mean') {
+    const node = cy.getElementById(id)
+
+    if (!node || node.empty()) {
+        console.error('Node not found:', id)
+        return null
+    }
+
+    // predecessors no inclou el node actual; l'afegim si vols tota l'àrea drenada fins al node
+    const upstream = node
+        .predecessors('node')
+        .union(node)
+        .filter(n => Number.isFinite(Number(n.data('area_m2'))) && Number(n.data('area_m2')) > 0)
+
+    if (upstream.empty()) return null
+
+    if (variable === 'area_m2' && operand === 'sum') {
+        return upstream
+            .map(n => Number(n.data('area_m2')) || 0)
+            .reduce((a, b) => a + b, 0)
+    }
+
+    const varNames = createMonths(variable, 12)
+
+    if (operand === 'mean') {
+        const areaTotal = upstream
+            .map(n => Number(n.data('area_m2')) || 0)
+            .reduce((a, b) => a + b, 0)
+
+        if (areaTotal <= 0) return null
+
+        const monthlyMeans = varNames.map(v => {
+            const weightedSum = upstream
+                .map(n => {
+                    const value = Number(n.data(v))
+                    const area = Number(n.data('area_m2')) || 0
+
+                    if (!Number.isFinite(value)) return 0
+
+                    return value * area
+                })
+                .reduce((a, b) => a + b, 0)
+
+            return weightedSum / areaTotal
+        })
+
+        // Retorna la mitjana dels 12 mesos
+        return monthlyMeans
+    }
+
+    if (operand === 'sum') {
+        return varNames
+            .map(v => {
+                return upstream
+                    .map(n => Number(n.data(v)) || 0)
+                    .reduce((a, b) => a + b, 0)
+            })
+            .reduce((a, b) => a + b, 0)
+    }
+
+    return null
+}
+
+export const isHeadwaterNode = function(n) {
+    const hasAncestors = n.predecessors('node').nonempty()
+    return n.data('type') === 'massa' && !hasAncestors
+}
+
 export {SIM, monthOfStep}
 
 export default {
@@ -673,5 +741,7 @@ export default {
     calculateSurface,
     RESERVOIR,
     params,
-    buildCalibratedParams
+    buildCalibratedParams,
+    isHeadwaterNode,
+    accumulateUpstream
 }

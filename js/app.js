@@ -179,7 +179,8 @@ createApp({
         const params = shallowRef(null)
         const editMode = ref('annual')
         const annualVolume = ref(null)
-        const openModal = ref(false)
+        const openModalScenarios = ref(false)
+        const openModalInfo = ref(false)
         const scenarios = ref({
             rainReduction: {
                 name: "Modificació de pluja",
@@ -314,7 +315,7 @@ createApp({
             loading.value = false
         }
         const applyScenariosChanges = async function () {
-            openModal.value = false
+            openModalScenarios.value = false
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
@@ -610,7 +611,9 @@ createApp({
                     nodeLayerById.set(n.id(), layer)
                 }
 
-                cy.value.nodes().forEach(addNodeLayer)
+                cy.value.nodes()
+                    .filter(n => !gm.isHeadwaterNode(n))
+                    .forEach(addNodeLayer)
 
                 const arcsLayer = L.geoJSON(edgesGeo, {
                     pane: 'edgePane',
@@ -757,7 +760,8 @@ createApp({
             selK,
             loading,
             fmt,
-            openModal,
+            openModalScenarios,
+            openModalInfo,
             scenarios,
             applyScenariosChanges,
             pptMean,
@@ -772,7 +776,8 @@ createApp({
             legendCollapsed,
             downloadData,
             nodeTypeSymbols: int.nodeTypeSymbols,
-            nodeSVG: int.nodeSymbolSVG
+            nodeSVG: int.nodeSymbolSVG,
+            accumulateUpstream: gm.accumulateUpstream
         }
     }
 }).mount('#app')

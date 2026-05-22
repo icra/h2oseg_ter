@@ -15,12 +15,12 @@
 <body>
 <div id="app">
     <!-- MODAL D'ESCENARIS -->
-    <div v-if="openModal" class="modal-backdrop" v-cloak>
+    <div v-if="openModalScenarios" class="modal-backdrop" v-cloak>
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
                 <h3 class="modal-title">Configuració d'escenaris</h3>
-                <button class="modal-close" @click="openModal=false" aria-label="Tanca">
+                <button class="modal-close" @click="openModalScenarios=false" aria-label="Tanca">
                     ×
                 </button>
             </div>
@@ -252,12 +252,86 @@
 
             <!-- FOOTER -->
             <div class="modal-footer">
-                <button class="btn-secondary" @click="openModal=false">
+                <button class="btn-secondary" @click="openModalScenarios=false">
                     Cancel·la
                 </button>
                 <button class="btn-primary" @click="applyScenariosChanges">
                     Aplica canvis
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL D'INFO    -->
+    <div v-if="openModalInfo" class="modal-backdrop" v-cloak>
+        <div class="modal-dialog" @click.stop>
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h3 class="modal-title" v-if="selectedEle.id !== 'DESEMBASSAT'">
+                    Informació del
+                    <span v-if="selectedEle.eleType === 'tram'">tram </span>
+                    <span v-else-if="selectedEle.eleType === 'punt'">punt </span>
+                    <span v-if="selectedEle.nomComu">{{ selectedEle.nomComu }}</span>
+                    <span v-else-if="selectedEle.name">{{ selectedEle.name }}</span>
+                    <span v-else-if="selectedEle.id">{{ selectedEle.id }}</span>
+                    <span v-else>{{ selectedEle.eleType }}</span>
+                </h3>
+                <h3 class="modal-title" v-else>Informació del sistema Sau-Susqueda</h3>
+                <button class="modal-close" @click="openModalInfo=false" aria-label="Tanca">
+                    ×
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <!-- info per trams-->
+                <div v-if="selectedEle.eleType === 'tram'">
+                    <table class="res-table">
+                        <thead>
+                            <tr>
+                                <th>Mes</th>
+                                <th class="valor">Cabal (m<sup>3</sup>/s)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="m in baseMonths">
+                                <td>{{ m.label }}</td>
+                                <td class="valor">{{ Number(selectedEle['flow'+m.value]).toFixed(2) }}</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <!-- info per punts -->
+                <div v-else-if="selectedEle.eleType === 'punt'">
+                    <!-- massa -->
+                    <table v-if="['massa', 'aforament'].includes(selectedEle.type)" class="res-table">
+                        <thead>
+                            <tr>
+                                <th>Mes</th>
+                                <th class="valor">Cabal (m<sup>3</sup>/s)</th>
+                                <th class="valor">Àrea de drenatge (km<sup>2</sup></th>
+                                <th class="valor">Precipitació mitjana (mm)</th>
+                                <th class="valor">Temperatura mitjana (ºC)</th>
+                                <th class="valor">ETP mitjana (mm)</th>
+                                <th class="valor">ET mitjana (mm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="m in baseMonths">
+                                <td>{{ m.label }}</td>
+                                <!-- Pensar què fer amb els nodes de capçalera on àrea de drenatge i cabal serà 0 -->
+                                <!-- una opció seria amagar els nodes amb inflow = 0 -->
+                                <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(2) }}</td>
+                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'area_m2', 'sum') / 1000000).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'ppt', 'mean')[m.value-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'tmit', 'mean')[m.value-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'etp', 'mean')[m.value-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'et', 'mean')[m.value-1]).toFixed(0) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -282,17 +356,25 @@
                 <div class="legend-block">
                     <div class="legend-header" @click="legendCollapsed = !legendCollapsed">
                         <span class="legend-title">Llegenda</span>
-                        <button
-                            class="legend-toggle"
-                            type="button"
-                            :aria-expanded="(!legendCollapsed).toString()"
-                            aria-controls="map-legend-content"
-                            aria-label="Mostra o amaga la llegenda"
-                        >
+                        <button
+
+                            class="legend-toggle"
+
+                            type="button"
+
+                            :aria-expanded="(!legendCollapsed).toString()"
+
+                            aria-controls="map-legend-content"
+
+                            aria-label="Mostra o amaga la llegenda"
+
+                        >
+
                             {{ legendCollapsed ? '▲' : '▼' }}
                         </button>
                     </div>
-                    <div id="map-legend-content" v-show="!legendCollapsed" class="legend-content">
+                    <div id="map-legend-content" v-show="!legendCollapsed" class="legend-content">
+
                     <!-- Mode TOTAL ANUAL -->
                         <div v-if="selK === 0">
                             <div class="legend-block-annual legend-annual-grid">
@@ -524,7 +606,7 @@
                     <div v-if="selectedEle.id === 'DESEMBASSAT'">
                         <p>El cabal mitjà desembassat és {{ fmt(selectedEle['m' + month]) }} m<sup>3</sup>/s</p>
                         <p>El volum a l'embassament és de {{ (reservoir.storage_hm3[selK] ?? 0).toFixed(0) }} Hm<sup>3</sup></p>
-                        <button class="btn-primary">Més informació</button>
+                        <button @click="openModalInfo=true">Més informació</button>
                     </div>
 
                     <!-- Cas punt -->
@@ -547,7 +629,7 @@
                             En aquest punt s'extreuen
                             {{ fmt(Math.abs(selectedEle['m' + month])) }} de la xarxa fluvial.
                         </p>
-
+                        <button @click="openModalInfo=true">Més informació</button>
                         <!-- Selector de mode -->
                         <div class="mode-toggle">
                             <p>Modifica el cabal</p>
@@ -658,6 +740,7 @@
                         <p>
                             El tram correspon a la massa d'aigua {{ selectedEle.codiMassa }}.
                         </p>
+                        <button @click="openModalInfo=true">Veure cabals</button>
                     </div>
                 </div>
             </div>
@@ -688,7 +771,7 @@
                     </div>
                 </div>
                 <div class="res-bottom res-actions">
-                    <button class="btn-primary" @click="openModal=true">
+                    <button class="btn-primary" @click="openModalScenarios=true">
                         Configura
                     </button>
                 </div>
