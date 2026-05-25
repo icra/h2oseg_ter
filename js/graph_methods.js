@@ -596,6 +596,39 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
     });
 }
 
+const calculateMonthlyMeanCy = function (cy, varPrefix, mode = "mean") {
+    const sumWeighted = Array(12).fill(0)
+    const sumArea = Array(12).fill(0)
+
+    cy.nodes().forEach(node => {
+        const area = Number(node.data("area_m2")) || 0
+        if (!area) return
+
+        for (let mo = 1; mo <= 12; mo++) {
+            const key = varPrefix + mo
+            const value = Number(node.data(key))
+
+            if (!Number.isFinite(value)) continue
+
+            if (mode === "sum") {
+                sumWeighted[mo - 1] += value * area
+            } else {
+                sumWeighted[mo - 1] += value * area
+                sumArea[mo - 1] += area
+            }
+        }
+    })
+
+    if (mode === "sum") {
+        return sumWeighted.map(v => v)
+    }
+
+    return sumWeighted.map((v, i) => {
+        if (sumArea[i] === 0) return null
+        return v / sumArea[i]
+    })
+}
+
 const calculateMeanCy = function (cy, varPrefix, mode = "sum") {
     let sumWeighted = 0;
     let sumArea = 0;
@@ -737,6 +770,7 @@ export default {
     calculateFlowMonth,
     modifyFlowChange,
     calculateMeanCy,
+    calculateMonthlyMeanCy,
     calculateDemand,
     calculateSurface,
     RESERVOIR,

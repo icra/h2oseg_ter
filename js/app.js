@@ -724,7 +724,7 @@ createApp({
 
                 pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
                 tmitMean.value.annual = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
-                tmitMean.value.monthly = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
+                tmitMean.value.monthly = gm.calculateMonthlyMeanCy(cy.value, 'tmit', 'mean')
 
                 urbanDemandMean.value = gm.calculateDemand(cy.value, urbanDemandTypes)
                 agriDemandMean.value = gm.calculateDemand(cy.value, agriDemandTypes)
