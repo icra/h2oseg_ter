@@ -854,8 +854,11 @@
                         <h4>Escenaris de simulació</h4>
                         <ul>
                             <template v-for="(value, key) in scenarios" :key="key">
-                                <li v-if="value.active">
+                                <li v-if="value.active && !value.monthly">
                                     {{ value.name }}: {{ value.value }} {{ value.units }}
+                                </li>
+                                <li v-else-if="value.active && value.monthly">
+                                    {{ value.name }}: mensual
                                 </li>
                             </template>
                         </ul>

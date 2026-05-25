@@ -447,7 +447,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
             // no propaguem cabal a través dels arcs virtuals
             node.data('outflow' + k, 0);
-            node.data('storage_after_hm3' + k, R.storage_hm3[k]);
+            // node.data('storage_after_hm3' + k, R.storage_hm3[k]);
 
             const outgoingEdges = node.outgoers('edge');
             outgoingEdges.forEach(edge => {
@@ -463,7 +463,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
             // posa 0 als sortints de l'embassament perquè els successors es calculin sense aportació de l'embassament
             node.outgoers('edge').forEach(edge => edge.data('flow' + k, 0));
 
-            node.data('storage_after_hm3' + k, R.storage_hm3[k]);
+            // node.data('storage_after_hm3' + k, R.storage_hm3[k]);
 
             return;
         }

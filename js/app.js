@@ -345,30 +345,66 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
+
             if (scenarios.value.rainReduction.active === false && scenarios.value.rainReduction.value !== '0') {
                 scenarios.value.rainReduction.value = '0'
                 await scen.rainReduction(cy.value, scenarios.value.rainReduction.value)
             } else if (scenarios.value.rainReduction.active) {
                 await scen.rainReduction(cy.value, scenarios.value.rainReduction.value)
             }
-            if (scenarios.value.temperatureIncrease.active === false && scenarios.value.temperatureIncrease.value !== '0') {
-                scenarios.value.temperatureIncrease.value = '0'
-                await scen.temperatureIncrease(cy.value, scenarios.value.temperatureIncrease.value)
-            } else if (scenarios.value.temperatureIncrease.active) {
-                await scen.temperatureIncrease(cy.value, scenarios.value.temperatureIncrease.value)
+
+            // TEMPERATURA: anual, mensual o desactivada. Només s'aplica una vegada.
+            if (scenarios.value.temperatureIncrease.active === false) {
+                const hadAnnualChange = scenarios.value.temperatureIncrease.value !== '0'
+                const hadMonthlyChange = scenarios.value.temperatureIncrease.monthlyValue
+                    .some(v => Number(v) !== 0)
+
+                if (hadAnnualChange || hadMonthlyChange) {
+                    scenarios.value.temperatureIncrease.value = '0'
+                    scenarios.value.temperatureIncrease.monthlyValue = Array(12).fill(0)
+                    await scen.temperatureIncrease(cy.value, 0)
+                }
+
+            } else if (scenarios.value.temperatureIncrease.monthly === true) {
+                const hadAnnualChange = scenarios.value.temperatureIncrease.value !== '0'
+
+                if (hadAnnualChange) {
+                    scenarios.value.temperatureIncrease.value = '0'
+                }
+
+                await scen.temperatureIncrease(
+                    cy.value,
+                    scenarios.value.temperatureIncrease.monthlyValue
+                )
+
+            } else {
+                const hadMonthlyChange = scenarios.value.temperatureIncrease.monthlyValue
+                    .some(v => Number(v) !== 0)
+
+                if (hadMonthlyChange) {
+                    scenarios.value.temperatureIncrease.monthlyValue = Array(12).fill(0)
+                }
+
+                await scen.temperatureIncrease(
+                    cy.value,
+                    scenarios.value.temperatureIncrease.value
+                )
             }
+
             if (scenarios.value.urbanDemand.active === false && scenarios.value.urbanDemand.value !== '0') {
                 scenarios.value.urbanDemand.value = '0'
                 await scen.modifyDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
             } else if (scenarios.value.urbanDemand.active) {
                 await scen.modifyDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
             }
+
             if (scenarios.value.agriDemand.active === false && scenarios.value.agriDemand.value !== '0') {
                 scenarios.value.agriDemand.value = '0'
                 await scen.modifyDemand(cy.value, scenarios.value.agriDemand.value, agriDemandTypes)
             } else if (scenarios.value.agriDemand.active) {
                 await scen.modifyDemand(cy.value, scenarios.value.agriDemand.value, agriDemandTypes)
             }
+
             if (scenarios.value.forestSurface.active === false && scenarios.value.forestSurface.value !== '0') {
                 scenarios.value.forestSurface.value = '0'
                 await scen.modifyForest(cy.value, scenarios.value.forestSurface.value)
@@ -377,10 +413,10 @@ createApp({
             }
 
             await gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value);
-            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel});
-            tick.value++
+            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
+            await int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
 
+            tick.value++
             loading.value = false
         }
 
