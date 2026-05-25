@@ -305,30 +305,42 @@
                 <!-- info per punts -->
                 <div v-else-if="selectedEle.eleType === 'punt'">
                     <!-- massa -->
-                    <table v-if="['massa', 'aforament'].includes(selectedEle.type)" class="res-table">
-                        <thead>
-                            <tr>
-                                <th>Mes</th>
-                                <th class="valor">Cabal (m³/s)</th>
-                                <th class="valor">Àrea de drenatge (km²)</th>
-                                <th class="valor">Precipitació mitjana (mm)</th>
-                                <th class="valor">Temperatura mitjana (ºC)</th>
-                                <th class="valor">ETP mitjana (mm)</th>
-                                <th class="valor">ET mitjana (mm)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="m in baseMonths">
-                                <td>{{ m.label }}</td>
-                                <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(2) }}</td>
-                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'area_m2', 'sum') / 1000000).toFixed(0) }}</td>
-                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'ppt', 'mean')[m.value-1]).toFixed(0) }}</td>
-                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'tmit', 'mean')[m.value-1]).toFixed(0) }}</td>
-                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'etp', 'mean')[m.value-1]).toFixed(0) }}</td>
-                                <td class="valor">{{ Number(accumulateUpstream(cy, selectedEle.id, 'et', 'mean')[m.value-1]).toFixed(0) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <template
+                        v-if="['massa', 'aforament'].includes(selectedEle.type)"
+                        v-for="upstream in [{
+                            areaKm2: accumulateUpstream(cy, selectedEle.id, 'area_m2', 'sum') / 1000000,
+                            ppt: accumulateUpstream(cy, selectedEle.id, 'ppt', 'mean'),
+                            tmit: accumulateUpstream(cy, selectedEle.id, 'tmit', 'mean'),
+                            etp: accumulateUpstream(cy, selectedEle.id, 'etp', 'mean'),
+                            et: accumulateUpstream(cy, selectedEle.id, 'et', 'mean')
+                        }]"
+                        :key="'upstream-' + selectedEle.id"
+                    >
+                        <table class="res-table">
+                            <thead>
+                                <tr>
+                                    <th>Mes</th>
+                                    <th class="valor">Cabal (m³/s)</th>
+                                    <th class="valor">Àrea de drenatge (km²)</th>
+                                    <th class="valor">Precipitació mitjana (mm)</th>
+                                    <th class="valor">Temperatura mitjana (ºC)</th>
+                                    <th class="valor">ETP mitjana (mm)</th>
+                                    <th class="valor">ET mitjana (mm)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="m in baseMonths">
+                                    <td>{{ m.label }}</td>
+                                    <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(2) }}</td>
+                                    <td class="valor">{{ Number(upstream.areaKm2).toFixed(0) }}</td>
+                                    <td class="valor">{{ Number(upstream.ppt[m.value-1]).toFixed(0) }}</td>
+                                    <td class="valor">{{ Number(upstream.tmit[m.value-1]).toFixed(0) }}</td>
+                                    <td class="valor">{{ Number(upstream.etp[m.value-1]).toFixed(0) }}</td>
+                                    <td class="valor">{{ Number(upstream.et[m.value-1]).toFixed(0) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </template>
                     <table v-else-if="selectedEle.type === 'comporta'" class="res-table">
                         <thead>
                         <tr>
