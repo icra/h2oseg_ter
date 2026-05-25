@@ -5,7 +5,6 @@ const rampPalette = ['#0074D9', '#2583B8', '#4B9397', '#71A476', '#97B355', '#BD
 const setupEleClickListener = function(cy, selectedEleRef, k) {
     cy.on('tap', evt => {
         const ele = evt.target;
-
         // Si no és ni node ni edge, és fons o un element sense interès
         if (!ele.isNode?.() && !ele.isEdge?.()) {
             selectedEleRef.value = null;

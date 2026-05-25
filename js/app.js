@@ -691,6 +691,10 @@ createApp({
                             },
                             mouseout: (e) => e.target.closeTooltip()
                         });
+                        layer.on('click', (e) => {
+                            L.DomEvent.stopPropagation(e)
+                            selectById('DESEMBASSAT', 'node')
+                        })
                     }
                 }).addTo(map);
 
@@ -806,6 +810,7 @@ createApp({
             accumulateUpstream: gm.accumulateUpstream,
             m3sToHm3: gm.m3sToHm3,
             monthSeconds: gm.monthSeconds,
+            monthOfStep: gm.monthOfStep,
         }
     }
 }).mount('#app')

@@ -745,5 +745,6 @@ export default {
     isHeadwaterNode,
     accumulateUpstream,
     m3sToHm3,
-    monthSeconds
+    monthSeconds,
+    monthOfStep
 }

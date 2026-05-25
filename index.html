@@ -344,16 +344,24 @@
                     <table v-else-if="selectedEle.type === 'comporta'" class="res-table">
                         <thead>
                         <tr>
+                            <th v-if="nYears > 1">Any</th>
                             <th>Mes</th>
+                            <th class="valor">Volum embassat (Hm³)</th>
+                            <th class="valor">Cabal d'entrada (m³/s)</th>
                             <th class="valor">Cabal desembassat (m³/s)</th>
+                            <th class="valor">Volum d'entrada (Hm³)</th>
                             <th class="valor">Volum desembassat (Hm³)</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="m in baseMonths">
-                            <td>{{ m.label }}</td>
-                            <td class="valor">{{ Number(selectedEle['m'+m.value]).toFixed(1) }}</td>
-                            <td class="valor">{{ m3sToHm3(selectedEle['m'+m.value], monthSeconds(2025, m.value)).toFixed(1) }}</td>
+                        <tr v-for="k in Array(nYears * 12).fill().map((_, i) => i + 1)">
+                            <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
+                            <td>{{baseMonths[monthOfStep(k)-1].label}}</td>
+                            <td class="valor">{{ Number(reservoir.storage_hm3[k] ?? 0).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.inflowSum_m3s[k]).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.released_m3s[k]).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.inflowVol_hm3[k]).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.releasedVol_hm3[k]).toFixed(0) }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -617,7 +625,10 @@
             <div v-if="selectedEle" class="res-mini res-stack">
                 <!-- Capçalera de la card -->
                 <div class="res-top">
-                    <svg v-if="selectedEle.eleType === 'punt'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg v-if="selectedEle.id == 'DESEMBASSAT'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
+                    </svg>
+                    <svg v-else-if="selectedEle.eleType === 'punt'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     <svg v-else-if="selectedEle.eleType === 'tram'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
@@ -630,12 +641,13 @@
 
 
                     <div class="res-header-text">
-                        <h4>
+                        <h4 v-if="selectedEle.id !== 'DESEMBASSAT'">
                             <span v-if="selectedEle.nomComu">{{ selectedEle.nomComu }}</span>
                             <span v-else-if="selectedEle.name">{{ selectedEle.name }}</span>
                             <span v-else-if="selectedEle.id">{{ selectedEle.id }}</span>
                             <span v-else>{{ selectedEle.eleType }}</span>
                         </h4>
+                        <h4 v-else>Sistema Sau-Susqueda</h4>
                         <span class="lab">
                             <span v-if="selectedEle.eleType === 'punt'">Punt de la xarxa</span>
                             <span v-else-if="selectedEle.eleType === 'tram'">Tram de la xarxa</span>
