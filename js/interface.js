@@ -56,10 +56,10 @@ const setGraphColors = function(selK, cy, leafMaps){
 }
 
 const applyNodeColorToLeaflet = (node, month, leafMaps, customColor = null) => {
+
     const layer = leafMaps.nodeLayerById.get(node.id());
 
     if (!layer) {
-        console.error("No s'ha trobat la capa on aplicar color als nodes")
         return;
     }
 

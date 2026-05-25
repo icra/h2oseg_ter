@@ -15,16 +15,40 @@ const waitForPaint = async function () {
     await new Promise(resolve => requestAnimationFrame(resolve))
 }
 
-const fmt = (v) => {
+const fmt = (v, result = 'string', returnUnit = true, convert = 'auto') => {
+
+    v = Number(v)
+
+    if (!Number.isFinite(+v)) return '-'
+
     let unit = 'm³/s'
     let d = 2
-    if (Math.abs(+v) < 0.1) {
+
+    if (convert === 'always' || (convert === 'auto' && Math.abs(v) < 0.1)) {
         unit = 'l/s'
-        // convertim a litres per segon
-        v = +v * 1000
+        v = v * 1000
         d = 0
     }
-    return Number.isFinite(+v) ? (+v).toFixed(d) + ' ' + unit : '—'
+
+    if (result === 'object') return {v: v, d: d, u: unit}
+
+    if (!returnUnit) {
+        unit = ''
+    }
+
+    return v.toFixed(d) + (returnUnit ? ' ' + unit : '')
+}
+
+const fmtConstant = function(v, v0) {
+    // mirem quines unitats torna amb la mitjana anual
+    let convert = fmt(v0, 'object').u === 'l/s' ? 'always' : 'never'
+    if (v0 < 0) v = v * -1
+    return fmt(v, 'string', false, convert)
+}
+
+const safeRatio = function(num, den) {
+    const p = Math.abs(Number(num) / Number(den))
+    return Number.isFinite(p) ? p.toPrecision(1) : '-'
 }
 
 const fmtHm3 = v => Number.isFinite(+v) ? (+v).toFixed(1) + ' Hm³' : '—'
@@ -179,7 +203,8 @@ createApp({
         const params = shallowRef(null)
         const editMode = ref('annual')
         const annualVolume = ref(null)
-        const openModal = ref(false)
+        const openModalScenarios = ref(false)
+        const openModalInfo = ref(false)
         const scenarios = ref({
             rainReduction: {
                 name: "Modificació de pluja",
@@ -314,7 +339,7 @@ createApp({
             loading.value = false
         }
         const applyScenariosChanges = async function () {
-            openModal.value = false
+            openModalScenarios.value = false
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
@@ -610,7 +635,9 @@ createApp({
                     nodeLayerById.set(n.id(), layer)
                 }
 
-                cy.value.nodes().forEach(addNodeLayer)
+                cy.value.nodes()
+                    .filter(n => !gm.isHeadwaterNode(n))
+                    .forEach(addNodeLayer)
 
                 const arcsLayer = L.geoJSON(edgesGeo, {
                     pane: 'edgePane',
@@ -697,7 +724,7 @@ createApp({
 
                 await gm.initSimulation(nYears.value, volumEmb.value)
                 await gm.calculateContribution(cy.value, params.value)
-                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2024, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
+                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {period: {year: 2025, month: 8}}, loadingYear, volumEmb.value); // mesos de l'1 al 12
                 int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById,  L, currentSel});
                 int.setupEleClickListener(cy.value, selectedEle)
             } catch (e) {
@@ -757,7 +784,10 @@ createApp({
             selK,
             loading,
             fmt,
-            openModal,
+            fmtConstant,
+            safeRatio,
+            openModalScenarios,
+            openModalInfo,
             scenarios,
             applyScenariosChanges,
             pptMean,
@@ -772,7 +802,10 @@ createApp({
             legendCollapsed,
             downloadData,
             nodeTypeSymbols: int.nodeTypeSymbols,
-            nodeSVG: int.nodeSymbolSVG
+            nodeSVG: int.nodeSymbolSVG,
+            accumulateUpstream: gm.accumulateUpstream,
+            m3sToHm3: gm.m3sToHm3,
+            monthSeconds: gm.monthSeconds,
         }
     }
 }).mount('#app')

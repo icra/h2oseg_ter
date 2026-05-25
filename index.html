@@ -15,12 +15,12 @@
 <body>
 <div id="app">
     <!-- MODAL D'ESCENARIS -->
-    <div v-if="openModal" class="modal-backdrop" v-cloak>
+    <div v-if="openModalScenarios" class="modal-backdrop" v-cloak>
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
                 <h3 class="modal-title">Configuració d'escenaris</h3>
-                <button class="modal-close" @click="openModal=false" aria-label="Tanca">
+                <button class="modal-close" @click="openModalScenarios=false" aria-label="Tanca">
                     ×
                 </button>
             </div>
@@ -138,7 +138,7 @@
 
                     <p class="scenario-desc">
                         {{scenarios.urbanDemand.description}}
-                        (valor inicial: {{ Number(urbanDemandMean || 0).toFixed(0) }} Hm<sup>3</sup> anuals).
+                        (valor inicial: {{ Number(urbanDemandMean || 0).toFixed(0) }} Hm³ anuals).
                     </p>
 
                     <div v-if="scenarios.urbanDemand.active" class="scenario-slider">
@@ -151,7 +151,7 @@
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ ((urbanDemandMean * (100 + +scenarios.urbanDemand.value) / 100)).toFixed(0) }} Hm<sup>3</sup>
+                                Nou valor: {{ ((urbanDemandMean * (100 + +scenarios.urbanDemand.value) / 100)).toFixed(0) }} Hm³
                             </span>
                             <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.urbanDemand.value }}%
@@ -182,7 +182,7 @@
 
                     <p class="scenario-desc">
                         {{scenarios.agriDemand.description}}
-                        (valor inicial: {{ Number(agriDemandMean || 0).toFixed(0) }} Hm<sup>3</sup> anuals).
+                        (valor inicial: {{ Number(agriDemandMean || 0).toFixed(0) }} Hm³ anuals).
                     </p>
 
                     <div v-if="scenarios.agriDemand.active" class="scenario-slider">
@@ -195,7 +195,7 @@
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ ((agriDemandMean * (100 + +scenarios.agriDemand.value) / 100)).toFixed(0) }} Hm<sup>3</sup>
+                                Nou valor: {{ ((agriDemandMean * (100 + +scenarios.agriDemand.value) / 100)).toFixed(0) }} Hm³
                             </span>
                             <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.agriDemand.value }}%
@@ -226,7 +226,7 @@
 
                     <p class="scenario-desc">
                         {{scenarios.forestSurface.description}}
-                        (valor inicial: {{ Number(forestSurface || 0).toFixed(0) }} km<sup>2</sup>).
+                        (valor inicial: {{ Number(forestSurface || 0).toFixed(0) }} km²).
                     </p>
 
                     <div v-if="scenarios.forestSurface.active" class="scenario-slider">
@@ -239,7 +239,7 @@
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor aproximat: {{ ((forestSurface * (100 + +scenarios.forestSurface.value) / 100)).toFixed(0) }} km<sup>2</sup>.
+                                Nou valor aproximat: {{ ((forestSurface * (100 + +scenarios.forestSurface.value) / 100)).toFixed(0) }} km².
                             </span>
                             <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.forestSurface.value }}%
@@ -252,12 +252,130 @@
 
             <!-- FOOTER -->
             <div class="modal-footer">
-                <button class="btn-secondary" @click="openModal=false">
+                <button class="btn-secondary" @click="openModalScenarios=false">
                     Cancel·la
                 </button>
                 <button class="btn-primary" @click="applyScenariosChanges">
                     Aplica canvis
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL D'INFO    -->
+    <div v-if="openModalInfo && selectedEle" class="modal-backdrop" v-cloak>
+        <div class="modal-dialog" @click.stop>
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h3 class="modal-title" v-if="selectedEle.id !== 'DESEMBASSAT'">
+                    Informació del
+                    <span v-if="selectedEle.eleType === 'tram'">tram </span>
+                    <span v-else-if="selectedEle.eleType === 'punt'">punt </span>
+                    <span v-if="selectedEle.nomComu">{{ selectedEle.nomComu }}</span>
+                    <span v-else-if="selectedEle.name">{{ selectedEle.name }}</span>
+                    <span v-else-if="selectedEle.id">{{ selectedEle.id }}</span>
+                    <span v-else>{{ selectedEle.eleType }}</span>
+                </h3>
+                <h3 class="modal-title" v-else>Informació del sistema Sau-Susqueda</h3>
+                <button class="modal-close" @click="openModalInfo=false" aria-label="Tanca">
+                    ×
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <!-- info per trams-->
+                <div v-if="selectedEle.eleType === 'tram'">
+                    <table class="res-table">
+                        <thead>
+                            <tr>
+                                <th>Mes</th>
+                                <th class="valor">Cabal (m³/s)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="m in baseMonths">
+                                <td>{{ m.label }}</td>
+                                <td class="valor">{{ Number(selectedEle['flow'+m.value]).toFixed(2) }}</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <!-- info per punts -->
+                <div v-else-if="selectedEle.eleType === 'punt'">
+                    <!-- massa -->
+                    <template
+                        v-if="['massa', 'aforament'].includes(selectedEle.type)"
+                        v-for="upstream in [{
+                            areaKm2: accumulateUpstream(cy, selectedEle.id, 'area_m2', 'sum') / 1000000,
+                            ppt: accumulateUpstream(cy, selectedEle.id, 'ppt', 'mean'),
+                            tmit: accumulateUpstream(cy, selectedEle.id, 'tmit', 'mean'),
+                            etp: accumulateUpstream(cy, selectedEle.id, 'etp', 'mean'),
+                            et: accumulateUpstream(cy, selectedEle.id, 'et', 'mean')
+                        }]"
+                        :key="'upstream-' + selectedEle.id"
+                    >
+                        <table class="res-table">
+                            <thead>
+                                <tr>
+                                    <th>Mes</th>
+                                    <th class="valor">Cabal (m³/s)</th>
+                                    <th class="valor">Àrea de drenatge (km²)</th>
+                                    <th class="valor">Precipitació mitjana (mm)</th>
+                                    <th class="valor">Temperatura mitjana (ºC)</th>
+                                    <th class="valor">ETP mitjana (mm)</th>
+                                    <th class="valor">ET mitjana (mm)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="m in baseMonths">
+                                    <td>{{ m.label }}</td>
+                                    <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(2) }}</td>
+                                    <td class="valor">{{ Number(upstream.areaKm2).toFixed(0) }}</td>
+                                    <td class="valor">{{ Number(upstream.ppt[m.value-1]).toFixed(0) }}</td>
+                                    <td class="valor">{{ Number(upstream.tmit[m.value-1]).toFixed(0) }}</td>
+                                    <td class="valor">{{ Number(upstream.etp[m.value-1]).toFixed(0) }}</td>
+                                    <td class="valor">{{ Number(upstream.et[m.value-1]).toFixed(0) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </template>
+                    <table v-else-if="selectedEle.type === 'comporta'" class="res-table">
+                        <thead>
+                        <tr>
+                            <th>Mes</th>
+                            <th class="valor">Cabal desembassat (m³/s)</th>
+                            <th class="valor">Volum desembassat (Hm³)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="m in baseMonths">
+                            <td>{{ m.label }}</td>
+                            <td class="valor">{{ Number(selectedEle['m'+m.value]).toFixed(1) }}</td>
+                            <td class="valor">{{ m3sToHm3(selectedEle['m'+m.value], monthSeconds(2025, m.value)).toFixed(1) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table v-else class="res-table">
+                        <thead>
+                        <tr>
+                            <th>Mes</th>
+                            <th class="valor">Cabal entrant (m³/s)</th>
+                            <th class="valor">{{ selectedEle.m0 > 0 ? 'Cabal aportat' : 'Cabal sortint'}} ({{ (fmt(selectedEle.m0, 'object').u)}})</th>
+                            <th class="valor">Proporció (%)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="m in baseMonths">
+                            <td>{{ m.label }}</td>
+                            <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(1) }}</td>
+                            <td class="valor">{{ fmtConstant(selectedEle['m'+m.value], selectedEle.m0) }}</td>
+                            <td class="valor">{{ safeRatio(selectedEle['m'+m.value], selectedEle['inflow'+m.value]) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -282,17 +400,25 @@
                 <div class="legend-block">
                     <div class="legend-header" @click="legendCollapsed = !legendCollapsed">
                         <span class="legend-title">Llegenda</span>
-                        <button
-                            class="legend-toggle"
-                            type="button"
-                            :aria-expanded="(!legendCollapsed).toString()"
-                            aria-controls="map-legend-content"
-                            aria-label="Mostra o amaga la llegenda"
-                        >
+                        <button
+
+                            class="legend-toggle"
+
+                            type="button"
+
+                            :aria-expanded="(!legendCollapsed).toString()"
+
+                            aria-controls="map-legend-content"
+
+                            aria-label="Mostra o amaga la llegenda"
+
+                        >
+
                             {{ legendCollapsed ? '▲' : '▼' }}
                         </button>
                     </div>
-                    <div id="map-legend-content" v-show="!legendCollapsed" class="legend-content">
+                    <div id="map-legend-content" v-show="!legendCollapsed" class="legend-content">
+
                     <!-- Mode TOTAL ANUAL -->
                         <div v-if="selK === 0">
                             <div class="legend-block-annual legend-annual-grid">
@@ -441,10 +567,10 @@
                     <div class="time-input-group">
                     <input id="volum-emb" type="number" min="0" max="400" step="25"
                            v-model.number="volumEmb" class="time-input" />
-                    <span class="time-unit">hm<sup>3</sup></span>
+                    <span class="time-unit">hm³</span>
                 </div>
                 <p class="res-error" v-if="volumEmb === null || volumEmb === '' || Number.isNaN(volumEmb) || volumEmb > 400 || volumEmb < 0">
-                    El volum ha de ser entre 0 i 400 hm<sup>3</sup>.
+                    El volum ha de ser entre 0 i 400 hm³.
                 </p>
                 </div>
                 <div class="time-row">
@@ -522,8 +648,9 @@
                 <div class="res-body">
                     <!-- Cas desembassat -->
                     <div v-if="selectedEle.id === 'DESEMBASSAT'">
-                        <p>El cabal mitjà desembassat és {{ fmt(selectedEle['m' + month]) }} m<sup>3</sup>/s</p>
-                        <p>El volum a l'embassament és de {{ (reservoir.storage_hm3[selK] ?? 0).toFixed(0) }} Hm<sup>3</sup></p>
+                        <p>El cabal mitjà desembassat és {{ fmt(selectedEle['m' + month]) }} m³/s</p>
+                        <p>El volum a l'embassament és de {{ (reservoir.storage_hm3[selK] ?? 0).toFixed(0) }} Hm³</p>
+                        <button @click="openModalInfo=true">Més informació</button>
                     </div>
 
                     <!-- Cas punt -->
@@ -546,17 +673,17 @@
                             En aquest punt s'extreuen
                             {{ fmt(Math.abs(selectedEle['m' + month])) }} de la xarxa fluvial.
                         </p>
-
+                        <button @click="openModalInfo=true">Més informació</button>
                         <!-- Selector de mode -->
                         <div class="mode-toggle">
                             <p>Modifica el cabal</p>
                             <label>
                                 <input type="radio" value="annual" v-model="editMode" />
-                                Volum anual (Hm<sup>3</sup>)
+                                Volum anual (Hm³)
                             </label>
                             <label>
                                 <input type="radio" value="monthly" v-model="editMode" />
-                                Cabal mes a mes (m<sup>3</sup>/s)
+                                Cabal mes a mes (m³/s)
                             </label>
                         </div>
 
@@ -657,6 +784,7 @@
                         <p>
                             El tram correspon a la massa d'aigua {{ selectedEle.codiMassa }}.
                         </p>
+                        <button @click="openModalInfo=true">Veure cabals</button>
                     </div>
                 </div>
             </div>
@@ -687,7 +815,7 @@
                     </div>
                 </div>
                 <div class="res-bottom res-actions">
-                    <button class="btn-primary" @click="openModal=true">
+                    <button class="btn-primary" @click="openModalScenarios=true">
                         Configura
                     </button>
                 </div>

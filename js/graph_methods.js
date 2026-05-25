@@ -200,7 +200,7 @@ const calculateNodeContribution = function(node, params) {
     const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]) * 0.9)
 
     const seconds = Array(12).fill().map((e, i) => i + 1)
-        .map(m => monthSeconds(2024, m))
+        .map(m => monthSeconds(2025, m))
 
     createMonths('m', 12).forEach((k, i) => {
         node.data(k, Math.max(monthContrib[i] * 0.001 / seconds[i], 0))
@@ -262,7 +262,7 @@ const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, op
 
         const mo = monthOfStep(k); // 1..12
         calculateFlowMonth(cy, params, errorRef, {
-            period: { year: 2024, month: mo },
+            period: { year: 2025, month: mo },
             step: k
         });
 
@@ -636,7 +636,7 @@ const calculateDemand = function(cy, types){
                 const nodeAnnualHm3 = Array.from({length: 12}, (_, i) => {
                     const month = i + 1
                     const q = Number(n.data('m' + month)) || 0
-                    const dt_s = monthSeconds(2024, month)
+                    const dt_s = monthSeconds(2025, month)
 
                     // Si les demandes són negatives, les convertim a volum positiu
                     const demanda = m3sToHm3(-q, dt_s)
@@ -660,6 +660,74 @@ const calculateSurface = function(cy, us){
         .reduce((a, b) => a + b, 0)
 }
 
+const accumulateUpstream = function(cy, id, variable, operand = 'mean') {
+    const node = cy.getElementById(id)
+
+    if (!node || node.empty()) {
+        console.error('Node not found:', id)
+        return null
+    }
+
+    // predecessors no inclou el node actual; l'afegim si vols tota l'àrea drenada fins al node
+    const upstream = node
+        .predecessors('node')
+        .union(node)
+        .filter(n => Number.isFinite(Number(n.data('area_m2'))) && Number(n.data('area_m2')) > 0)
+
+    if (upstream.empty()) return null
+
+    if (variable === 'area_m2' && operand === 'sum') {
+        return upstream
+            .map(n => Number(n.data('area_m2')) || 0)
+            .reduce((a, b) => a + b, 0)
+    }
+
+    const varNames = createMonths(variable, 12)
+
+    if (operand === 'mean') {
+        const areaTotal = upstream
+            .map(n => Number(n.data('area_m2')) || 0)
+            .reduce((a, b) => a + b, 0)
+
+        if (areaTotal <= 0) return null
+
+        const monthlyMeans = varNames.map(v => {
+            const weightedSum = upstream
+                .map(n => {
+                    const value = Number(n.data(v))
+                    const area = Number(n.data('area_m2')) || 0
+
+                    if (!Number.isFinite(value)) return 0
+
+                    return value * area
+                })
+                .reduce((a, b) => a + b, 0)
+
+            return weightedSum / areaTotal
+        })
+
+        // Retorna les 12 mitjanes mensuals
+        return monthlyMeans
+    }
+
+    if (operand === 'sum') {
+        return varNames
+            .map(v => {
+                return upstream
+                    .map(n => Number(n.data(v)) || 0)
+                    .reduce((a, b) => a + b, 0)
+            })
+            .reduce((a, b) => a + b, 0)
+    }
+
+    return null
+}
+
+export const isHeadwaterNode = function(n) {
+    const hasAncestors = n.predecessors('node').nonempty()
+    return n.data('type') === 'massa' && !hasAncestors
+}
+
 export {SIM, monthOfStep}
 
 export default {
@@ -673,5 +741,9 @@ export default {
     calculateSurface,
     RESERVOIR,
     params,
-    buildCalibratedParams
+    buildCalibratedParams,
+    isHeadwaterNode,
+    accumulateUpstream,
+    m3sToHm3,
+    monthSeconds
 }
