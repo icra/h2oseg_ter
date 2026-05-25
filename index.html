@@ -660,7 +660,7 @@
                 <div class="res-body">
                     <!-- Cas desembassat -->
                     <div v-if="selectedEle.id === 'DESEMBASSAT'">
-                        <p>El cabal mitjà desembassat és {{ fmt(selectedEle['m' + month]) }} m³/s</p>
+                        <p>El cabal mitjà desembassat és {{ fmt(selectedEle['m' + month]) }}</p>
                         <p>El volum a l'embassament és de {{ (reservoir.storage_hm3[selK] ?? 0).toFixed(0) }} Hm³</p>
                         <button @click="openModalInfo=true">Més informació</button>
                     </div>
