@@ -415,7 +415,8 @@ button:hover {
     color: #0f172a;
 }
 
-.scenario-toggle .scenario-desc input[type="checkbox"] {
+.scenario-toggle input[type="checkbox"],
+.scenario-monthly input[type="checkbox"] {
     margin: 0;
     width: 14px;
     height: 14px;
