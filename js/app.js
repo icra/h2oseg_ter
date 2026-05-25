@@ -218,7 +218,9 @@ createApp({
                 value: '0',
                 units: "ºC",
                 description: "Aplica una modificació uniforme a la temperatura mitjana anual",
-                active: false
+                active: false,
+                monthly: false,
+                monthlyValue: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             },
             urbanDemand: {
                 name: "Modificació de la demanda per a ús urbà",
@@ -243,7 +245,7 @@ createApp({
             }
         })
         const pptMean = ref(null)
-        const tmitMean = ref(null)
+        const tmitMean = ref({})
         const urbanDemandMean = ref(null)
         const agriDemandMean = ref(null)
         const forestSurface = ref(null)
@@ -721,7 +723,9 @@ createApp({
                 }).addTo(map);
 
                 pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
-                tmitMean.value = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
+                tmitMean.value.annual = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
+                tmitMean.value.monthly = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
+
                 urbanDemandMean.value = gm.calculateDemand(cy.value, urbanDemandTypes)
                 agriDemandMean.value = gm.calculateDemand(cy.value, agriDemandTypes)
                 forestSurface.value = gm.calculateSurface(cy.value, 'us_forestal')

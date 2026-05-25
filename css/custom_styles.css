@@ -415,11 +415,20 @@ button:hover {
     color: #0f172a;
 }
 
-.scenario-toggle input[type="checkbox"] {
+.scenario-toggle .scenario-desc input[type="checkbox"] {
     margin: 0;
     width: 14px;
     height: 14px;
     accent-color: #0074D9; /* navegadors moderns */
+}
+
+.scenario-monthly {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-weight: 400;
+    color: #0f172a;
 }
 
 .scenario-title {
