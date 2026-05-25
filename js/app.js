@@ -18,6 +18,9 @@ const waitForPaint = async function () {
 const fmt = (v, result = 'string', returnUnit = true, convert = 'auto') => {
 
     v = Number(v)
+
+    if (!Number.isFinite(+v)) return '-'
+
     let unit = 'm³/s'
     let d = 2
 

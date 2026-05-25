@@ -263,7 +263,7 @@
     </div>
 
     <!-- MODAL D'INFO    -->
-    <div v-if="openModalInfo" class="modal-backdrop" v-cloak>
+    <div v-if="openModalInfo && selectedEle" class="modal-backdrop" v-cloak>
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
@@ -334,7 +334,7 @@
                         <tr>
                             <th>Mes</th>
                             <th class="valor">Cabal desembassat (m³/s)</th>
-                            <th class="valor">Volum desembassat (Hm³/s)</th>
+                            <th class="valor">Volum desembassat (Hm³)</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -350,7 +350,7 @@
                         <tr>
                             <th>Mes</th>
                             <th class="valor">Cabal entrant (m³/s)</th>
-                            <th class="valor">{{ selectedEle.m0 > 0 ? 'Cabal aportat' : 'Cabal sortint'}} ({{ (fmt(selectedEle.m0, result = 'object').u)}})</th>
+                            <th class="valor">{{ selectedEle.m0 > 0 ? 'Cabal aportat' : 'Cabal sortint'}} ({{ (fmt(selectedEle.m0, 'object').u)}})</th>
                             <th class="valor">Proporció (%)</th>
                         </tr>
                         </thead>
@@ -362,7 +362,7 @@
                             <td class="valor">{{ safeRatio(selectedEle['m'+m.value], selectedEle['inflow'+m.value]) }}</td>
                         </tr>
                         </tbody>
-                    </table>'
+                    </table>
                 </div>
             </div>
         </div>
