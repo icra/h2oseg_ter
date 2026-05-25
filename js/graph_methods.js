@@ -200,7 +200,7 @@ const calculateNodeContribution = function(node, params) {
     const monthContrib = ppt.map((p, i) => node.data('area_m2') * (p - ET[i] - mmNeu[i]) * 0.9)
 
     const seconds = Array(12).fill().map((e, i) => i + 1)
-        .map(m => monthSeconds(2024, m))
+        .map(m => monthSeconds(2025, m))
 
     createMonths('m', 12).forEach((k, i) => {
         node.data(k, Math.max(monthContrib[i] * 0.001 / seconds[i], 0))
@@ -262,7 +262,7 @@ const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, op
 
         const mo = monthOfStep(k); // 1..12
         calculateFlowMonth(cy, params, errorRef, {
-            period: { year: 2024, month: mo },
+            period: { year: 2025, month: mo },
             step: k
         });
 
@@ -636,7 +636,7 @@ const calculateDemand = function(cy, types){
                 const nodeAnnualHm3 = Array.from({length: 12}, (_, i) => {
                     const month = i + 1
                     const q = Number(n.data('m' + month)) || 0
-                    const dt_s = monthSeconds(2024, month)
+                    const dt_s = monthSeconds(2025, month)
 
                     // Si les demandes són negatives, les convertim a volum positiu
                     const demanda = m3sToHm3(-q, dt_s)
@@ -743,5 +743,7 @@ export default {
     params,
     buildCalibratedParams,
     isHeadwaterNode,
-    accumulateUpstream
+    accumulateUpstream,
+    m3sToHm3,
+    monthSeconds
 }
