@@ -706,7 +706,7 @@ const accumulateUpstream = function(cy, id, variable, operand = 'mean') {
             return weightedSum / areaTotal
         })
 
-        // Retorna la mitjana dels 12 mesos
+        // Retorna les 12 mitjanes mensuals
         return monthlyMeans
     }
 
