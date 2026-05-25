@@ -85,35 +85,72 @@
 
                         <!-- Xip amb el % quan l'escenari és actiu -->
                         <span
-                                v-if="scenarios.temperatureIncrease.active"
+                                v-if="scenarios.temperatureIncrease.active && !scenarios.temperatureIncrease.monthly"
                                 class="scenario-chip"
                         >
                             {{ Number(scenarios.temperatureIncrease.value).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}
                         </span>
                     </div>
-
-                    <p class="scenario-desc">
-                        {{ scenarios.temperatureIncrease.description }}
-                        (valor inicial: {{ Number(tmitMean || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
-                    </p>
-
-                    <div v-if="scenarios.temperatureIncrease.active" class="scenario-slider">
+                    <label class="scenario-monthly" for="temperatureMonthly" v-if="scenarios.temperatureIncrease.active">
                         <input
-                                type="range"
-                                min="-10"
-                                max="10"
-                                v-model="scenarios.temperatureIncrease.value"
+                                id="temperatureMonthly"
+                                type="checkbox"
+                                v-model="scenarios.temperatureIncrease.monthly"
                         />
+                        <span class="scenario-desc">Modificació de la temperatura mitjana mes a mes</span>
+                    </label>
 
-                        <div class="scenario-values">
+                    <div v-if="!scenarios.temperatureIncrease.monthly">
+                        <p class="scenario-desc">
+                            {{ scenarios.temperatureIncrease.description }}
+                            (valor inicial: {{ Number(tmitMean.annual || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
+                        </p>
+
+                        <div v-if="scenarios.temperatureIncrease.active" class="scenario-slider">
+                            <input
+                                    type="range"
+                                    min="-10"
+                                    max="10"
+                                    v-model="scenarios.temperatureIncrease.value"
+                            />
+
+                            <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ (tmitMean + Number(scenarios.temperatureIncrease.value)).toFixed(0) }} {{ scenarios.temperatureIncrease.units }} de mitjana a la conca.
+                                Nou valor: {{ (tmitMean.annual + Number(scenarios.temperatureIncrease.value)).toFixed(0) }} {{ scenarios.temperatureIncrease.units }} de mitjana a la conca.
                             </span>
-                            <span class="scenario-value-delta">
+                                <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.temperatureIncrease.value }} {{ scenarios.temperatureIncrease.units }}
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="monthly-slider-list">
+                        <div
+                                class="monthly-slider-row"
+                                v-for="month in baseMonths"
+                                :key="month.value"
+                        >
+                            <span class="monthly-label">
+                                {{ month.label }}
+                            </span>
+                            <input
+                                    class="monthly-range"
+                                    type="range"
+                                    min="-10"
+                                    max="10"
+                                    step="1"
+                                    v-model.number="scenarios.temperatureIncrease.monthlyValue[Number(month.value) - 1]"
+                            />
+                            <span class="monthly-new-value">
+                                {{ Number(scenarios.temperatureIncrease.monthlyValue[month.value - 1]).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}
+                            </span>
+                            <span class="monthly-delta">
+                                {{ Number(scenarios.temperatureIncrease.monthlyValue[Number(month.value) - 1]  + tmitMean.monthly[month.value - 1]).toFixed(0)}}
+                                {{ scenarios.temperatureIncrease.units }}
                             </span>
                         </div>
                     </div>
+
                 </div>
 <!--                Demanda urbana-->
                 <div class="scenario-block">
@@ -817,8 +854,11 @@
                         <h4>Escenaris de simulació</h4>
                         <ul>
                             <template v-for="(value, key) in scenarios" :key="key">
-                                <li v-if="value.active">
+                                <li v-if="value.active && !value.monthly">
                                     {{ value.name }}: {{ value.value }} {{ value.units }}
+                                </li>
+                                <li v-else-if="value.active && value.monthly">
+                                    {{ value.name }}: mensual
                                 </li>
                             </template>
                         </ul>

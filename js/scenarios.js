@@ -42,10 +42,17 @@ const temperatureIncrease = async function (cy, deltaTmit) {
         console.log("reftmit created")
     }
 
+    const deltaByMonth = Array.isArray(deltaTmit) ? deltaTmit.map(Number) : Array(12).fill(Number(deltaTmit))
+
+    if (deltaByMonth.length !== 12 || deltaByMonth.some(v => !Number.isFinite(v))) {
+        console.error("tmit i deltaTmit no tenen la mateixa llargada")
+        return
+    }
+
     cy.nodes().forEach(n => {
         if (n.data('tmit1') == null) return
         for (const i in tmit) {
-            const newTmit = n.data(reftmit[i]) + Number(deltaTmit)
+            const newTmit = n.data(reftmit[i]) + Number(deltaByMonth[i])
             n.data(tmit[i], newTmit)
         }
     })

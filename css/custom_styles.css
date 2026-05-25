@@ -415,11 +415,21 @@ button:hover {
     color: #0f172a;
 }
 
-.scenario-toggle input[type="checkbox"] {
+.scenario-toggle input[type="checkbox"],
+.scenario-monthly input[type="checkbox"] {
     margin: 0;
     width: 14px;
     height: 14px;
     accent-color: #0074D9; /* navegadors moderns */
+}
+
+.scenario-monthly {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-weight: 400;
+    color: #0f172a;
 }
 
 .scenario-title {
@@ -465,6 +475,41 @@ button:hover {
 
 .scenario-value-delta {
     opacity: 0.8;
+}
+
+.monthly-slider-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.monthly-slider-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 70px 60px;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+}
+
+.monthly-label {
+    color: #374151;
+    white-space: nowrap;
+}
+
+.monthly-range {
+    width: 100%;
+}
+
+.monthly-new-value {
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.monthly-delta {
+    text-align: right;
+    color: #6b7280;
+    white-space: nowrap;
 }
 
 .map-title {
