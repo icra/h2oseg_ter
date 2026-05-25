@@ -596,7 +596,7 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
     });
 }
 
-const calculateMonthlyMeanCy = function (cy, varPrefix, mode = "mean") {
+const calculateMonthlyMeanCy = function (cy, varPrefix) {
     const sumWeighted = Array(12).fill(0)
     const sumArea = Array(12).fill(0)
 
@@ -610,18 +610,10 @@ const calculateMonthlyMeanCy = function (cy, varPrefix, mode = "mean") {
 
             if (!Number.isFinite(value)) continue
 
-            if (mode === "sum") {
-                sumWeighted[mo - 1] += value * area
-            } else {
-                sumWeighted[mo - 1] += value * area
-                sumArea[mo - 1] += area
-            }
+            sumWeighted[mo - 1] += value * area
+            sumArea[mo - 1] += area
         }
     })
-
-    if (mode === "sum") {
-        return sumWeighted.map(v => v)
-    }
 
     return sumWeighted.map((v, i) => {
         if (sumArea[i] === 0) return null
