@@ -245,7 +245,10 @@ createApp({
             }
         })
         const pptMean = ref(null)
-        const tmitMean = ref({})
+        const tmitMean = ref({
+            annual: 0,
+            monthly: Array(12).fill(0)
+        })
         const urbanDemandMean = ref(null)
         const agriDemandMean = ref(null)
         const forestSurface = ref(null)
