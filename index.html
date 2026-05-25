@@ -358,10 +358,10 @@
                             <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
                             <td>{{baseMonths[monthOfStep(k)-1].label}}</td>
                             <td class="valor">{{ Number(reservoir.storage_hm3[k] ?? 0).toFixed(0) }}</td>
-                            <td class="valor">{{ Number(reservoir.inflowSum_m3s[k]).toFixed(0) }}</td>
-                            <td class="valor">{{ Number(reservoir.released_m3s[k]).toFixed(0) }}</td>
-                            <td class="valor">{{ Number(reservoir.inflowVol_hm3[k]).toFixed(0) }}</td>
-                            <td class="valor">{{ Number(reservoir.releasedVol_hm3[k]).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.inflowSum_m3s[k] ?? 0).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.released_m3s[k] ?? 0).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.inflowVol_hm3[k] ?? 0).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.releasedVol_hm3[k] ?? 0).toFixed(0) }}</td>
                         </tr>
                         </tbody>
                     </table>
