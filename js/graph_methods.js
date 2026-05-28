@@ -126,7 +126,7 @@ let RESERVOIR = {
     releaseDemand_m3s: {},
     released_m3s: {},
     releasedVol_hm3: {},
-    customRelease: {}
+    customRelease_m3s: {}
     // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
 
@@ -309,6 +309,8 @@ const calculateAnnualValues = function(cy){
         .reduce((a, b) => a + b, 0) / SIM.r.length;
     RESERVOIR.released_m3s['0'] = SIM.r.map(k => RESERVOIR.released_m3s[k])
         .reduce((a, b) => a + b, 0) / SIM.r.length;
+    RESERVOIR.releasedVol_hm3.total = SIM.r.map(k => RESERVOIR.releasedVol_hm3[k])
+        .reduce((a, b) => a + b, 0)
 
 }
 
@@ -458,18 +460,24 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         }
 
         if (R.outNode && R.outNode === node.id()) {
-            let released
-            if (R.customRelease[k] === undefined) {
-                released = 0
+            const customRelease = R.customRelease_m3s[k]
+
+            if (customRelease !== undefined) {
+                applyCustomReleaseDownstreamDam(
+                    cy,
+                    customRelease,
+                    node,
+                    month,
+                    k,
+                    dt_s,
+                    params
+                )
             } else {
-                released = R.customRelease[k]
+                node.data('outflow' + k, 0)
+                node.outgoers('edge').forEach(edge => edge.data('flow' + k, 0))
             }
 
-            node.data('outflow' + k, released);
-            // posa 0 als sortints de l'embassament perquè els successors es calculin sense aportació de l'embassament
-            node.outgoers('edge').forEach(edge => edge.data('flow' + k, released));
-
-            return;
+            return
         }
 
         // 3. Assignar aquest outflow als edges sortints
@@ -485,7 +493,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     leaves.forEach(leaf => dfs(leaf));
 
     // Segona passada per calcular demanda de l'embassament i alliberar l'aigua si no hi ha valor d'usuari
-    if (R.customRelease[k] === undefined){
+    if (R.customRelease_m3s[k] === undefined){
         const dam = cy.getElementById(R.outNode);
         const succNodes = dam.successors('node');
         let demanda = 0;
@@ -601,6 +609,31 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
         });
     });
 }
+
+const applyCustomReleaseDownstreamDam = function(cy, requestedRelease_m3s, dam, month, k, dt_s, params) {
+    const R = RESERVOIR
+
+    const requested = Math.max(0, Number(requestedRelease_m3s) || 0)
+
+    const overflow_m3s = Number(R.overflowSum_m3s[k]) || 0
+    const maxFromStorage_m3s = hm3ToM3s(R.storage_hm3[k], dt_s)
+
+    // El valor de l'usuari és desembassament controlat.
+    // El sobreeiximent s'afegeix sempre perquè no consumeix volum útil.
+    const controlledRelease_m3s = Math.min(requested, maxFromStorage_m3s)
+    const release_m3s = controlledRelease_m3s + overflow_m3s
+
+    const used_hm3 = m3sToHm3(controlledRelease_m3s, dt_s)
+
+    R.storage_hm3[k] = Math.max(0, R.storage_hm3[k] - used_hm3)
+    R.releaseDemand_m3s[k] = requested
+    R.released_m3s[k] = release_m3s
+    R.releasedVol_hm3[k] = m3sToHm3(release_m3s, dt_s)
+
+    dam.data('outflow' + k, release_m3s)
+    dam.outgoers('edge').forEach(e => e.data('flow' + k, release_m3s))
+}
+
 
 const calculateMonthlyMeanCy = function (cy, varPrefix) {
     const sumWeighted = Array(12).fill(0)
