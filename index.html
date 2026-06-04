@@ -700,7 +700,103 @@
                         <p>El cabal mitjà desembassat és {{ fmt(selectedEle['m' + month]) }}</p>
                         <p>El volum a l'embassament és de {{ (reservoir.storage_hm3[selK] ?? 0).toFixed(0) }} Hm³</p>
                         <button @click="openModalInfo=true">Més informació</button>
+                        <!-- Selector de mode -->
+                        <div class="mode-toggle">
+                            <p>Modifica el volum desembassat</p>
+                            <label>
+                                <input type="radio" value="annual" v-model="editMode" />
+                                Volum anual (Hm³)
+                            </label>
+                            <label>
+                                <input type="radio" value="monthly" v-model="editMode" />
+                                Volum mes a mes (Hm³)
+                            </label>
+                        </div>
+
+                        <!-- MODE: VOLUM ANUAL -->
+                        <div v-if="editMode === 'annual'">
+                            <div class="res-table-wrapper">
+                                <table class="res-table">
+                                    <thead>
+                                    <tr>
+                                        <th class="val">Volum actual</th>
+                                        <th class="val">Nou volum</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="val">
+                                            {{ Number(reservoir.releasedVol_hm3.total).toFixed(0) || 0 }}
+                                        </td>
+                                        <td>
+                                            <input
+                                                    type="number"
+                                                    step="0.1"
+                                                    v-model="annualVolume"
+                                                    class="res-input"
+                                                    v-on:keyup.enter="applyAnnualChange(selectedEle)"
+                                            />
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="res-bottom res-actions">
+                                <button class="btn-primary"  @click="applyAnnualChange(selectedEle)">
+                                    Aplica
+                                </button>
+
+                                <p v-if="errorMsg" class="res-error">
+                                    ⚠️ {{ errorMsg }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- MODE: MES A MES -->
+                        <div v-else-if="editMode === 'monthly'">
+                            <div class="res-table-wrapper">
+                                <table class="res-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Mes</th>
+                                        <th class="val">Volum actual</th>
+                                        <th class="val">Nou volum</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="m in baseMonths" :key="m.value">
+                                        <td class="lab">{{ m.label }}</td>
+                                        <td class="val">
+                                            {{ Number(selectedEle['m' + m.value] || 0).toFixed(2) }}
+                                        </td>
+                                        <td>
+                                            <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    v-model.number="flowModifiedByMonth[m.value]"
+                                                    @blur="flowModifiedByMonth[m.value] = Number(flowModifiedByMonth[m.value]).toFixed(2)"
+                                                    class="res-input"
+                                                    v-on:keyup.enter="applyFlowChanges(selectedEle)"
+                                            />
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="res-bottom res-actions">
+                                <button class="btn-primary" @click="applyFlowChanges(selectedEle)">
+                                    Aplica tots els canvis
+                                </button>
+
+                                <p v-if="errorMsg" class="res-error">
+                                    ⚠️ {{ errorMsg }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
+<!--                    </div>-->
 
                     <!-- Cas punt -->
                     <div v-else-if="selectedEle.eleType === 'punt'">

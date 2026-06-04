@@ -461,21 +461,21 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 
         if (R.outNode && R.outNode === node.id()) {
             const customRelease = R.customRelease_m3s[k]
-
+            // console.log("customRelease", R.customRelease_m3s[k], k, R);
+            const localContribution_m3s = Math.max(0, flowChange)
+            let outflowR
             if (customRelease !== undefined) {
-                applyCustomReleaseDownstreamDam(
-                    cy,
-                    customRelease,
-                    node,
-                    month,
-                    k,
-                    dt_s,
-                    params
-                )
+                console.log("customRelease", customRelease)
+                outflowR = applyCustomReleaseDownstreamDam(customRelease, localContribution_m3s, k, dt_s)
             } else {
-                node.data('outflow' + k, 0)
-                node.outgoers('edge').forEach(edge => edge.data('flow' + k, 0))
+                outflowR = localContribution_m3s;
             }
+
+            node.data('outflow' + k, outflowR)
+            node.outgoers('edge').forEach(edge => {
+                const q = applyGwLossToEdge(outflowR, edge, month, params)
+                edge.data('flow' + k, q)
+            })
 
             return
         }
@@ -610,7 +610,7 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
     });
 }
 
-const applyCustomReleaseDownstreamDam = function(cy, requestedRelease_m3s, dam, month, k, dt_s, params) {
+const applyCustomReleaseDownstreamDam = function(requestedRelease_m3s, nodeContribution, k, dt_s) {
     const R = RESERVOIR
 
     const requested = Math.max(0, Number(requestedRelease_m3s) || 0)
@@ -622,6 +622,7 @@ const applyCustomReleaseDownstreamDam = function(cy, requestedRelease_m3s, dam, 
     // El sobreeiximent s'afegeix sempre perquè no consumeix volum útil.
     const controlledRelease_m3s = Math.min(requested, maxFromStorage_m3s)
     const release_m3s = controlledRelease_m3s + overflow_m3s
+    const totalOutflow_m3s = release_m3s + nodeContribution
 
     const used_hm3 = m3sToHm3(controlledRelease_m3s, dt_s)
 
@@ -630,8 +631,13 @@ const applyCustomReleaseDownstreamDam = function(cy, requestedRelease_m3s, dam, 
     R.released_m3s[k] = release_m3s
     R.releasedVol_hm3[k] = m3sToHm3(release_m3s, dt_s)
 
-    dam.data('outflow' + k, release_m3s)
-    dam.outgoers('edge').forEach(e => e.data('flow' + k, release_m3s))
+    return totalOutflow_m3s
+
+    // dam.data('outflow' + k, totalOutflow_m3s)
+    // dam.outgoers('edge').forEach(e => {
+    //     const q = applyGwLossToEdge(totalOutflow_m3s, e, month, params)
+    //     e.data('flow' + k, q)
+    // })
 }
 
 

@@ -324,22 +324,47 @@ createApp({
             errorMsg.value = null
 
             const months = Array(12).fill().map((e, i) => String(i + 1))
-
             let newVals
 
-            if (Math.abs(+ele.m0) < 1e-6) {
-                newVals = months.map(() => target)
+            if (ele.id === 'DESEMBASSAT') {
+                const currentAnnualHm3 = Number(gm.RESERVOIR.releasedVol_hm3.total) || 0
+
+                if (currentAnnualHm3 <= 1e-6) {
+                    newVals = months.map(() => target)
+                } else {
+                    const k = Number(annualVolume.value) / currentAnnualHm3;
+
+                    newVals = months.map(m => {
+                        const q = Number(gm.RESERVOIR.released_m3s[m]) || 0
+                        return q * k
+                    })
+                }
+
+                gm.RESERVOIR.customRelease_m3s = {}
+                months.forEach((m, idx) => {
+                    gm.RESERVOIR.customRelease_m3s[m] = Number(newVals[idx]).toFixed(2)
+                })
+                console.log("després de canviar", gm.RESERVOIR.customRelease_m3s)
+
+
+                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
+                await int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
+
             } else {
-                const k = target / ele.m0
-                newVals = months.map(m => ele['m' + m] * k)
+                if (Math.abs(+ele.m0) < 1e-6) {
+                    newVals = months.map(() => target)
+                } else {
+                    const k = target / ele.m0
+                    newVals = months.map(m => ele['m' + m] * k)
+                }
+
+                months.forEach((m, idx) => {
+                    flowModifiedByMonth.value[m] = Number(Number(newVals[idx]).toFixed(2))
+                })
+
+                await sleep(0)
+                await applyFlowChanges()
             }
-
-            months.forEach((m, idx) => {
-                flowModifiedByMonth.value[m] = Number(Number(newVals[idx]).toFixed(2))
-            })
-
-            await sleep(0)
-            await applyFlowChanges()
 
             loading.value = false
         }
@@ -778,12 +803,16 @@ createApp({
                 console.error(e);
             } finally {
                 loading.value = false;
+                console.log(gm.RESERVOIR)
             }
         })
 
         // Quan es selecciona un node, posa-hi el valor actual com a valor per defecte
         watch(selectedEle, (val) => {
-            if (val && val.eleType === 'punt') {
+            if (val && val.id === 'DESEMBASSAT') {
+                annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total).toFixed(0);
+            }
+            else if (val && val.eleType === 'punt') {
                 const init = {}
                 monthSelector.value.forEach(m => {
                     const raw = val['m' + m.value]
