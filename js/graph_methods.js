@@ -253,7 +253,6 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
 
 const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, opts = {}, loadingYear, initialVolume){
     if (!params) throw new Error('parameters required')
-
     initSimulation(nYears, initialVolume)
 
     const K = Number(nYears) * 12 || 12
@@ -454,6 +453,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
             let outflowR
 
             if (customRelease !== undefined) {
+                console.log('customRelease', customRelease);
                 outflowR = applyCustomTotalRelease(customRelease, localContribution_m3s, k, dt_s)
             } else {
                 outflowR = localContribution_m3s;
@@ -635,6 +635,7 @@ const applyCustomTotalRelease = function(requestedTotalRelease_m3s, nodeContribu
     // Sobreeiximent inevitable si no es desembassa res
     const minSpill_hm3 = Math.max(0, available_hm3 - R.capacity_hm3)
 
+
     let controlledRelease_hm3
 
     if (requestedTotal_hm3 <= minSpill_hm3) {
@@ -646,6 +647,18 @@ const applyCustomTotalRelease = function(requestedTotalRelease_m3s, nodeContribu
         // desembassem aquest volum controladament.
         controlledRelease_hm3 = Math.min(requestedTotal_hm3, available_hm3)
     }
+
+    console.table({
+        k,
+        requestedTotal_m3s: requestedTotal,
+        requestedTotal_hm3,
+        storageStart_hm3,
+        inflowVol_hm3,
+        available_hm3,
+        minSpill_hm3,
+        controlledRelease_hm3,
+        capacity_hm3: R.capacity_hm3
+    })
 
     const controlledRelease_m3s = hm3ToM3s(controlledRelease_hm3, dt_s)
 
@@ -810,6 +823,10 @@ const accumulateUpstream = function(cy, id, variable, operand = 'mean') {
     return null
 }
 
+const changeCustomRelease = function(customRelease_hm3){
+
+}
+
 export const isHeadwaterNode = function(n) {
     const hasAncestors = n.predecessors('node').nonempty()
     return n.data('type') === 'massa' && !hasAncestors
@@ -833,6 +850,8 @@ export default {
     isHeadwaterNode,
     accumulateUpstream,
     m3sToHm3,
+    hm3ToM3s,
+    changeCustomRelease,
     monthSeconds,
     monthOfStep
 }

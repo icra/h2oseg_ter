@@ -78,7 +78,7 @@ function nodeTooltipHTML(n, month, k) {
           <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
           <div>Tipus: ${n.data('type') ?? '—'}</div>
           <div>Cabal entrant: ${fmt(n.data('inflow' + k))}</div>
-          <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month), 2)}</div>
+          <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month))}</div>
           <div>Cabal sortint: ${fmt(n.data('outflow' + k))}</div>
           ${month === '0' ? '<div>' + (n.data('m' + month) > 0 ? "Aportació" : "Extracció total") + ': ' + Hm3ToM3(n.data('m' + month)) + ' Hm<sup>3</sup></div>' : ''}
         </div>
@@ -135,6 +135,7 @@ createApp({
         const selectedEle = ref(null)
         const flowModified = ref(null)
         const flowModifiedByMonth = ref(null)
+        const customRelease = ref({})
         const errorMsg = ref(null)
         const month = ref('0')
         const baseMonths = [
@@ -192,9 +193,9 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await sleep(1)
-            await gm.calculateContribution(cy.value, params.value)
+            gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
-            await int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel});
+            int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel});
             tick.value++
 
             loading.value = false
@@ -288,21 +289,42 @@ createApp({
             loadingYear.value = 1
             loading.value = true
             await waitForPaint()
-            // IMPORTANT: només mesos 1..12, no '0'
-            const changes = {}
-            for (let mo = 1; mo <= 12; mo++) {
-                changes[String(mo)] = flowModifiedByMonth.value[String(mo)]
+
+            if (selectedEle.value.id === 'DESEMBASSAT') {
+                errorMsg.value = null
+                for (let mo = 1; mo <= 12; mo++) {
+                    const v = Number(customRelease.value[mo])
+                    if (!Number.isFinite(v)) {
+                        errorMsg.value = `Introdueix un número vàlid al mes ${mo}`
+                        loading.value = false
+                        return
+                    }
+                }
+                for (const [key, value] of Object.entries(customRelease.value)) {
+                    const dt_s = gm.monthSeconds(2025, Number(key))
+                    gm.RESERVOIR.customRelease_m3s[key] = gm.hm3ToM3s(Number(value), dt_s)
+                }
+                annualVolume.value = Object.values(customRelease.value).reduce((sum, v) => sum + Number(v), 0)
+                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
+
+            } else {
+                // IMPORTANT: només mesos 1..12, no '0'
+                const changes = {}
+                for (let mo = 1; mo <= 12; mo++) {
+                    changes[String(mo)] = flowModifiedByMonth.value[String(mo)]
+                }
+
+                await gm.modifyFlowChange(
+                    cy.value,
+                    selectedEle.value,
+                    changes,
+                    errorMsg,
+                    params.value,
+                    { nYears: nYears.value },
+                    loadingYear,
+                    volumEmb.value
+                )
             }
-            await gm.modifyFlowChange(
-                cy.value,
-                selectedEle.value,
-                changes,
-                errorMsg,
-                params.value,
-                { nYears: nYears.value },
-                loadingYear,
-                volumEmb.value
-            )
 
             int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
             tick.value++
@@ -314,7 +336,7 @@ createApp({
             loading.value = true
             await sleep(0)
 
-            if (annualVolume.value === '' || annualVolume.value === NaN || annualVolume.value === null) {
+            if (annualVolume.value === '' || isNaN(annualVolume.value) || annualVolume.value === null) {
                 errorMsg.value = "Introdueix un volum vàlid"
                 annualVolume.value = Number(Hm3ToM3(ele.m0))
                 loading.value = false
@@ -349,7 +371,7 @@ createApp({
 
 
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
-                await int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
+                int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
 
             } else {
                 if (Math.abs(+ele.m0) < 1e-6) {
@@ -441,9 +463,9 @@ createApp({
                 await scen.modifyForest(cy.value, scenarios.value.forestSurface.value)
             }
 
-            await gm.calculateContribution(cy.value, params.value)
+            gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
-            await int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
+            int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
 
             tick.value++
             loading.value = false
@@ -812,6 +834,12 @@ createApp({
         watch(selectedEle, (val) => {
             if (val && val.id === 'DESEMBASSAT') {
                 annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total / nYears.value).toFixed(0);
+                monthSelector.value.forEach(m => {
+                    if (m.value === '0') return
+                    const raw = gm.RESERVOIR.releasedVol_hm3[m.value]
+                    const num = Number.isFinite(+raw) ? Number(raw) : 0
+                    customRelease.value[m.value] = Number(num.toFixed(0))
+                })
             }
             else if (val && val.eleType === 'punt') {
                 const init = {}
@@ -833,6 +861,11 @@ createApp({
 
         watch(selK, (k) => {
             int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
+        });
+
+        const reservoirView = Vue.computed(() => {
+            tick.value
+            return gm.RESERVOIR
         })
 
         return {
@@ -841,11 +874,12 @@ createApp({
             selectedEle,
             flowModified,
             flowModifiedByMonth,
+            customRelease,
             applyFlowChanges,
             applyAnnualChange,
             editMode,
             annualVolume,
-            reservoir: gm.RESERVOIR,
+            reservoir: reservoirView,
             errorMsg,
             reset,
             month,
