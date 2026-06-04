@@ -312,6 +312,7 @@ createApp({
         const applyAnnualChange = async function (ele) {
             loadingYear.value = 1
             loading.value = true
+            await sleep(0)
 
             if (annualVolume.value === '' || annualVolume.value === NaN || annualVolume.value === null) {
                 errorMsg.value = "Introdueix un volum vàlid"
@@ -327,7 +328,7 @@ createApp({
             let newVals
 
             if (ele.id === 'DESEMBASSAT') {
-                const currentAnnualHm3 = Number(gm.RESERVOIR.releasedVol_hm3.total) || 0
+                const currentAnnualHm3 = Number(gm.RESERVOIR.releasedVol_hm3.total) / nYears.value || 0
 
                 if (currentAnnualHm3 <= 1e-6) {
                     newVals = months.map(() => target)
@@ -810,7 +811,7 @@ createApp({
         // Quan es selecciona un node, posa-hi el valor actual com a valor per defecte
         watch(selectedEle, (val) => {
             if (val && val.id === 'DESEMBASSAT') {
-                annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total).toFixed(0);
+                annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total / nYears.value).toFixed(0);
             }
             else if (val && val.eleType === 'punt') {
                 const init = {}

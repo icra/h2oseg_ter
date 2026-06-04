@@ -433,20 +433,8 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         if (R.inNodes && R.inNodes.has(node.id())) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
 
-            const storageBefore = R.storage_hm3[k] || 0;
-            const storageRaw = storageBefore + add_hm3;
-
-            const overflow_hm3 = Math.max(0, storageRaw - R.capacity_hm3)
-            const stored_hm3 = Math.min(storageRaw, R.capacity_hm3)
-
-            // const nouVol = Math.min(R.storage_hm3[k] + add_hm3, R.capacity_hm3);
             R.inflowSum_m3s[k] += positiveOut;
             R.inflowVol_hm3[k] += add_hm3
-
-            R.overflowVol_hm3[k] += overflow_hm3;
-            R.overflowSum_m3s[k] += hm3ToM3s(overflow_hm3, dt_s)
-
-            R.storage_hm3[k] = stored_hm3;
 
             // no propaguem cabal a través dels arcs virtuals
             node.data('outflow' + k, 0);
@@ -460,13 +448,13 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         }
 
         if (R.outNode && R.outNode === node.id()) {
-            const customRelease = R.customRelease_m3s[k]
-            // console.log("customRelease", R.customRelease_m3s[k], k, R);
+            const customRelease = R.customRelease_m3s[month]
             const localContribution_m3s = Math.max(0, flowChange)
+
             let outflowR
+
             if (customRelease !== undefined) {
-                console.log("customRelease", customRelease)
-                outflowR = applyCustomReleaseDownstreamDam(customRelease, localContribution_m3s, k, dt_s)
+                outflowR = applyCustomTotalRelease(customRelease, localContribution_m3s, k, dt_s)
             } else {
                 outflowR = localContribution_m3s;
             }
@@ -493,7 +481,7 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     leaves.forEach(leaf => dfs(leaf));
 
     // Segona passada per calcular demanda de l'embassament i alliberar l'aigua si no hi ha valor d'usuari
-    if (R.customRelease_m3s[k] === undefined){
+    if (R.customRelease_m3s[month] === undefined){
         const dam = cy.getElementById(R.outNode);
         const succNodes = dam.successors('node');
         let demanda = 0;
@@ -545,7 +533,8 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
                 break
             }
 
-            const maxPossible_m3s = hm3ToM3s(R_backup.storage_hm3[k], dt_s)
+            const available_hm3 = R_backup.storage_hm3[k] + R_backup.inflowVol_hm3[k]
+            const maxPossible_m3s = hm3ToM3s(available_hm3, dt_s)
             const alreadyAtLimit = demandaTotal >= maxPossible_m3s - tol
 
             if (alreadyAtLimit) {
@@ -565,26 +554,15 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, params){
     let R = RESERVOIR
 
-    const overflow_m3s = Number(R.overflowSum_m3s[k]) || 0;
-    const maxPossible_m3s = hm3ToM3s(R.storage_hm3[k], dt_s)
+    const localContribution_m3s = Math.max(0, Number(dam.data('m' + month)) || 0)
 
-    // La demanda consumeix volum embassat.
-    // El sobreeiximent s'afegeix al cabal alliberat, però no consumeix volum,
-    // perquè és aigua que no cabia dins l'embassament.
-    const demandRelease_m3s = Math.min(demanda, maxPossible_m3s);
-    const release_m3s = demandRelease_m3s + overflow_m3s;
+    const totalOutflow_m3s = applyReservoirRelease(demanda, localContribution_m3s, k, dt_s)
 
-    const used_hm3 = m3sToHm3(demandRelease_m3s, dt_s);
-
-    R.storage_hm3[k] = Math.max(0, R.storage_hm3[k] - used_hm3);
-    R.releaseDemand_m3s[k] = demanda + overflow_m3s;
-    R.released_m3s[k] = release_m3s;
-    R.releasedVol_hm3[k] = m3sToHm3(release_m3s, dt_s);
-
-    // console.log(m, "entrada", R.inflowVol_hm3[m], "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
-
-    dam.data('outflow' + k, release_m3s);
-    dam.outgoers('edge').forEach(e => e.data('flow' + k, release_m3s));
+    dam.data('outflow' + k, totalOutflow_m3s);
+    dam.outgoers('edge').forEach(e => {
+        const q = applyGwLossToEdge(totalOutflow_m3s, e, month, params)
+        e.data('flow' + k, q)
+    })
 
     // Recalcular tot aigües avall amb el release ja aplicat
     const bfs = cy.elements().bfs({ roots: dam, directed: true });
@@ -610,34 +588,73 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
     });
 }
 
-const applyCustomReleaseDownstreamDam = function(requestedRelease_m3s, nodeContribution, k, dt_s) {
+const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, k, dt_s) {
     const R = RESERVOIR
 
-    const requested = Math.max(0, Number(requestedRelease_m3s) || 0)
+    const controlled = Math.max(0, Number(controlledRelease_m3s) || 0)
 
-    const overflow_m3s = Number(R.overflowSum_m3s[k]) || 0
-    const maxFromStorage_m3s = hm3ToM3s(R.storage_hm3[k], dt_s)
+    const storageStart_hm3 = Number(R.storage_hm3[k]) || 0
+    const inflowVol_hm3 = Number(R.inflowVol_hm3[k]) || 0
 
-    // El valor de l'usuari és desembassament controlat.
-    // El sobreeiximent s'afegeix sempre perquè no consumeix volum útil.
-    const controlledRelease_m3s = Math.min(requested, maxFromStorage_m3s)
-    const release_m3s = controlledRelease_m3s + overflow_m3s
-    const totalOutflow_m3s = release_m3s + nodeContribution
+    const available_hm3 = storageStart_hm3 + inflowVol_hm3
+    const maxControlledRelease_m3s = hm3ToM3s(available_hm3, dt_s)
 
-    const used_hm3 = m3sToHm3(controlledRelease_m3s, dt_s)
+    const actualControlledRelease_m3s = Math.min(controlled, maxControlledRelease_m3s)
+    const controlledReleaseVol_hm3 = m3sToHm3(actualControlledRelease_m3s, dt_s)
 
-    R.storage_hm3[k] = Math.max(0, R.storage_hm3[k] - used_hm3)
-    R.releaseDemand_m3s[k] = requested
-    R.released_m3s[k] = release_m3s
-    R.releasedVol_hm3[k] = m3sToHm3(release_m3s, dt_s)
+    const storageAfterRelease_hm3 = Math.max(0, available_hm3 - controlledReleaseVol_hm3)
+    const overflowVol_hm3 = Math.max(0, storageAfterRelease_hm3 - R.capacity_hm3)
+    const overFlow_m3s = hm3ToM3s(overflowVol_hm3, dt_s)
+    const storageEnd_hm3 = Math.min(storageAfterRelease_hm3, R.capacity_hm3)
+    const reservoirRelease_m3s = actualControlledRelease_m3s + overFlow_m3s
+    const totalOutflow_m3s = reservoirRelease_m3s + nodeContribution
+
+    R.storage_hm3[k] = storageEnd_hm3
+
+    R.overflowVol_hm3[k] = overflowVol_hm3
+    R.overflowSum_m3s[k] = overFlow_m3s
+
+    R.releaseDemand_m3s[k] = controlled
+    R.released_m3s[k] = reservoirRelease_m3s
+    R.releasedVol_hm3[k] = m3sToHm3(reservoirRelease_m3s, dt_s)
 
     return totalOutflow_m3s
+}
 
-    // dam.data('outflow' + k, totalOutflow_m3s)
-    // dam.outgoers('edge').forEach(e => {
-    //     const q = applyGwLossToEdge(totalOutflow_m3s, e, month, params)
-    //     e.data('flow' + k, q)
-    // })
+const applyCustomTotalRelease = function(requestedTotalRelease_m3s, nodeContribution_m3s, k, dt_s){
+    const R = RESERVOIR
+    const requestedTotal = Math.max(0, Number(requestedTotalRelease_m3s) || 0)
+    const nodeContribution = Math.max(0, Number(nodeContribution_m3s) || 0)
+
+    const storageStart_hm3 = Number(R.storage_hm3[k]) || 0
+    const inflowVol_hm3 = Number(R.inflowVol_hm3[k]) || 0
+    const available_hm3 = storageStart_hm3 + inflowVol_hm3
+
+    const requestedTotal_hm3 = m3sToHm3(requestedTotal, dt_s)
+
+    // Sobreeiximent inevitable si no es desembassa res
+    const minSpill_hm3 = Math.max(0, available_hm3 - R.capacity_hm3)
+
+    let controlledRelease_hm3
+
+    if (requestedTotal_hm3 <= minSpill_hm3) {
+        // No cal desembassar controladament:
+        // el mínim físic ja és superior al que demana l'usuari.
+        controlledRelease_hm3 = 0
+    } else {
+        // Per assolir un total superior al sobreeiximent inevitable,
+        // desembassem aquest volum controladament.
+        controlledRelease_hm3 = Math.min(requestedTotal_hm3, available_hm3)
+    }
+
+    const controlledRelease_m3s = hm3ToM3s(controlledRelease_hm3, dt_s)
+
+    return applyReservoirRelease(
+        controlledRelease_m3s,
+        nodeContribution,
+        k,
+        dt_s
+    )
 }
 
 
