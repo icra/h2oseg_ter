@@ -701,6 +701,7 @@ createApp({
                         selectById(n.id(), 'node')
                     })
                     layer.on('mouseover', () => {
+                        layer.closeTooltip()
                         const cn = cy.value.getElementById(n.id())
                         const html = nodeTooltipHTML(cn, month.value, selK.value)
                         const tt = layer.getTooltip()
