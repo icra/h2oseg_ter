@@ -741,6 +741,7 @@ createApp({
 
                 cy.value.nodes()
                     .filter(n => !gm.isHeadwaterNode(n))
+                    .filter(n => n.id() !== 'DESEMBASSAT')
                     .forEach(addNodeLayer)
 
                 const arcsLayer = L.geoJSON(edgesGeo, {
