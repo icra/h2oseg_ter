@@ -742,6 +742,7 @@ createApp({
                             selectById(eid, 'edge')
                         })
                         layer.on('mouseover', () => {
+                            layer.closeTooltip()
                             const ce = cy.value.getElementById(eid)
                             const html = edgeTooltipHTML(ce, month.value, selK.value)
                             const tt = layer.getTooltip()
@@ -809,6 +810,8 @@ createApp({
                         });
                     }
                 }).addTo(map);
+
+
 
                 pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
                 tmitMean.value.annual = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
