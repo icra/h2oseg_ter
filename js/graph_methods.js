@@ -811,10 +811,6 @@ const accumulateUpstream = function(cy, id, variable, operand = 'mean') {
     return null
 }
 
-const changeCustomRelease = function(customRelease_hm3){
-
-}
-
 export const isHeadwaterNode = function(n) {
     const hasAncestors = n.predecessors('node').nonempty()
     return n.data('type') === 'massa' && !hasAncestors
@@ -839,7 +835,6 @@ export default {
     accumulateUpstream,
     m3sToHm3,
     hm3ToM3s,
-    changeCustomRelease,
     monthSeconds,
     monthOfStep
 }

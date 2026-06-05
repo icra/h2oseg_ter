@@ -825,7 +825,7 @@ createApp({
             } catch (e) {
                 console.error(e);
             } finally {
-                console.log(gm.RESERVOIR)
+                loading.value = false;
             }
         })
 
