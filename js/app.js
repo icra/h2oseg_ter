@@ -811,8 +811,6 @@ createApp({
                     }
                 }).addTo(map);
 
-
-
                 pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
                 tmitMean.value.annual = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
                 tmitMean.value.monthly = gm.calculateMonthlyMeanCy(cy.value, 'tmit')
