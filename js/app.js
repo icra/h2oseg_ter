@@ -375,9 +375,11 @@ createApp({
 
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
                 int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
-                for (const [key, value] of Object.entries(gm.RESERVOIR.releasedVol_hm3)){
-                    if (key === 'total') continue
-                    customRelease.value[key] = Math.round(value)
+                customRelease.value = {}
+                for (let mo = 1; mo <= 12; mo++) {
+                    const raw = gm.RESERVOIR.releasedVol_hm3[String(mo)]
+                    const num = Number.isFinite(+raw) ? Number(raw) : 0
+                    customRelease.value[String(mo)] = Number(num.toFixed(0))
                 }
 
             } else {
