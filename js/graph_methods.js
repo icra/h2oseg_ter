@@ -453,7 +453,6 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
             let outflowR
 
             if (customRelease !== undefined) {
-                console.log('customRelease', customRelease);
                 outflowR = applyCustomTotalRelease(customRelease, localContribution_m3s, k, dt_s)
             } else {
                 outflowR = localContribution_m3s;
