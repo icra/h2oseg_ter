@@ -196,6 +196,9 @@ createApp({
             gm.calculateContribution(cy.value, params.value)
             await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
             int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel});
+            if (selectedEle.value && selectedEle.value.id === 'DESEMBASSAT') {
+                annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total / nYears.value).toFixed(0);
+            }
             tick.value++
 
             loading.value = false
@@ -332,13 +335,14 @@ createApp({
             loading.value = false
         }
         const applyAnnualChange = async function (ele) {
+
             loadingYear.value = 1
             loading.value = true
             await sleep(0)
 
             if (annualVolume.value === '' || isNaN(annualVolume.value) || annualVolume.value === null) {
                 errorMsg.value = "Introdueix un volum vàlid"
-                annualVolume.value = Number(Hm3ToM3(ele.m0))
+                annualVolume.value = ele.id === 'DESEMBASSAT' ? Math.round(gm.RESERVOIR.releasedVol_hm3.total / nYears.value) : Hm3ToM3(ele.m0)
                 loading.value = false
                 return
             }
@@ -369,9 +373,19 @@ createApp({
 
                 })
 
-
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
                 int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
+                customRelease.value = {}
+
+                for (let mo = 1; mo <= 12; mo++) {
+
+                    const raw = gm.RESERVOIR.releasedVol_hm3[String(mo)]
+
+                    const num = Number.isFinite(+raw) ? Number(raw) : 0
+
+                    customRelease.value[String(mo)] = Number(num.toFixed(0))
+
+                }
 
             } else {
                 if (Math.abs(+ele.m0) < 1e-6) {
