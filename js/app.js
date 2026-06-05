@@ -365,7 +365,8 @@ createApp({
 
                 gm.RESERVOIR.customRelease_m3s = {}
                 months.forEach((m, idx) => {
-                    gm.RESERVOIR.customRelease_m3s[m] = Number(Number(newVals[idx]).toFixed(2))
+                    gm.RESERVOIR.customRelease_m3s[m] = Number(Number(newVals[idx]).toFixed(2))
+
                 })
 
 
@@ -824,7 +825,6 @@ createApp({
             } catch (e) {
                 console.error(e);
             } finally {
-                loading.value = false;
                 console.log(gm.RESERVOIR)
             }
         })
