@@ -342,7 +342,7 @@ createApp({
 
             if (annualVolume.value === '' || isNaN(annualVolume.value) || annualVolume.value === null) {
                 errorMsg.value = "Introdueix un volum vàlid"
-                annualVolume.value = ele.id === 'DESEMBASSAT' ? gm.RESERVOIR.releasedVol_hm3.total : Number(Hm3ToM3(ele.m0))
+                annualVolume.value = ele.id === 'DESEMBASSAT' ? Math.round(gm.RESERVOIR.releasedVol_hm3.total / nYears.value) : Hm3ToM3(ele.m0)
                 loading.value = false
                 return
             }
@@ -375,11 +375,16 @@ createApp({
 
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
                 int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
-                customRelease.value = {}
-                for (let mo = 1; mo <= 12; mo++) {
-                    const raw = gm.RESERVOIR.releasedVol_hm3[String(mo)]
-                    const num = Number.isFinite(+raw) ? Number(raw) : 0
-                    customRelease.value[String(mo)] = Number(num.toFixed(0))
+                customRelease.value = {}
+
+                for (let mo = 1; mo <= 12; mo++) {
+
+                    const raw = gm.RESERVOIR.releasedVol_hm3[String(mo)]
+
+                    const num = Number.isFinite(+raw) ? Number(raw) : 0
+
+                    customRelease.value[String(mo)] = Number(num.toFixed(0))
+
                 }
 
             } else {
