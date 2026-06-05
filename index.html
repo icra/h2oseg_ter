@@ -971,33 +971,35 @@
 
             <!-- Embassament -->
             <div v-if="cy" class="res-mini res-stack" :key="tick">
+                <div>Informació del sistema Sau-Susqueda</div>
                 <div>
-                    Informació del sistema Sau-Susqueda
-                    <span v-if="!(month === '0' || simYear === '0')">({{ monthSelector.find(e=> e.value === month).label }}{{ nYears > 1 ? `, any ${simYear}` : '' }})</span>
-                    <span v-else>(Mitjana total)</span>
+                    <span>Volum </span>
+                    <span v-if="!(month === '0' || simYear === '0')">a {{ monthSelector.find(e=> e.value === month).label }}{{ nYears > 1 ? `, any ${simYear}` : '' }}</span>
+                    <span v-else>final</span>
+                    <span> (Hm³)</span>
                 </div>
                 <!-- Línia superior: Volum -->
                 <div class="res-top">
                     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
                     </svg>
-                    <span class="lab">Volum</span>
-                    <span class="val">{{ (reservoir.storage_hm3[selK] ?? 0).toFixed(1) }} hm³</span>
+                    <span class="val">{{ (reservoir.storage_hm3[selK === 0 ? nYears * 12 : selK] ?? 0).toFixed(1) }} </span>
                     <div class="cap">
                         <div class="cap-fill"
-                             :style="{ width: (Math.min(100, Math.max(0, (reservoir.storage_hm3[selK] / reservoir.capacity_hm3) * 100)) ?? 0).toFixed(0) + '%' }">
+                             :style="{ width: (Math.min(100, Math.max(0, (reservoir.storage_hm3[selK === 0 ? nYears * 12 : selK] / reservoir.capacity_hm3) * 100)) ?? 0).toFixed(0) + '%' }">
                         </div>
                     </div>
                 </div>
 
                 <!-- Línia inferior: Entrant | Sortint -->
+                <div>Cabals mitjans del període simulat (m³/s)</div>
                 <div class="res-bottom">
                     <div class="res-item">
                         <svg class="ico in" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 3v12m0 0l-4-4m4 4 4-4M4 21h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span class="lab">Entrant</span>
-                        <span class="val">{{ Number(reservoir.inflowSum_m3s[selK] || 0).toFixed(1) }} m³/s</span>
+                        <span class="val">{{ Number(reservoir.inflowSum_m3s[selK] || 0).toFixed(1) }}</span>
                     </div>
 
                     <div class="res-item">
@@ -1005,7 +1007,7 @@
                             <path d="M12 21V9m0 0 4 4m-4-4-4 4M4 3h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span class="lab">Sortint</span>
-                        <span class="val">{{ Number(reservoir.released_m3s[selK] || 0).toFixed(1) }} m³/s</span>
+                        <span class="val">{{ Number(reservoir.released_m3s[selK] || 0).toFixed(1) }}</span>
                     </div>
                 </div>
             </div>

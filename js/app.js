@@ -742,6 +742,7 @@ createApp({
                             selectById(eid, 'edge')
                         })
                         layer.on('mouseover', () => {
+                            layer.closeTooltip()
                             const ce = cy.value.getElementById(eid)
                             const html = edgeTooltipHTML(ce, month.value, selK.value)
                             const tt = layer.getTooltip()
