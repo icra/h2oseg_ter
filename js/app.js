@@ -365,9 +365,8 @@ createApp({
 
                 gm.RESERVOIR.customRelease_m3s = {}
                 months.forEach((m, idx) => {
-                    gm.RESERVOIR.customRelease_m3s[m] = Number(newVals[idx]).toFixed(2)
+                    gm.RESERVOIR.customRelease_m3s[m] = Number(Number(newVals[idx]).toFixed(2))
                 })
-                console.log("després de canviar", gm.RESERVOIR.customRelease_m3s)
 
 
                 await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
