@@ -647,17 +647,6 @@ const applyCustomTotalRelease = function(requestedTotalRelease_m3s, nodeContribu
         controlledRelease_hm3 = Math.min(requestedTotal_hm3, available_hm3)
     }
 
-    console.table({
-        k,
-        requestedTotal_m3s: requestedTotal,
-        requestedTotal_hm3,
-        storageStart_hm3,
-        inflowVol_hm3,
-        available_hm3,
-        minSpill_hm3,
-        controlledRelease_hm3,
-        capacity_hm3: R.capacity_hm3
-    })
 
     const controlledRelease_m3s = hm3ToM3s(controlledRelease_hm3, dt_s)
 
