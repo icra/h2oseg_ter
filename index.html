@@ -726,7 +726,7 @@
                                     <tbody>
                                     <tr>
                                         <td class="val">
-                                            {{ Number(reservoir.releasedVol_hm3.total / nYears).toFixed(0) || 0 }}
+                                            {{ ((Number(reservoir.releasedVol_hm3.total) / nYears) || 0).toFixed(0) }}
                                         </td>
                                         <td>
                                             <input
