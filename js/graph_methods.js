@@ -125,7 +125,8 @@ let RESERVOIR = {
     overflowVol_hm3: {},
     releaseDemand_m3s: {},
     released_m3s: {},
-    releasedVol_hm3: {}
+    releasedVol_hm3: {},
+    customRelease_m3s: {}
     // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
 
@@ -252,7 +253,6 @@ const applyGwLossToEdge = function(q_in, edge, month, params){
 
 const calculateFlow = async function(cy, params, nYears = 1, errorRef = null, opts = {}, loadingYear, initialVolume){
     if (!params) throw new Error('parameters required')
-
     initSimulation(nYears, initialVolume)
 
     const K = Number(nYears) * 12 || 12
@@ -308,6 +308,8 @@ const calculateAnnualValues = function(cy){
         .reduce((a, b) => a + b, 0) / SIM.r.length;
     RESERVOIR.released_m3s['0'] = SIM.r.map(k => RESERVOIR.released_m3s[k])
         .reduce((a, b) => a + b, 0) / SIM.r.length;
+    RESERVOIR.releasedVol_hm3.total = SIM.r.map(k => RESERVOIR.releasedVol_hm3[k])
+        .reduce((a, b) => a + b, 0)
 
 }
 
@@ -430,20 +432,8 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         if (R.inNodes && R.inNodes.has(node.id())) {
             const add_hm3 = m3sToHm3(positiveOut, dt_s);
 
-            const storageBefore = R.storage_hm3[k] || 0;
-            const storageRaw = storageBefore + add_hm3;
-
-            const overflow_hm3 = Math.max(0, storageRaw - R.capacity_hm3)
-            const stored_hm3 = Math.min(storageRaw, R.capacity_hm3)
-
-            // const nouVol = Math.min(R.storage_hm3[k] + add_hm3, R.capacity_hm3);
             R.inflowSum_m3s[k] += positiveOut;
             R.inflowVol_hm3[k] += add_hm3
-
-            R.overflowVol_hm3[k] += overflow_hm3;
-            R.overflowSum_m3s[k] += hm3ToM3s(overflow_hm3, dt_s)
-
-            R.storage_hm3[k] = stored_hm3;
 
             // no propaguem cabal a través dels arcs virtuals
             node.data('outflow' + k, 0);
@@ -457,15 +447,24 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
         }
 
         if (R.outNode && R.outNode === node.id()) {
+            const customRelease = R.customRelease_m3s[month]
+            const localContribution_m3s = Math.max(0, flowChange)
 
-            node.data('outflow' + k, 0);
+            let outflowR
 
-            // posa 0 als sortints de l'embassament perquè els successors es calculin sense aportació de l'embassament
-            node.outgoers('edge').forEach(edge => edge.data('flow' + k, 0));
+            if (customRelease !== undefined) {
+                outflowR = applyCustomTotalRelease(customRelease, localContribution_m3s, k, dt_s)
+            } else {
+                outflowR = localContribution_m3s;
+            }
 
-            // node.data('storage_after_hm3' + k, R.storage_hm3[k]);
+            node.data('outflow' + k, outflowR)
+            node.outgoers('edge').forEach(edge => {
+                const q = applyGwLossToEdge(outflowR, edge, month, params)
+                edge.data('flow' + k, q)
+            })
 
-            return;
+            return
         }
 
         // 3. Assignar aquest outflow als edges sortints
@@ -480,70 +479,73 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
     const leaves = cy.nodes().filter(n => n.outgoers('edge').length === 0);
     leaves.forEach(leaf => dfs(leaf));
 
-    // Segona passada per calcular demanda de l'embassament i alliberar l'aigua
+    // Segona passada per calcular demanda de l'embassament i alliberar l'aigua si no hi ha valor d'usuari
+    if (R.customRelease_m3s[month] === undefined){
+        const dam = cy.getElementById(R.outNode);
+        const succNodes = dam.successors('node');
+        let demanda = 0;
 
-    const dam = cy.getElementById(R.outNode);
-    const succNodes = dam.successors('node');
-    let demanda = 0;
-
-    succNodes.forEach(n => {
-        // la demanda és el cabal que necessita menys el que li entra.
-        if (n.data('m' + month) < 0) {
-            const demandaNode = (n.data('m' + month)*(-1) - n.data('inflow' + k))
-            demanda += Math.max(demandaNode, 0)
-        }
-    });
-
-    // Augmentem demanda un factor de seguretat
-    demanda = demanda * 1.01
-
-    const R_backup = structuredClone(R)
-
-    // Calcular demanda ambiental, és el màxim de envFlow<m> - flow
-    let demandaTotal = demanda
-    const tol = 1e-4
-    const maxIter = 10
-
-    for (let iter = 0; iter < maxIter; iter++) {
-        Object.assign(RESERVOIR, structuredClone(R_backup))
-
-        calculateFlowDownstreamDam(
-            cy,
-            demandaTotal,
-            dam,
-            month,
-            k,
-            dt_s,
-            params
-        )
-
-        let maxDeficitAmbiental = 0
-
-        dam.successors('edge').forEach(edge => {
-            const env = Number(edge.data('envFlow' + month)) || 0
-            const flow = Number(edge.data('flow' + k)) || 0
-            const deficit = env - flow
-
-            if (deficit > maxDeficitAmbiental) {
-                maxDeficitAmbiental = deficit
+        succNodes.forEach(n => {
+            // la demanda és el cabal que necessita menys el que li entra.
+            if (n.data('m' + month) < 0) {
+                const demandaNode = (n.data('m' + month)*(-1) - n.data('inflow' + k))
+                demanda += Math.max(demandaNode, 0)
             }
-        })
+        });
 
-        if (maxDeficitAmbiental <= tol) {
-            break
+        // Augmentem demanda un factor de seguretat
+        demanda = demanda * 1.01
+
+        const R_backup = structuredClone(R)
+
+        // Calcular demanda ambiental, és el màxim de envFlow<m> - flow
+        let demandaTotal = demanda
+        const tol = 1e-4
+        const maxIter = 10
+
+        for (let iter = 0; iter < maxIter; iter++) {
+            Object.assign(RESERVOIR, structuredClone(R_backup))
+
+            calculateFlowDownstreamDam(
+                cy,
+                demandaTotal,
+                dam,
+                month,
+                k,
+                dt_s,
+                params
+            )
+
+            let maxDeficitAmbiental = 0
+
+            dam.successors('edge').forEach(edge => {
+                const env = Number(edge.data('envFlow' + month)) || 0
+                const flow = Number(edge.data('flow' + k)) || 0
+                const deficit = env - flow
+
+                if (deficit > maxDeficitAmbiental) {
+                    maxDeficitAmbiental = deficit
+                }
+            })
+
+            if (maxDeficitAmbiental <= tol) {
+                break
+            }
+
+            const available_hm3 = R_backup.storage_hm3[k] + R_backup.inflowVol_hm3[k]
+            const maxPossible_m3s = hm3ToM3s(available_hm3, dt_s)
+            const alreadyAtLimit = demandaTotal >= maxPossible_m3s - tol
+
+            if (alreadyAtLimit) {
+                break
+            }
+
+            // Factor de seguretat perquè si hi ha pèrdues en trams intermedis,
+            // no ens quedem curts.
+            demandaTotal += maxDeficitAmbiental * 1.05
         }
-
-        const maxPossible_m3s = hm3ToM3s(R_backup.storage_hm3[k], dt_s)
-        const alreadyAtLimit = demandaTotal >= maxPossible_m3s - tol
-
-        if (alreadyAtLimit) {
-            break
-        }
-
-        // Factor de seguretat perquè si hi ha pèrdues en trams intermedis,
-        // no ens quedem curts.
-        demandaTotal += maxDeficitAmbiental * 1.05
     }
+
 
     if (errorRef) errorRef.value = null;
 };
@@ -551,26 +553,15 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
 const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, params){
     let R = RESERVOIR
 
-    const overflow_m3s = Number(R.overflowSum_m3s[k]) || 0;
-    const maxPossible_m3s = hm3ToM3s(R.storage_hm3[k], dt_s)
+    const localContribution_m3s = Math.max(0, Number(dam.data('m' + month)) || 0)
 
-    // La demanda consumeix volum embassat.
-    // El sobreeiximent s'afegeix al cabal alliberat, però no consumeix volum,
-    // perquè és aigua que no cabia dins l'embassament.
-    const demandRelease_m3s = Math.min(demanda, maxPossible_m3s);
-    const release_m3s = demandRelease_m3s + overflow_m3s;
+    const totalOutflow_m3s = applyReservoirRelease(demanda, localContribution_m3s, k, dt_s)
 
-    const used_hm3 = m3sToHm3(demandRelease_m3s, dt_s);
-
-    R.storage_hm3[k] = Math.max(0, R.storage_hm3[k] - used_hm3);
-    R.releaseDemand_m3s[k] = demanda + overflow_m3s;
-    R.released_m3s[k] = release_m3s;
-    R.releasedVol_hm3[k] = m3sToHm3(release_m3s, dt_s);
-
-    // console.log(m, "entrada", R.inflowVol_hm3[m], "maxim", maxPossible_m3s, "release", release_m3s, "demanda", demanda, "storage", R.storage_hm3[m]);
-
-    dam.data('outflow' + k, release_m3s);
-    dam.outgoers('edge').forEach(e => e.data('flow' + k, release_m3s));
+    dam.data('outflow' + k, totalOutflow_m3s);
+    dam.outgoers('edge').forEach(e => {
+        const q = applyGwLossToEdge(totalOutflow_m3s, e, month, params)
+        e.data('flow' + k, q)
+    })
 
     // Recalcular tot aigües avall amb el release ja aplicat
     const bfs = cy.elements().bfs({ roots: dam, directed: true });
@@ -595,6 +586,78 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
         });
     });
 }
+
+const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, k, dt_s) {
+    const R = RESERVOIR
+
+    const controlled = Math.max(0, Number(controlledRelease_m3s) || 0)
+
+    const storageStart_hm3 = Number(R.storage_hm3[k]) || 0
+    const inflowVol_hm3 = Number(R.inflowVol_hm3[k]) || 0
+
+    const available_hm3 = storageStart_hm3 + inflowVol_hm3
+    const maxControlledRelease_m3s = hm3ToM3s(available_hm3, dt_s)
+
+    const actualControlledRelease_m3s = Math.min(controlled, maxControlledRelease_m3s)
+    const controlledReleaseVol_hm3 = m3sToHm3(actualControlledRelease_m3s, dt_s)
+
+    const storageAfterRelease_hm3 = Math.max(0, available_hm3 - controlledReleaseVol_hm3)
+    const overflowVol_hm3 = Math.max(0, storageAfterRelease_hm3 - R.capacity_hm3)
+    const overFlow_m3s = hm3ToM3s(overflowVol_hm3, dt_s)
+    const storageEnd_hm3 = Math.min(storageAfterRelease_hm3, R.capacity_hm3)
+    const reservoirRelease_m3s = actualControlledRelease_m3s + overFlow_m3s
+    const totalOutflow_m3s = reservoirRelease_m3s + nodeContribution
+
+    R.storage_hm3[k] = storageEnd_hm3
+
+    R.overflowVol_hm3[k] = overflowVol_hm3
+    R.overflowSum_m3s[k] = overFlow_m3s
+
+    R.releaseDemand_m3s[k] = controlled
+    R.released_m3s[k] = reservoirRelease_m3s
+    R.releasedVol_hm3[k] = m3sToHm3(reservoirRelease_m3s, dt_s)
+
+    return totalOutflow_m3s
+}
+
+const applyCustomTotalRelease = function(requestedTotalRelease_m3s, nodeContribution_m3s, k, dt_s){
+    const R = RESERVOIR
+    const requestedTotal = Math.max(0, Number(requestedTotalRelease_m3s) || 0)
+    const nodeContribution = Math.max(0, Number(nodeContribution_m3s) || 0)
+
+    const storageStart_hm3 = Number(R.storage_hm3[k]) || 0
+    const inflowVol_hm3 = Number(R.inflowVol_hm3[k]) || 0
+    const available_hm3 = storageStart_hm3 + inflowVol_hm3
+
+    const requestedTotal_hm3 = m3sToHm3(requestedTotal, dt_s)
+
+    // Sobreeiximent inevitable si no es desembassa res
+    const minSpill_hm3 = Math.max(0, available_hm3 - R.capacity_hm3)
+
+
+    let controlledRelease_hm3
+
+    if (requestedTotal_hm3 <= minSpill_hm3) {
+        // No cal desembassar controladament:
+        // el mínim físic ja és superior al que demana l'usuari.
+        controlledRelease_hm3 = 0
+    } else {
+        // Per assolir un total superior al sobreeiximent inevitable,
+        // desembassem aquest volum controladament.
+        controlledRelease_hm3 = Math.min(requestedTotal_hm3, available_hm3)
+    }
+
+
+    const controlledRelease_m3s = hm3ToM3s(controlledRelease_hm3, dt_s)
+
+    return applyReservoirRelease(
+        controlledRelease_m3s,
+        nodeContribution,
+        k,
+        dt_s
+    )
+}
+
 
 const calculateMonthlyMeanCy = function (cy, varPrefix) {
     const sumWeighted = Array(12).fill(0)
@@ -771,6 +834,7 @@ export default {
     isHeadwaterNode,
     accumulateUpstream,
     m3sToHm3,
+    hm3ToM3s,
     monthSeconds,
     monthOfStep
 }
