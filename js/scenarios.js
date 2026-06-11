@@ -64,7 +64,6 @@ const modifyDemand = async function(cy, deltaUrbanDemand, types) {
         return
     }
     const reduction = Number(deltaUrbanDemand) / 100
-    console.log('reduction', reduction)
     const flow = Array(12).fill().map((e, i) => String('m' + (i + 1)))
     const refFlow = Array(12).fill().map((e, i) => String('refFlow' + (i + 1)))
 
