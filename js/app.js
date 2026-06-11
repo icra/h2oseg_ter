@@ -212,7 +212,7 @@ createApp({
         const scenarios = ref({
             rainReduction: {
                 name: "Modificació de pluja",
-                value: '0',
+                value: '100',
                 units: "%",
                 description: "Aplica una modificació proporcional a la precipitació mitjana anual",
                 active: false
@@ -228,21 +228,21 @@ createApp({
             },
             urbanDemand: {
                 name: "Modificació de la demanda per a ús urbà",
-                value: '0',
+                value: '100',
                 units: "%",
                 description: "Augmenta proporcionalment totes les captacions per a ús urbà",
                 active: false
             },
             agriDemand: {
                 name: "Modificació de la demanda per a ús agrícola",
-                value: '0',
+                value: '100',
                 units: "%",
                 description: "Augmenta proporcionalment totes les captacions per a ús agrícola",
                 active: false
             },
             forestSurface: {
                 name: "Modificació de la superfície forestal",
-                value: '0',
+                value: '100',
                 units: "%",
                 description: "Substitueix proporcionalment boscos per conreus de secà i prats i a la inversa",
                 active: false
@@ -411,8 +411,8 @@ createApp({
             loading.value = true
             await sleep(1)
 
-            if (scenarios.value.rainReduction.active === false && scenarios.value.rainReduction.value !== '0') {
-                scenarios.value.rainReduction.value = '0'
+            if (scenarios.value.rainReduction.active === false && scenarios.value.rainReduction.value !== '100') {
+                scenarios.value.rainReduction.value = '100'
                 await scen.rainReduction(cy.value, scenarios.value.rainReduction.value)
             } else if (scenarios.value.rainReduction.active) {
                 await scen.rainReduction(cy.value, scenarios.value.rainReduction.value)
@@ -456,22 +456,22 @@ createApp({
                 )
             }
 
-            if (scenarios.value.urbanDemand.active === false && scenarios.value.urbanDemand.value !== '0') {
-                scenarios.value.urbanDemand.value = '0'
+            if (scenarios.value.urbanDemand.active === false && scenarios.value.urbanDemand.value !== '100') {
+                scenarios.value.urbanDemand.value = '100'
                 await scen.modifyDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
             } else if (scenarios.value.urbanDemand.active) {
                 await scen.modifyDemand(cy.value, scenarios.value.urbanDemand.value, urbanDemandTypes)
             }
 
-            if (scenarios.value.agriDemand.active === false && scenarios.value.agriDemand.value !== '0') {
-                scenarios.value.agriDemand.value = '0'
+            if (scenarios.value.agriDemand.active === false && scenarios.value.agriDemand.value !== '100') {
+                scenarios.value.agriDemand.value = '100'
                 await scen.modifyDemand(cy.value, scenarios.value.agriDemand.value, agriDemandTypes)
             } else if (scenarios.value.agriDemand.active) {
                 await scen.modifyDemand(cy.value, scenarios.value.agriDemand.value, agriDemandTypes)
             }
 
-            if (scenarios.value.forestSurface.active === false && scenarios.value.forestSurface.value !== '0') {
-                scenarios.value.forestSurface.value = '0'
+            if (scenarios.value.forestSurface.active === false && scenarios.value.forestSurface.value !== '100') {
+                scenarios.value.forestSurface.value = '100'
                 await scen.modifyForest(cy.value, scenarios.value.forestSurface.value)
             } else if (scenarios.value.forestSurface.active) {
                 await scen.modifyForest(cy.value, scenarios.value.forestSurface.value)
@@ -482,6 +482,7 @@ createApp({
             int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
 
             tick.value++
+            if (selectedEle.value) calcSelectedEleVolumes(selectedEle.value)
             loading.value = false
         }
 
@@ -489,6 +490,34 @@ createApp({
 
         const edgeLayerById = new Map()
         const nodeLayerById = new Map()
+
+        const calcSelectedEleVolumes = function(val){
+            if (val && val.id === 'DESEMBASSAT') {
+                annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total / nYears.value).toFixed(0);
+                monthSelector.value.forEach(m => {
+                    if (m.value === '0') return
+                    const raw = gm.RESERVOIR.releasedVol_hm3[m.value]
+                    const num = Number.isFinite(+raw) ? Number(raw) : 0
+                    customRelease.value[m.value] = Number(num.toFixed(0))
+                })
+            }
+            else if (val && val.eleType === 'punt') {
+                const init = {}
+                monthSelector.value.forEach(m => {
+                    const raw = val['m' + m.value]
+                    const num = Number.isFinite(+raw) ? Number(raw) : 0
+                    init[m.value] = Number(num.toFixed(2))
+                })
+                flowModifiedByMonth.value = init
+
+                const rawAnnual = Hm3ToM3(val['m0'])
+                const annualNum = Number.isFinite(+rawAnnual) ? Number(rawAnnual) : 0
+                annualVolume.value = Number(annualNum)
+            } else {
+                flowModifiedByMonth.value = {}
+                annualVolume.value = null
+            }
+        }
 
         onMounted(async () => {
             loading.value = true
@@ -848,31 +877,7 @@ createApp({
 
         // Quan es selecciona un node, posa-hi el valor actual com a valor per defecte
         watch(selectedEle, (val) => {
-            if (val && val.id === 'DESEMBASSAT') {
-                annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total / nYears.value).toFixed(0);
-                monthSelector.value.forEach(m => {
-                    if (m.value === '0') return
-                    const raw = gm.RESERVOIR.releasedVol_hm3[m.value]
-                    const num = Number.isFinite(+raw) ? Number(raw) : 0
-                    customRelease.value[m.value] = Number(num.toFixed(0))
-                })
-            }
-            else if (val && val.eleType === 'punt') {
-                const init = {}
-                monthSelector.value.forEach(m => {
-                    const raw = val['m' + m.value]
-                    const num = Number.isFinite(+raw) ? Number(raw) : 0
-                    init[m.value] = Number(num.toFixed(2))
-                })
-                flowModifiedByMonth.value = init
-
-                const rawAnnual = Hm3ToM3(val['m0'])
-                const annualNum = Number.isFinite(+rawAnnual) ? Number(rawAnnual) : 0
-                annualVolume.value = Number(annualNum)
-            } else {
-                flowModifiedByMonth.value = {}
-                annualVolume.value = null
-            }
+            calcSelectedEleVolumes(val)
         }, {immediate: true});
 
         watch(selK, (k) => {
