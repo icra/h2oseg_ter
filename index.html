@@ -56,14 +56,14 @@
                     <div v-if="scenarios.rainReduction.active" class="scenario-slider">
                         <input
                                 type="range"
-                                min="-100"
-                                max="100"
+                                min="0"
+                                max="200"
                                 v-model="scenarios.rainReduction.value"
                         />
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ ((pptMean * (100 + +scenarios.rainReduction.value) / 100)).toFixed(0) }} mm de mitjana a la conca.
+                                Nou valor: {{ ((pptMean * scenarios.rainReduction.value / 100)).toFixed(0) }} mm de mitjana a la conca.
                             </span>
                                         <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.rainReduction.value }}%
@@ -181,14 +181,14 @@
                     <div v-if="scenarios.urbanDemand.active" class="scenario-slider">
                         <input
                                 type="range"
-                                min="-100"
-                                max="100"
+                                min="0"
+                                max="200"
                                 v-model="scenarios.urbanDemand.value"
                         />
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ ((urbanDemandMean * (100 + +scenarios.urbanDemand.value) / 100)).toFixed(0) }} Hm³
+                                Nou valor: {{ ((urbanDemandMean * scenarios.urbanDemand.value / 100)).toFixed(0) }} Hm³
                             </span>
                             <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.urbanDemand.value }}%
@@ -225,14 +225,14 @@
                     <div v-if="scenarios.agriDemand.active" class="scenario-slider">
                         <input
                                 type="range"
-                                min="-100"
-                                max="100"
+                                min="0"
+                                max="200"
                                 v-model="scenarios.agriDemand.value"
                         />
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ ((agriDemandMean * (100 + +scenarios.agriDemand.value) / 100)).toFixed(0) }} Hm³
+                                Nou valor: {{ (agriDemandMean * scenarios.agriDemand.value / 100).toFixed(0) }} Hm³
                             </span>
                             <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.agriDemand.value }}%
@@ -269,14 +269,14 @@
                     <div v-if="scenarios.forestSurface.active" class="scenario-slider">
                         <input
                                 type="range"
-                                min="-100"
-                                max="100"
+                                min="0"
+                                max="200"
                                 v-model="scenarios.forestSurface.value"
                         />
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor aproximat: {{ ((forestSurface * (100 + +scenarios.forestSurface.value) / 100)).toFixed(0) }} km².
+                                Nou valor aproximat: {{ ((forestSurface * scenarios.forestSurface.value / 100)).toFixed(0) }} km².
                             </span>
                             <span class="scenario-value-delta">
                                 Canvi: {{ scenarios.forestSurface.value }}%
