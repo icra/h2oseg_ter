@@ -3,7 +3,7 @@ const rainReduction = async function (cy, deltaPpt) {
         console.error("cy not loaded")
         return
     }
-    const reduction = (100 + Number(deltaPpt)) / 100
+    const reduction = Number(deltaPpt) / 100
     const ppt = Array(12).fill().map((e, i) => String('ppt' + (i + 1)))
     const refppt = Array(12).fill().map((e, i) => String('refppt' + (i + 1)))
 
@@ -63,7 +63,7 @@ const modifyDemand = async function(cy, deltaUrbanDemand, types) {
         console.error("cy not loaded")
         return
     }
-    const reduction = (100 + Number(deltaUrbanDemand)) / 100
+    const reduction = Number(deltaUrbanDemand) / 100
     const flow = Array(12).fill().map((e, i) => String('m' + (i + 1)))
     const refFlow = Array(12).fill().map((e, i) => String('refFlow' + (i + 1)))
 
@@ -95,7 +95,7 @@ const modifyForest = async function(cy, deltaForest){
         console.error("cy not loaded")
         return
     }
-    const change = (100 + Number(deltaForest)) / 100
+    const change = Number(deltaForest) / 100
 
     const forestKey = 'us_forestal'
     const dryKey = 'us_conreu_seca'
