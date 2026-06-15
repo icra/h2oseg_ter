@@ -599,7 +599,8 @@ const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, 
     const storageStart_hm3 = Number(R.storage_hm3[k]) || 0
     const inflowVol_hm3 = Number(R.inflowVol_hm3[k]) || 0
 
-    const available_hm3 = storageStart_hm3 + inflowVol_hm3
+    const evap_hm3 = calculateEvaporation(k, etp)
+    const available_hm3 = storageStart_hm3 + inflowVol_hm3 - evap_hm3
     const maxControlledRelease_m3s = hm3ToM3s(available_hm3, dt_s)
 
     const actualControlledRelease_m3s = Math.min(controlled, maxControlledRelease_m3s)
@@ -608,8 +609,7 @@ const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, 
     const storageAfterRelease_hm3 = Math.max(0, available_hm3 - controlledReleaseVol_hm3)
     const overflowVol_hm3 = Math.max(0, storageAfterRelease_hm3 - R.capacity_hm3)
     const overFlow_m3s = hm3ToM3s(overflowVol_hm3, dt_s)
-    const evap_hm3 = calculateEvaporation(k, etp)
-    const storageEnd_hm3 = Math.min(storageAfterRelease_hm3 - evap_hm3, R.capacity_hm3)
+    const storageEnd_hm3 = Math.min(storageAfterRelease_hm3, R.capacity_hm3)
     const reservoirRelease_m3s = actualControlledRelease_m3s + overFlow_m3s
     const totalOutflow_m3s = reservoirRelease_m3s + nodeContribution
 
