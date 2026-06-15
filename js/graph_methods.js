@@ -600,7 +600,7 @@ const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, 
     const inflowVol_hm3 = Number(R.inflowVol_hm3[k]) || 0
 
     const evap_hm3 = calculateEvaporation(k, etp)
-    const available_hm3 = storageStart_hm3 + inflowVol_hm3 - evap_hm3
+    const available_hm3 = Math.max(storageStart_hm3 + inflowVol_hm3 - evap_hm3, 0)
     const maxControlledRelease_m3s = hm3ToM3s(available_hm3, dt_s)
 
     const actualControlledRelease_m3s = Math.min(controlled, maxControlledRelease_m3s)
