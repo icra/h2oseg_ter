@@ -454,7 +454,8 @@ const calculateFlowMonth = function(cy, params, errorRef = null, opts = {}) {
             let outflowR
 
             if (customRelease !== undefined) {
-                outflowR = applyCustomTotalRelease(customRelease, localContribution_m3s, k, dt_s)
+                const etp = node.data('etp' + month)
+                outflowR = applyCustomTotalRelease(customRelease, localContribution_m3s, etp, k, dt_s)
             } else {
                 outflowR = localContribution_m3s;
             }
@@ -556,7 +557,9 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
 
     const localContribution_m3s = Math.max(0, Number(dam.data('m' + month)) || 0)
 
-    const totalOutflow_m3s = applyReservoirRelease(demanda, localContribution_m3s, k, dt_s)
+    const etp = dam.data('etp' + month)
+
+    const totalOutflow_m3s = applyReservoirRelease(demanda, localContribution_m3s, etp, k, dt_s)
 
     dam.data('outflow' + k, totalOutflow_m3s);
     dam.outgoers('edge').forEach(e => {
@@ -588,7 +591,7 @@ const calculateFlowDownstreamDam = function(cy, demanda, dam, month, k, dt_s, pa
     });
 }
 
-const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, k, dt_s) {
+const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, etp, k, dt_s) {
     const R = RESERVOIR
 
     const controlled = Math.max(0, Number(controlledRelease_m3s) || 0)
@@ -605,7 +608,8 @@ const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, 
     const storageAfterRelease_hm3 = Math.max(0, available_hm3 - controlledReleaseVol_hm3)
     const overflowVol_hm3 = Math.max(0, storageAfterRelease_hm3 - R.capacity_hm3)
     const overFlow_m3s = hm3ToM3s(overflowVol_hm3, dt_s)
-    const storageEnd_hm3 = Math.min(storageAfterRelease_hm3, R.capacity_hm3)
+    const evap_hm3 = calculateEvaporation(k, etp)
+    const storageEnd_hm3 = Math.min(storageAfterRelease_hm3 - evap_hm3, R.capacity_hm3)
     const reservoirRelease_m3s = actualControlledRelease_m3s + overFlow_m3s
     const totalOutflow_m3s = reservoirRelease_m3s + nodeContribution
 
@@ -621,7 +625,7 @@ const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, 
     return totalOutflow_m3s
 }
 
-const applyCustomTotalRelease = function(requestedTotalRelease_m3s, nodeContribution_m3s, k, dt_s){
+const applyCustomTotalRelease = function(requestedTotalRelease_m3s, nodeContribution_m3s, etp, k, dt_s){
     const R = RESERVOIR
     const requestedTotal = Math.max(0, Number(requestedTotalRelease_m3s) || 0)
     const nodeContribution = Math.max(0, Number(nodeContribution_m3s) || 0)
@@ -654,6 +658,7 @@ const applyCustomTotalRelease = function(requestedTotalRelease_m3s, nodeContribu
     return applyReservoirRelease(
         controlledRelease_m3s,
         nodeContribution,
+        etp,
         k,
         dt_s
     )
@@ -749,7 +754,7 @@ const calculateSurface = function(cy, us){
         .reduce((a, b) => a + b, 0)
 }
 
-const calculateEvaporation = function(cy, month){
+const calculateEvaporation = function(k, etp){
     const maxSurface  = RESERVOIR.maxSurface_ha
     const maxSurfaceSau = 443
     const maxSurfaceSus = 526
@@ -757,7 +762,7 @@ const calculateEvaporation = function(cy, month){
     // Volum repartit Sau 0.4 i Susqueda 0.6 a partir de la capacitat màxima de cada embassament
     const partSau = 0.4
     const partSus = 0.6
-    const volum_m3 = RESERVOIR.storage_hm3[month] * 1e6
+    const volum_m3 = RESERVOIR.storage_hm3[k] * 1e6
     const volSau = volum_m3 * partSau
     const volSus = volum_m3 * partSus
 
@@ -766,12 +771,10 @@ const calculateEvaporation = function(cy, month){
     const areaSus = (volSus / 233e6) * maxSurfaceSus
     const areaEmb_m2 = (areaSau + areaSus) * 1e4
 
-    const etp = cy.nodes().filter(n => n.id() == 'DESEMBASSAT').first()[month]
-
     // Evaporació basat en el model calibrat en R a partir de evaporació de Penman FAO56
     const et = (etp * 1.11 + 16.76) // l/m2
     const evaporacio_hm3 = ((et / 1000) * areaEmb_m2) / 1e6 // hm3 mensuals
-
+    // console.log('evaporació', 'volum:', RESERVOIR.storage_hm3[k], 'evaporat:', evaporacio_hm3, "percentatge:", evaporacio_hm3 / RESERVOIR.storage_hm3[k] * 100)
     return evaporacio_hm3
 }
 
