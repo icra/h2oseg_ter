@@ -119,6 +119,7 @@ let RESERVOIR = {
     outNode: 'DESEMBASSAT',
     storage_hm3: {},
     capacity_hm3: 400,
+    maxSurface_ha: 967,
     inflowSum_m3s: {},
     inflowVol_hm3: {},
     overflowSum_m3s: {},
@@ -746,6 +747,32 @@ const calculateSurface = function(cy, us){
         .filter(n => n.data(us) != null)
         .map((n) => n.data('area_m2') * n.data(us) / 1000000)
         .reduce((a, b) => a + b, 0)
+}
+
+const calculateEvaporation = function(cy, month){
+    const maxSurface  = RESERVOIR.maxSurface_ha
+    const maxSurfaceSau = 443
+    const maxSurfaceSus = 526
+
+    // Volum repartit Sau 0.4 i Susqueda 0.6 a partir de la capacitat màxima de cada embassament
+    const partSau = 0.4
+    const partSus = 0.6
+    const volum_m3 = RESERVOIR.storage_hm3[month] * 1e6
+    const volSau = volum_m3 * partSau
+    const volSus = volum_m3 * partSus
+
+    // Capacitat Sau: 155, capacitat Susqueda 233 hm3
+    const areaSau = (volSau / 155e6) * maxSurfaceSau
+    const areaSus = (volSus / 233e6) * maxSurfaceSus
+    const areaEmb_m2 = (areaSau + areaSus) * 1e4
+
+    const etp = cy.nodes().filter(n => n.id() == 'DESEMBASSAT').first()[month]
+
+    // Evaporació basat en el model calibrat en R a partir de evaporació de Penman FAO56
+    const et = (etp * 1.11 + 16.76) // l/m2
+    const evaporacio_hm3 = ((et / 1000) * areaEmb_m2) / 1e6 // hm3 mensuals
+
+    return evaporacio_hm3
 }
 
 const accumulateUpstream = function(cy, id, variable, operand = 'mean') {
