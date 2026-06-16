@@ -19,7 +19,7 @@
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
-                <h3 class="modal-title">Configuració d'escenaris</h3>
+                <h3 class="modal-title">{{ $t('modalScenarios.title') }}</h3>
                 <button class="modal-close" @click="openModalScenarios=false" aria-label="Tanca">
                     ×
                 </button>
@@ -36,7 +36,7 @@
                                     type="checkbox"
                                     v-model="scenarios.rainReduction.active"
                             />
-                            <span class="scenario-title">Modificació de la pluja anual</span>
+                            <span class="scenario-title">{{ $t('modalScenarios.rainModification') }}</span>
                         </label>
 
                         <!-- Xip amb el % quan l'escenari és actiu -->
@@ -50,7 +50,7 @@
 
                     <p class="scenario-desc">
                         {{scenarios.rainReduction.description}}
-                        (valor inicial: {{ Number(pptMean || 0).toFixed(0) }} mm).
+                        ({{ $t('modalScenarios.initialValue') }}: {{ Number(pptMean || 0).toFixed(0) }} mm).
                     </p>
 
                     <div v-if="scenarios.rainReduction.active" class="scenario-slider">
@@ -63,10 +63,10 @@
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ ((pptMean * scenarios.rainReduction.value / 100)).toFixed(0) }} mm de mitjana a la conca.
+                                {{ $t('modalScenarios.newValue') }}: {{ ((pptMean * scenarios.rainReduction.value / 100)).toFixed(0) }} mm {{ $t('modalScenarios.watershedMean') }}.
                             </span>
                                         <span class="scenario-value-delta">
-                                Canvi: {{ scenarios.rainReduction.value }}%
+                                {{ $t('modalScenarios.change') }}: {{ scenarios.rainReduction.value }}%
                             </span>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                                     type="checkbox"
                                     v-model="scenarios.temperatureIncrease.active"
                             />
-                            <span class="scenario-title">Modificació de la temperatura mitjana anual</span>
+                            <span class="scenario-title">{{ $t('modalScenarios.tempModification') }}</span>
                         </label>
 
                         <!-- Xip amb el % quan l'escenari és actiu -->
@@ -97,13 +97,13 @@
                                 type="checkbox"
                                 v-model="scenarios.temperatureIncrease.monthly"
                         />
-                        <span class="scenario-desc">Modificació de la temperatura mitjana mes a mes</span>
+                        <span class="scenario-desc">{{ $t('modalScenarios.monthlyTemp') }}</span>
                     </label>
 
                     <div v-if="!scenarios.temperatureIncrease.monthly">
                         <p class="scenario-desc">
                             {{ scenarios.temperatureIncrease.description }}
-                            (valor inicial: {{ Number(tmitMean.annual || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
+                            ({{ $t('modalScenarios.initialValue') }}: {{ Number(tmitMean.annual || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
                         </p>
 
                         <div v-if="scenarios.temperatureIncrease.active" class="scenario-slider">
@@ -116,10 +116,10 @@
 
                             <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ (tmitMean.annual + Number(scenarios.temperatureIncrease.value)).toFixed(0) }} {{ scenarios.temperatureIncrease.units }} de mitjana a la conca.
+                                {{ $t('modalScenarios.newValue') }}: {{ (tmitMean.annual + Number(scenarios.temperatureIncrease.value)).toFixed(0) }} {{ scenarios.temperatureIncrease.units }} de mitjana a la conca.
                             </span>
                                 <span class="scenario-value-delta">
-                                Canvi: {{ scenarios.temperatureIncrease.value }} {{ scenarios.temperatureIncrease.units }}
+                                {{ $t('modalScenarios.change') }}: {{ scenarios.temperatureIncrease.value }} {{ scenarios.temperatureIncrease.units }}
                             </span>
                             </div>
                         </div>
@@ -604,6 +604,11 @@
             <div class ="align-right">
                 <img src="assets/logo_h20seg.png" alt="Logo H2OSEG" style="height: 50px;" />
                 <span style="padding: 0.5em;">Ter</span>
+            </div>
+            <div class="locale-changer">
+                <select v-model="$i18n.locale">
+                    <option v-for="locale in $i18n.availableLocales" :key="`locale-${locale}`" :value="locale">{{ locale }}</option>
+                </select>
             </div>
             <!-- Temps (Any / Mes) + Anys simulació -->
             <div class="time-controls" v-cloak>

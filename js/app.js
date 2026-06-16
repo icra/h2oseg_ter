@@ -3,7 +3,7 @@
 import gm from './graph_methods.js'
 import int from './interface.js'
 import scen from './scenarios.js'
-import m from './messagesi18n.js'
+import messages from './messagesi18n.js'
 
 const {createApp, onMounted, ref, shallowRef, watch, nextTick} = Vue
 const { createI18n } = VueI18n;
@@ -11,9 +11,8 @@ const { createI18n } = VueI18n;
 const i18n = createI18n({
     legacy: false,
     locale: 'ca',
-    fallbackLocale: 'en',
-    messages: m.messages
-    }
+    fallbackLocale: 'ca',
+    messages: messages
 });
 
 const TT_OPTS = {direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane'}
