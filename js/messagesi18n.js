@@ -9,6 +9,8 @@ const messages = {
             change: "Canvi",
             tempModification: "Modificació de la temperatura mitjana anual",
             monthlyTemp: "Modificació de la temperatura mitjana mes a mes",
+            urbanModification: "Modificació de la demanda urbana",
+
 
         },
     },

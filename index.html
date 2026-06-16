@@ -161,7 +161,7 @@
                                     type="checkbox"
                                     v-model="scenarios.urbanDemand.active"
                             />
-                            <span class="scenario-title">Modificació de la demanda urbana</span>
+                            <span class="scenario-title">{{ $t('modalScenarios.urbanModification') }}</span>
                         </label>
 
                         <!-- Xip amb el % quan l'escenari és actiu -->
@@ -175,7 +175,7 @@
 
                     <p class="scenario-desc">
                         {{scenarios.urbanDemand.description}}
-                        (valor inicial: {{ Number(urbanDemandMean || 0).toFixed(0) }} Hm³ anuals).
+                        ({{ $t('modalScenarios.initialValue') }}: {{ Number(urbanDemandMean || 0).toFixed(0) }} Hm³ anuals).
                     </p>
 
                     <div v-if="scenarios.urbanDemand.active" class="scenario-slider">
@@ -188,10 +188,10 @@
 
                         <div class="scenario-values">
                             <span class="scenario-value-new">
-                                Nou valor: {{ ((urbanDemandMean * scenarios.urbanDemand.value / 100)).toFixed(0) }} Hm³
+                                {{ $t('modalScenarios.newValue') }}: {{ ((urbanDemandMean * scenarios.urbanDemand.value / 100)).toFixed(0) }} Hm³
                             </span>
                             <span class="scenario-value-delta">
-                                Canvi: {{ scenarios.urbanDemand.value }}%
+                                {{ $t('modalScenarios.change') }}: {{ scenarios.urbanDemand.value }}%
                             </span>
                         </div>
                     </div>
