@@ -93,22 +93,22 @@ const setNodeColor = function(node, k){
 
 const nodeTypeSymbols = [
     {
-        label: 'Àrea de drenatge',
+        labelKey: 'nodeTypes.drainageArea',
         shape: 'circle',
         types: ['massa']
     },
     {
-        label: 'Captació',
+        labelKey: 'nodeTypes.intake',
         shape: 'triangle',
         types: ['ETAP', 'ATL', 'Comunitat de regants', 'Cabal ambiental']
     },
     {
-        label: 'Retorn',
+        labelKey: 'nodeTypes.return',
         shape: 'square',
         types: ['EDAR', 'comporta', 'entrada']
     },
     {
-        label: "Estació d'aforament",
+        labelKey: 'nodeTypes.gaugingStation',
         shape: 'diamond',
         types: ['aforament']
     }

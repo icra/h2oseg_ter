@@ -3,8 +3,19 @@
 import gm from './graph_methods.js'
 import int from './interface.js'
 import scen from './scenarios.js'
+import mes from './messagesi18n.js'
 
 const {createApp, onMounted, ref, shallowRef, watch, nextTick} = Vue
+const { createI18n } = VueI18n;
+
+const i18n = createI18n({
+    legacy: false,
+    locale: 'ca',
+    fallbackLocale: 'ca',
+    messages: mes
+});
+
+const t = i18n.global.t.bind(i18n.global)
 
 const TT_OPTS = {direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane'}
 
@@ -63,24 +74,14 @@ const agriDemandTypes = ['Comunitat de regants']
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month, k) {
-    if (n.id() === 'DESEMBASSAT') {
-        return `
-            <div>
-              <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
-              <div>Tipus: ${n.data('type') ?? '—'}</div>
-              <div>Cabal desembassat: ${fmt(n.data('outflow' + k))}</div>
-              ${month === '0' ? '<div>Total anual: ' + Hm3ToM3(n.data('outflow' + k)) + ' Hm<sup>3</sup></div>' : ''}
-            </div>
-        `
-    }
     return `
         <div>
           <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
-          <div>Tipus: ${n.data('type') ?? '—'}</div>
-          <div>Cabal entrant: ${fmt(n.data('inflow' + k))}</div>
-          <div>${n.data('m' + month) > 0 ? 'Aportació' : 'Extracció'}: ${fmt(n.data('m' + month))}</div>
-          <div>Cabal sortint: ${fmt(n.data('outflow' + k))}</div>
-          ${month === '0' ? '<div>' + (n.data('m' + month) > 0 ? "Aportació" : "Extracció total") + ': ' + Hm3ToM3(n.data('m' + month)) + ' Hm<sup>3</sup></div>' : ''}
+          <div>${t('tt.type')}: ${n.data('type') ?? '—'}</div>
+          <div>${t('tt.incomeFlow')}: ${fmt(n.data('inflow' + k))}</div>
+          <div>${n.data('m' + month) > 0 ? t('tt.contribution') : t('tt.extraction')}: ${fmt(n.data('m' + month))}</div>
+          <div>${t('tt.outflow')}: ${fmt(n.data('outflow' + k))}</div>
+          ${month === '0' ? '<div>' + t('tt.volume') + ': ' + Hm3ToM3(n.data('m' + month)) + ' Hm<sup>3</sup></div>' : ''}
         </div>
   `
 }
@@ -90,9 +91,9 @@ function edgeTooltipHTML(e, month, k) {
     <div>
       <div><strong>${e.data('nomComu') ?? ''}</strong></div>
       <div>${e.data('codiMassa')}</div>
-      <div>Cabal mitjà: ${fmt(e.data('flow' + k))}</div>
-      <div>Cabal ambiental: ${fmt(e.data('envFlow' + month))}</div>
-      <div>Llargada tram: ${+e.data('lengthRiver').toFixed(0)} km</div>
+      <div>${t('tt.meanFlow')}: ${fmt(e.data('flow' + k))}</div>
+      <div>${t('tt.envFlow')}: ${fmt(e.data('envFlow' + month))}</div>
+      <div>${t('tt.length')}: ${+e.data('lengthRiver').toFixed(0)} km</div>
     </div>
   `
 }
@@ -100,10 +101,10 @@ function edgeTooltipHTML(e, month, k) {
 function embTooltipHTML(k) {
     return `
     <div>
-        <div><strong>Sistema Sau-Susqueda-Pasteral</strong></div>
-        <div>Volum al sistema: ${fmtHm3(gm.RESERVOIR.storage_hm3[k])}</div>
-        <div>Cabal mitjà d'entrada: ${fmt(gm.RESERVOIR.inflowSum_m3s[k])}</div>
-        <div>Cabal mitjà desembassat: ${fmt(gm.RESERVOIR.released_m3s[k])}</div>
+        <div><strong>${t('tt.system')} Sau-Susqueda-Pasteral</strong></div>
+        <div>${t('tt.systemVolume')}: ${fmtHm3(gm.RESERVOIR.storage_hm3[k === 0 ? nYears.value * 12 : k])}</div>
+        <div>${t('tt.meanIncomeFlow')}: ${fmt(gm.RESERVOIR.inflowSum_m3s[k])}</div>
+        <div>${t('tt.meanReleasedFlow')}: ${fmt(gm.RESERVOIR.released_m3s[k])}</div>
     </div>
     `
 }
@@ -112,13 +113,13 @@ function canalsTooltipHTML(n, c, month) {
     return `
     <div>
         <div><strong>${c.nom}</strong></div>
-        <div>Cabal mitjà: ${fmt(Math.abs(n.data('m' + month)))}</div>
+        <div>${t('tt.meanFlow')}: ${fmt(Math.abs(n.data('m' + month)))}</div>
     </div>
     `
 }
 
 const reset = function () {
-    window.confirm('Segur que vols reiniciar el model?') && window.location.reload()
+    window.confirm(`${t('resetConfirmation')}`) && window.location.reload()
 }
 
 async function loadCalibResults() {
@@ -136,27 +137,36 @@ createApp({
         const flowModified = ref(null)
         const flowModifiedByMonth = ref(null)
         const customRelease = ref({})
+        const localeLabels = {
+            ca: 'Català',
+            es: 'Español',
+            en: 'English'
+        }
         const errorMsg = ref(null)
         const month = ref('0')
         const baseMonths = [
-            {value: '1', label: "Gener"},
-            {value: '2', label: "Febrer"},
-            {value: '3', label: "Març"},
-            {value: '4', label: "Abril"},
-            {value: '5', label: "Maig"},
-            {value: '6', label: "Juny"},
-            {value: '7', label: "Juliol"},
-            {value: '8', label: "Agost"},
-            {value: '9', label: "Setembre"},
-            {value: '10', label: "Octubre"},
-            {value: '11', label: "Novembre"},
-            {value: '12', label: "Desembre"},
+            {value: '1', label: "months.1"},
+            {value: '2', label: "months.2"},
+            {value: '3', label: "months.3"},
+            {value: '4', label: "months.4"},
+            {value: '5', label: "months.5"},
+            {value: '6', label: "months.6"},
+            {value: '7', label: "months.7"},
+            {value: '8', label: "months.8"},
+            {value: '9', label: "months.9"},
+            {value: '10', label: "months.10"},
+            {value: '11', label: "months.11"},
+            {value: '12', label: "months.12"},
         ]
         const monthSelector = Vue.computed(() => {
-            if (nYears.value === 1){
-                return [{value: '0', label: "Total anual"}, ...baseMonths]
-            }
-            return baseMonths
+            const months = Array.from({ length: 12 }, (_, i) => ({
+                value: String(i + 1),
+                label: t(`months.${i + 1}`)
+            }))
+
+            return nYears.value === 1
+                ? [{ value: '0', label: t('months.0') }, ...months]
+                : months
         })
         const nYears = ref(1)
         const nYearsDraft = ref(1)
@@ -165,9 +175,9 @@ createApp({
             const N = Math.max(1, Math.min(10, Number(nYears.value) || 1))
             const options = Array.from({length: N}, (_, i) => ({
                 value: String(i+1),
-                label: `Any ${i+1}`
+                label: `${t('year')} ${i+1}`
             }))
-            options.push({value: '0', label: 'Total'})
+            options.push({value: '0', label: t('time.total')})
             return options
         })
         const yearsDirty = Vue.computed(() => {
@@ -211,40 +221,40 @@ createApp({
         const openModalInfo = ref(false)
         const scenarios = ref({
             rainReduction: {
-                name: "Modificació de pluja",
+                name: 'modalScenarios.rainModification',
                 value: '100',
                 units: "%",
-                description: "Aplica una modificació proporcional a la precipitació mitjana anual",
+                description: 'modalScenarios.rainDescription',
                 active: false
             },
             temperatureIncrease: {
-                name: "Modificació de temperatura",
+                name: "modalScenarios.tempModification",
                 value: '0',
                 units: "ºC",
-                description: "Aplica una modificació uniforme a la temperatura mitjana anual",
+                description: "modalScenarios.tempDescription",
                 active: false,
                 monthly: false,
                 monthlyValue: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             },
             urbanDemand: {
-                name: "Modificació de la demanda per a ús urbà",
+                name: "modalScenarios.urbanModification",
                 value: '100',
                 units: "%",
-                description: "Augmenta proporcionalment totes les captacions per a ús urbà",
+                description: "modalScenarios.urbanDescription",
                 active: false
             },
             agriDemand: {
-                name: "Modificació de la demanda per a ús agrícola",
+                name: "modalScenarios.agriDemandModification",
                 value: '100',
                 units: "%",
-                description: "Augmenta proporcionalment totes les captacions per a ús agrícola",
+                description: 'modalScenarios.agriDescription',
                 active: false
             },
             forestSurface: {
-                name: "Modificació de la superfície forestal",
+                name: "modalScenarios.forestSurfaceModification",
                 value: '100',
                 units: "%",
-                description: "Substitueix proporcionalment boscos per conreus de secà i prats i a la inversa",
+                description: "modalScenarios.forestDescription",
                 active: false
             }
         })
@@ -281,7 +291,7 @@ createApp({
 
             const link = document.createElement("a");
             link.href = url;
-            link.download = "dades_h2oseg_ter.json";
+            link.download = "h2oseg_ter.json";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -298,7 +308,7 @@ createApp({
                 for (let mo = 1; mo <= 12; mo++) {
                     const v = Number(customRelease.value[mo])
                     if (!Number.isFinite(v)) {
-                        errorMsg.value = `Introdueix un número vàlid al mes ${mo}`
+                        errorMsg.value = `${t('errors.validNumber', {m: mo})}`
                         loading.value = false
                         return
                     }
@@ -341,7 +351,7 @@ createApp({
             await sleep(0)
 
             if (annualVolume.value === '' || isNaN(annualVolume.value) || annualVolume.value === null) {
-                errorMsg.value = "Introdueix un volum vàlid"
+                errorMsg.value = t('errors.validVolume')
                 annualVolume.value = ele.id === 'DESEMBASSAT' ? Math.round(gm.RESERVOIR.releasedVol_hm3.total / nYears.value) : Hm3ToM3(ele.m0)
                 loading.value = false
                 return
@@ -672,7 +682,7 @@ createApp({
                         container.style.alignItems = 'center';
                         container.style.justifyContent = 'center';
                         container.style.cursor = 'pointer';
-                        container.title = 'Restableix la vista';
+                        container.title = t('map.resetView');
 
                         L.DomEvent.disableClickPropagation(container);
 
@@ -880,6 +890,14 @@ createApp({
             calcSelectedEleVolumes(val)
         }, {immediate: true});
 
+        watch(simYear, (year) => {
+            if (Number(year) === 0) {
+                month.value = '0'
+            } else if (nYears.value > 1 && month.value === '0') {
+                month.value = '1'
+            }
+        });
+
         watch(selK, (k) => {
             int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
         });
@@ -896,6 +914,7 @@ createApp({
             flowModified,
             flowModifiedByMonth,
             customRelease,
+            localeLabels,
             applyFlowChanges,
             applyAnnualChange,
             editMode,
@@ -941,4 +960,6 @@ createApp({
             monthOfStep: gm.monthOfStep,
         }
     }
-}).mount('#app')
+})
+    .use(i18n)
+    .mount('#app')

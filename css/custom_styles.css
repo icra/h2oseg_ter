@@ -49,9 +49,55 @@ html, body {
     height: 100%;
 }
 
-.align-right {
-    text-align: right;
+.sidebar-header {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
     padding: 1em;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.sidebar-brand img {
+    height: 50px;
+    width: auto;
+}
+
+.sidebar-brand span {
+    color: #34495e;
+    font-weight: 700;
+}
+
+.locale-changer {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+.locale-select {
+    min-width: 104px;
+    height: 26px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.12);
+    background-color: #fff;
+    background-position: 8px center, calc(100% - 12px) 11px, calc(100% - 8px) 11px;
+    background-repeat: no-repeat;
+    background-size: 18px 12px, 4px 4px, 4px 4px;
+    /*color: #34495e;*/
+    outline: none;
+    padding: 0 24px 0 32px;
+    font-size: 0.75rem;
+    /*font-weight: 700;*/
+    cursor: pointer;
+    /*appearance: none;*/
+    /*-webkit-appearance: none;*/
 }
 
 td.valor, th.valor {
@@ -144,7 +190,7 @@ td.valor, th.valor {
     gap: 8px;
     padding: 8px 10px;
     border: 1px solid #e7eaf0;
-    border-radius: 10px;
+    border-radius: 8px;
     background: #fff;
     font-size: 12px; line-height: 1.2;
 }
@@ -389,7 +435,7 @@ button:hover {
 }
 
 .scenario-block {
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid #e7eaf0;
     background: #f9fafb;
     padding: 10px 12px;
@@ -545,7 +591,7 @@ button:hover {
 
 .map-legend .legend-block {
     background: rgba(255, 255, 255, 0.96);
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid #e5e7eb;
     box-shadow: 0 6px 18px rgba(0,0,0,0.12);
     padding: 6px 6px 6px 8px;   /* compacte, poca dreta */
@@ -557,7 +603,7 @@ button:hover {
 .legend-header {
     display: flex;
     align-items: center;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(255, 255, 255, 0.96);
     justify-content: space-between;
     gap: 12px;
@@ -893,7 +939,7 @@ button:hover {
 .time-select,
 .time-input{
     height: 25px;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid rgba(0,0,0,0.12);
     padding: 0 10px;
     background: #fff;
@@ -911,7 +957,7 @@ button:hover {
 
 .time-hint{
     margin: 8px 0 0;
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     opacity: 0.7;
 }
 
