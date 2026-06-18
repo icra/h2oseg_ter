@@ -641,25 +641,27 @@
         </div>
 
         <div id="sidebar">
-            <div class="locale-changer">
-                <select
-                        v-model="$i18n.locale"
-                        class="locale-select"
-                        :aria-label="$t('languageSelector')"
-                        :style="{ backgroundImage: `url('assets/flags/${$i18n.locale}.svg'), linear-gradient(45deg, transparent 50%, #34495e 50%), linear-gradient(135deg, #34495e 50%, transparent 50%)` }"
-                >
-                    <option
-                            v-for="locale in $i18n.availableLocales"
-                            :key="`locale-${locale}`"
-                            :value="locale"
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img src="assets/logo_h20seg.png" :alt="$t('logoAlt')" />
+                    <span>Ter</span>
+                </div>
+                <div class="locale-changer">
+                    <select
+                            v-model="$i18n.locale"
+                            class="locale-select"
+                            :aria-label="$t('languageSelector')"
+                            :style="{ backgroundImage: `url('assets/flags/${$i18n.locale}.svg'), linear-gradient(45deg, transparent 50%, #34495e 50%), linear-gradient(135deg, #34495e 50%, transparent 50%)` }"
                     >
-                        {{ localeLabels[locale] }}
-                    </option>
-                </select>
-            </div>
-            <div class ="align-right">
-                <img src="assets/logo_h20seg.png" :alt="$t('logoAlt')" style="height: 50px;" />
-                <span style="padding: 0.5em;">Ter</span>
+                        <option
+                                v-for="locale in $i18n.availableLocales"
+                                :key="`locale-${locale}`"
+                                :value="locale"
+                        >
+                            {{ localeLabels[locale] }}
+                        </option>
+                    </select>
+                </div>
             </div>
             <!-- Temps (Any / Mes) + Anys simulació -->
             <div class="time-controls" v-cloak>
