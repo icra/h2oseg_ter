@@ -90,7 +90,7 @@ function nodeTooltipHTML(n, month, k) {
           <div>${t('tt.type')}: ${n.data('type') ?? '—'}</div>
           <div>${t('tt.incomeFlow')}: ${fmt(n.data('inflow' + k))}</div>
           <div>${n.data('m' + month) > 0 ? t('tt.contribution') : t('tt.extraction')}: ${fmt(n.data('m' + month))}</div>
-          <div>Cabal sortint: ${fmt(n.data('outflow' + k))}</div>
+          <div>${t('tt.outflow')}: ${fmt(n.data('outflow' + k))}</div>
           ${month === '0' ? '<div>' + t('tt.volume') + ': ' + Hm3ToM3(n.data('m' + month)) + ' Hm<sup>3</sup></div>' : ''}
         </div>
   `
@@ -147,6 +147,11 @@ createApp({
         const flowModified = ref(null)
         const flowModifiedByMonth = ref(null)
         const customRelease = ref({})
+        const localeLabels = {
+            ca: 'Català',
+            es: 'Español',
+            en: 'English'
+        }
         const errorMsg = ref(null)
         const month = ref('0')
         const baseMonths = [
@@ -182,7 +187,7 @@ createApp({
                 value: String(i+1),
                 label: `${t('year')} ${i+1}`
             }))
-            options.push({value: '0', label: 'Total'})
+            options.push({value: '0', label: t('time.total')})
             return options
         })
         const yearsDirty = Vue.computed(() => {
@@ -687,7 +692,7 @@ createApp({
                         container.style.alignItems = 'center';
                         container.style.justifyContent = 'center';
                         container.style.cursor = 'pointer';
-                        container.title = 'Restableix la vista';
+                        container.title = t('map.resetView');
 
                         L.DomEvent.disableClickPropagation(container);
 
@@ -911,6 +916,7 @@ createApp({
             flowModified,
             flowModifiedByMonth,
             customRelease,
+            localeLabels,
             applyFlowChanges,
             applyAnnualChange,
             editMode,

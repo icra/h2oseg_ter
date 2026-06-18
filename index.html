@@ -20,7 +20,7 @@
             <!-- HEADER -->
             <div class="modal-header">
                 <h3 class="modal-title">{{ $t('modalScenarios.title') }}</h3>
-                <button class="modal-close" @click="openModalScenarios=false" aria-label="Tanca">
+                <button class="modal-close" @click="openModalScenarios=false" :aria-label="$t('close')">
                     ×
                 </button>
             </div>
@@ -116,7 +116,7 @@
 
                             <div class="scenario-values">
                             <span class="scenario-value-new">
-                                {{ $t('modalScenarios.newValue') }}: {{ (tmitMean.annual + Number(scenarios.temperatureIncrease.value)).toFixed(0) }} {{ scenarios.temperatureIncrease.units }} de mitjana a la conca.
+                                {{ $t('modalScenarios.newValue') }}: {{ (tmitMean.annual + Number(scenarios.temperatureIncrease.value)).toFixed(0) }} {{ scenarios.temperatureIncrease.units }} {{ $t('modalScenarios.watershedMean') }}.
                             </span>
                                 <span class="scenario-value-delta">
                                 {{ $t('modalScenarios.change') }}: {{ scenarios.temperatureIncrease.value }} {{ scenarios.temperatureIncrease.units }}
@@ -131,7 +131,7 @@
                                 :key="month.value"
                         >
                             <span class="monthly-label">
-                                {{ month.label }}
+                                {{ $t(month.label) }}
                             </span>
                             <input
                                     class="monthly-range"
@@ -318,12 +318,12 @@
             <!-- HEADER -->
             <div class="modal-header">
                 <h3 class="modal-title" v-if="selectedEle.id !== 'DESEMBASSAT'">
-                    {{ $t('modalInfo.informationOf') }}
+                    {{ $t('modalInfo.informationOf')}}
                     <span v-if="selectedEle.eleType === 'tram'">
-                    {{ $t('modalInfo.section') }}
+                    {{ $t('modalInfo.section') + ' ' }}
                 </span>
                     <span v-else-if="selectedEle.eleType === 'punt'">
-                    {{ $t('modalInfo.point') }}
+                    {{ $t('modalInfo.point') + ' ' }}
                 </span>
                     <span v-if="selectedEle.nomComu">{{ selectedEle.nomComu }}</span>
                     <span v-else-if="selectedEle.name">{{ selectedEle.name }}</span>
@@ -357,7 +357,7 @@
                         </thead>
                         <tbody>
                         <tr v-for="m in baseMonths">
-                            <td>{{ m.label }}</td>
+                            <td>{{ $t(m.label) }}</td>
                             <td class="valor">
                                 {{ Number(selectedEle['flow'+m.value]).toFixed(2) }}
                             </td>
@@ -395,7 +395,7 @@
                             </thead>
                             <tbody>
                             <tr v-for="m in baseMonths">
-                                <td>{{ m.label }}</td>
+                                <td>{{ $t(m.label) }}</td>
                                 <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(2) }}</td>
                                 <td class="valor">{{ Number(upstream.areaKm2).toFixed(0) }}</td>
                                 <td class="valor">{{ Number(upstream.ppt[m.value-1]).toFixed(0) }}</td>
@@ -421,7 +421,7 @@
                         <tbody>
                         <tr v-for="k in Array(nYears * 12).fill().map((_, i) => i + 1)">
                             <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
-                            <td>{{ baseMonths[monthOfStep(k)-1].label }}</td>
+                            <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
                             <td class="valor">{{ Number(reservoir.storage_hm3[k] ?? 0).toFixed(0) }}</td>
                             <td class="valor">{{ Number(reservoir.inflowSum_m3s[k] ?? 0).toFixed(0) }}</td>
                             <td class="valor">{{ Number(reservoir.released_m3s[k] ?? 0).toFixed(0) }}</td>
@@ -453,7 +453,7 @@
 
                         <tbody>
                         <tr v-for="m in baseMonths">
-                            <td>{{ m.label }}</td>
+                            <td>{{ $t(m.label) }}</td>
                             <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(1) }}</td>
                             <td class="valor">{{ fmtConstant(selectedEle['m'+m.value], selectedEle.m0) }}</td>
                             <td class="valor">{{ safeRatio(selectedEle['m'+m.value], selectedEle['inflow'+m.value]) }}</td>
@@ -468,16 +468,16 @@
     <div v-if="loading" class="loading-overlay">
         <div class="loading-box">
             <div class="spinner"></div>
-            <p>Calculant cabals...</p>
-            <p>Any {{Math.min(loadingYear, nYears)}} de {{nYears}}</p>
+            <p>{{ $t('loading.calculatingFlows') }}</p>
+            <p>{{ $t('loading.yearProgress', { current: Math.min(loadingYear, nYears), total: nYears }) }}</p>
         </div>
     </div>
     <div class="layout" v-cloak>
         <div id="map-wrapper">
             <!-- Títol sobre el mapa -->
             <div class="map-title" v-cloak>
-                <strong v-if="Number(selK) === 0">Total {{ nYears > 1 ? `de ${nYears} anys de simulació` : 'anual'}}</strong>
-                <strong v-if="Number(selK) !== 0">{{ nYears > 1 ? `Any ${simYear} - ` : '' }}{{ (monthSelector.find(m => m.value === month) || {label:'—'}).label }}</strong>
+                <strong v-if="Number(selK) === 0">{{ nYears > 1 ? $t('time.totalYears', { count: nYears }) : $t('time.totalAnnual') }}</strong>
+                <strong v-if="Number(selK) !== 0">{{ nYears > 1 ? $t('time.yearPrefix', { year: simYear }) : '' }}{{ (monthSelector.find(m => m.value === month) || {label:'—'}).label }}</strong>
             </div>
 
             <!-- Llegenda flotant -->
@@ -495,7 +495,7 @@
 
                             aria-controls="map-legend-content"
 
-                            aria-label="Mostra o amaga la llegenda"
+                            :aria-label="$t('map.toggleLegend')"
 
                         >
 
@@ -515,14 +515,14 @@
                                     <div class="legend-symbol-list">
                                         <div
                                                 v-for="item in nodeTypeSymbols"
-                                                :key="item.label"
+                                                :key="item.labelKey"
                                                 class="legend-symbol-row"
                                         >
                                 <span
                                         class="legend-node-symbol"
                                         v-html="nodeSVG(item.shape, '#999', false)"
                                 ></span>
-                                            <span>{{ item.label }}</span>
+                                            <span>{{ $t(item.labelKey) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -579,14 +579,14 @@
                                     <div class="legend-symbol-list">
                                         <div
                                                 v-for="item in nodeTypeSymbols"
-                                                :key="item.label"
+                                                :key="item.labelKey"
                                                 class="legend-symbol-row"
                                         >
                                 <span
                                         class="legend-node-symbol"
                                         v-html="nodeSVG(item.shape, '#999', false)"
                                 ></span>
-                                            <span>{{ item.label }}</span>
+                                            <span>{{ $t(item.labelKey) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -642,12 +642,23 @@
 
         <div id="sidebar">
             <div class="locale-changer">
-                <select v-model="$i18n.locale">
-                    <option v-for="locale in $i18n.availableLocales" :key="`locale-${locale}`" :value="locale">{{ locale }}</option>
+                <select
+                        v-model="$i18n.locale"
+                        class="locale-select"
+                        :aria-label="$t('languageSelector')"
+                        :style="{ backgroundImage: `url('assets/flags/${$i18n.locale}.svg'), linear-gradient(45deg, transparent 50%, #34495e 50%), linear-gradient(135deg, #34495e 50%, transparent 50%)` }"
+                >
+                    <option
+                            v-for="locale in $i18n.availableLocales"
+                            :key="`locale-${locale}`"
+                            :value="locale"
+                    >
+                        {{ localeLabels[locale] }}
+                    </option>
                 </select>
             </div>
             <div class ="align-right">
-                <img src="assets/logo_h20seg.png" alt="Logo H2OSEG" style="height: 50px;" />
+                <img src="assets/logo_h20seg.png" :alt="$t('logoAlt')" style="height: 50px;" />
                 <span style="padding: 0.5em;">Ter</span>
             </div>
             <!-- Temps (Any / Mes) + Anys simulació -->
@@ -729,7 +740,7 @@
                             <span v-else-if="selectedEle.id">{{ selectedEle.id }}</span>
                             <span v-else>{{ selectedEle.eleType }}</span>
                         </h4>
-                        <h4 v-else>{{ $t('sel.ssSytem') }}</h4>
+                        <h4 v-else>{{ $t('sel.ssSystem') }}</h4>
                         <span class="lab">
                             <span v-if="selectedEle.eleType === 'punt'">{{ $t('sel.node') }}</span>
                             <span v-else-if="selectedEle.eleType === 'tram'">{{ $t('sel.edge') }}</span>
@@ -811,7 +822,7 @@
                                     </thead>
                                     <tbody>
                                     <tr v-for="m in baseMonths" :key="m.value">
-                                        <td class="lab">{{ m.label }}</td>
+                                        <td class="lab">{{ $t(m.label) }}</td>
                                         <td class="val">
                                             {{ Number(reservoir.releasedVol_hm3[m.value] || 0).toFixed(0) }}
                                         </td>
@@ -930,7 +941,7 @@
                                     </thead>
                                     <tbody>
                                     <tr v-for="m in baseMonths" :key="m.value">
-                                        <td class="lab">{{ m.label }}</td>
+                                        <td class="lab">{{ $t(m.label) }}</td>
                                         <td class="val">
                                             {{ Number(selectedEle['m' + m.value] || 0).toFixed(2) }}
                                         </td>
@@ -1019,9 +1030,13 @@
             <div v-if="cy" class="res-mini res-stack" :key="tick">
                 <div>{{ $t('reservoir.title') }}</div>
                 <div>
-                    <span>Volum </span>
-                    <span v-if="!(month === '0' || simYear === '0')">a {{ monthSelector.find(e=> e.value === month).label }}{{ nYears > 1 ? `, any ${simYear}` : '' }}</span>
-                    <span v-else>{{ $t('reservoir.final') }}</span>
+                    <span v-if="!(month === '0' || simYear === '0')">
+                        {{ $t('reservoir.volumeAtMonth', {
+                            month: monthSelector.find(e=> e.value === month).label,
+                            year: nYears > 1 ? $t('reservoir.yearSuffix', { year: simYear }) : ''
+                        }) }}
+                    </span>
+                    <span v-else>{{ $t('reservoir.finalVolume') }}</span>
                     <span> (Hm³)</span>
                 </div>
                 <!-- Línia superior: Volum -->

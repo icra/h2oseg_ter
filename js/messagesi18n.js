@@ -65,6 +65,11 @@ const messages = {
         },
         reservoir: {
             title: "Informació del sistema Sau-Susqueda",
+            volume: "Volum",
+            atMonth: "a {month}",
+            yearSuffix: ", any {year}",
+            finalVolume: "Volum final",
+            volumeAtMonth: "Volum a {month}{year}",
             final: "final",
             avgFlows: "Cabals mitjans del període simulat",
             inflow: "Entrant",
@@ -106,9 +111,29 @@ const messages = {
         initialValues: "Valors d'inici",
         downloadData: "Descarrega dades",
         documentation: "Documentació",
+        logoAlt: "Logo H2OSEG",
+        languageSelector: "Selector d'idioma",
         resetConfirmation: "Segur que vols reiniciar el model?",
+        loading: {
+            calculatingFlows: "Calculant cabals...",
+            yearProgress: "Any {current} de {total}"
+        },
+        time: {
+            total: "Total",
+            totalAnnual: "Total anual",
+            totalYears: "Total de {count} anys de simulació",
+            yearPrefix: "Any {year} - "
+        },
+        nodeTypes: {
+            drainageArea: "Àrea de drenatge",
+            intake: "Captació",
+            return: "Retorn",
+            gaugingStation: "Estació d'aforament"
+        },
         map: {
             legend: "Llegenda",
+            toggleLegend: "Mostra o amaga la llegenda",
+            resetView: "Restableix la vista",
             pointType: "Tipus de punt",
             incompliment: "Incompliment cabal ambiental",
             state: "Estat",
@@ -125,6 +150,7 @@ const messages = {
             incomeFlow: "Cabal entrant",
             contribution: "Contribució",
             extraction: "Extracció",
+            outflow: "Cabal sortint",
             volume: "Volum",
             meanFlow: "Cabal mitjà",
             envFlow: "Cabal ambiental",
@@ -152,17 +178,357 @@ const messages = {
 
     },
     en: {
-        resetConfirmation: "Are you sure to reset the model?",
         modalScenarios: {
             title: "Scenario setup",
             rainModification: "Annual rainfall modification",
-            rainDescription: "Apply a proportional change to mean annual rainfall"
+            rainDescription: "Applies a proportional change to mean annual rainfall",
+            initialValue: "initial value",
+            watershedMean: "on average in the basin",
+            newValue: "New value",
+            change: "Change",
+            tempModification: "Mean annual temperature modification",
+            tempDescription: "Applies a uniform change to mean annual temperature",
+            monthlyTemp: "Month-by-month mean temperature modification",
+            urbanModification: "Urban demand modification",
+            urbanDescription: "Proportionally increases all abstractions for urban use",
+            agriDemandModification: 'Agricultural demand modification',
+            agriDescription: "Proportionally increases all abstractions for agricultural use",
+            forestSurfaceModification: 'Forest surface modification',
+            forestDescription: "Proportionally replaces forests with rainfed crops and grasslands, and vice versa",
+            approxNewValue: 'Approximate new value',
+            hm3Annual: 'Annual hm³'
+        },
+        errors: {
+            validNumber: "Enter a valid number for month {m}",
+            validVolume: "Enter a valid volume"
+        },
+        sb: {
+            initialVol: "Initial volume of the Sau-Susqueda system",
+            validVol: "The volume must be between 0 and 400 hm³",
+            simYears: "Simulation years",
+            pushApply: "Press \"Apply\" to calculate the simulation"
+        },
+        sel: {
+            ssSystem: "Sau-Susqueda system",
+            node: "Network point",
+            edge: "Network section",
+            element: "Network element",
+            releasedFlow: "The mean released flow is ",
+            resVol: "The volume in the reservoir is ",
+            moreInfo: "More information",
+            modifyVol: "Modify the released volume",
+            annualVol: "Annual volume (hm³)",
+            monthlyVol: "Month-by-month volume (hm³)",
+            currentVol: "Current volume",
+            newVol: "New volume",
+            applyAll: "Apply all changes",
+            nodeFlow: "At this point in the network, {inflow} flows in and {outflow} flows out.",
+            catchmentArea: "The drainage area of this point contributes {contribution} of flow.",
+            wwtpOutflow: "The WWTP effluent contributes {flow} to the river network.",
+            posFlow: "At this point, {flow} enters the river network.",
+            negFlow: "At this point, {flow} is extracted from the river network.",
+            modifyFlow: "Modify the flow",
+            monthlyFlow: "Month-by-month flow (m³/s)",
+            currentFlow: "Current flow",
+            newFlow: "New flow",
+            edgeFlow: "In this section of the river network, {flow} circulates and it has a length of {length} km.",
+            envFlow: "The minimum flow required to ensure good ecological status is {envFlow}.",
+            riverCode: "The section corresponds to water body {code}.",
+            noSel: "Click on an element to view its data.",
+        },
+        scen: {
+            title: "Simulation scenarios",
+            monthly: "monthly",
+            setup: "Configure"
+        },
+        reservoir: {
+            title: "Sau-Susqueda system information",
+            volume: "Volume",
+            atMonth: "in {month}",
+            yearSuffix: ", year {year}",
+            finalVolume: "Final volume",
+            volumeAtMonth: "Volume in {month}{year}",
+            final: "final",
+            avgFlows: "Mean flows for the simulated period",
+            inflow: "Inflow",
+            outflow: "Outflow"
+        },
+        modalInfo: {
+            informationOf: 'Information about the',
+            section: 'section',
+            point: 'point',
+            sauSusquedaSystemInfo: 'Sau-Susqueda system information',
+
+            flow: 'Flow',
+
+            drainageArea: 'Drainage area',
+            meanPrecipitation: 'Mean precipitation',
+            meanTemperature: 'Mean temperature',
+            meanETP: 'Mean PET',
+            meanET: 'Mean ET',
+
+            storedVolume: 'Stored volume',
+
+            inflowFlow: "Inflow",
+            releasedFlow: 'Released flow',
+
+            inflowVolume: "Inflow volume",
+            releasedVolume: 'Released volume',
+
+            contributedFlow: 'Contributed flow',
+            outgoingFlow: 'Outgoing flow',
+
+            proportion: 'Proportion'
+        },
+        cancel: "Cancel",
+        apply: "Apply",
+        applyChanges: "Apply changes",
+        close: 'Close',
+        month: 'Month | months',
+        year: 'Year',
+        initialValues: "Initial values",
+        downloadData: "Download data",
+        documentation: "Documentation",
+        logoAlt: "H2OSEG logo",
+        languageSelector: "Language selector",
+        resetConfirmation: "Are you sure you want to reset the model?",
+        loading: {
+            calculatingFlows: "Calculating flows...",
+            yearProgress: "Year {current} of {total}"
+        },
+        time: {
+            total: "Total",
+            totalAnnual: "Annual total",
+            totalYears: "Total for {count} simulation years",
+            yearPrefix: "Year {year} - "
+        },
+        nodeTypes: {
+            drainageArea: "Drainage area",
+            intake: "Intake",
+            return: "Return",
+            gaugingStation: "Gauging station"
+        },
+        map: {
+            legend: "Legend",
+            toggleLegend: "Show or hide the legend",
+            resetView: "Reset view",
+            pointType: "Point type",
+            incompliment: "Environmental flow non-compliance",
+            state: "Status",
+            satisfiedFlow: "Environmental flow met",
+            notSatisfiedFlow: "Environmental flow not met",
+            satisfiedDemand: "Demand met",
+            notSatisfiedDemand: "Demand not met"
+
         },
         tt: {
             type: "Type",
+            releasedFlow: "Released flow",
+            yearTotal: "Annual total",
+            incomeFlow: "Inflow",
+            contribution: "Contribution",
+            extraction: "Extraction",
+            outflow: "Outflow",
+            volume: "Volume",
+            meanFlow: "Mean flow",
+            envFlow: "Environmental flow",
+            length: "Section length",
+            system: "System",
+            systemVolume: "System volume",
+            meanIncomeFlow: "Mean inflow",
+            meanReleasedFlow: "Mean released flow",
+        },
+        months: {
+            0: "Annual total",
+            1: "January",
+            2: "February",
+            3: "March",
+            4: "April",
+            5: "May",
+            6: "June",
+            7: "July",
+            8: "August",
+            9: "September",
+            10: "October",
+            11: "November",
+            12: "December"
+        }
+    },
+    es: {
+        modalScenarios: {
+            title: "Configuración de escenarios",
+            rainModification: "Modificación de la lluvia anual",
+            rainDescription: "Aplica una modificación proporcional a la precipitación media anual",
+            initialValue: "valor inicial",
+            watershedMean: "de media en la cuenca",
+            newValue: "Nuevo valor",
+            change: "Cambio",
+            tempModification: "Modificación de la temperatura media anual",
+            tempDescription: "Aplica una modificación uniforme a la temperatura media anual",
+            monthlyTemp: "Modificación de la temperatura media mes a mes",
+            urbanModification: "Modificación de la demanda urbana",
+            urbanDescription: "Aumenta proporcionalmente todas las captaciones para uso urbano",
+            agriDemandModification: 'Modificación de la demanda agrícola',
+            agriDescription: "Aumenta proporcionalmente todas las captaciones para uso agrícola",
+            forestSurfaceModification: 'Modificación de la superficie forestal',
+            forestDescription: "Sustituye proporcionalmente bosques por cultivos de secano y prados, y a la inversa",
+            approxNewValue: 'Nuevo valor aproximado',
+            hm3Annual: 'Hm³ anuales'
+        },
+        errors: {
+            validNumber: "Introduce un número válido en el mes {m}",
+            validVolume: "Introduce un volumen válido"
+        },
+        sb: {
+            initialVol: "Volumen inicial del sistema Sau-Susqueda",
+            validVol: "El volumen debe estar entre 0 y 400 hm³",
+            simYears: "Años de simulación",
+            pushApply: "Pulsa \"Aplicar\" para calcular la simulación"
         },
         sel: {
-            nodeFlow: "Here it arrives {inflow} and leaves {outflow}."
+            ssSystem: "Sistema Sau-Susqueda",
+            node: "Punto de la red",
+            edge: "Tramo de la red",
+            element: "Elemento de la red",
+            releasedFlow: "El caudal medio desembalsado es ",
+            resVol: "El volumen en el embalse es de ",
+            moreInfo: "Más información",
+            modifyVol: "Modifica el volumen desembalsado",
+            annualVol: "Volumen anual (Hm³)",
+            monthlyVol: "Volumen mes a mes (Hm³)",
+            currentVol: "Volumen actual",
+            newVol: "Nuevo volumen",
+            applyAll: "Aplica todos los cambios",
+            nodeFlow: "A este punto de la red llegan {inflow} y salen {outflow}.",
+            catchmentArea: "El área de drenaje de este punto aporta {contribution} de caudal.",
+            wwtpOutflow: "El efluente de la EDAR aporta {flow} a la red fluvial.",
+            posFlow: "En este punto entran {flow} en la red fluvial.",
+            negFlow: "En este punto se extraen {flow} de la red fluvial.",
+            modifyFlow: "Modifica el caudal",
+            monthlyFlow: "Caudal mes a mes (m³/s)",
+            currentFlow: "Caudal actual",
+            newFlow: "Nuevo caudal",
+            edgeFlow: "Por este tramo de la red fluvial circulan {flow} y tiene una longitud de {length} km.",
+            envFlow: "El caudal mínimo para garantizar un buen estado ecológico es {envFlow}.",
+            riverCode: "El tramo corresponde a la masa de agua {code}.",
+            noSel: "Haz clic en un elemento para ver sus datos.",
+        },
+        scen: {
+            title: "Escenarios de simulación",
+            monthly: "mensual",
+            setup: "Configurar"
+        },
+        reservoir: {
+            title: "Información del sistema Sau-Susqueda",
+            volume: "Volumen",
+            atMonth: "en {month}",
+            yearSuffix: ", año {year}",
+            finalVolume: "Volumen final",
+            volumeAtMonth: "Volumen en {month}{year}",
+            final: "final",
+            avgFlows: "Caudales medios del periodo simulado",
+            inflow: "Entrante",
+            outflow: "Saliente"
+        },
+        modalInfo: {
+            informationOf: 'Información del',
+            section: 'tramo',
+            point: 'punto',
+            sauSusquedaSystemInfo: 'Información del sistema Sau-Susqueda',
+
+            flow: 'Caudal',
+
+            drainageArea: 'Área de drenaje',
+            meanPrecipitation: 'Precipitación media',
+            meanTemperature: 'Temperatura media',
+            meanETP: 'ETP media',
+            meanET: 'ET media',
+
+            storedVolume: 'Volumen embalsado',
+
+            inflowFlow: "Caudal de entrada",
+            releasedFlow: 'Caudal desembalsado',
+
+            inflowVolume: "Volumen de entrada",
+            releasedVolume: 'Volumen desembalsado',
+
+            contributedFlow: 'Caudal aportado',
+            outgoingFlow: 'Caudal saliente',
+
+            proportion: 'Proporción'
+        },
+        cancel: "Cancelar",
+        apply: "Aplicar",
+        applyChanges: "Aplicar cambios",
+        close: 'Cerrar',
+        month: 'Mes | meses',
+        year: 'Año',
+        initialValues: "Valores iniciales",
+        downloadData: "Descargar datos",
+        documentation: "Documentación",
+        logoAlt: "Logo de H2OSEG",
+        languageSelector: "Selector de idioma",
+        resetConfirmation: "¿Seguro que quieres reiniciar el modelo?",
+        loading: {
+            calculatingFlows: "Calculando caudales...",
+            yearProgress: "Año {current} de {total}"
+        },
+        time: {
+            total: "Total",
+            totalAnnual: "Total anual",
+            totalYears: "Total de {count} años de simulación",
+            yearPrefix: "Año {year} - "
+        },
+        nodeTypes: {
+            drainageArea: "Área de drenaje",
+            intake: "Captación",
+            return: "Retorno",
+            gaugingStation: "Estación de aforo"
+        },
+        map: {
+            legend: "Leyenda",
+            toggleLegend: "Muestra u oculta la leyenda",
+            resetView: "Restablecer la vista",
+            pointType: "Tipo de punto",
+            incompliment: "Incumplimiento del caudal ambiental",
+            state: "Estado",
+            satisfiedFlow: "Cumple el caudal ambiental",
+            notSatisfiedFlow: "No cumple el caudal ambiental",
+            satisfiedDemand: "Demanda satisfecha",
+            notSatisfiedDemand: "Demanda no satisfecha"
+
+        },
+        tt: {
+            type: "Tipo",
+            releasedFlow: "Caudal desembalsado",
+            yearTotal: "Total anual",
+            incomeFlow: "Caudal entrante",
+            contribution: "Contribución",
+            extraction: "Extracción",
+            outflow: "Caudal saliente",
+            volume: "Volumen",
+            meanFlow: "Caudal medio",
+            envFlow: "Caudal ambiental",
+            length: "Longitud del tramo",
+            system: "Sistema",
+            systemVolume: "Volumen del sistema",
+            meanIncomeFlow: "Caudal medio de entrada",
+            meanReleasedFlow: "Caudal medio desembalsado",
+        },
+        months: {
+            0: "Total anual",
+            1: "Enero",
+            2: "Febrero",
+            3: "Marzo",
+            4: "Abril",
+            5: "Mayo",
+            6: "Junio",
+            7: "Julio",
+            8: "Agosto",
+            9: "Septiembre",
+            10: "Octubre",
+            11: "Noviembre",
+            12: "Diciembre"
         }
     }
 
