@@ -873,7 +873,7 @@
                             {{ $t('sel.posFlow', {flow: fmt(selectedEle['m' + month])}) }}
                         </p>
                         <p v-else-if="selectedEle['m' + month] < 0">
-                            {{ $t('sel.negFlow', {flow: fmt(selectedEle['m' + month])}) }}
+                            {{ $t('sel.negFlow', {flow: fmt(Math.abs(selectedEle['m' + month]))}) }}
 
                         </p>
                         <button @click="openModalInfo=true">{{ $t('sel.moreInfo') }}</button>
