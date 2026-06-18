@@ -74,16 +74,6 @@ const agriDemandTypes = ['Comunitat de regants']
 
 // HTML dels tooltips
 function nodeTooltipHTML(n, month, k) {
-    if (n.id() === 'DESEMBASSAT') {
-        return `
-            <div>
-              <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
-              <div>${t('tt.type')}: ${n.data('type') ?? '—'}</div>
-              <div>${t('tt.releasedFlow')}: ${fmt(n.data('outflow' + k))}</div>
-              ${month === '0' ? '<div>${t("tt.yearTotal")}: ' + Hm3ToM3(n.data('outflow' + k)) + ' Hm<sup>3</sup></div>' : ''}
-            </div>
-        `
-    }
     return `
         <div>
           <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>

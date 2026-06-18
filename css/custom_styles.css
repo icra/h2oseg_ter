@@ -90,14 +90,14 @@ html, body {
     background-position: 8px center, calc(100% - 12px) 11px, calc(100% - 8px) 11px;
     background-repeat: no-repeat;
     background-size: 18px 12px, 4px 4px, 4px 4px;
-    color: #34495e;
+    /*color: #34495e;*/
     outline: none;
     padding: 0 24px 0 32px;
     font-size: 0.75rem;
-    font-weight: 700;
+    /*font-weight: 700;*/
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
+    /*appearance: none;*/
+    /*-webkit-appearance: none;*/
 }
 
 td.valor, th.valor {

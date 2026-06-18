@@ -651,7 +651,7 @@
                             v-model="$i18n.locale"
                             class="locale-select"
                             :aria-label="$t('languageSelector')"
-                            :style="{ backgroundImage: `url('assets/flags/${$i18n.locale}.svg'), linear-gradient(45deg, transparent 50%, #34495e 50%), linear-gradient(135deg, #34495e 50%, transparent 50%)` }"
+                            :style="{ backgroundImage: `url('assets/flags/${$i18n.locale}.svg')` }"
                     >
                         <option
                                 v-for="locale in $i18n.availableLocales"
@@ -859,7 +859,7 @@
                     <!-- Cas punt -->
                     <div v-else-if="selectedEle.eleType === 'punt'">
                         <p>
-                            {{ $t('sel.nodeFlow', {inflow: fmt(selectedEle['inflow' + selK]), outflow: fmt(selectedEle['outflow' + selK])}) }}
+                            {{ $t('sel.nodeFlow', {inflow: fmt(selectedEle['inflow' + selK]), outflow: fmt(selectedEle['outflow' + month])}) }}
                         </p>
 
                         <p v-if="selectedEle.type === 'massa'">
@@ -977,11 +977,11 @@
                     <!-- Cas tram -->
                     <div v-else-if="selectedEle.eleType === 'tram'">
                         <p>
-                            {{ $t('sel.edgeFlow', {flow: fmt(selectedEle['flow' + selK]), length: selectedEle.lengthRiver.toFixed(1)}) }}
+                            {{ $t('sel.edgeFlow', {flow: fmt(selectedEle['flow' + month]), length: selectedEle.lengthRiver.toFixed(1)}) }}
 
                         </p>
                         <p>
-                            {{ $t('sel.envFlow', {envFlow: fmt(selectedEle['flow' + selK])}) }}
+                            {{ $t('sel.envFlow', {envFlow: fmt(selectedEle['envFlow' + month])}) }}
 
                         </p>
                         <p>
