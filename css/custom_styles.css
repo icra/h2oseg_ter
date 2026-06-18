@@ -54,6 +54,46 @@ html, body {
     padding: 1em;
 }
 
+.locale-changer {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 1rem -0.2rem 0;
+}
+
+.locale-changer select {
+    min-width: 58px;
+    height: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    padding: 0 22px 0 8px;
+    background-color: #fff;
+    background-image: linear-gradient(45deg, transparent 50%, #34495e 50%),
+        linear-gradient(135deg, #34495e 50%, transparent 50%);
+    background-position: calc(100% - 12px) 10px, calc(100% - 8px) 10px;
+    background-size: 4px 4px, 4px 4px;
+    background-repeat: no-repeat;
+    color: #34495e;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    outline: none;
+    text-transform: uppercase;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.locale-changer select:hover {
+    border-color: rgba(0, 0, 0, 0.22);
+    background-color: #f8fafc;
+}
+
+.locale-changer select:focus {
+    border-color: #2c7be5;
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.14);
+}
+
 td.valor, th.valor {
     text-align: right !important;
 }
@@ -144,7 +184,7 @@ td.valor, th.valor {
     gap: 8px;
     padding: 8px 10px;
     border: 1px solid #e7eaf0;
-    border-radius: 10px;
+    border-radius: 8px;
     background: #fff;
     font-size: 12px; line-height: 1.2;
 }
@@ -389,7 +429,7 @@ button:hover {
 }
 
 .scenario-block {
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid #e7eaf0;
     background: #f9fafb;
     padding: 10px 12px;
@@ -545,7 +585,7 @@ button:hover {
 
 .map-legend .legend-block {
     background: rgba(255, 255, 255, 0.96);
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid #e5e7eb;
     box-shadow: 0 6px 18px rgba(0,0,0,0.12);
     padding: 6px 6px 6px 8px;   /* compacte, poca dreta */
@@ -557,7 +597,7 @@ button:hover {
 .legend-header {
     display: flex;
     align-items: center;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(255, 255, 255, 0.96);
     justify-content: space-between;
     gap: 12px;
@@ -893,7 +933,7 @@ button:hover {
 .time-select,
 .time-input{
     height: 25px;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid rgba(0,0,0,0.12);
     padding: 0 10px;
     background: #fff;
@@ -911,7 +951,7 @@ button:hover {
 
 .time-hint{
     margin: 8px 0 0;
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     opacity: 0.7;
 }
 

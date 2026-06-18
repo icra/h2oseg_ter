@@ -641,14 +641,14 @@
         </div>
 
         <div id="sidebar">
-            <div class ="align-right">
-                <img src="assets/logo_h20seg.png" alt="Logo H2OSEG" style="height: 50px;" />
-                <span style="padding: 0.5em;">Ter</span>
-            </div>
             <div class="locale-changer">
                 <select v-model="$i18n.locale">
                     <option v-for="locale in $i18n.availableLocales" :key="`locale-${locale}`" :value="locale">{{ locale }}</option>
                 </select>
+            </div>
+            <div class ="align-right">
+                <img src="assets/logo_h20seg.png" alt="Logo H2OSEG" style="height: 50px;" />
+                <span style="padding: 0.5em;">Ter</span>
             </div>
             <!-- Temps (Any / Mes) + Anys simulació -->
             <div class="time-controls" v-cloak>
