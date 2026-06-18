@@ -102,7 +102,7 @@
 
                     <div v-if="!scenarios.temperatureIncrease.monthly">
                         <p class="scenario-desc">
-                            {{ scenarios.temperatureIncrease.description }}
+                            {{ $t(scenarios.temperatureIncrease.description) }}
                             ({{ $t('modalScenarios.initialValue') }}: {{ Number(tmitMean.annual || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
                         </p>
 
@@ -174,7 +174,7 @@
                     </div>
 
                     <p class="scenario-desc">
-                        {{scenarios.urbanDemand.description}}
+                        {{ $t(scenarios.urbanDemand.description) }}
                         ({{ $t('modalScenarios.initialValue') }}: {{ Number(urbanDemandMean || 0).toFixed(0) }} Hm³ anuals).
                     </p>
 
@@ -219,7 +219,7 @@
                     </div>
 
                     <p class="scenario-desc">
-                        {{ scenarios.agriDemand.description }}
+                        {{ $t(scenarios.agriDemand.description) }}
                         ({{ $t('modalScenarios.initialValue') }}:
                         {{ Number(agriDemandMean || 0).toFixed(0) }}
                         {{ $t('modalScenarios.hm3Annual') }}).
@@ -270,7 +270,7 @@
                     </div>
 
                     <p class="scenario-desc">
-                        {{ scenarios.forestSurface.description }}
+                        {{ $t(scenarios.forestSurface.description) }}
                         ({{ $t('modalScenarios.initialValue') }}:
                         {{ Number(forestSurface || 0).toFixed(0) }}
                         km²).
@@ -1000,7 +1000,7 @@
                                     {{ $t(value.name) }}: {{ value.value }} {{ value.units }}
                                 </li>
                                 <li v-else-if="value.active && value.monthly">
-                                    {{ value.name }}: {{ $t('scen.monthly') }}
+                                    {{ $t(value.name) }}: {{ $t('scen.monthly') }}
                                 </li>
                             </template>
                         </ul>
