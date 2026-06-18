@@ -975,14 +975,14 @@
                             {{ $t('sel.riverCode', {code: selectedEle.codiMassa}) }}
 
                         </p>
-                        <button @click="openModalInfo=true">Veure cabals</button>
+                        <button @click="openModalInfo=true">{{ $t('sel.moreInfo') }}</button>
                     </div>
                 </div>
             </div>
 
             <!-- Quan no hi ha res seleccionat -->
             <div v-else class="res-mini res-stack">
-                <p>Fes clic sobre un element per veure’n les dades.</p>
+                <p>{{ $t('sel.noSel') }}</p>
             </div>
             <!--            Escenaris-->
             <div class="res-mini res-stack">
@@ -993,14 +993,14 @@
                         <rect x="15" y="6"  width="3" height="14" rx="1" fill="currentColor"/>
                     </svg>
                     <div class="res-header-text">
-                        <h4>Escenaris de simulació</h4>
+                        <h4>{{ $t('scen.title') }}</h4>
                         <ul>
                             <template v-for="(value, key) in scenarios" :key="key">
                                 <li v-if="value.active && !value.monthly">
                                     {{ $t(value.name) }}: {{ value.value }} {{ value.units }}
                                 </li>
                                 <li v-else-if="value.active && value.monthly">
-                                    {{ value.name }}: mensual
+                                    {{ value.name }}: {{ $t('scen.monthly') }}
                                 </li>
                             </template>
                         </ul>
@@ -1010,18 +1010,18 @@
                 </div>
                 <div class="res-bottom res-actions">
                     <button class="btn-primary" @click="openModalScenarios=true">
-                        Configura
+                        {{ $t('scen.setup') }}
                     </button>
                 </div>
             </div>
 
             <!-- Embassament -->
             <div v-if="cy" class="res-mini res-stack" :key="tick">
-                <div>Informació del sistema Sau-Susqueda</div>
+                <div>{{ $t('reservoir.title') }}</div>
                 <div>
                     <span>Volum </span>
                     <span v-if="!(month === '0' || simYear === '0')">a {{ monthSelector.find(e=> e.value === month).label }}{{ nYears > 1 ? `, any ${simYear}` : '' }}</span>
-                    <span v-else>final</span>
+                    <span v-else>{{ $t('reservoir.final') }}</span>
                     <span> (Hm³)</span>
                 </div>
                 <!-- Línia superior: Volum -->
@@ -1038,13 +1038,13 @@
                 </div>
 
                 <!-- Línia inferior: Entrant | Sortint -->
-                <div>Cabals mitjans del període simulat (m³/s)</div>
+                <div>{{ $t('reservoir.avgFlows') }} (m³/s)</div>
                 <div class="res-bottom">
                     <div class="res-item">
                         <svg class="ico in" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 3v12m0 0l-4-4m4 4 4-4M4 21h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <span class="lab">Entrant</span>
+                        <span class="lab">{{ $t('reservoir.inflow') }}</span>
                         <span class="val">{{ Number(reservoir.inflowSum_m3s[selK] || 0).toFixed(1) }}</span>
                     </div>
 
@@ -1052,16 +1052,16 @@
                         <svg class="ico out" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 21V9m0 0 4 4m-4-4-4 4M4 3h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <span class="lab">Sortint</span>
+                        <span class="lab">{{ $t('reservoir.outflow') }}</span>
                         <span class="val">{{ Number(reservoir.released_m3s[selK] || 0).toFixed(1) }}</span>
                     </div>
                 </div>
             </div>
             <div class="sidebar-footer">
-                <button @click="reset">Valors d'inici</button>
-                <button style="margin-left: 1em;" @click="downloadData">Descarrega dades</button>
+                <button @click="reset">{{ $t('initialValues') }}</button>
+                <button style="margin-left: 1em;" @click="downloadData">{{ $t('downloadData') }}</button>
                 <hr />
-                <p>Documentació</p>
+                <p>{{ $t('documentation') }}</p>
             </div>
         </div>
     </div>

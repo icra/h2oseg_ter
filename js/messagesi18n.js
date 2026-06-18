@@ -55,7 +55,20 @@ const messages = {
             newFlow: "Nou cabal",
             edgeFlow: "En aquest tram de la xarxa fluvial hi circulen {flow} i té una llargada de {length} km.",
             envFlow: "El cabal mínim per garantir un bon estat ecològic són {envFlow}.",
-            riverCode: "El tram correspon a la massa d'aigua {code}."
+            riverCode: "El tram correspon a la massa d'aigua {code}.",
+            noSel: "Fes clic sobre un element per veure’n les dades.",
+        },
+        scen: {
+            title: "Escenaris de simulació",
+            monthly: "mensual",
+            setup: "Configura"
+        },
+        reservoir: {
+            title: "Informació del sistema Sau-Susqueda",
+            final: "final",
+            avgFlows: "Cabals mitjans del període simulat",
+            inflow: "Entrant",
+            outflow: "Sortint"
         },
         modalInfo: {
             informationOf: 'Informació del',
@@ -90,6 +103,9 @@ const messages = {
         close: 'Tanca',
         month: 'Mes | mesos',
         year: 'Any',
+        initialValues: "Valors d'inici",
+        downloadData: "Descarrega dades",
+        documentation: "Documentació",
         resetConfirmation: "Segur que vols reiniciar el model?",
         map: {
             legend: "Llegenda",
