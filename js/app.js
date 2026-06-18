@@ -890,6 +890,14 @@ createApp({
             calcSelectedEleVolumes(val)
         }, {immediate: true});
 
+        watch(simYear, (year) => {
+            if (Number(year) === 0) {
+                month.value = '0'
+            } else if (nYears.value > 1 && month.value === '0') {
+                month.value = '1'
+            }
+        });
+
         watch(selK, (k) => {
             int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
         });
