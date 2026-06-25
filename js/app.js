@@ -136,6 +136,7 @@ createApp({
         const flowModified = ref(null)
         const flowModifiedByMonth = ref(null)
         const customRelease = ref({})
+        const calculatingLoading = ref('loading.calculatingFlows')
         const localeLabels = {
             ca: 'Català',
             es: 'Español',
@@ -546,7 +547,9 @@ createApp({
                         return
                     }
                     gm.RESERVOIR.customRelease_m3s = {}
+                    calculatingLoading.value = 'loading.calculatingReservoir'
                     await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
+                    calculatingLoading.value = 'loading.calculatingFlows'
                     loadingYear.value = 1
                 }
 
@@ -1000,6 +1003,7 @@ createApp({
             annualVolume,
             reservoir: reservoirView,
             errorMsg,
+            calculatingLoading,
             reset,
             month,
             baseMonths,

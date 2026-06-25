@@ -472,7 +472,7 @@
     <div v-if="loading" class="loading-overlay">
         <div class="loading-box">
             <div class="spinner"></div>
-            <p>{{ $t('loading.calculatingFlows') }}</p>
+            <p>{{ $t(calculatingLoading) }}</p>
             <p>{{ $t('loading.yearProgress', { current: Math.min(loadingYear, nYears), total: nYears }) }}</p>
         </div>
     </div>

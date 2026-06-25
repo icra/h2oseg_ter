@@ -119,6 +119,7 @@ const messages = {
         resetConfirmation: "Segur que vols reiniciar el model?",
         loading: {
             calculatingFlows: "Calculant cabals...",
+            calculatingReservoir: "Calculant volums de l'embassament...",
             yearProgress: "Any {current} de {total}"
         },
         time: {
@@ -300,6 +301,7 @@ const messages = {
         resetConfirmation: "Are you sure you want to reset the model?",
         loading: {
             calculatingFlows: "Calculating flows...",
+            calculatingReservoir: "Calculating reservoir volumes...",
             yearProgress: "Year {current} of {total}"
         },
         time: {
@@ -480,6 +482,7 @@ const messages = {
         resetConfirmation: "¿Seguro que quieres reiniciar el modelo?",
         loading: {
             calculatingFlows: "Calculando caudales...",
+            calculatingReservoir: "Calculando volumnes del embalse...",
             yearProgress: "Año {current} de {total}"
         },
         time: {
