@@ -353,14 +353,16 @@
                         <tr>
                             <th>{{ $t('month') }}</th>
                             <th class="valor">{{ $t('modalInfo.flow') }} (m³/s)</th>
+                            <th class="valor">{{ $t('modalInfo.envFlow') }} (m³/s)</th>
+                            <th class="valor">{{ $t('modalInfo.proportion')}} (%)</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="m in baseMonths">
                             <td>{{ $t(m.label) }}</td>
-                            <td class="valor">
-                                {{ Number(selectedEle['flow'+m.value]).toFixed(2) }}
-                            </td>
+                            <td class="valor">{{ Number(selectedEle['flow'+m.value]).toFixed(2) }}</td>
+                            <td class="valor">{{ Number(selectedEle['envFlow'+m.value]).toFixed(2) }}</td>
+                            <td class="valor">{{ selectedEle['envFlow'+m.value] > 0 && selectedEle['envFlow'+m.value] > selectedEle['flow'+m.value] ? Number(selectedEle['flow'+m.value] / selectedEle['envFlow'+m.value] * 100).toFixed(2) : '-'}}</td>
                         </tr>
                         </tbody>
                     </table>

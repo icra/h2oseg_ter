@@ -85,6 +85,7 @@ const messages = {
             flow: 'Cabal',
             inflow: 'Cabal entrant',
             outflow: 'Cabal sortint',
+            envFlow: 'Cabal ambiental',
 
             drainageArea: 'Àrea de drenatge',
             meanPrecipitation: 'Precipitació mitjana',
@@ -267,6 +268,7 @@ const messages = {
             flow: 'Flow',
             inflow: 'Inflow',
             outflow: 'Outflow',
+            envFlow: 'Environmental flow',
 
             drainageArea: 'Drainage area',
             meanPrecipitation: 'Mean precipitation',
@@ -448,6 +450,7 @@ const messages = {
             flow: 'Caudal',
             inflow: 'Caudal entrante',
             outflow: 'Caudal saliente',
+            envFlow: 'Caudal ambiental',
 
             drainageArea: 'Área de drenaje',
             meanPrecipitation: 'Precipitación media',
