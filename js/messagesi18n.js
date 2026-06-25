@@ -82,6 +82,8 @@ const messages = {
             sauSusquedaSystemInfo: 'Informació del sistema Sau-Susqueda',
 
             flow: 'Cabal',
+            inflow: 'Cabal entrant',
+            outflow: 'Cabal sortint',
 
             drainageArea: 'Àrea de drenatge',
             meanPrecipitation: 'Precipitació mitjana',
@@ -260,6 +262,8 @@ const messages = {
             sauSusquedaSystemInfo: 'Sau-Susqueda system information',
 
             flow: 'Flow',
+            inflow: 'Inflow',
+            outflow: 'Outflow',
 
             drainageArea: 'Drainage area',
             meanPrecipitation: 'Mean precipitation',
@@ -437,6 +441,8 @@ const messages = {
             sauSusquedaSystemInfo: 'Información del sistema Sau-Susqueda',
 
             flow: 'Caudal',
+            inflow: 'Caudal entrante',
+            outflow: 'Caudal saliente',
 
             drainageArea: 'Área de drenaje',
             meanPrecipitation: 'Precipitación media',
