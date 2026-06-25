@@ -214,11 +214,48 @@ createApp({
         const editMode = ref('annual')
         const annualVolume = ref(null)
         const selectedEditDirtyMode = ref(null)
+        const selectedFormSnapshot = ref(null)
         const markAnnualDirty = function () {
             selectedEditDirtyMode.value = 'annual'
         }
         const markMonthlyDirty = function () {
             selectedEditDirtyMode.value = 'monthly'
+        }
+        const sameNumber = function (a, b, decimals = 6) {
+            const na = Number(a)
+            const nb = Number(b)
+            if (!Number.isFinite(na) || !Number.isFinite(nb)) return false
+            return Math.abs(na - nb) < Math.pow(10, -decimals)
+        }
+        const monthlyValuesChanged = function (values, snapshot) {
+            if (!values || !snapshot) return false
+            return Array.from({ length: 12 }, (_, i) => String(i + 1))
+                .some(m => !sameNumber(values[m], snapshot[m], 6))
+        }
+        const selectedInputsChanged = function () {
+            const snap = selectedFormSnapshot.value
+            if (!selectedEle.value || !snap || snap.id !== selectedEle.value.id) return selectedEditDirtyMode.value !== null
+            if (selectedEditDirtyMode.value !== null) return true
+            if (editMode.value === 'annual') return !sameNumber(annualVolume.value, snap.annualVolume, 6)
+            const values = selectedEle.value.id === 'DESEMBASSAT' ? customRelease.value : flowModifiedByMonth.value
+            return monthlyValuesChanged(values, snap.monthlyValues)
+        }
+        const updateSelectedFormSnapshot = function (val) {
+            if (!val?.id) {
+                selectedFormSnapshot.value = null
+                return
+            }
+            const values = val.id === 'DESEMBASSAT' ? customRelease.value : flowModifiedByMonth.value
+            selectedFormSnapshot.value = {
+                id: val.id,
+                annualVolume: annualVolume.value,
+                monthlyValues: Object.fromEntries(
+                    Array.from({ length: 12 }, (_, i) => {
+                        const key = String(i + 1)
+                        return [key, values?.[key]]
+                    })
+                )
+            }
         }
         const openModalScenarios = ref(false)
         const openModalInfo = ref(false)
@@ -394,10 +431,11 @@ createApp({
             return true
         }
         const applySelectedElementInputs = async function () {
-            if (!selectedEle.value || selectedEle.value.eleType !== 'punt' || selectedEditDirtyMode.value === null) {
+            const editableSelection = selectedEle.value?.id === 'DESEMBASSAT' || selectedEle.value?.eleType === 'punt'
+            if (!editableSelection || !selectedInputsChanged()) {
                 return true
             }
-            if (selectedEditDirtyMode.value === 'annual') {
+            if (editMode.value === 'annual') {
                 return applySelectedAnnualInputs(selectedEle.value)
             }
             return applySelectedMonthlyInputs(selectedEle.value)
@@ -487,16 +525,27 @@ createApp({
                 return
             }
 
-            loadingYear.value = 1
-            loading.value = true
-            await waitForPaint()
-
             try {
                 applyTimeInputs()
+                loadingYear.value = 1
+                await nextTick()
+                loading.value = true
+                await waitForPaint()
                 await applyScenarioInputs()
                 gm.calculateContribution(cy.value, params.value)
 
-                if (selectedEle.value?.id === 'DESEMBASSAT' && selectedEditDirtyMode.value === 'annual') {
+                const reservoirAnnualChanged = selectedEle.value?.id === 'DESEMBASSAT'
+                    && editMode.value === 'annual'
+                    && selectedInputsChanged()
+                const requestedReservoirAnnualVolume = reservoirAnnualChanged ? Number(annualVolume.value) : null
+
+                if (reservoirAnnualChanged) {
+                    if (annualVolume.value === '' || isNaN(annualVolume.value) || annualVolume.value === null) {
+                        errorMsg.value = t('errors.validVolume')
+                        annualVolume.value = Math.round(gm.RESERVOIR.releasedVol_hm3.total / nYears.value)
+                        return
+                    }
+                    gm.RESERVOIR.customRelease_m3s = {}
                     await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
                     loadingYear.value = 1
                 }
@@ -510,6 +559,15 @@ createApp({
 
                 tick.value++
                 refreshSelectedElement()
+                if (reservoirAnnualChanged && Number.isFinite(requestedReservoirAnnualVolume)) {
+                    const actualAnnualVolume = Number(gm.RESERVOIR.releasedVol_hm3.total) / nYears.value
+                    if (Math.abs(actualAnnualVolume - requestedReservoirAnnualVolume) > 0.5) {
+                        annualVolume.value = requestedReservoirAnnualVolume
+                        errorMsg.value = t('errors.reservoirVolumeLimited', {
+                            actual: actualAnnualVolume.toFixed(0)
+                        })
+                    }
+                }
                 selectedEditDirtyMode.value = null
             } finally {
                 loading.value = false
@@ -548,6 +606,7 @@ createApp({
                 flowModifiedByMonth.value = {}
                 annualVolume.value = null
             }
+            updateSelectedFormSnapshot(val)
         }
 
         onMounted(async () => {
