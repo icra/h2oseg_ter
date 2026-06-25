@@ -389,6 +389,7 @@
                         <table class="res-table">
                             <thead>
                             <tr>
+                                <th v-if="nYears > 1">{{ $t('year') }}</th>
                                 <th>{{ $t('month') }}</th>
                                 <th class="valor">{{ $t('modalInfo.inflow') }} (m³/s)</th>
                                 <th class="valor">{{ $t('modalInfo.contributedFlow') }} (m³/s)</th>
@@ -401,16 +402,17 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="m in baseMonths">
-                                <td>{{ $t(m.label) }}</td>
-                                <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(2) }}</td>
-                                <td class="valor">{{ Number(selectedEle['m'+m.value]).toFixed(2) }}</td>
-                                <td class="valor">{{ Number(Number(selectedEle['m'+m.value] || 0) === 0  ? selectedEle['inflow'+m.value] : selectedEle['outflow'+m.value]).toFixed(2) }}</td>
+                            <tr v-for="k in Array(nYears * 12).fill().map((_, i) => i + 1)">
+                                <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
+                                <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
+                                <td class="valor">{{ Number(selectedEle['inflow'+k]).toFixed(2) }}</td>
+                                <td class="valor">{{ Number(selectedEle['m'+monthOfStep(k)]).toFixed(2) }}</td>
+                                <td class="valor">{{ Number(Number(selectedEle['m'+monthOfStep(k)] || 0) === 0  ? selectedEle['inflow'+k] : selectedEle['outflow'+k]).toFixed(2) }}</td>
                                 <td class="valor">{{ Number(upstream.areaKm2).toFixed(0) }}</td>
-                                <td class="valor">{{ Number(upstream.ppt[m.value-1]).toFixed(0) }}</td>
-                                <td class="valor">{{ Number(upstream.tmit[m.value-1]).toFixed(0) }}</td>
-                                <td class="valor">{{ Number(upstream.etp[m.value-1]).toFixed(0) }}</td>
-                                <td class="valor">{{ Number(upstream.et[m.value-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(upstream.ppt[monthOfStep(k)-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(upstream.tmit[monthOfStep(k)-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(upstream.etp[monthOfStep(k)-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(upstream.et[monthOfStep(k)-1]).toFixed(0) }}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -442,6 +444,7 @@
                     <table v-else class="res-table">
                         <thead>
                         <tr>
+                            <th v-if="nYears > 1">{{ $t('year') }}</th>
                             <th>{{ $t('month') }}</th>
                             <th class="valor">{{ $t('modalInfo.inflowFlow') }} (m³/s)</th>
 
@@ -461,11 +464,12 @@
                         </thead>
 
                         <tbody>
-                        <tr v-for="m in baseMonths">
-                            <td>{{ $t(m.label) }}</td>
-                            <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(1) }}</td>
-                            <td class="valor">{{ fmtConstant(selectedEle['m'+m.value], selectedEle.m0) }}</td>
-                            <td class="valor">{{ safeRatio(selectedEle['m'+m.value], selectedEle['inflow'+m.value]) }}</td>
+                        <tr v-for="k in Array(nYears * 12).fill().map((_, i) => i + 1)">
+                            <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
+                            <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
+                            <td class="valor">{{ Number(selectedEle['inflow'+k]).toFixed(1) }}</td>
+                            <td class="valor">{{ fmtConstant(selectedEle['m'+monthOfStep(k)], selectedEle.m0) }}</td>
+                            <td class="valor">{{ safeRatio(selectedEle['m'+monthOfStep(k)], selectedEle['inflow'+k]) }}</td>
                         </tr>
                         </tbody>
                     </table>
