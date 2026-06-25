@@ -482,7 +482,7 @@ const messages = {
         resetConfirmation: "¿Seguro que quieres reiniciar el modelo?",
         loading: {
             calculatingFlows: "Calculando caudales...",
-            calculatingReservoir: "Calculando volumnes del embalse...",
+            calculatingReservoir: "Calculando volúmenes del embalse...",
             yearProgress: "Año {current} de {total}"
         },
         time: {
