@@ -351,6 +351,7 @@
                     <table class="res-table">
                         <thead>
                         <tr>
+                            <th v-if="nYears > 1">{{ $t('year') }}</th>
                             <th>{{ $t('month') }}</th>
                             <th class="valor">{{ $t('modalInfo.flow') }} (m³/s)</th>
                             <th class="valor">{{ $t('modalInfo.envFlow') }} (m³/s)</th>
@@ -358,11 +359,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="m in baseMonths">
-                            <td>{{ $t(m.label) }}</td>
-                            <td class="valor">{{ Number(selectedEle['flow'+m.value]).toFixed(2) }}</td>
-                            <td class="valor">{{ Number(selectedEle['envFlow'+m.value]).toFixed(2) }}</td>
-                            <td class="valor">{{ selectedEle['envFlow'+m.value] > 0 && selectedEle['envFlow'+m.value] > selectedEle['flow'+m.value] ? Number(selectedEle['flow'+m.value] / selectedEle['envFlow'+m.value] * 100).toFixed(2) : '-'}}</td>
+                        <tr v-for="k in Array(nYears * 12).fill().map((_, i) => i + 1)">
+                            <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
+                            <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
+                            <td class="valor">{{ Number(selectedEle['flow'+k]).toFixed(2) }}</td>
+                            <td class="valor">{{ Number(selectedEle['envFlow'+monthOfStep(k)]).toFixed(2) }}</td>
+                            <td class="valor">{{ selectedEle['envFlow'+monthOfStep(k)] > 0 && selectedEle['envFlow'+monthOfStep(k)] > selectedEle['flow'+k] ?
+                                    Number(selectedEle['flow'+k] / selectedEle['envFlow'+monthOfStep(k)] * 100).toFixed(2) : '-'}}</td>
                         </tr>
                         </tbody>
                     </table>
