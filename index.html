@@ -305,7 +305,7 @@
                 <button class="btn-secondary" @click="openModalScenarios=false">
                     {{ $t('cancel') }}
                 </button>
-                <button class="btn-primary" @click="applyScenariosChanges">
+                <button class="btn-primary" @click="applySidebarChanges">
                     {{ $t('applyChanges') }}
                 </button>
             </div>
@@ -710,7 +710,7 @@
                     </div>
 
                     <button class="btn-primary"
-                            @click="applyYears"
+                            @click="applySidebarChanges"
                             :disabled="loading || initialVolumeInvalid">
                         {{ $t('apply') }}
                     </button>
@@ -797,7 +797,7 @@
                                                     v-model="annualVolume"
                                                     @input="markAnnualDirty"
                                                     class="res-input"
-                                                    v-on:keyup.enter="applyAnnualChange(selectedEle)"
+                                                    v-on:keyup.enter="applySidebarChanges"
                                             />
                                         </td>
                                     </tr>
@@ -806,7 +806,7 @@
                             </div>
 
                             <div class="res-bottom res-actions">
-                                <button class="btn-primary"  @click="applyAnnualChange(selectedEle)">
+                                <button class="btn-primary"  @click="applySidebarChanges">
                                     {{ $t('apply') }}
                                 </button>
 
@@ -841,7 +841,7 @@
                                                     @input="markMonthlyDirty"
                                                     @blur="customRelease[m.value] = Number(Number(customRelease[m.value] || 0).toFixed(0))"
                                                     class="res-input"
-                                                    v-on:keyup.enter="applyFlowChanges(selectedEle)"
+                                                    v-on:keyup.enter="applySidebarChanges"
                                             />
                                         </td>
                                     </tr>
@@ -850,7 +850,7 @@
                             </div>
 
                             <div class="res-bottom res-actions">
-                                <button class="btn-primary" @click="applyFlowChanges(selectedEle)">
+                                <button class="btn-primary" @click="applySidebarChanges">
                                     {{ $t('sel.applyAll') }}
                                 </button>
 
@@ -918,7 +918,7 @@
                                                     v-model="annualVolume"
                                                     @input="markAnnualDirty"
                                                     class="res-input"
-                                                    v-on:keyup.enter="applyAnnualChange(selectedEle)"
+                                                    v-on:keyup.enter="applySidebarChanges"
                                             />
                                         </td>
                                     </tr>
@@ -927,7 +927,7 @@
                             </div>
 
                             <div class="res-bottom res-actions">
-                                <button class="btn-primary"  @click="applyAnnualChange(selectedEle)">
+                                <button class="btn-primary"  @click="applySidebarChanges">
                                     {{ $t('apply') }}
                                 </button>
 
@@ -962,7 +962,7 @@
                                                     @input="markMonthlyDirty"
                                                     @blur="flowModifiedByMonth[m.value] = Number(flowModifiedByMonth[m.value]).toFixed(2)"
                                                     class="res-input"
-                                                    v-on:keyup.enter="applyFlowChanges(selectedEle)"
+                                                    v-on:keyup.enter="applySidebarChanges"
                                             />
                                         </td>
                                     </tr>
@@ -971,7 +971,7 @@
                             </div>
 
                             <div class="res-bottom res-actions">
-                                <button class="btn-primary" @click="applyFlowChanges(selectedEle)">
+                                <button class="btn-primary" @click="applySidebarChanges">
                                     {{ $t('sel.applyAll') }}
                                 </button>
 

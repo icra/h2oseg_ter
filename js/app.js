@@ -480,6 +480,8 @@ createApp({
             calcSelectedEleVolumes(selectedEle.value)
         }
         const applySidebarChanges = async function () {
+            openModalScenarios.value = false
+
             if (initialVolumeInvalid.value) {
                 errorMsg.value = t('sb.validVol')
                 return
@@ -512,17 +514,6 @@ createApp({
             } finally {
                 loading.value = false
             }
-        }
-        const applyYears = async () => applySidebarChanges()
-        const applyFlowChanges = async function () {
-            await applySidebarChanges()
-        }
-        const applyAnnualChange = async function () {
-            await applySidebarChanges()
-        }
-        const applyScenariosChanges = async function () {
-            openModalScenarios.value = false
-            await applySidebarChanges()
         }
 
         const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
@@ -945,8 +936,7 @@ createApp({
             flowModifiedByMonth,
             customRelease,
             localeLabels,
-            applyFlowChanges,
-            applyAnnualChange,
+            applySidebarChanges,
             editMode,
             annualVolume,
             reservoir: reservoirView,
@@ -961,7 +951,6 @@ createApp({
             initialVolumeInvalid,
             yearSelector,
             simYear,
-            applyYears,
             loadingYear,
             selK,
             loading,
@@ -971,7 +960,6 @@ createApp({
             openModalScenarios,
             openModalInfo,
             scenarios,
-            applyScenariosChanges,
             markAnnualDirty,
             markMonthlyDirty,
             pptMean,
