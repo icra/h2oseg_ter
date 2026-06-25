@@ -22,7 +22,8 @@ const messages = {
         },
         errors: {
             validNumber: "Introdueix un número vàlid al mes {m}",
-            validVolume: "Introdueix un volum vàlid"
+            validVolume: "Introdueix un volum vàlid",
+            reservoirVolumeLimited: "No es pot assolir aquest volum desembassat amb l'estat actual; el volum resultant és {actual} Hm³."
         },
         sb: {
             initialVol: "Volum inicial del sistema Sau-Susqueda",
@@ -118,6 +119,7 @@ const messages = {
         resetConfirmation: "Segur que vols reiniciar el model?",
         loading: {
             calculatingFlows: "Calculant cabals...",
+            calculatingReservoir: "Calculant volums de l'embassament...",
             yearProgress: "Any {current} de {total}"
         },
         time: {
@@ -202,7 +204,8 @@ const messages = {
         },
         errors: {
             validNumber: "Enter a valid number for month {m}",
-            validVolume: "Enter a valid volume"
+            validVolume: "Enter a valid volume",
+            reservoirVolumeLimited: "This released volume cannot be reached with the current state; the resulting volume is {actual} hm³."
         },
         sb: {
             initialVol: "Initial volume of the Sau-Susqueda system",
@@ -298,6 +301,7 @@ const messages = {
         resetConfirmation: "Are you sure you want to reset the model?",
         loading: {
             calculatingFlows: "Calculating flows...",
+            calculatingReservoir: "Calculating reservoir volumes...",
             yearProgress: "Year {current} of {total}"
         },
         time: {
@@ -381,7 +385,8 @@ const messages = {
         },
         errors: {
             validNumber: "Introduce un número válido en el mes {m}",
-            validVolume: "Introduce un volumen válido"
+            validVolume: "Introduce un volumen válido",
+            reservoirVolumeLimited: "No se puede alcanzar este volumen desembalsado con el estado actual; el volumen resultante es {actual} Hm³."
         },
         sb: {
             initialVol: "Volumen inicial del sistema Sau-Susqueda",
@@ -477,6 +482,7 @@ const messages = {
         resetConfirmation: "¿Seguro que quieres reiniciar el modelo?",
         loading: {
             calculatingFlows: "Calculando caudales...",
+            calculatingReservoir: "Calculando volúmenes del embalse...",
             yearProgress: "Año {current} de {total}"
         },
         time: {

@@ -23,7 +23,8 @@ let SIM = {
 const initSimulation = function(nYears, initialVolume){
     SIM.K = Number(nYears) * 12 || 12;
 
-    let initVolume = Number(initialVolume) || RESERVOIR.capacity_hm3
+    const parsedInitialVolume = Number(initialVolume)
+    let initVolume = Number.isFinite(parsedInitialVolume) ? parsedInitialVolume : RESERVOIR.capacity_hm3
 
     SIM.m      = createMonths('m',      SIM.K);
     SIM.inflow = createMonths('inflow', SIM.K);
