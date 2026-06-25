@@ -385,7 +385,9 @@
                             <thead>
                             <tr>
                                 <th>{{ $t('month') }}</th>
-                                <th class="valor">{{ $t('modalInfo.flow') }} (m³/s)</th>
+                                <th class="valor">{{ $t('modalInfo.inflow') }} (m³/s)</th>
+                                <th class="valor">{{ $t('modalInfo.contributedFlow') }} (m³/s)</th>
+                                <th class="valor">{{ $t('modalInfo.outflow') }} (m³/s)</th>
                                 <th class="valor">{{ $t('modalInfo.drainageArea') }} (km²)</th>
                                 <th class="valor">{{ $t('modalInfo.meanPrecipitation') }} (mm)</th>
                                 <th class="valor">{{ $t('modalInfo.meanTemperature') }} (ºC)</th>
@@ -397,6 +399,8 @@
                             <tr v-for="m in baseMonths">
                                 <td>{{ $t(m.label) }}</td>
                                 <td class="valor">{{ Number(selectedEle['inflow'+m.value]).toFixed(2) }}</td>
+                                <td class="valor">{{ Number(selectedEle['m'+m.value]).toFixed(2) }}</td>
+                                <td class="valor">{{ Number(Number(selectedEle['m'+m.value] || 0) === 0  ? selectedEle['inflow'+m.value] : selectedEle['outflow'+m.value]).toFixed(2) }}</td>
                                 <td class="valor">{{ Number(upstream.areaKm2).toFixed(0) }}</td>
                                 <td class="valor">{{ Number(upstream.ppt[m.value-1]).toFixed(0) }}</td>
                                 <td class="valor">{{ Number(upstream.tmit[m.value-1]).toFixed(0) }}</td>

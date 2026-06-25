@@ -79,8 +79,8 @@ function nodeTooltipHTML(n, month, k) {
           <div><strong>${n.data('name') ?? n.data('id') ?? ''}</strong></div>
           <div>${t('tt.type')}: ${n.data('type') ?? '—'}</div>
           <div>${t('tt.incomeFlow')}: ${fmt(n.data('inflow' + k))}</div>
-          <div>${n.data('m' + month) > 0 ? t('tt.contribution') : t('tt.extraction')}: ${fmt(n.data('m' + month))}</div>
-          <div>${t('tt.outflow')}: ${fmt(n.data('outflow' + k))}</div>
+          <div>${n.data('m' + month) >= 0 ? t('tt.contribution') : t('tt.extraction')}: ${fmt(n.data('m' + month))}</div>
+          <div>${t('tt.outflow')}: ${Number(n.data('m'+ month)  || 0) === 0 ? fmt(n.data('inflow' + k)) : fmt(n.data('outflow' + k))}</div>
           ${month === '0' ? '<div>' + t('tt.volume') + ': ' + Hm3ToM3(n.data('m' + month)) + ' Hm<sup>3</sup></div>' : ''}
         </div>
   `
@@ -779,7 +779,7 @@ createApp({
                 }
 
                 cy.value.nodes()
-                    .filter(n => !gm.isHeadwaterNode(n))
+                    // .filter(n => !gm.isHeadwaterNode(n))
                     .filter(n => n.id() !== 'DESEMBASSAT')
                     .forEach(addNodeLayer)
 
