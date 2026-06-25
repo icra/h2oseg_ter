@@ -676,7 +676,7 @@
                            v-model.number="volumEmb" class="time-input" />
                     <span class="time-unit">hm³</span>
                 </div>
-                <p class="res-error" v-if="volumEmb === null || volumEmb === '' || Number.isNaN(volumEmb) || volumEmb > 400 || volumEmb < 0">
+                <p class="res-error" v-if="initialVolumeInvalid">
                     {{ $t('sb.validVol') }}.
                 </p>
                 </div>
@@ -711,7 +711,7 @@
 
                     <button class="btn-primary"
                             @click="applyYears"
-                            :disabled="loading || !Number(volumEmb) || volumEmb > 400 || volumEmb < 0">
+                            :disabled="loading || initialVolumeInvalid">
                         {{ $t('apply') }}
                     </button>
                 </div>
@@ -795,6 +795,7 @@
                                                     type="number"
                                                     step="0.1"
                                                     v-model="annualVolume"
+                                                    @input="markAnnualDirty"
                                                     class="res-input"
                                                     v-on:keyup.enter="applyAnnualChange(selectedEle)"
                                             />
@@ -837,6 +838,7 @@
                                                     type="number"
                                                     step="1"
                                                     v-model.number="customRelease[m.value]"
+                                                    @input="markMonthlyDirty"
                                                     @blur="customRelease[m.value] = Number(Number(customRelease[m.value] || 0).toFixed(0))"
                                                     class="res-input"
                                                     v-on:keyup.enter="applyFlowChanges(selectedEle)"
@@ -914,6 +916,7 @@
                                                     type="number"
                                                     step="0.1"
                                                     v-model="annualVolume"
+                                                    @input="markAnnualDirty"
                                                     class="res-input"
                                                     v-on:keyup.enter="applyAnnualChange(selectedEle)"
                                             />
@@ -956,6 +959,7 @@
                                                     type="number"
                                                     step="0.01"
                                                     v-model.number="flowModifiedByMonth[m.value]"
+                                                    @input="markMonthlyDirty"
                                                     @blur="flowModifiedByMonth[m.value] = Number(flowModifiedByMonth[m.value]).toFixed(2)"
                                                     class="res-input"
                                                     v-on:keyup.enter="applyFlowChanges(selectedEle)"

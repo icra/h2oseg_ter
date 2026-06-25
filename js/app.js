@@ -19,7 +19,6 @@ const t = i18n.global.t.bind(i18n.global)
 
 const TT_OPTS = {direction: 'auto', sticky: true, opacity: 0.95, className: 'cytt', offset: [10, 0], pane: 'tipPane'}
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 const waitForPaint = async function () {
     await nextTick()
     await new Promise(resolve => requestAnimationFrame(resolve))
@@ -171,6 +170,7 @@ createApp({
         const nYears = ref(1)
         const nYearsDraft = ref(1)
         const simYear = ref('1')
+        const volumEmb = ref(400)
         const yearSelector = Vue.computed(() => {
             const N = Math.max(1, Math.min(10, Number(nYears.value) || 1))
             const options = Array.from({length: N}, (_, i) => ({
@@ -185,12 +185,21 @@ createApp({
             const a = Math.max(1, Math.min(10, Number(nYears.value) || 1))
             return d !== a
         })
+        const initialVolumeInvalid = Vue.computed(() => {
+            const v = Number(volumEmb.value)
+            return volumEmb.value === null
+                || volumEmb.value === ''
+                || !Number.isFinite(v)
+                || v > 400
+                || v < 0
+        })
         const selK = Vue.computed(() => {
             return Number(simYear.value) === 0 ? 0 : (simYear.value - 1) * 12 + Number(month.value)
         })
-        const applyYears = async () => {
+        const applyTimeInputs = function () {
             const newN = Math.max(1, Math.min(10, Number(nYearsDraft.value) || 1))
             nYears.value = newN
+            nYearsDraft.value = newN
             if (newN > 1 && month.value === '0') month.value = '1'
 
             if (newN > 1){
@@ -199,24 +208,18 @@ createApp({
                 simYear.value = '1'
                 month.value = '0'
             }
-
-            loadingYear.value = 1
-            loading.value = true
-            await sleep(1)
-            gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value); // mesos de l'1 al 12
-            int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel});
-            if (selectedEle.value && selectedEle.value.id === 'DESEMBASSAT') {
-                annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total / nYears.value).toFixed(0);
-            }
-            tick.value++
-
-            loading.value = false
         }
         const loadingYear = ref(1)
         const params = shallowRef(null)
         const editMode = ref('annual')
         const annualVolume = ref(null)
+        const selectedEditDirtyMode = ref(null)
+        const markAnnualDirty = function () {
+            selectedEditDirtyMode.value = 'annual'
+        }
+        const markMonthlyDirty = function () {
+            selectedEditDirtyMode.value = 'monthly'
+        }
         const openModalScenarios = ref(false)
         const openModalInfo = ref(false)
         const scenarios = ref({
@@ -266,7 +269,6 @@ createApp({
         const urbanDemandMean = ref(null)
         const agriDemandMean = ref(null)
         const forestSurface = ref(null)
-        const volumEmb = ref(400)
         const tick = ref(0)
         const legendCollapsed = ref(true)
         const downloadData = function() {
@@ -298,19 +300,14 @@ createApp({
 
             URL.revokeObjectURL(url);
         }
-        const applyFlowChanges = async function () {
-            loadingYear.value = 1
-            loading.value = true
-            await waitForPaint()
-
-            if (selectedEle.value.id === 'DESEMBASSAT') {
+        const applySelectedMonthlyInputs = async function (ele) {
+            if (ele.id === 'DESEMBASSAT') {
                 errorMsg.value = null
                 for (let mo = 1; mo <= 12; mo++) {
                     const v = Number(customRelease.value[mo])
                     if (!Number.isFinite(v)) {
                         errorMsg.value = `${t('errors.validNumber', {m: mo})}`
-                        loading.value = false
-                        return
+                        return false
                     }
                 }
                 for (const [key, value] of Object.entries(customRelease.value)) {
@@ -318,43 +315,33 @@ createApp({
                     gm.RESERVOIR.customRelease_m3s[key] = gm.hm3ToM3s(Number(value), dt_s)
                 }
                 annualVolume.value = Object.values(customRelease.value).reduce((sum, v) => sum + Number(v), 0)
-                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
-
-            } else {
-                // IMPORTANT: només mesos 1..12, no '0'
-                const changes = {}
-                for (let mo = 1; mo <= 12; mo++) {
-                    changes[String(mo)] = flowModifiedByMonth.value[String(mo)]
-                }
-
-                await gm.modifyFlowChange(
-                    cy.value,
-                    selectedEle.value,
-                    changes,
-                    errorMsg,
-                    params.value,
-                    { nYears: nYears.value },
-                    loadingYear,
-                    volumEmb.value
-                )
+                return true
             }
 
-            int.setGraphColors(selK.value, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
-            tick.value++
-
-            loading.value = false
+            const node = cy.value.getElementById(ele.id)
+            if (!node?.isNode?.()) return true
+            for (let mo = 1; mo <= 12; mo++) {
+                const v = Number(flowModifiedByMonth.value?.[String(mo)])
+                if (!Number.isFinite(v)) {
+                    errorMsg.value = `${t('errors.validNumber', {m: mo})}`
+                    return false
+                }
+            }
+            for (let mo = 1; mo <= 12; mo++) {
+                const key = String(mo)
+                const v = Number(flowModifiedByMonth.value[key])
+                node.data('m' + key, v)
+                ele['m' + key] = v
+            }
+            ele.m0 = Array.from({ length: 12 }, (_, i) => Number(ele['m' + (i + 1)]) || 0)
+                .reduce((sum, v) => sum + v, 0) / 12
+            return true
         }
-        const applyAnnualChange = async function (ele) {
-
-            loadingYear.value = 1
-            loading.value = true
-            await sleep(0)
-
+        const applySelectedAnnualInputs = async function (ele) {
             if (annualVolume.value === '' || isNaN(annualVolume.value) || annualVolume.value === null) {
                 errorMsg.value = t('errors.validVolume')
                 annualVolume.value = ele.id === 'DESEMBASSAT' ? Math.round(gm.RESERVOIR.releasedVol_hm3.total / nYears.value) : Hm3ToM3(ele.m0)
-                loading.value = false
-                return
+                return false
             }
 
             const target = annualVolume.value * 1000000 / (24 * 365 * 3600)
@@ -380,46 +367,42 @@ createApp({
                 gm.RESERVOIR.customRelease_m3s = {}
                 months.forEach((m, idx) => {
                     gm.RESERVOIR.customRelease_m3s[m] = Number(Number(newVals[idx]).toFixed(2))
-
                 })
-
-                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
-                int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
-                customRelease.value = {}
-
-                for (let mo = 1; mo <= 12; mo++) {
-
-                    const raw = gm.RESERVOIR.releasedVol_hm3[String(mo)]
-
-                    const num = Number.isFinite(+raw) ? Number(raw) : 0
-
-                    customRelease.value[String(mo)] = Number(num.toFixed(0))
-
-                }
-
-            } else {
-                if (Math.abs(+ele.m0) < 1e-6) {
-                    newVals = months.map(() => target)
-                } else {
-                    const k = target / ele.m0
-                    newVals = months.map(m => ele['m' + m] * k)
-                }
-
-                months.forEach((m, idx) => {
-                    flowModifiedByMonth.value[m] = Number(Number(newVals[idx]).toFixed(2))
-                })
-
-                await sleep(0)
-                await applyFlowChanges()
+                return true
             }
 
-            loading.value = false
+            const node = cy.value.getElementById(ele.id)
+            if (!node?.isNode?.()) return true
+            const currentMean = months
+                .map(m => Number(node.data('m' + m)) || 0)
+                .reduce((sum, v) => sum + v, 0) / months.length
+
+            if (Math.abs(currentMean) < 1e-6) {
+                newVals = months.map(() => target)
+            } else {
+                const k = target / currentMean
+                newVals = months.map(m => (Number(node.data('m' + m)) || 0) * k)
+            }
+
+            months.forEach((m, idx) => {
+                const v = Number(Number(newVals[idx]).toFixed(2))
+                flowModifiedByMonth.value[m] = v
+                node.data('m' + m, v)
+                ele['m' + m] = v
+            })
+            ele.m0 = newVals.reduce((sum, v) => sum + Number(v || 0), 0) / newVals.length
+            return true
         }
-        const applyScenariosChanges = async function () {
-            openModalScenarios.value = false
-            loadingYear.value = 1
-            loading.value = true
-            await sleep(1)
+        const applySelectedElementInputs = async function () {
+            if (!selectedEle.value || selectedEle.value.eleType !== 'punt' || selectedEditDirtyMode.value === null) {
+                return true
+            }
+            if (selectedEditDirtyMode.value === 'annual') {
+                return applySelectedAnnualInputs(selectedEle.value)
+            }
+            return applySelectedMonthlyInputs(selectedEle.value)
+        }
+        const applyScenarioInputs = async function () {
 
             if (scenarios.value.rainReduction.active === false && scenarios.value.rainReduction.value !== '100') {
                 scenarios.value.rainReduction.value = '100'
@@ -486,14 +469,60 @@ createApp({
             } else if (scenarios.value.forestSurface.active) {
                 await scen.modifyForest(cy.value, scenarios.value.forestSurface.value)
             }
+        }
+        const refreshSelectedElement = function () {
+            if (!selectedEle.value?.id || !cy.value) return
+            const eleType = selectedEle.value.eleType
+            const ele = cy.value.getElementById(selectedEle.value.id)
+            if (!ele?.nonempty?.()) return
+            selectedEle.value = ele.data()
+            selectedEle.value.eleType = eleType
+            calcSelectedEleVolumes(selectedEle.value)
+        }
+        const applySidebarChanges = async function () {
+            if (initialVolumeInvalid.value) {
+                errorMsg.value = t('sb.validVol')
+                return
+            }
 
-            gm.calculateContribution(cy.value, params.value)
-            await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
-            int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
+            loadingYear.value = 1
+            loading.value = true
+            await waitForPaint()
 
-            tick.value++
-            if (selectedEle.value) calcSelectedEleVolumes(selectedEle.value)
-            loading.value = false
+            try {
+                applyTimeInputs()
+                await applyScenarioInputs()
+                gm.calculateContribution(cy.value, params.value)
+
+                if (selectedEle.value?.id === 'DESEMBASSAT' && selectedEditDirtyMode.value === 'annual') {
+                    await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
+                    loadingYear.value = 1
+                }
+
+                const selectedApplied = await applySelectedElementInputs()
+                if (!selectedApplied) return
+
+                errorMsg.value = null
+                await gm.calculateFlow(cy.value, params.value, nYears.value, errorMsg, {}, loadingYear, volumEmb.value)
+                int.setGraphColors(selK.value, cy.value, { nodeLayerById, edgeLayerById, L, currentSel })
+
+                tick.value++
+                refreshSelectedElement()
+                selectedEditDirtyMode.value = null
+            } finally {
+                loading.value = false
+            }
+        }
+        const applyYears = async () => applySidebarChanges()
+        const applyFlowChanges = async function () {
+            await applySidebarChanges()
+        }
+        const applyAnnualChange = async function () {
+            await applySidebarChanges()
+        }
+        const applyScenariosChanges = async function () {
+            openModalScenarios.value = false
+            await applySidebarChanges()
         }
 
         const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
@@ -502,6 +531,7 @@ createApp({
         const nodeLayerById = new Map()
 
         const calcSelectedEleVolumes = function(val){
+            selectedEditDirtyMode.value = null
             if (val && val.id === 'DESEMBASSAT') {
                 annualVolume.value = Number(gm.RESERVOIR.releasedVol_hm3.total / nYears.value).toFixed(0);
                 monthSelector.value.forEach(m => {
@@ -928,6 +958,7 @@ createApp({
             nYears,
             nYearsDraft,
             yearsDirty,
+            initialVolumeInvalid,
             yearSelector,
             simYear,
             applyYears,
@@ -941,6 +972,8 @@ createApp({
             openModalInfo,
             scenarios,
             applyScenariosChanges,
+            markAnnualDirty,
+            markMonthlyDirty,
             pptMean,
             tmitMean,
             urbanDemandMean,
