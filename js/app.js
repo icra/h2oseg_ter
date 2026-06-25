@@ -573,6 +573,7 @@ createApp({
                 }
                 selectedEditDirtyMode.value = null
             } finally {
+                calculatingLoading.value = 'loading.calculatingFlows'
                 loading.value = false
             }
         }
