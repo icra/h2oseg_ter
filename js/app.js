@@ -266,7 +266,9 @@ createApp({
                 value: '100',
                 units: "%",
                 description: 'modalScenarios.rainDescription',
-                active: false
+                active: false,
+                monthly: false,
+                monthlyValue: Array(12).fill(100)
             },
             temperatureIncrease: {
                 name: "modalScenarios.tempModification",
@@ -299,7 +301,10 @@ createApp({
                 active: false
             }
         })
-        const pptMean = ref(null)
+        const pptMean = ref({
+            annual: 0,
+            monthly: Array(12).fill(0)
+        })
         const tmitMean = ref({
             annual: 0,
             monthly: Array(12).fill(0)
@@ -443,11 +448,41 @@ createApp({
         }
         const applyScenarioInputs = async function () {
 
-            if (scenarios.value.rainReduction.active === false && scenarios.value.rainReduction.value !== '100') {
-                scenarios.value.rainReduction.value = '100'
-                await scen.rainReduction(cy.value, scenarios.value.rainReduction.value)
-            } else if (scenarios.value.rainReduction.active) {
-                await scen.rainReduction(cy.value, scenarios.value.rainReduction.value)
+            if (scenarios.value.rainReduction.active === false) {
+                const hadAnnualChange = scenarios.value.rainReduction.value !== '100'
+                const hadMonthlyChange = scenarios.value.rainReduction.monthlyValue
+                    .some(v => Number(v) !== 100)
+
+                if (hadAnnualChange || hadMonthlyChange) {
+                    scenarios.value.rainReduction.value = '100'
+                    scenarios.value.rainReduction.monthlyValue = Array(12).fill(100)
+                    await scen.rainReduction(cy.value, 100)
+                }
+
+            } else if (scenarios.value.rainReduction.monthly === true) {
+                const hadAnnualChange = scenarios.value.rainReduction.value !== '100'
+
+                if (hadAnnualChange) {
+                    scenarios.value.rainReduction.value = '100'
+                }
+
+                await scen.rainReduction(
+                    cy.value,
+                    scenarios.value.rainReduction.monthlyValue
+                )
+
+            } else {
+                const hadMonthlyChange = scenarios.value.rainReduction.monthlyValue
+                    .some(v => Number(v) !== 100)
+
+                if (hadMonthlyChange) {
+                    scenarios.value.rainReduction.monthlyValue = Array(12).fill(100)
+                }
+
+                await scen.rainReduction(
+                    cy.value,
+                    scenarios.value.rainReduction.value
+                )
             }
 
             // TEMPERATURA: anual, mensual o desactivada. Només s'aplica una vegada.
@@ -949,7 +984,8 @@ createApp({
                     }
                 }).addTo(map);
 
-                pptMean.value = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
+                pptMean.value.annual = gm.calculateMeanCy(cy.value, 'ppt', 'sum')
+                pptMean.value.monthly = gm.calculateMonthlyMeanCy(cy.value, 'ppt')
                 tmitMean.value.annual = gm.calculateMeanCy(cy.value, 'tmit', 'mean')
                 tmitMean.value.monthly = gm.calculateMonthlyMeanCy(cy.value, 'tmit')
 

@@ -3,7 +3,6 @@ const rainReduction = async function (cy, deltaPpt) {
         console.error("cy not loaded")
         return
     }
-    const reduction = Number(deltaPpt) / 100
     const ppt = Array(12).fill().map((e, i) => String('ppt' + (i + 1)))
     const refppt = Array(12).fill().map((e, i) => String('refppt' + (i + 1)))
 
@@ -16,10 +15,19 @@ const rainReduction = async function (cy, deltaPpt) {
         })
     }
 
+    const reductionByMonth = Array.isArray(deltaPpt)
+        ? deltaPpt.map(v => Number(v) / 100)
+        : Array(12).fill(Number(deltaPpt) / 100)
+
+    if (reductionByMonth.length !== 12 || reductionByMonth.some(v => !Number.isFinite(v))) {
+        console.error("ppt i deltaPpt no tenen la mateixa llargada")
+        return
+    }
+
     cy.nodes().forEach(n => {
         if (n.data('ppt1') == null) return
         for (const i in ppt) {
-            const newRain = n.data(refppt[i]) * reduction
+            const newRain = n.data(refppt[i]) * reductionByMonth[i]
             n.data(ppt[i], newRain)
         }
     })

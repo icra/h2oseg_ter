@@ -41,32 +41,69 @@
 
                         <!-- Xip amb el % quan l'escenari és actiu -->
                         <span
-                                v-if="scenarios.rainReduction.active"
+                                v-if="scenarios.rainReduction.active && !scenarios.rainReduction.monthly"
                                 class="scenario-chip"
                         >
                             {{ scenarios.rainReduction.value }}{{ scenarios.rainReduction.units }}
                         </span>
                     </div>
 
-                    <p class="scenario-desc">
-                        {{$t(scenarios.rainReduction.description)}}
-                        ({{ $t('modalScenarios.initialValue') }}: {{ Number(pptMean || 0).toFixed(0) }} mm).
-                    </p>
-
-                    <div v-if="scenarios.rainReduction.active" class="scenario-slider">
+                    <label class="scenario-monthly" for="rainMonthly" v-if="scenarios.rainReduction.active">
                         <input
-                                type="range"
-                                min="0"
-                                max="200"
-                                v-model="scenarios.rainReduction.value"
+                                id="rainMonthly"
+                                type="checkbox"
+                                v-model="scenarios.rainReduction.monthly"
                         />
+                        <span class="scenario-desc">{{ $t('modalScenarios.monthlyRain') }}</span>
+                    </label>
 
-                        <div class="scenario-values">
+                    <div v-if="!scenarios.rainReduction.monthly">
+                        <p class="scenario-desc">
+                            {{$t(scenarios.rainReduction.description)}}
+                            ({{ $t('modalScenarios.initialValue') }}: {{ Number(pptMean.annual || 0).toFixed(0) }} mm).
+                        </p>
+
+                        <div v-if="scenarios.rainReduction.active" class="scenario-slider">
+                            <input
+                                    type="range"
+                                    min="0"
+                                    max="200"
+                                    v-model="scenarios.rainReduction.value"
+                            />
+
+                            <div class="scenario-values">
                             <span class="scenario-value-new">
-                                {{ $t('modalScenarios.newValue') }}: {{ ((pptMean * scenarios.rainReduction.value / 100)).toFixed(0) }} mm {{ $t('modalScenarios.watershedMean') }}.
+                                {{ $t('modalScenarios.newValue') }}: {{ ((pptMean.annual * scenarios.rainReduction.value / 100)).toFixed(0) }} mm {{ $t('modalScenarios.watershedMean') }}.
                             </span>
                                         <span class="scenario-value-delta">
                                 {{ $t('modalScenarios.change') }}: {{ scenarios.rainReduction.value }}%
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="monthly-slider-list">
+                        <div
+                                class="monthly-slider-row"
+                                v-for="month in baseMonths"
+                                :key="month.value"
+                        >
+                            <span class="monthly-label">
+                                {{ $t(month.label) }}
+                            </span>
+                            <input
+                                    class="monthly-range"
+                                    type="range"
+                                    min="0"
+                                    max="200"
+                                    step="1"
+                                    v-model.number="scenarios.rainReduction.monthlyValue[Number(month.value) - 1]"
+                            />
+                            <span class="monthly-new-value">
+                                {{ Number(scenarios.rainReduction.monthlyValue[month.value - 1]).toFixed(0) }}{{ scenarios.rainReduction.units }}
+                            </span>
+                            <span class="monthly-delta">
+                                {{ (Number(pptMean.monthly[month.value - 1] || 0) * Number(scenarios.rainReduction.monthlyValue[Number(month.value) - 1]) / 100).toFixed(0) }}
+                                mm
                             </span>
                         </div>
                     </div>
