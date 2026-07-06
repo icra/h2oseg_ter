@@ -359,7 +359,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="k in Array(nYears * 12).fill().map((_, i) => i + 1)">
+                        <tr v-for="k in (nYears * 12)" :key="k">
                             <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
                             <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
                             <td class="valor">{{ Number(selectedEle['flow'+k]).toFixed(2) }}</td>
