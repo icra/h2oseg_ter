@@ -2,8 +2,9 @@ const messages = {
     ca: {
         modalScenarios: {
             title: "Configuració d'escenaris",
-            rainModification: "Modificació de la pluja anual",
-            rainDescription: "Aplica una modificació proporcional a la precipitació mitjana anual",
+            rainModification: "Modificació de la pluja acumulada",
+            rainDescription: "Aplica una modificació proporcional a la pluja acumulada anual",
+            monthlyRain: "Modificació de la pluja acumulada mes a mes",
             initialValue: "valor inicial",
             watershedMean: "de mitjana a la conca",
             newValue: "Nou valor",
@@ -185,8 +186,9 @@ const messages = {
     en: {
         modalScenarios: {
             title: "Scenario setup",
-            rainModification: "Annual rainfall modification",
-            rainDescription: "Applies a proportional change to mean annual rainfall",
+            rainModification: "Accumulated rainfall modification",
+            rainDescription: "Applies a proportional change to accumulated annual rainfall",
+            monthlyRain: "Month-by-month accumulated rainfall modification",
             initialValue: "initial value",
             watershedMean: "on average in the basin",
             newValue: "New value",
@@ -367,8 +369,9 @@ const messages = {
     es: {
         modalScenarios: {
             title: "Configuración de escenarios",
-            rainModification: "Modificación de la lluvia anual",
-            rainDescription: "Aplica una modificación proporcional a la precipitación media anual",
+            rainModification: "Modificación de la lluvia acumulada",
+            rainDescription: "Aplica una modificación proporcional a la lluvia acumulada anual",
+            monthlyRain: "Modificación de la lluvia acumulada mes a mes",
             initialValue: "valor inicial",
             watershedMean: "de media en la cuenca",
             newValue: "Nuevo valor",
