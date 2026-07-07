@@ -81,7 +81,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-else class="monthly-slider-list">
+                    <div v-if="scenarios.rainReduction.active && scenarios.rainReduction.monthly" class="monthly-slider-list">
                         <div
                                 class="monthly-slider-row"
                                 v-for="month in baseMonths"
@@ -161,7 +161,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-else class="monthly-slider-list">
+                    <div v-if="scenarios.temperatureIncrease.active && scenarios.temperatureIncrease.monthly" class="monthly-slider-list">
                         <div
                                 class="monthly-slider-row"
                                 v-for="month in baseMonths"
