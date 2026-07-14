@@ -327,7 +327,8 @@ createApp({
                 })),
                 edges: cy.value.edges().map(edge => ({
                     data: edge.data()
-                }))
+                })),
+                reservoir: gm.RESERVOIR
             };
 
             const jsonString = JSON.stringify(dades, null, 2);

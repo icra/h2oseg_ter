@@ -2,6 +2,8 @@ library(tidyverse)
 use('janitor', 'clean_names')
 library(jsonlite)
 
+path_paper <- "C:/Users/jpueyo/ICRA/H2OSEG - ICRA - General/WP4/figures"
+
 cabals <- read_json("calibration/calibration_results.json") |>
   map(\(x) {
     x$stations |>
@@ -25,9 +27,29 @@ cabals |>
 
 cabals |>
   pivot_longer(c(meanObs_m3s, meanMod_m3s)) |>
+  mutate(
+    codi_sad = str_remove(codi_sad, "CONTROL_") |>
+      str_replace_all("_", " ") |>
+      str_to_title()
+  ) |>
+  mutate(name = if_else(str_detect(name, "Obs"), "Observed", "Estimated")) |>
+  mutate(mes = fct(as.character(mes))) |>
   ggplot(aes(x = mes, y = value, color = name, group = name)) +
   geom_line() +
-  facet_wrap(~codi_sad, scales = "free_y")
+  facet_wrap(~codi_sad, scales = "free_y") +
+  labs(
+    x = "Month",
+    y = bquote(m^3 / s)
+  ) +
+  theme_minimal() +
+  theme(
+    legend.title = element_blank()
+  )
+ggsave(
+  file.path(path_paper, "calibration_by_station.png"),
+  width = 7,
+  height = 4
+)
 
 read_json(
   "calibration/dades_h2oseg_ter_calibrades.json",
