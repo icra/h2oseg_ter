@@ -652,6 +652,15 @@ createApp({
         onMounted(async () => {
             loading.value = true
             try {
+                console.log('i18n', i18n.global.locale.value)
+                console.log('url', window.location.search)
+
+                const lang = window.location.search.match(/[?&]lang=([a-z]{2})/i)[1]
+
+                if (Object.keys(mes).includes(lang)){
+                    i18n.global.locale.value = lang
+                }
+
                 const [nodesResp, edgesResp, embResp, canalsResp] = await Promise.all([
                     fetch('assets/nodes.geojson'),
                     fetch('assets/edges.geojson'),
