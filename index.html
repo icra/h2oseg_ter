@@ -15,12 +15,12 @@
 <body>
 <div id="app">
     <!-- MODAL D'ESCENARIS -->
-    <div v-if="openModalScenarios" class="modal-backdrop" v-cloak>
+    <div v-if="modalScenarios" class="modal-backdrop" v-cloak>
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
                 <h3 class="modal-title">{{ $t('modalScenarios.title') }}</h3>
-                <button class="modal-close" @click="openModalScenarios=false" :aria-label="$t('close')">
+                <button class="modal-close" @click="closeModalScenarios" :aria-label="$t('close')">
                     ×
                 </button>
             </div>
@@ -339,7 +339,7 @@
 
             <!-- FOOTER -->
             <div class="modal-footer">
-                <button class="btn-secondary" @click="openModalScenarios=false">
+                <button class="btn-secondary" @click="closeModalScenarios">
                     {{ $t('cancel') }}
                 </button>
                 <button class="btn-primary" @click="applySidebarChanges">
@@ -1076,7 +1076,7 @@
                     </div>
                 </div>
                 <div class="res-bottom res-actions">
-                    <button class="btn-primary" @click="openModalScenarios=true">
+                    <button class="btn-primary" @click="openModalScenarios">
                         {{ $t('scen.setup') }}
                     </button>
                 </div>
