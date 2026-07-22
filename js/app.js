@@ -655,10 +655,10 @@ createApp({
                 console.log('i18n', i18n.global.locale.value)
                 console.log('url', window.location.search)
 
-                const lang = window.location.search.match(/[?&]lang=([a-z]{2})/i)
+                const lang = new URLSearchParams(window.location.search).get('lang')?.toLowerCase()
 
-                if (lang && Object.keys(mes).includes(lang[1])){
-                    i18n.global.locale.value = lang[1]
+                if (lang && Object.prototype.hasOwnProperty.call(mes, lang)) {
+                    i18n.global.locale.value = lang
                 }
 
                 const [nodesResp, edgesResp, embResp, canalsResp] = await Promise.all([
