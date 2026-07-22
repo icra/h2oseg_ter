@@ -20,7 +20,7 @@
             <!-- HEADER -->
             <div class="modal-header">
                 <h3 class="modal-title">{{ $t('modalScenarios.title') }}</h3>
-                <button class="modal-close" @click="openModalScenarios=false" :aria-label="$t('close')">
+                <button class="modal-close" @click="closeModalScenarios" :aria-label="$t('close')">
                     ×
                 </button>
             </div>
@@ -339,7 +339,7 @@
 
             <!-- FOOTER -->
             <div class="modal-footer">
-                <button class="btn-secondary" @click="openModalScenarios=false">
+                <button class="btn-secondary" @click="closeModalScenarios">
                     {{ $t('cancel') }}
                 </button>
                 <button class="btn-primary" @click="applySidebarChanges">

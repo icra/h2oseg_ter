@@ -613,6 +613,9 @@ createApp({
                 loading.value = false
             }
         }
+        const closeModalScenarios = function () {
+            openModalScenarios.value = false
+        }
 
         const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
 
@@ -1059,6 +1062,7 @@ createApp({
             fmtConstant,
             safeRatio,
             openModalScenarios,
+            closeModalScenarios,
             openModalInfo,
             scenarios,
             markAnnualDirty,
