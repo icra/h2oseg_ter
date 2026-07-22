@@ -1031,10 +1031,10 @@ createApp({
         });
 
         watch(i18n.global.locale, (l) => {
-            console.log("language changed to", l)
             const url = new URL(window.location.href);
+            if (url.searchParams.get('lang') === l) return;
             url.searchParams.set('lang', l);
-            window.history.pushState({}, '', url);
+            window.history.replaceState({}, '', url);
         })
 
         const reservoirView = Vue.computed(() => {
