@@ -4,6 +4,8 @@ library(jsonlite)
 
 path_paper <- "C:/Users/jpueyo/ICRA/H2OSEG - ICRA - General/WP4/figures"
 
+stopifnot(dir.exists(path_paper))
+
 cabals <- read_json("calibration/calibration_results.json") |>
   map(\(x) {
     x$stations |>
@@ -34,6 +36,7 @@ cabals |>
   ) |>
   mutate(name = if_else(str_detect(name, "Obs"), "Observed", "Estimated")) |>
   mutate(mes = fct(as.character(mes))) |>
+  mutate(codi_sad = fct_reorder(codi_sad, desc(value))) |>
   ggplot(aes(x = mes, y = value, color = name, group = name)) +
   geom_line() +
   facet_wrap(~codi_sad, scales = "free_y") +
