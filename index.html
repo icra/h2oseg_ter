@@ -15,7 +15,7 @@
 <body>
 <div id="app">
     <!-- MODAL D'ESCENARIS -->
-    <div v-if="openModalScenarios" class="modal-backdrop" v-cloak>
+    <div v-if="modalScenarios" class="modal-backdrop" v-cloak>
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
@@ -1076,7 +1076,7 @@
                     </div>
                 </div>
                 <div class="res-bottom res-actions">
-                    <button class="btn-primary" @click="openModalScenarios=true">
+                    <button class="btn-primary" @click="openModalScenarios">
                         {{ $t('scen.setup') }}
                     </button>
                 </div>

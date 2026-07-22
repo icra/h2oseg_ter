@@ -5,7 +5,7 @@ import int from './interface.js'
 import scen from './scenarios.js'
 import mes from './messagesi18n.js'
 
-const {createApp, onMounted, ref, shallowRef, watch, nextTick} = Vue
+const {createApp, onMounted, ref, shallowRef, watch, nextTick, toRaw} = Vue
 const { createI18n } = VueI18n;
 
 const i18n = createI18n({
@@ -258,7 +258,6 @@ createApp({
                 )
             }
         }
-        const openModalScenarios = ref(false)
         const openModalInfo = ref(false)
         const scenarios = ref({
             rainReduction: {
@@ -301,6 +300,7 @@ createApp({
                 active: false
             }
         })
+        let scenariosBackup = {}
         const pptMean = ref({
             annual: 0,
             monthly: Array(12).fill(0)
@@ -555,7 +555,7 @@ createApp({
             calcSelectedEleVolumes(selectedEle.value)
         }
         const applySidebarChanges = async function () {
-            openModalScenarios.value = false
+            modalScenarios.value = false
 
             if (initialVolumeInvalid.value) {
                 errorMsg.value = t('sb.validVol')
@@ -613,8 +613,14 @@ createApp({
                 loading.value = false
             }
         }
+        const modalScenarios = ref(false)
+        const openModalScenarios = function(){
+            scenariosBackup = structuredClone(toRaw(scenarios.value))
+            modalScenarios.value = true
+        }
         const closeModalScenarios = function () {
-            openModalScenarios.value = false
+            scenarios.value = structuredClone(scenariosBackup)
+            modalScenarios.value = false
         }
 
         const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
@@ -1075,6 +1081,7 @@ createApp({
             fmt,
             fmtConstant,
             safeRatio,
+            modalScenarios,
             openModalScenarios,
             closeModalScenarios,
             openModalInfo,
