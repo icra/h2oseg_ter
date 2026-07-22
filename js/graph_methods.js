@@ -128,7 +128,9 @@ let RESERVOIR = {
     releaseDemand_m3s: {},
     released_m3s: {},
     releasedVol_hm3: {},
-    customRelease_m3s: {}
+    customRelease_m3s: {},
+    evaporation_m3s: {},
+    evaporation_hm3: {},
     // last: {inflowSum_m3s: {}, inflowVol_hm3: {}, releaseDemand_m3s: {}, released_m3s: {}, releasedVol_hm3: {}, dt_s: {}}
 };
 
@@ -622,6 +624,8 @@ const applyReservoirRelease = function(controlledRelease_m3s, nodeContribution, 
     R.releaseDemand_m3s[k] = controlled
     R.released_m3s[k] = reservoirRelease_m3s
     R.releasedVol_hm3[k] = m3sToHm3(reservoirRelease_m3s, dt_s)
+    R.evaporation_hm3[k] = evap_hm3
+    R.evaporation_m3s[k] = hm3ToM3s(evap_hm3, dt_s)
 
     return totalOutflow_m3s
 }
