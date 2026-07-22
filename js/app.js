@@ -652,8 +652,6 @@ createApp({
         onMounted(async () => {
             loading.value = true
             try {
-                console.log('i18n', i18n.global.locale.value)
-                console.log('url', window.location.search)
 
                 const lang = new URLSearchParams(window.location.search).get('lang')?.toLowerCase()
 
