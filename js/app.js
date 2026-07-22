@@ -655,6 +655,13 @@ createApp({
         onMounted(async () => {
             loading.value = true
             try {
+
+                const lang = new URLSearchParams(window.location.search).get('lang')?.toLowerCase()
+
+                if (lang && Object.prototype.hasOwnProperty.call(mes, lang)) {
+                    i18n.global.locale.value = lang
+                }
+
                 const [nodesResp, edgesResp, embResp, canalsResp] = await Promise.all([
                     fetch('assets/nodes.geojson'),
                     fetch('assets/edges.geojson'),
@@ -1025,6 +1032,13 @@ createApp({
         watch(selK, (k) => {
             int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
         });
+
+        watch(i18n.global.locale, (l) => {
+            const url = new URL(window.location.href);
+            if (url.searchParams.get('lang') === l) return;
+            url.searchParams.set('lang', l);
+            window.history.replaceState({}, '', url);
+        })
 
         const reservoirView = Vue.computed(() => {
             tick.value
