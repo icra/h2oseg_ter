@@ -655,10 +655,10 @@ createApp({
                 console.log('i18n', i18n.global.locale.value)
                 console.log('url', window.location.search)
 
-                const lang = window.location.search.match(/[?&]lang=([a-z]{2})/i)[1]
+                const lang = window.location.search.match(/[?&]lang=([a-z]{2})/i)
 
-                if (Object.keys(mes).includes(lang)){
-                    i18n.global.locale.value = lang
+                if (lang && Object.keys(mes).includes(lang[1])){
+                    i18n.global.locale.value = lang[1]
                 }
 
                 const [nodesResp, edgesResp, embResp, canalsResp] = await Promise.all([
@@ -1031,6 +1031,13 @@ createApp({
         watch(selK, (k) => {
             int.setGraphColors(k, cy.value, {nodeLayerById, edgeLayerById, L, currentSel})
         });
+
+        watch(i18n.global.locale, (l) => {
+            console.log("language changed to", l)
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', l);
+            window.history.pushState({}, '', url);
+        })
 
         const reservoirView = Vue.computed(() => {
             tick.value
