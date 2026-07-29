@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8" />
+    <title>H2OSEG Ter</title>
+    <!-- Estils de Leaflet -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>-->
+    <!-- Estils de cytoscape-leaf -->
+    <link rel="stylesheet" href="css/cytoscape-leaf.css" />
+    <link rel="stylesheet" href="css/custom_styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+</head>
+<body>
+<div id="app">
+    <!-- MODAL D'ESCENARIS -->
+    <div v-if="modalScenarios" class="modal-backdrop" v-cloak>
+        <div class="modal-dialog" @click.stop>
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h3 class="modal-title">{{ $t('modalScenarios.title') }}</h3>
+                <button class="modal-close" @click="closeModalScenarios" :aria-label="$t('close')">
+                    ×
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+<!--                Rain Reduction-->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="rainReduction">
+                            <input
+                                    id="rainReduction"
+                                    type="checkbox"
+                                    v-model="scenarios.rainReduction.active"
+                            />
+                            <span class="scenario-title">{{ $t('modalScenarios.rainModification') }}</span>
+                        </label>
+
+                        <!-- Xip amb el % quan l'escenari és actiu -->
+                        <span
+                                v-if="scenarios.rainReduction.active && !scenarios.rainReduction.monthly"
+                                class="scenario-chip"
+                        >
+                            {{ scenarios.rainReduction.value }}{{ scenarios.rainReduction.units }}
+                        </span>
+                    </div>
+
+                    <label class="scenario-monthly" for="rainMonthly" v-if="scenarios.rainReduction.active">
+                        <input
+                                id="rainMonthly"
+                                type="checkbox"
+                                v-model="scenarios.rainReduction.monthly"
+                        />
+                        <span class="scenario-desc">{{ $t('modalScenarios.monthlyRain') }}</span>
+                    </label>
+
+                    <div v-if="!scenarios.rainReduction.monthly">
+                        <p class="scenario-desc">
+                            {{$t(scenarios.rainReduction.description)}}
+                            ({{ $t('modalScenarios.initialValue') }}: {{ Number(pptMean.annual || 0).toFixed(0) }} mm).
+                        </p>
+
+                        <div v-if="scenarios.rainReduction.active" class="scenario-slider">
+                            <input
+                                    type="range"
+                                    min="0"
+                                    max="200"
+                                    v-model="scenarios.rainReduction.value"
+                            />
+
+                            <div class="scenario-values">
+                            <span class="scenario-value-new">
+                                {{ $t('modalScenarios.newValue') }}: {{ ((pptMean.annual * scenarios.rainReduction.value / 100)).toFixed(0) }} mm {{ $t('modalScenarios.watershedMean') }}.
+                            </span>
+                                        <span class="scenario-value-delta">
+                                {{ $t('modalScenarios.change') }}: {{ scenarios.rainReduction.value }}%
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="scenarios.rainReduction.active && scenarios.rainReduction.monthly" class="monthly-slider-list">
+                        <div
+                                class="monthly-slider-row"
+                                v-for="month in baseMonths"
+                                :key="month.value"
+                        >
+                            <span class="monthly-label">
+                                {{ $t(month.label) }}
+                            </span>
+                            <input
+                                    class="monthly-range"
+                                    type="range"
+                                    min="0"
+                                    max="200"
+                                    step="1"
+                                    v-model.number="scenarios.rainReduction.monthlyValue[Number(month.value) - 1]"
+                            />
+                            <span class="monthly-new-value">
+                                {{ Number(scenarios.rainReduction.monthlyValue[month.value - 1]).toFixed(0) }}{{ scenarios.rainReduction.units }}
+                            </span>
+                            <span class="monthly-delta">
+                                {{ (Number(pptMean.monthly[month.value - 1] || 0) * Number(scenarios.rainReduction.monthlyValue[Number(month.value) - 1]) / 100).toFixed(0) }}
+                                mm
+                            </span>
+                        </div>
+                    </div>
+                </div>
+<!--                Temperature increase -->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="temperatureIncrease">
+                            <input
+                                    id="temperatureIncrease"
+                                    type="checkbox"
+                                    v-model="scenarios.temperatureIncrease.active"
+                            />
+                            <span class="scenario-title">{{ $t('modalScenarios.tempModification') }}</span>
+                        </label>
+
+                        <!-- Xip amb el % quan l'escenari és actiu -->
+                        <span
+                                v-if="scenarios.temperatureIncrease.active && !scenarios.temperatureIncrease.monthly"
+                                class="scenario-chip"
+                        >
+                            {{ Number(scenarios.temperatureIncrease.value).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}
+                        </span>
+                    </div>
+                    <label class="scenario-monthly" for="temperatureMonthly" v-if="scenarios.temperatureIncrease.active">
+                        <input
+                                id="temperatureMonthly"
+                                type="checkbox"
+                                v-model="scenarios.temperatureIncrease.monthly"
+                        />
+                        <span class="scenario-desc">{{ $t('modalScenarios.monthlyTemp') }}</span>
+                    </label>
+
+                    <div v-if="!scenarios.temperatureIncrease.monthly">
+                        <p class="scenario-desc">
+                            {{ $t(scenarios.temperatureIncrease.description) }}
+                            ({{ $t('modalScenarios.initialValue') }}: {{ Number(tmitMean.annual || 0).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}).
+                        </p>
+
+                        <div v-if="scenarios.temperatureIncrease.active" class="scenario-slider">
+                            <input
+                                    type="range"
+                                    min="-10"
+                                    max="10"
+                                    v-model="scenarios.temperatureIncrease.value"
+                            />
+
+                            <div class="scenario-values">
+                            <span class="scenario-value-new">
+                                {{ $t('modalScenarios.newValue') }}: {{ (tmitMean.annual + Number(scenarios.temperatureIncrease.value)).toFixed(0) }} {{ scenarios.temperatureIncrease.units }} {{ $t('modalScenarios.watershedMean') }}.
+                            </span>
+                                <span class="scenario-value-delta">
+                                {{ $t('modalScenarios.change') }}: {{ scenarios.temperatureIncrease.value }} {{ scenarios.temperatureIncrease.units }}
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="scenarios.temperatureIncrease.active && scenarios.temperatureIncrease.monthly" class="monthly-slider-list">
+                        <div
+                                class="monthly-slider-row"
+                                v-for="month in baseMonths"
+                                :key="month.value"
+                        >
+                            <span class="monthly-label">
+                                {{ $t(month.label) }}
+                            </span>
+                            <input
+                                    class="monthly-range"
+                                    type="range"
+                                    min="-10"
+                                    max="10"
+                                    step="1"
+                                    v-model.number="scenarios.temperatureIncrease.monthlyValue[Number(month.value) - 1]"
+                            />
+                            <span class="monthly-new-value">
+                                {{ Number(scenarios.temperatureIncrease.monthlyValue[month.value - 1]).toFixed(0) }} {{ scenarios.temperatureIncrease.units }}
+                            </span>
+                            <span class="monthly-delta">
+                                {{ Number(scenarios.temperatureIncrease.monthlyValue[Number(month.value) - 1]  + tmitMean.monthly[month.value - 1]).toFixed(0)}}
+                                {{ scenarios.temperatureIncrease.units }}
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+<!--                Demanda urbana-->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="urbanDemand">
+                            <input
+                                    id="urbanDemand"
+                                    type="checkbox"
+                                    v-model="scenarios.urbanDemand.active"
+                            />
+                            <span class="scenario-title">{{ $t('modalScenarios.urbanModification') }}</span>
+                        </label>
+
+                        <!-- Xip amb el % quan l'escenari és actiu -->
+                        <span
+                                v-if="scenarios.urbanDemand.active"
+                                class="scenario-chip"
+                        >
+                            {{ scenarios.urbanDemand.value }}{{ scenarios.urbanDemand.units }}
+                        </span>
+                    </div>
+
+                    <p class="scenario-desc">
+                        {{ $t(scenarios.urbanDemand.description) }}
+                        ({{ $t('modalScenarios.initialValue') }}: {{ Number(urbanDemandMean || 0).toFixed(0) }} Hm³ anuals).
+                    </p>
+
+                    <div v-if="scenarios.urbanDemand.active" class="scenario-slider">
+                        <input
+                                type="range"
+                                min="0"
+                                max="200"
+                                v-model="scenarios.urbanDemand.value"
+                        />
+
+                        <div class="scenario-values">
+                            <span class="scenario-value-new">
+                                {{ $t('modalScenarios.newValue') }}: {{ ((urbanDemandMean * scenarios.urbanDemand.value / 100)).toFixed(0) }} Hm³
+                            </span>
+                            <span class="scenario-value-delta">
+                                {{ $t('modalScenarios.change') }}: {{ scenarios.urbanDemand.value }}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+<!--                Demanda agrícola-->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="agriDemand">
+                            <input
+                                    id="agriDemand"
+                                    type="checkbox"
+                                    v-model="scenarios.agriDemand.active"
+                            />
+                            <span class="scenario-title">
+                {{ $t('modalScenarios.agriDemandModification') }}
+            </span>
+                        </label>
+
+                        <span
+                                v-if="scenarios.agriDemand.active"
+                                class="scenario-chip"
+                        >
+            {{ scenarios.agriDemand.value }}{{ scenarios.agriDemand.units }}
+        </span>
+                    </div>
+
+                    <p class="scenario-desc">
+                        {{ $t(scenarios.agriDemand.description) }}
+                        ({{ $t('modalScenarios.initialValue') }}:
+                        {{ Number(agriDemandMean || 0).toFixed(0) }}
+                        {{ $t('modalScenarios.hm3Annual') }}).
+                    </p>
+
+                    <div v-if="scenarios.agriDemand.active" class="scenario-slider">
+                        <input
+                                type="range"
+                                min="0"
+                                max="200"
+                                v-model="scenarios.agriDemand.value"
+                        />
+
+                        <div class="scenario-values">
+            <span class="scenario-value-new">
+                {{ $t('modalScenarios.newValue') }}:
+                {{ (agriDemandMean * scenarios.agriDemand.value / 100).toFixed(0) }}
+                Hm³
+            </span>
+                            <span class="scenario-value-delta">
+                {{ $t('modalScenarios.change') }}:
+                {{ scenarios.agriDemand.value }}%
+            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Superfície forestal -->
+                <div class="scenario-block">
+                    <div class="scenario-header">
+                        <label class="scenario-toggle" for="forestSurface">
+                            <input
+                                    id="forestSurface"
+                                    type="checkbox"
+                                    v-model="scenarios.forestSurface.active"
+                            />
+                            <span class="scenario-title">
+                {{ $t('modalScenarios.forestSurfaceModification') }}
+            </span>
+                        </label>
+
+                        <span
+                                v-if="scenarios.forestSurface.active"
+                                class="scenario-chip"
+                        >
+            {{ scenarios.forestSurface.value }}{{ scenarios.forestSurface.units }}
+        </span>
+                    </div>
+
+                    <p class="scenario-desc">
+                        {{ $t(scenarios.forestSurface.description) }}
+                        ({{ $t('modalScenarios.initialValue') }}:
+                        {{ Number(forestSurface || 0).toFixed(0) }}
+                        km²).
+                    </p>
+
+                    <div v-if="scenarios.forestSurface.active" class="scenario-slider">
+                        <input
+                                type="range"
+                                min="0"
+                                max="200"
+                                v-model="scenarios.forestSurface.value"
+                        />
+
+                        <div class="scenario-values">
+            <span class="scenario-value-new">
+                {{ $t('modalScenarios.approxNewValue') }}:
+                {{ ((forestSurface * scenarios.forestSurface.value / 100)).toFixed(0) }}
+                km²
+            </span>
+                            <span class="scenario-value-delta">
+                {{ $t('modalScenarios.change') }}:
+                {{ scenarios.forestSurface.value }}%
+            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+                <button class="btn-secondary" @click="closeModalScenarios">
+                    {{ $t('cancel') }}
+                </button>
+                <button class="btn-primary" @click="applySidebarChanges">
+                    {{ $t('applyChanges') }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL D'INFO -->
+    <div v-if="openModalInfo && selectedEle" class="modal-backdrop" v-cloak>
+        <div class="modal-dialog" @click.stop>
+            <!-- HEADER -->
+            <div class="modal-header">
+                <h3 class="modal-title" v-if="selectedEle.id !== 'DESEMBASSAT'">
+                    {{ $t('modalInfo.informationOf')}}
+                    <span v-if="selectedEle.eleType === 'tram'">
+                    {{ $t('modalInfo.section') + ' ' }}
+                </span>
+                    <span v-else-if="selectedEle.eleType === 'punt'">
+                    {{ $t('modalInfo.point') + ' ' }}
+                </span>
+                    <span v-if="selectedEle.nomComu">{{ selectedEle.nomComu }}</span>
+                    <span v-else-if="selectedEle.name">{{ selectedEle.name }}</span>
+                    <span v-else-if="selectedEle.id">{{ selectedEle.id }}</span>
+                    <span v-else>{{ selectedEle.eleType }}</span>
+                </h3>
+
+                <h3 class="modal-title" v-else>
+                    {{ $t('modalInfo.sauSusquedaSystemInfo') }}
+                </h3>
+
+                <button
+                        class="modal-close"
+                        @click="openModalInfo=false"
+                        :aria-label="$t('close')"
+                >
+                    ×
+                </button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+                <!-- info per trams-->
+                <div v-if="selectedEle.eleType === 'tram'">
+                    <table class="res-table">
+                        <thead>
+                        <tr>
+                            <th v-if="nYears > 1">{{ $t('year') }}</th>
+                            <th>{{ $t('month') }}</th>
+                            <th class="valor">{{ $t('modalInfo.flow') }} (m³/s)</th>
+                            <th class="valor">{{ $t('modalInfo.envFlow') }} (m³/s)</th>
+                            <th class="valor">{{ $t('modalInfo.proportion')}} (%)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="k in (nYears * 12)" :key="k">
+                            <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
+                            <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
+                            <td class="valor">{{ Number(selectedEle['flow'+k]).toFixed(2) }}</td>
+                            <td class="valor">{{ Number(selectedEle['envFlow'+monthOfStep(k)]).toFixed(2) }}</td>
+                            <td class="valor">{{ selectedEle['envFlow'+monthOfStep(k)] > 0 && selectedEle['envFlow'+monthOfStep(k)] > selectedEle['flow'+k] ?
+                                    Number(selectedEle['flow'+k] / selectedEle['envFlow'+monthOfStep(k)] * 100).toFixed(2) : '-'}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- info per punts -->
+                <div v-else-if="selectedEle.eleType === 'punt'">
+
+                    <!-- massa -->
+                    <template
+                            v-if="['massa', 'aforament'].includes(selectedEle.type)"
+                            v-for="upstream in [{
+                        areaKm2: accumulateUpstream(cy, selectedEle.id, 'area_m2', 'sum') / 1000000,
+                        ppt: accumulateUpstream(cy, selectedEle.id, 'ppt', 'mean'),
+                        tmit: accumulateUpstream(cy, selectedEle.id, 'tmit', 'mean'),
+                        etp: accumulateUpstream(cy, selectedEle.id, 'etp', 'mean'),
+                        et: accumulateUpstream(cy, selectedEle.id, 'et', 'mean')
+                    }]"
+                            :key="'upstream-' + selectedEle.id"
+                    >
+                        <table class="res-table">
+                            <thead>
+                            <tr>
+                                <th v-if="nYears > 1">{{ $t('year') }}</th>
+                                <th>{{ $t('month') }}</th>
+                                <th class="valor">{{ $t('modalInfo.inflow') }} (m³/s)</th>
+                                <th class="valor">{{ $t('modalInfo.contributedFlow') }} (m³/s)</th>
+                                <th class="valor">{{ $t('modalInfo.outflow') }} (m³/s)</th>
+                                <th class="valor">{{ $t('modalInfo.drainageArea') }} (km²)</th>
+                                <th class="valor">{{ $t('modalInfo.meanPrecipitation') }} (mm)</th>
+                                <th class="valor">{{ $t('modalInfo.meanTemperature') }} (ºC)</th>
+                                <th class="valor">{{ $t('modalInfo.meanETP') }} (mm)</th>
+                                <th class="valor">{{ $t('modalInfo.meanET') }} (mm)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="k in (nYears * 12)" :key="k">
+                                <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
+                                <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
+                                <td class="valor">{{ Number(selectedEle['inflow'+k]).toFixed(2) }}</td>
+                                <td class="valor">{{ Number(selectedEle['m'+monthOfStep(k)]).toFixed(2) }}</td>
+                                <td class="valor">{{ Number(Number(selectedEle['m'+monthOfStep(k)] || 0) === 0  ? selectedEle['inflow'+k] : selectedEle['outflow'+k]).toFixed(2) }}</td>
+                                <td class="valor">{{ Number(upstream.areaKm2).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(upstream.ppt[monthOfStep(k)-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(upstream.tmit[monthOfStep(k)-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(upstream.etp[monthOfStep(k)-1]).toFixed(0) }}</td>
+                                <td class="valor">{{ Number(upstream.et[monthOfStep(k)-1]).toFixed(0) }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </template>
+                    <table v-else-if="selectedEle.type === 'comporta'" class="res-table">
+                        <thead>
+                        <tr>
+                            <th v-if="nYears > 1">{{ $t('year') }}</th>
+                            <th>{{ $t('month') }}</th>
+                            <th class="valor">{{ $t('modalInfo.storedVolume') }} (Hm³)</th>
+                            <th class="valor">{{ $t('modalInfo.inflowFlow') }} (m³/s)</th>
+                            <th class="valor">{{ $t('modalInfo.releasedFlow') }} (m³/s)</th>
+                            <th class="valor">{{ $t('modalInfo.inflowVolume') }} (Hm³)</th>
+                            <th class="valor">{{ $t('modalInfo.releasedVolume') }} (Hm³)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="k in Array(nYears * 12).fill().map((_, i) => i + 1)">
+                            <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
+                            <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
+                            <td class="valor">{{ Number(reservoir.storage_hm3[k] ?? 0).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.inflowSum_m3s[k] ?? 0).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.released_m3s[k] ?? 0).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.inflowVol_hm3[k] ?? 0).toFixed(0) }}</td>
+                            <td class="valor">{{ Number(reservoir.releasedVol_hm3[k] ?? 0).toFixed(0) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table v-else class="res-table">
+                        <thead>
+                        <tr>
+                            <th v-if="nYears > 1">{{ $t('year') }}</th>
+                            <th>{{ $t('month') }}</th>
+                            <th class="valor">{{ $t('modalInfo.inflowFlow') }} (m³/s)</th>
+
+                            <th class="valor">
+                                {{
+                                    selectedEle.m0 > 0
+                                            ? $t('modalInfo.contributedFlow')
+                                            : $t('modalInfo.outgoingFlow')
+                                }}
+                                ({{ fmt(selectedEle.m0, 'object').u }})
+                            </th>
+
+                            <th class="valor">
+                                {{ $t('modalInfo.proportion') }} (%)
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr v-for="k in (nYears * 12)" :key="k">
+                            <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
+                            <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
+                            <td class="valor">{{ Number(selectedEle['inflow'+k]).toFixed(1) }}</td>
+                            <td class="valor">{{ fmtConstant(selectedEle['m'+monthOfStep(k)], selectedEle.m0) }}</td>
+                            <td class="valor">{{ safeRatio(selectedEle['m'+monthOfStep(k)], selectedEle['inflow'+k]) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="loading" class="loading-overlay">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <p>{{ $t(calculatingLoading) }}</p>
+            <p>{{ $t('loading.yearProgress', { current: Math.min(loadingYear, nYears), total: nYears }) }}</p>
+        </div>
+    </div>
+    <div class="layout" v-cloak>
+        <div id="map-wrapper">
+            <!-- Títol sobre el mapa -->
+            <div class="map-title" v-cloak>
+                <strong v-if="Number(selK) === 0">{{ nYears > 1 ? $t('time.totalYears', { count: nYears }) : $t('time.totalAnnual') }}</strong>
+                <strong v-if="Number(selK) !== 0">{{ nYears > 1 ? $t('time.yearPrefix', { year: simYear }) : '' }}{{ (monthSelector.find(m => m.value === month) || {label:'—'}).label }}</strong>
+            </div>
+
+            <!-- Llegenda flotant -->
+            <div class="map-legend" v-cloak>
+                <div class="legend-block">
+                    <div class="legend-header" @click="legendCollapsed = !legendCollapsed">
+                        <span class="legend-title">{{ $t('map.legend') }}</span>
+                        <button
+
+                            class="legend-toggle"
+
+                            type="button"
+
+                            :aria-expanded="(!legendCollapsed).toString()"
+
+                            aria-controls="map-legend-content"
+
+                            :aria-label="$t('map.toggleLegend')"
+
+                        >
+
+                            {{ legendCollapsed ? '▲' : '▼' }}
+                        </button>
+                    </div>
+                    <div id="map-legend-content" v-show="!legendCollapsed" class="legend-content">
+
+                    <!-- Mode TOTAL ANUAL -->
+                        <div v-if="selK === 0">
+                            <div class="legend-block-annual legend-annual-grid">
+
+                                <!-- COL 1 — Simbologia -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">{{ $t('map.pointType') }}</div>
+
+                                    <div class="legend-symbol-list">
+                                        <div
+                                                v-for="item in nodeTypeSymbols"
+                                                :key="item.labelKey"
+                                                class="legend-symbol-row"
+                                        >
+                                <span
+                                        class="legend-node-symbol"
+                                        v-html="nodeSVG(item.shape, '#999', false)"
+                                ></span>
+                                            <span>{{ $t(item.labelKey) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- COL 2 — Cabal ambiental -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">{{ $t('map.incompliment') }}</div>
+                                    <div class="legend-multi-row">
+                                        <div class="legend-multi-column">
+                                <span
+                                        v-for="(c, idx) in rampPalette"
+                                        :key="'env-'+idx"
+                                        class="legend-tiny-line"
+                                        :style="{ borderTopColor: c }"
+                                ></span>
+                                        </div>
+                                        <div class="legend-scale">
+                                            <span>{{ nYears * 12 }} {{ $t('month', 2) }}</span>
+                                            <span>0 {{ $t('month', 2) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- COL 3 — Demanda no satisfeta -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">{{ $t('map.notSatisfiedDemand') }}</div>
+                                    <div class="legend-multi-row">
+                                        <div class="legend-multi-column">
+                                <span
+                                        v-for="(c, idx) in rampPalette"
+                                        :key="'dem-'+idx"
+                                        class="legend-tiny-triangle"
+                                        v-html="nodeSVG('triangle', c, false, false)"
+                                ></span>
+                                        </div>
+                                        <div class="legend-scale">
+                                            <span>{{ nYears * 12 }} {{ $t('month', 2) }}</span>
+                                            <span>0 {{ $t('month', 2) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                    </div>
+
+                    <!-- Mode UN SOL MES -->
+                        <div v-else>
+                            <div class="legend-grid-month">
+
+                                <!-- COL 1 — Simbologia -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">{{ $t('map.pointType')}}</div>
+
+                                    <div class="legend-symbol-list">
+                                        <div
+                                                v-for="item in nodeTypeSymbols"
+                                                :key="item.labelKey"
+                                                class="legend-symbol-row"
+                                        >
+                                <span
+                                        class="legend-node-symbol"
+                                        v-html="nodeSVG(item.shape, '#999', false)"
+                                ></span>
+                                            <span>{{ $t(item.labelKey) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- COL 2 — Estat -->
+                                <div class="legend-category">
+                                    <div class="legend-subtitle">{{ $t('map.state') }}</div>
+
+                                    <div class="legend-symbol">
+                                        <span class="legend-line blue"></span>
+                                        <span class="legend-label">
+                                {{ $t('map.satisfiedFlow') }}
+                            </span>
+                                    </div>
+
+                                    <div class="legend-symbol">
+                                        <span class="legend-line red"></span>
+                                        <span class="legend-label">
+                                {{ $t('map.notSatisfiedFlow') }}
+                            </span>
+                                    </div>
+
+                                    <div class="legend-symbol">
+                            <span
+                                    class="legend-node-symbol"
+                                    v-html="nodeSVG('triangle', '#0074D9', false, false)"
+                            ></span>
+                                        <span class="legend-label">
+                                {{ $t('map.satisfiedDemand') }}
+                            </span>
+                                    </div>
+
+                                    <div class="legend-symbol">
+                            <span
+                                    class="legend-node-symbol"
+                                    v-html="nodeSVG('triangle', '#FF0000', false, false)"
+                            ></span>
+                                        <span class="legend-label">
+                                {{ $t('map.notSatisfiedDemand') }}
+                            </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="cy"></div>
+            <div id="cy-leaflet"></div>
+        </div>
+
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img src="assets/logo_h20seg.png" :alt="$t('logoAlt')" />
+                    <span>Ter</span>
+                </div>
+                <div class="locale-changer">
+                    <select
+                            v-model="$i18n.locale"
+                            class="locale-select"
+                            :aria-label="$t('languageSelector')"
+                            :style="{ backgroundImage: `url('assets/flags/${$i18n.locale}.svg')` }"
+                    >
+                        <option
+                                v-for="locale in $i18n.availableLocales"
+                                :key="`locale-${locale}`"
+                                :value="locale"
+                        >
+                            {{ localeLabels[locale] }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <!-- Temps (Any / Mes) + Anys simulació -->
+            <div class="time-controls" v-cloak>
+                <div class="time-field">
+                    <label for="volum-emb">{{ $t('sb.initialVol') }}:</label>
+                    <div class="time-input-group">
+                    <input id="volum-emb" type="number" min="0" max="400" step="25"
+                           v-model.number="volumEmb" class="time-input" />
+                    <span class="time-unit">hm³</span>
+                </div>
+                <p class="res-error" v-if="initialVolumeInvalid">
+                    {{ $t('sb.validVol') }}.
+                </p>
+                </div>
+                <div class="time-row">
+                    <!-- Selector d'any (només si nYears > 1) -->
+                    <div v-if="Number(nYears) > 1" class="time-field">
+                        <label for="selYear">{{ $t('year') }}:</label>
+                        <select id="selYear" v-model="simYear" class="time-select">
+                            <option v-for="y in yearSelector" :key="y.value" :value="y.value">
+                                {{ y.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Selector de mes -->
+                    <div class="time-field">
+                        <label for="selMonth">{{ $t('month') }}:</label>
+                        <select id="selMonth" v-model="month" class="time-select" :disabled="Number(simYear) === 0">
+                            <option v-for="m in monthSelector" :key="m.value" :value="m.value">
+                                {{ m.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="time-row time-row-secondary">
+                    <div class="time-field">
+                        <label for="nYears">{{ $t('sb.simYears') }}:</label>
+                        <input id="nYears" type="number" min="1" max="10" step="1"
+                               v-model.number="nYearsDraft" class="time-input" />
+                    </div>
+
+                    <button class="btn-primary"
+                            @click="applySidebarChanges"
+                            :disabled="loading || initialVolumeInvalid">
+                        {{ $t('apply') }}
+                    </button>
+                </div>
+
+                <p v-if="yearsDirty" class="time-hint">
+                    {{ $t('sb.pushApply') }}
+                </p>
+            </div>
+            <!-- CARD PRINCIPAL DE L'ELEMENT SELECCIONAT -->
+            <div v-if="selectedEle" class="res-mini res-stack">
+                <!-- Capçalera de la card -->
+                <div class="res-top">
+                    <svg v-if="selectedEle.id === 'DESEMBASSAT'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
+                    </svg>
+                    <svg v-else-if="selectedEle.eleType === 'punt'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <svg v-else-if="selectedEle.eleType === 'tram'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="4" y1="12" x2="20" y2="12"
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <svg v-else class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
+                    </svg>
+
+
+                    <div class="res-header-text">
+                        <h4 v-if="selectedEle.id !== 'DESEMBASSAT'">
+                            <span v-if="selectedEle.nomComu">{{ selectedEle.nomComu }}</span>
+                            <span v-else-if="selectedEle.name">{{ selectedEle.name }}</span>
+                            <span v-else-if="selectedEle.id">{{ selectedEle.id }}</span>
+                            <span v-else>{{ selectedEle.eleType }}</span>
+                        </h4>
+                        <h4 v-else>{{ $t('sel.ssSystem') }}</h4>
+                        <span class="lab">
+                            <span v-if="selectedEle.eleType === 'punt'">{{ $t('sel.node') }}</span>
+                            <span v-else-if="selectedEle.eleType === 'tram'">{{ $t('sel.edge') }}</span>
+                            <span v-else>{{ $t('sel.element') }}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Cos de la card: text + edició -->
+                <div class="res-body">
+                    <!-- Cas desembassat -->
+                    <div v-if="selectedEle.id === 'DESEMBASSAT'">
+                        <p> {{ $t('sel.releasedFlow') + fmt(selectedEle['m' + month]) }}</p>
+                        <p>{{ $t('sel.resVol') + (reservoir.storage_hm3[selK] ?? 0).toFixed(0) }} Hm³</p>
+                        <button @click="openModalInfo=true">{{ $t('sel.moreInfo') }}</button>
+                        <!-- Selector de mode -->
+                        <div class="mode-toggle">
+                            <p>{{ $t('sel.modifyVol') }}</p>
+                            <label>
+                                <input type="radio" value="annual" v-model="editMode" />
+                                {{ $t('sel.annualVol') }}
+                            </label>
+                            <label>
+                                <input type="radio" value="monthly" v-model="editMode" />
+                                {{ $t('sel.monthlyVol') }}
+                            </label>
+                        </div>
+
+                        <!-- MODE: VOLUM ANUAL -->
+                        <div v-if="editMode === 'annual'">
+                            <div class="res-table-wrapper">
+                                <table class="res-table">
+                                    <thead>
+                                    <tr>
+                                        <th class="val">{{ $t('sel.currentVol') }}</th>
+                                        <th class="val">{{ $t('sel.newVol') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="val">
+                                            {{ ((Number(reservoir.releasedVol_hm3.total) / nYears) || 0).toFixed(0) }}
+                                        </td>
+                                        <td>
+                                            <input
+                                                    type="number"
+                                                    step="0.1"
+                                                    v-model="annualVolume"
+                                                    @input="markAnnualDirty"
+                                                    class="res-input"
+                                                    v-on:keyup.enter="applySidebarChanges"
+                                            />
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="res-bottom res-actions">
+                                <button class="btn-primary"  @click="applySidebarChanges">
+                                    {{ $t('apply') }}
+                                </button>
+
+                                <p v-if="errorMsg" class="res-error">
+                                    ⚠️ {{ errorMsg }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- MODE: MES A MES -->
+                        <div v-else-if="editMode === 'monthly'">
+                            <div class="res-table-wrapper">
+                                <table class="res-table">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ $t('month') }}</th>
+                                        <th class="val">{{ $t('sel.currentVol') }}</th>
+                                        <th class="val">{{ $t('sel.newVol') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="m in baseMonths" :key="m.value">
+                                        <td class="lab">{{ $t(m.label) }}</td>
+                                        <td class="val">
+                                            {{ Number(reservoir.releasedVol_hm3[m.value] || 0).toFixed(0) }}
+                                        </td>
+                                        <td>
+                                            <input
+                                                    type="number"
+                                                    step="1"
+                                                    v-model.number="customRelease[m.value]"
+                                                    @input="markMonthlyDirty"
+                                                    @blur="customRelease[m.value] = Number(Number(customRelease[m.value] || 0).toFixed(0))"
+                                                    class="res-input"
+                                                    v-on:keyup.enter="applySidebarChanges"
+                                            />
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="res-bottom res-actions">
+                                <button class="btn-primary" @click="applySidebarChanges">
+                                    {{ $t('sel.applyAll') }}
+                                </button>
+
+                                <p v-if="errorMsg" class="res-error">
+                                    ⚠️ {{ errorMsg }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+<!--                    </div>-->
+
+                    <!-- Cas punt -->
+                    <div v-else-if="selectedEle.eleType === 'punt'">
+                        <p>
+                            {{ $t('sel.nodeFlow', {inflow: fmt(selectedEle['inflow' + selK]), outflow: fmt(selectedEle['outflow' + month])}) }}
+                        </p>
+
+                        <p v-if="selectedEle.type === 'massa'">
+                            {{ $t('sel.catchmentArea', {contribution: fmt(selectedEle['m' + month])}) }}
+                        </p>
+                        <p v-else-if="selectedEle.type === 'EDAR'">
+                            {{ $t('sel.wwtpOutflow', {flow: fmt(selectedEle['m' + month])}) }}
+
+                        </p>
+                        <p v-else-if="selectedEle['m' + month] > 0">
+                            {{ $t('sel.posFlow', {flow: fmt(selectedEle['m' + month])}) }}
+                        </p>
+                        <p v-else-if="selectedEle['m' + month] < 0">
+                            {{ $t('sel.negFlow', {flow: fmt(Math.abs(selectedEle['m' + month]))}) }}
+
+                        </p>
+                        <button @click="openModalInfo=true">{{ $t('sel.moreInfo') }}</button>
+                        <!-- Selector de mode -->
+                        <div class="mode-toggle">
+                            <p>{{ $t('sel.modifyFlow') }}</p>
+                            <label>
+                                <input type="radio" value="annual" v-model="editMode" />
+                                {{ $t('sel.annualVol') }}
+                            </label>
+                            <label>
+                                <input type="radio" value="monthly" v-model="editMode" />
+                                {{ $t('sel.monthlyFlow') }}
+                            </label>
+                        </div>
+
+                        <!-- MODE: VOLUM ANUAL -->
+                        <div v-if="editMode === 'annual'">
+                            <div class="res-table-wrapper">
+                                <table class="res-table">
+                                    <thead>
+                                    <tr>
+                                        <th class="val">{{ $t('sel.currentVol') }}</th>
+                                        <th class="val">{{ $t('sel.newVol') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="val">
+                                            {{ Number(Hm3ToM3(selectedEle.m0) || 0) }}
+                                        </td>
+                                        <td>
+                                            <input
+                                                    type="number"
+                                                    step="0.1"
+                                                    v-model="annualVolume"
+                                                    @input="markAnnualDirty"
+                                                    class="res-input"
+                                                    v-on:keyup.enter="applySidebarChanges"
+                                            />
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="res-bottom res-actions">
+                                <button class="btn-primary"  @click="applySidebarChanges">
+                                    {{ $t('apply') }}
+                                </button>
+
+                                <p v-if="errorMsg" class="res-error">
+                                    ⚠️ {{ errorMsg }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- MODE: MES A MES -->
+                        <div v-else-if="editMode === 'monthly'">
+                            <div class="res-table-wrapper">
+                                <table class="res-table">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ $t('month') }}</th>
+                                        <th class="val">{{ $t('sel.currentFlow') }}</th>
+                                        <th class="val">{{ $t('sel.newFlow') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="m in baseMonths" :key="m.value">
+                                        <td class="lab">{{ $t(m.label) }}</td>
+                                        <td class="val">
+                                            {{ Number(selectedEle['m' + m.value] || 0).toFixed(2) }}
+                                        </td>
+                                        <td>
+                                            <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    v-model.number="flowModifiedByMonth[m.value]"
+                                                    @input="markMonthlyDirty"
+                                                    @blur="flowModifiedByMonth[m.value] = Number(flowModifiedByMonth[m.value]).toFixed(2)"
+                                                    class="res-input"
+                                                    v-on:keyup.enter="applySidebarChanges"
+                                            />
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="res-bottom res-actions">
+                                <button class="btn-primary" @click="applySidebarChanges">
+                                    {{ $t('sel.applyAll') }}
+                                </button>
+
+                                <p v-if="errorMsg" class="res-error">
+                                    ⚠️ {{ errorMsg }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cas tram -->
+                    <div v-else-if="selectedEle.eleType === 'tram'">
+                        <p>
+                            {{ $t('sel.edgeFlow', {flow: fmt(selectedEle['flow' + month]), length: selectedEle.lengthRiver.toFixed(1)}) }}
+
+                        </p>
+                        <p>
+                            {{ $t('sel.envFlow', {envFlow: fmt(selectedEle['envFlow' + month])}) }}
+
+                        </p>
+                        <p>
+                            {{ $t('sel.riverCode', {code: selectedEle.codiMassa}) }}
+
+                        </p>
+                        <button @click="openModalInfo=true">{{ $t('sel.moreInfo') }}</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quan no hi ha res seleccionat -->
+            <div v-else class="res-mini res-stack">
+                <p>{{ $t('sel.noSel') }}</p>
+            </div>
+            <!--            Escenaris-->
+            <div class="res-mini res-stack">
+                <div class="res-top">
+                    <svg viewBox="0 0 24 24" class="ico" aria-hidden="true">
+                        <rect x="5"  y="14" width="3" height="6"  rx="1" fill="currentColor"/>
+                        <rect x="10" y="10" width="3" height="10" rx="1" fill="currentColor"/>
+                        <rect x="15" y="6"  width="3" height="14" rx="1" fill="currentColor"/>
+                    </svg>
+                    <div class="res-header-text">
+                        <h4>{{ $t('scen.title') }}</h4>
+                        <ul>
+                            <template v-for="(value, key) in scenarios" :key="key">
+                                <li v-if="value.active && !value.monthly">
+                                    {{ $t(value.name) }}: {{ value.value }} {{ value.units }}
+                                </li>
+                                <li v-else-if="value.active && value.monthly">
+                                    {{ $t(value.name) }}: {{ $t('scen.monthly') }}
+                                </li>
+                            </template>
+                        </ul>
+
+
+                    </div>
+                </div>
+                <div class="res-bottom res-actions">
+                    <button class="btn-primary" @click="openModalScenarios">
+                        {{ $t('scen.setup') }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Embassament -->
+            <div v-if="cy" class="res-mini res-stack" :key="tick">
+                <div>{{ $t('reservoir.title') }}</div>
+                <div>
+                    <span v-if="!(month === '0' || simYear === '0')">
+                        {{ $t('reservoir.volumeAtMonth', {
+                            month: monthSelector.find(e=> e.value === month).label,
+                            year: nYears > 1 ? $t('reservoir.yearSuffix', { year: simYear }) : ''
+                        }) }}
+                    </span>
+                    <span v-else>{{ $t('reservoir.finalVolume') }}</span>
+                    <span> (Hm³)</span>
+                </div>
+                <!-- Línia superior: Volum -->
+                <div class="res-top">
+                    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C9 7 6 9.7 6 13a6 6 0 0 0 12 0c0-3.3-3-6-6-11Z" fill="currentColor"/>
+                    </svg>
+                    <span class="val">{{ (reservoir.storage_hm3[selK === 0 ? nYears * 12 : selK] ?? 0).toFixed(1) }} </span>
+                    <div class="cap">
+                        <div class="cap-fill"
+                             :style="{ width: (Math.min(100, Math.max(0, (reservoir.storage_hm3[selK === 0 ? nYears * 12 : selK] / reservoir.capacity_hm3) * 100)) ?? 0).toFixed(0) + '%' }">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Línia inferior: Entrant | Sortint -->
+                <div>{{ $t('reservoir.avgFlows') }} (m³/s)</div>
+                <div class="res-bottom">
+                    <div class="res-item">
+                        <svg class="ico in" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3v12m0 0l-4-4m4 4 4-4M4 21h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="lab">{{ $t('reservoir.inflow') }}</span>
+                        <span class="val">{{ Number(reservoir.inflowSum_m3s[selK] || 0).toFixed(1) }}</span>
+                    </div>
+
+                    <div class="res-item">
+                        <svg class="ico out" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 21V9m0 0 4 4m-4-4-4 4M4 3h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="lab">{{ $t('reservoir.outflow') }}</span>
+                        <span class="val">{{ Number(reservoir.released_m3s[selK] || 0).toFixed(1) }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button @click="reset">{{ $t('initialValues') }}</button>
+                <button style="margin-left: 1em;" @click="downloadData">{{ $t('downloadData') }}</button>
+                <hr />
+                <p>{{ $t('documentation') }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Llibreries necessàries -->
+<!-- Llibreries necessàries -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/vue-i18n@11"></script>
+<script src="js/leaflet.js"></script>
+<script src="js/cytoscape.min.js"></script>
+<script src="js/cytoscape-leaf.js"></script>
+
+<script src="https://unpkg.com/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://unpkg.com/cytoscape-popper@2.0.0/cytoscape-popper.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.min.js"></script>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

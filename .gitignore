@@ -1,0 +1,8 @@
+/.idea/
+/index.deploy.html
+/index.deploy.html.bak
+/todo.txt
+/data_raw/
+gruixos_*
+air.toml
+.vscode/

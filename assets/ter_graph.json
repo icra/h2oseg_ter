@@ -1,0 +1,2637 @@
+[
+  {
+    "data": {
+      "id": 1,
+      "lat": 42.4276,
+      "lng": 2.2567,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 2,
+      "lat": 42.3817,
+      "lng": 2.3904,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 3,
+      "lat": 42.3131,
+      "lng": 2.3648,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 4,
+      "lat": 42.1972,
+      "lng": 2.1924,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 5,
+      "lat": 42.2139,
+      "lng": 2.1675,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 6,
+      "lat": 42.3047,
+      "lng": 2.1673,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 7,
+      "lat": 42.3069,
+      "lng": 2.1703,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 8,
+      "lat": 42.3065,
+      "lng": 2.2416,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 9,
+      "lat": 42.3855,
+      "lng": 2.2202,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 10,
+      "lat": 42.3129,
+      "lng": 1.9844,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 11,
+      "lat": 42.2456,
+      "lng": 2.074,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 12,
+      "lat": 42.1772,
+      "lng": 2.1955,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 13,
+      "lat": 42.1628,
+      "lng": 2.1378,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 14,
+      "lat": 42.1396,
+      "lng": 2.2099,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 15,
+      "lat": 42.1165,
+      "lng": 2.2019,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 16,
+      "lat": 42.1084,
+      "lng": 2.1493,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 17,
+      "lat": 42.0986,
+      "lng": 2.2324,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 18,
+      "lat": 42.0435,
+      "lng": 2.2566,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 19,
+      "lat": 41.9945,
+      "lng": 2.2487,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 20,
+      "lat": 42.0272,
+      "lng": 2.1501,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 21,
+      "lat": 41.9841,
+      "lng": 2.3017,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 22,
+      "lat": 41.972,
+      "lng": 2.2867,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 23,
+      "lat": 41.9561,
+      "lng": 2.2737,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 24,
+      "lat": 41.9699,
+      "lng": 2.2311,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 25,
+      "lat": 41.9255,
+      "lng": 2.2667,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 26,
+      "lat": 41.9241,
+      "lng": 2.2339,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 27,
+      "lat": 41.933,
+      "lng": 2.1867,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 28,
+      "lat": 41.871,
+      "lng": 2.174,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 29,
+      "lat": 41.8945,
+      "lng": 2.2593,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 30,
+      "lat": 41.862,
+      "lng": 2.2393,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 31,
+      "lat": 41.8466,
+      "lng": 2.2957,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 32,
+      "lat": 41.9441,
+      "lng": 2.3097,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 33,
+      "lat": 42.0034,
+      "lng": 2.3401,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 34,
+      "lat": 41.9675,
+      "lng": 2.422,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 35,
+      "lat": 41.9029,
+      "lng": 2.3799,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 36,
+      "lat": 41.8335,
+      "lng": 2.3905,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 37,
+      "lat": 41.8734,
+      "lng": 2.4042,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 38,
+      "lat": 41.9792,
+      "lng": 2.5222,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 39,
+      "lat": 41.9877,
+      "lng": 2.6155,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 40,
+      "lat": 41.9628,
+      "lng": 2.6347,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 41,
+      "lat": 41.8967,
+      "lng": 2.4768,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 42,
+      "lat": 41.9822,
+      "lng": 2.7707,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 43,
+      "lat": 41.9839,
+      "lng": 2.781,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 44,
+      "lat": 41.9865,
+      "lng": 2.811,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 45,
+      "lat": 41.938,
+      "lng": 2.7918,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 46,
+      "lat": 42.0126,
+      "lng": 2.8232,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 47,
+      "lat": 41.9546,
+      "lng": 2.8389,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 48,
+      "lat": 41.9218,
+      "lng": 2.8048,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 49,
+      "lat": 41.9062,
+      "lng": 2.8166,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 50,
+      "lat": 41.9218,
+      "lng": 2.7135,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 51,
+      "lat": 41.8948,
+      "lng": 2.8175,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 52,
+      "lat": 41.8347,
+      "lng": 2.8358,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 53,
+      "lat": 41.8697,
+      "lng": 2.8366,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 54,
+      "lat": 41.8065,
+      "lng": 2.8996,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 55,
+      "lat": 41.8605,
+      "lng": 2.9228,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 56,
+      "lat": 41.9171,
+      "lng": 2.871,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 57,
+      "lat": 41.9487,
+      "lng": 2.8616,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 58,
+      "lat": 42.041,
+      "lng": 2.8632,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 59,
+      "lat": 42.0559,
+      "lng": 2.8989,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 60,
+      "lat": 42.0545,
+      "lng": 2.9379,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 61,
+      "lat": 42.0226,
+      "lng": 2.9331,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 62,
+      "lat": 42.0596,
+      "lng": 2.9597,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 63,
+      "lat": 42.0233,
+      "lng": 3.1936,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 64,
+      "lat": 42.0963,
+      "lng": 2.9115,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 65,
+      "lat": 42.1073,
+      "lng": 2.8407,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 66,
+      "lat": 42.088,
+      "lng": 2.8283,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 67,
+      "lat": 42.1242,
+      "lng": 2.7692,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 68,
+      "lat": 42.0722,
+      "lng": 2.7565,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 69,
+      "lat": 42.0171,
+      "lng": 2.76,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 70,
+      "lat": 42.0066,
+      "lng": 2.7358,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 71,
+      "lat": 42.0381,
+      "lng": 2.7191,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 72,
+      "lat": 42.0955,
+      "lng": 2.5824,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 73,
+      "lat": 42.0969,
+      "lng": 2.495,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 74,
+      "lat": 42.0333,
+      "lng": 2.4593,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 75,
+      "lat": 42.0426,
+      "lng": 2.3962,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 76,
+      "lat": 42.092,
+      "lng": 2.3696,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 77,
+      "lat": 42.1355,
+      "lng": 2.3177,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 78,
+      "lat": 42.111,
+      "lng": 2.2737,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 79,
+      "lat": 42.1935,
+      "lng": 2.3126,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 80,
+      "lat": 42.2498,
+      "lng": 2.1651,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 81,
+      "lat": 42.0032,
+      "lng": 2.196,
+      "flowChange": 3,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 82,
+      "lat": 41.977,
+      "lng": 2.3423,
+      "flowChange": 1,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 83,
+      "lat": 41.9716,
+      "lng": 2.836,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 84,
+      "lat": 42.0054,
+      "lng": 2.5135,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 85,
+      "lat": 42.0707,
+      "lng": 2.3014,
+      "flowChange": 2,
+      "type": "massa",
+      "name": null
+    }
+  },
+  {
+    "data": {
+      "id": 86,
+      "lat": 41.9849,
+      "lng": 2.6016,
+      "flowChange": -3.5,
+      "type": "ATL",
+      "name": "Aigües Ter-Llobregat"
+    }
+  },
+  {
+    "data": {
+      "id": 87,
+      "lat": 42.042,
+      "lng": 3.0684,
+      "flowChange": -0.21,
+      "type": "Cabal ambiental",
+      "name": "CABAL AMBIENTAL REC DEL MOLÍ DE PALS"
+    }
+  },
+  {
+    "data": {
+      "id": 88,
+      "lat": 42.0822,
+      "lng": 2.9859,
+      "flowChange": -0.062,
+      "type": "Cabal ambiental",
+      "name": "CABAL AMBIENTAL REC SENTMENAT"
+    }
+  },
+  {
+    "data": {
+      "id": 89,
+      "lat": 41.9869,
+      "lng": 2.6118,
+      "flowChange": -0.82,
+      "type": "ETAP",
+      "name": "ETAP MONTFULLA"
+    }
+  },
+  {
+    "data": {
+      "id": 90,
+      "lat": 42.0276,
+      "lng": 2.8313,
+      "flowChange": 0.48,
+      "type": "EDAR",
+      "name": "EDAR GIRONA"
+    }
+  },
+  {
+    "data": {
+      "id": 91,
+      "lat": 41.9622,
+      "lng": 2.6616,
+      "flowChange": 0.034,
+      "type": "EDAR",
+      "name": "EDAR ANGLÈS"
+    }
+  },
+  {
+    "data": {
+      "id": 92,
+      "lat": 42.0857,
+      "lng": 2.8327,
+      "flowChange": 0.11,
+      "type": "EDAR",
+      "name": "EDAR BANYOLES"
+    }
+  },
+  {
+    "data": {
+      "id": 93,
+      "lat": 41.9728,
+      "lng": 2.7594,
+      "flowChange": 0.0058,
+      "type": "EDAR",
+      "name": "EDAR BESCANÓ"
+    }
+  },
+  {
+    "data": {
+      "id": 94,
+      "lat": 42.2995,
+      "lng": 2.3587,
+      "flowChange": 0.025,
+      "type": "EDAR",
+      "name": "EDAR CAMPRODON"
+    }
+  },
+  {
+    "data": {
+      "id": 95,
+      "lat": 41.8774,
+      "lng": 2.8314,
+      "flowChange": 0.039,
+      "type": "EDAR",
+      "name": "EDAR CASSÀ DE LA SELVA"
+    }
+  },
+  {
+    "data": {
+      "id": 96,
+      "lat": 42.046,
+      "lng": 2.87,
+      "flowChange": 0.023,
+      "type": "EDAR",
+      "name": "EDAR CELRÀ"
+    }
+  },
+  {
+    "data": {
+      "id": 97,
+      "lat": 42.0561,
+      "lng": 2.954,
+      "flowChange": 0.0038,
+      "type": "EDAR",
+      "name": "EDAR FLAÇÀ"
+    }
+  },
+  {
+    "data": {
+      "id": 98,
+      "lat": 41.9457,
+      "lng": 2.3098,
+      "flowChange": 0.0056,
+      "type": "EDAR",
+      "name": "EDAR FOLGUEROLES"
+    }
+  },
+  {
+    "data": {
+      "id": 99,
+      "lat": 42.0533,
+      "lng": 2.5519,
+      "flowChange": 0.01,
+      "type": "EDAR",
+      "name": "EDAR PLANES D'HOSTOLES, LES"
+    }
+  },
+  {
+    "data": {
+      "id": 100,
+      "lat": 41.9932,
+      "lng": 2.2859,
+      "flowChange": 0.076,
+      "type": "EDAR",
+      "name": "EDAR MANLLEU"
+    }
+  },
+  {
+    "data": {
+      "id": 101,
+      "lat": 41.9669,
+      "lng": 2.8445,
+      "flowChange": 0.0068,
+      "type": "EDAR",
+      "name": "EDAR QUART"
+    }
+  },
+  {
+    "data": {
+      "id": 102,
+      "lat": 41.9086,
+      "lng": 2.8118,
+      "flowChange": 0.013,
+      "type": "EDAR",
+      "name": "EDAR RIUDELLOTS DE LA SELVA"
+    }
+  },
+  {
+    "data": {
+      "id": 103,
+      "lat": 41.9768,
+      "lng": 2.309,
+      "flowChange": 0.013,
+      "type": "EDAR",
+      "name": "EDAR RODA DE TER"
+    }
+  },
+  {
+    "data": {
+      "id": 104,
+      "lat": 42.2993,
+      "lng": 2.1665,
+      "flowChange": 0.025,
+      "type": "EDAR",
+      "name": "EDAR RIBES DE FRESER"
+    }
+  },
+  {
+    "data": {
+      "id": 105,
+      "lat": 42.1654,
+      "lng": 2.2013,
+      "flowChange": 0.087,
+      "type": "EDAR",
+      "name": "EDAR RIPOLL"
+    }
+  },
+  {
+    "data": {
+      "id": 106,
+      "lat": 41.8715,
+      "lng": 2.2596,
+      "flowChange": 0.0041,
+      "type": "EDAR",
+      "name": "EDAR SEVA"
+    }
+  },
+  {
+    "data": {
+      "id": 107,
+      "lat": 41.9836,
+      "lng": 2.7613,
+      "flowChange": 0.0028,
+      "type": "EDAR",
+      "name": "EDAR SANT GREGORI"
+    }
+  },
+  {
+    "data": {
+      "id": 108,
+      "lat": 41.9023,
+      "lng": 2.5046,
+      "flowChange": 0.017,
+      "type": "EDAR",
+      "name": "EDAR SANT HILARI SACALM"
+    }
+  },
+  {
+    "data": {
+      "id": 109,
+      "lat": 42.2276,
+      "lng": 2.2777,
+      "flowChange": 0.011,
+      "type": "EDAR",
+      "name": "EDAR SANT JOAN DE LES ABADESSES"
+    }
+  },
+  {
+    "data": {
+      "id": 110,
+      "lat": 42.0356,
+      "lng": 2.372,
+      "flowChange": 0.0039,
+      "type": "EDAR",
+      "name": "EDAR SANTA MARIA DE CORCÓ-L'ESQUIROL"
+    }
+  },
+  {
+    "data": {
+      "id": 111,
+      "lat": 42.0962,
+      "lng": 2.2288,
+      "flowChange": 0.0044,
+      "type": "EDAR",
+      "name": "EDAR SANT QUIRZE DE BESORA"
+    }
+  },
+  {
+    "data": {
+      "id": 112,
+      "lat": 41.8863,
+      "lng": 2.2628,
+      "flowChange": 0.017,
+      "type": "EDAR",
+      "name": "EDAR TARADELL"
+    }
+  },
+  {
+    "data": {
+      "id": 113,
+      "lat": 42.0255,
+      "lng": 3.1539,
+      "flowChange": 0.072,
+      "type": "EDAR",
+      "name": "EDAR TORROELLA DE MONTGRÍ"
+    }
+  },
+  {
+    "data": {
+      "id": 114,
+      "lat": 41.8632,
+      "lng": 2.2401,
+      "flowChange": 0.018,
+      "type": "EDAR",
+      "name": "EDAR TONA"
+    }
+  },
+  {
+    "data": {
+      "id": 115,
+      "lat": 41.886,
+      "lng": 2.7482,
+      "flowChange": 0.0048,
+      "type": "EDAR",
+      "name": "EDAR VILOBÍ D'ONYAR"
+    }
+  },
+  {
+    "data": {
+      "id": 116,
+      "lat": 42.0425,
+      "lng": 2.2564,
+      "flowChange": 0.059,
+      "type": "EDAR",
+      "name": "EDAR VALL DEL GES-TORELLÓ"
+    }
+  },
+  {
+    "data": {
+      "id": 117,
+      "lat": 41.956,
+      "lng": 2.2728,
+      "flowChange": 0.25,
+      "type": "EDAR",
+      "name": "EDAR VIC"
+    }
+  },
+  {
+    "data": {
+      "id": 136,
+      "lat": 41.9858,
+      "lng": 2.6054,
+      "flowChange": -0.16,
+      "type": "Comunitat de regants",
+      "name": "CR PARDINA REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": 137,
+      "lat": 41.9758,
+      "lng": 2.6276,
+      "flowChange": -0.18,
+      "type": "Comunitat de regants",
+      "name": "CR ANGLES REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": 138,
+      "lat": 41.9624,
+      "lng": 2.6496,
+      "flowChange": -0.025,
+      "type": "Comunitat de regants",
+      "name": "CR ST JULIA LLOR REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": 139,
+      "lat": 41.9738,
+      "lng": 2.674,
+      "flowChange": -0.16,
+      "type": "Comunitat de regants",
+      "name": "CR VILANNA REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": 140,
+      "lat": 41.9716,
+      "lng": 2.7523,
+      "flowChange": -0.47,
+      "type": "Comunitat de regants",
+      "name": "CR MONAR REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": 141,
+      "lat": 42.0198,
+      "lng": 2.8277,
+      "flowChange": -0.48,
+      "type": "Comunitat de regants",
+      "name": "CR CERVIA REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": 142,
+      "lat": 42.0194,
+      "lng": 2.828,
+      "flowChange": -0.7,
+      "type": "Comunitat de regants",
+      "name": "CR VINYALS REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": 143,
+      "lat": 42.0822,
+      "lng": 2.9859,
+      "flowChange": -1.8,
+      "type": "Comunitat de regants",
+      "name": "CR SENTMENAT REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": 144,
+      "lat": 42.042,
+      "lng": 3.0683,
+      "flowChange": -1.9,
+      "type": "Comunitat de regants",
+      "name": "CR MOLI DE PALS REG TOTAL"
+    }
+  },
+  {
+    "data": {
+      "id": "1.3",
+      "source": 1,
+      "target": 3,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000010",
+      "lengthRiver": 19895.1533
+    }
+  },
+  {
+    "data": {
+      "id": "2.3",
+      "source": 2,
+      "target": 3,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000010",
+      "lengthRiver": 13481.0811
+    }
+  },
+  {
+    "data": {
+      "id": "3.94",
+      "source": 3,
+      "target": 94,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000020",
+      "lengthRiver": 1756.1972
+    }
+  },
+  {
+    "data": {
+      "id": "4.12",
+      "source": 4,
+      "target": 12,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000060",
+      "lengthRiver": 2476.7961
+    }
+  },
+  {
+    "data": {
+      "id": "5.4",
+      "source": 5,
+      "target": 4,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000040",
+      "lengthRiver": 3159.3464
+    }
+  },
+  {
+    "data": {
+      "id": "6.104",
+      "source": 6,
+      "target": 104,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000030",
+      "lengthRiver": 652.2564
+    }
+  },
+  {
+    "data": {
+      "id": "7.6",
+      "source": 7,
+      "target": 6,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000030",
+      "lengthRiver": 362.4581
+    }
+  },
+  {
+    "data": {
+      "id": "8.7",
+      "source": 8,
+      "target": 7,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000030",
+      "lengthRiver": 7638.3788
+    }
+  },
+  {
+    "data": {
+      "id": "9.7",
+      "source": 9,
+      "target": 7,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000030",
+      "lengthRiver": 12609.5448
+    }
+  },
+  {
+    "data": {
+      "id": "10.6",
+      "source": 10,
+      "target": 6,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000030",
+      "lengthRiver": 18360.0285
+    }
+  },
+  {
+    "data": {
+      "id": "11.5",
+      "source": 11,
+      "target": 5,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000050",
+      "lengthRiver": 12720.095
+    }
+  },
+  {
+    "data": {
+      "id": "12.105",
+      "source": 12,
+      "target": 105,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000060",
+      "lengthRiver": 1663.7874
+    }
+  },
+  {
+    "data": {
+      "id": "13.12",
+      "source": 13,
+      "target": 12,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000070",
+      "lengthRiver": 7420.6826
+    }
+  },
+  {
+    "data": {
+      "id": "14.15",
+      "source": 14,
+      "target": 15,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000090",
+      "lengthRiver": 4977.9637
+    }
+  },
+  {
+    "data": {
+      "id": "15.111",
+      "source": 15,
+      "target": 111,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000090",
+      "lengthRiver": 3598.1173
+    }
+  },
+  {
+    "data": {
+      "id": "16.15",
+      "source": 16,
+      "target": 15,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000100",
+      "lengthRiver": 7129.4708
+    }
+  },
+  {
+    "data": {
+      "id": "17.18",
+      "source": 17,
+      "target": 18,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000090",
+      "lengthRiver": 13599.915
+    }
+  },
+  {
+    "data": {
+      "id": "18.116",
+      "source": 18,
+      "target": 116,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000150",
+      "lengthRiver": 122.3362
+    }
+  },
+  {
+    "data": {
+      "id": "19.100",
+      "source": 19,
+      "target": 100,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000150",
+      "lengthRiver": 4964.2468
+    }
+  },
+  {
+    "data": {
+      "id": "20.81",
+      "source": 20,
+      "target": 81,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000170",
+      "lengthRiver": 7949.6071
+    }
+  },
+  {
+    "data": {
+      "id": "21.103",
+      "source": 21,
+      "target": 103,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000210",
+      "lengthRiver": 1126.1297
+    }
+  },
+  {
+    "data": {
+      "id": "22.21",
+      "source": 22,
+      "target": 21,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000200",
+      "lengthRiver": 4042.1462
+    }
+  },
+  {
+    "data": {
+      "id": "23.22",
+      "source": 23,
+      "target": 22,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000200",
+      "lengthRiver": 2670.807
+    }
+  },
+  {
+    "data": {
+      "id": "24.117",
+      "source": 24,
+      "target": 117,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 5719.6803
+    }
+  },
+  {
+    "data": {
+      "id": "25.23",
+      "source": 25,
+      "target": 23,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 4344.3293
+    }
+  },
+  {
+    "data": {
+      "id": "26.25",
+      "source": 26,
+      "target": 25,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 3270.8617
+    }
+  },
+  {
+    "data": {
+      "id": "27.26",
+      "source": 27,
+      "target": 26,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 5430.4793
+    }
+  },
+  {
+    "data": {
+      "id": "28.26",
+      "source": 28,
+      "target": 26,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 10454.1315
+    }
+  },
+  {
+    "data": {
+      "id": "29.25",
+      "source": 29,
+      "target": 25,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 4993.032
+    }
+  },
+  {
+    "data": {
+      "id": "30.114",
+      "source": 30,
+      "target": 114,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 331.6631
+    }
+  },
+  {
+    "data": {
+      "id": "31.106",
+      "source": 31,
+      "target": 106,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000190",
+      "lengthRiver": 8131.7927
+    }
+  },
+  {
+    "data": {
+      "id": "32.98",
+      "source": 32,
+      "target": 98,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000200",
+      "lengthRiver": 173.587
+    }
+  },
+  {
+    "data": {
+      "id": "33.34",
+      "source": 33,
+      "target": 34,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000220",
+      "lengthRiver": 9595.3647
+    }
+  },
+  {
+    "data": {
+      "id": "34.38",
+      "source": 34,
+      "target": 38,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000223",
+      "lengthRiver": 13502.5819
+    }
+  },
+  {
+    "data": {
+      "id": "35.34",
+      "source": 35,
+      "target": 34,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000240",
+      "lengthRiver": 12638.7104
+    }
+  },
+  {
+    "data": {
+      "id": "36.35",
+      "source": 36,
+      "target": 35,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000240",
+      "lengthRiver": 12032.6518
+    }
+  },
+  {
+    "data": {
+      "id": "37.35",
+      "source": 37,
+      "target": 35,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000240",
+      "lengthRiver": 5797.9576
+    }
+  },
+  {
+    "data": {
+      "id": "38.86",
+      "source": 38,
+      "target": 86,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000227",
+      "lengthRiver": 10530.7377
+    }
+  },
+  {
+    "data": {
+      "id": "39.137",
+      "source": 39,
+      "target": 137,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 2058.8035
+    }
+  },
+  {
+    "data": {
+      "id": "137.40",
+      "source": 137,
+      "target": 40,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 1808.1804
+    }
+  },
+  {
+    "data": {
+      "id": "40.138",
+      "source": 40,
+      "target": 138,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 1273.8232
+    }
+  },
+  {
+    "data": {
+      "id": "138.91",
+      "source": 138,
+      "target": 91,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 1094.5493
+    }
+  },
+  {
+    "data": {
+      "id": "41.108",
+      "source": 41,
+      "target": 108,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000290",
+      "lengthRiver": 5012.8352
+    }
+  },
+  {
+    "data": {
+      "id": "42.43",
+      "source": 42,
+      "target": 43,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 885.2547
+    }
+  },
+  {
+    "data": {
+      "id": "43.44",
+      "source": 43,
+      "target": 44,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 2749.3966
+    }
+  },
+  {
+    "data": {
+      "id": "44.46",
+      "source": 44,
+      "target": 46,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 3833.8758
+    }
+  },
+  {
+    "data": {
+      "id": "45.44",
+      "source": 45,
+      "target": 44,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000320",
+      "lengthRiver": 6395.5709
+    }
+  },
+  {
+    "data": {
+      "id": "46.142",
+      "source": 46,
+      "target": 142,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000380",
+      "lengthRiver": 988.574
+    }
+  },
+  {
+    "data": {
+      "id": "142.141",
+      "source": 142,
+      "target": 141,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000380",
+      "lengthRiver": 50.5001
+    }
+  },
+  {
+    "data": {
+      "id": "141.90",
+      "source": 141,
+      "target": 90,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000380",
+      "lengthRiver": 974.3633
+    }
+  },
+  {
+    "data": {
+      "id": "47.101",
+      "source": 47,
+      "target": 101,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000360",
+      "lengthRiver": 1623.0586
+    }
+  },
+  {
+    "data": {
+      "id": "48.47",
+      "source": 48,
+      "target": 47,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000360",
+      "lengthRiver": 6375.9768
+    }
+  },
+  {
+    "data": {
+      "id": "49.102",
+      "source": 49,
+      "target": 102,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000360",
+      "lengthRiver": 489.5179
+    }
+  },
+  {
+    "data": {
+      "id": "50.115",
+      "source": 50,
+      "target": 115,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000330",
+      "lengthRiver": 5728.824
+    }
+  },
+  {
+    "data": {
+      "id": "51.49",
+      "source": 51,
+      "target": 49,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000340",
+      "lengthRiver": 1548.2083
+    }
+  },
+  {
+    "data": {
+      "id": "52.51",
+      "source": 52,
+      "target": 51,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000340",
+      "lengthRiver": 7854.5773
+    }
+  },
+  {
+    "data": {
+      "id": "53.95",
+      "source": 53,
+      "target": 95,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000340",
+      "lengthRiver": 968.4841
+    }
+  },
+  {
+    "data": {
+      "id": "54.53",
+      "source": 54,
+      "target": 53,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000340",
+      "lengthRiver": 9657.9267
+    }
+  },
+  {
+    "data": {
+      "id": "55.53",
+      "source": 55,
+      "target": 53,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000340",
+      "lengthRiver": 9768.3882
+    }
+  },
+  {
+    "data": {
+      "id": "56.48",
+      "source": 56,
+      "target": 48,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000360",
+      "lengthRiver": 9105.7198
+    }
+  },
+  {
+    "data": {
+      "id": "57.47",
+      "source": 57,
+      "target": 47,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000360",
+      "lengthRiver": 6133.7848
+    }
+  },
+  {
+    "data": {
+      "id": "58.96",
+      "source": 58,
+      "target": 96,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000420",
+      "lengthRiver": 808.1111
+    }
+  },
+  {
+    "data": {
+      "id": "59.60",
+      "source": 59,
+      "target": 60,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000420",
+      "lengthRiver": 5235.1935
+    }
+  },
+  {
+    "data": {
+      "id": "60.97",
+      "source": 60,
+      "target": 97,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000420",
+      "lengthRiver": 1875.2263
+    }
+  },
+  {
+    "data": {
+      "id": "61.60",
+      "source": 61,
+      "target": 60,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000435",
+      "lengthRiver": 5316.8405
+    }
+  },
+  {
+    "data": {
+      "id": "62.88",
+      "source": 62,
+      "target": 88,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000460",
+      "lengthRiver": 5109.2553
+    }
+  },
+  {
+    "data": {
+      "id": "64.62",
+      "source": 64,
+      "target": 62,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000440",
+      "lengthRiver": 6908.8044
+    }
+  },
+  {
+    "data": {
+      "id": "65.59",
+      "source": 65,
+      "target": 59,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000430",
+      "lengthRiver": 9675.5773
+    }
+  },
+  {
+    "data": {
+      "id": "66.92",
+      "source": 66,
+      "target": 92,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000410",
+      "lengthRiver": 939.2071
+    }
+  },
+  {
+    "data": {
+      "id": "67.66",
+      "source": 67,
+      "target": 66,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000390",
+      "lengthRiver": 7708.6371
+    }
+  },
+  {
+    "data": {
+      "id": "68.66",
+      "source": 68,
+      "target": 66,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000400",
+      "lengthRiver": 10897.9232
+    }
+  },
+  {
+    "data": {
+      "id": "69.43",
+      "source": 69,
+      "target": 43,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000310",
+      "lengthRiver": 5677.2094
+    }
+  },
+  {
+    "data": {
+      "id": "70.107",
+      "source": 70,
+      "target": 107,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000300",
+      "lengthRiver": 4595.5515
+    }
+  },
+  {
+    "data": {
+      "id": "71.70",
+      "source": 71,
+      "target": 70,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000300",
+      "lengthRiver": 5427.1526
+    }
+  },
+  {
+    "data": {
+      "id": "72.70",
+      "source": 72,
+      "target": 70,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000300",
+      "lengthRiver": 21537.8114
+    }
+  },
+  {
+    "data": {
+      "id": "73.99",
+      "source": 73,
+      "target": 99,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000260",
+      "lengthRiver": 9189.5772
+    }
+  },
+  {
+    "data": {
+      "id": "74.84",
+      "source": 74,
+      "target": 84,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000250",
+      "lengthRiver": 10006.4136
+    }
+  },
+  {
+    "data": {
+      "id": "75.110",
+      "source": 75,
+      "target": 110,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000230",
+      "lengthRiver": 4321.3094
+    }
+  },
+  {
+    "data": {
+      "id": "76.85",
+      "source": 76,
+      "target": 85,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000130",
+      "lengthRiver": 14474.6886
+    }
+  },
+  {
+    "data": {
+      "id": "77.85",
+      "source": 77,
+      "target": 85,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000130",
+      "lengthRiver": 11149.3113
+    }
+  },
+  {
+    "data": {
+      "id": "78.17",
+      "source": 78,
+      "target": 17,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000110",
+      "lengthRiver": 6891.0326
+    }
+  },
+  {
+    "data": {
+      "id": "79.14",
+      "source": 79,
+      "target": 14,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000080",
+      "lengthRiver": 16625.0105
+    }
+  },
+  {
+    "data": {
+      "id": "80.5",
+      "source": 80,
+      "target": 5,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000040",
+      "lengthRiver": 4629.7656
+    }
+  },
+  {
+    "data": {
+      "id": "81.19",
+      "source": 81,
+      "target": 19,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000180",
+      "lengthRiver": 6631.8123
+    }
+  },
+  {
+    "data": {
+      "id": "82.33",
+      "source": 82,
+      "target": 33,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000220",
+      "lengthRiver": 3945.5932
+    }
+  },
+  {
+    "data": {
+      "id": "83.46",
+      "source": 83,
+      "target": 46,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000370",
+      "lengthRiver": 5495.7983
+    }
+  },
+  {
+    "data": {
+      "id": "84.38",
+      "source": 84,
+      "target": 38,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000223",
+      "lengthRiver": 3922.9224
+    }
+  },
+  {
+    "data": {
+      "id": "85.18",
+      "source": 85,
+      "target": 18,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000140",
+      "lengthRiver": 7216.3407
+    }
+  },
+  {
+    "data": {
+      "id": "86.136",
+      "source": 86,
+      "target": 136,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000227",
+      "lengthRiver": 331.1775
+    }
+  },
+  {
+    "data": {
+      "id": "87.113",
+      "source": 87,
+      "target": 113,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000460",
+      "lengthRiver": 7637.6096
+    }
+  },
+  {
+    "data": {
+      "id": "88.143",
+      "source": 88,
+      "target": 143,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000460",
+      "lengthRiver": 0.457
+    }
+  },
+  {
+    "data": {
+      "id": "143.144",
+      "source": 143,
+      "target": 144,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000460",
+      "lengthRiver": 10254.4314
+    }
+  },
+  {
+    "data": {
+      "id": "144.87",
+      "source": 144,
+      "target": 87,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000460",
+      "lengthRiver": 12.1537
+    }
+  },
+  {
+    "data": {
+      "id": "89.39",
+      "source": 89,
+      "target": 39,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000227",
+      "lengthRiver": 330.7004
+    }
+  },
+  {
+    "data": {
+      "id": "90.58",
+      "source": 90,
+      "target": 58,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000380",
+      "lengthRiver": 5095.8452
+    }
+  },
+  {
+    "data": {
+      "id": "91.139",
+      "source": 91,
+      "target": 139,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 2181.7176
+    }
+  },
+  {
+    "data": {
+      "id": "139.140",
+      "source": 139,
+      "target": 140,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 7953.2297
+    }
+  },
+  {
+    "data": {
+      "id": "140.93",
+      "source": 140,
+      "target": 93,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 620.415
+    }
+  },
+  {
+    "data": {
+      "id": "92.58",
+      "source": 92,
+      "target": 58,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000410",
+      "lengthRiver": 10775.209
+    }
+  },
+  {
+    "data": {
+      "id": "93.42",
+      "source": 93,
+      "target": 42,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000280",
+      "lengthRiver": 1482.1036
+    }
+  },
+  {
+    "data": {
+      "id": "94.109",
+      "source": 94,
+      "target": 109,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000020",
+      "lengthRiver": 15213.8983
+    }
+  },
+  {
+    "data": {
+      "id": "95.51",
+      "source": 95,
+      "target": 51,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000340",
+      "lengthRiver": 2474.542
+    }
+  },
+  {
+    "data": {
+      "id": "96.59",
+      "source": 96,
+      "target": 59,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000420",
+      "lengthRiver": 2775.7531
+    }
+  },
+  {
+    "data": {
+      "id": "97.62",
+      "source": 97,
+      "target": 62,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000420",
+      "lengthRiver": 673.1706
+    }
+  },
+  {
+    "data": {
+      "id": "98.22",
+      "source": 98,
+      "target": 22,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000200",
+      "lengthRiver": 4491.2578
+    }
+  },
+  {
+    "data": {
+      "id": "99.39",
+      "source": 99,
+      "target": 39,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000260",
+      "lengthRiver": 11494.3703
+    }
+  },
+  {
+    "data": {
+      "id": "100.21",
+      "source": 100,
+      "target": 21,
+      "flowNeed": 4,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000150",
+      "lengthRiver": 2682.1302
+    }
+  },
+  {
+    "data": {
+      "id": "101.83",
+      "source": 101,
+      "target": 83,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000360",
+      "lengthRiver": 1200.3421
+    }
+  },
+  {
+    "data": {
+      "id": "102.48",
+      "source": 102,
+      "target": 48,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000360",
+      "lengthRiver": 1996.4725
+    }
+  },
+  {
+    "data": {
+      "id": "103.82",
+      "source": 103,
+      "target": 82,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000210",
+      "lengthRiver": 7402.3921
+    }
+  },
+  {
+    "data": {
+      "id": "104.80",
+      "source": 104,
+      "target": 80,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000030",
+      "lengthRiver": 6619.3446
+    }
+  },
+  {
+    "data": {
+      "id": "105.14",
+      "source": 105,
+      "target": 14,
+      "flowNeed": 8,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000060",
+      "lengthRiver": 5470.2543
+    }
+  },
+  {
+    "data": {
+      "id": "106.112",
+      "source": 106,
+      "target": 112,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000190",
+      "lengthRiver": 3252.0994
+    }
+  },
+  {
+    "data": {
+      "id": "107.42",
+      "source": 107,
+      "target": 42,
+      "flowNeed": 10,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000300",
+      "lengthRiver": 1012.8466
+    }
+  },
+  {
+    "data": {
+      "id": "108.40",
+      "source": 108,
+      "target": 40,
+      "flowNeed": 9,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000290",
+      "lengthRiver": 22073.1
+    }
+  },
+  {
+    "data": {
+      "id": "109.4",
+      "source": 109,
+      "target": 4,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000020",
+      "lengthRiver": 9581.9021
+    }
+  },
+  {
+    "data": {
+      "id": "110.33",
+      "source": 110,
+      "target": 33,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000230",
+      "lengthRiver": 8279.6023
+    }
+  },
+  {
+    "data": {
+      "id": "111.17",
+      "source": 111,
+      "target": 17,
+      "flowNeed": 5,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000090",
+      "lengthRiver": 457.4318
+    }
+  },
+  {
+    "data": {
+      "id": "112.29",
+      "source": 112,
+      "target": 29,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000190",
+      "lengthRiver": 1242.0869
+    }
+  },
+  {
+    "data": {
+      "id": "113.63",
+      "source": 113,
+      "target": 63,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000460",
+      "lengthRiver": 3334.2011
+    }
+  },
+  {
+    "data": {
+      "id": "114.29",
+      "source": 114,
+      "target": 29,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 5478.6518
+    }
+  },
+  {
+    "data": {
+      "id": "115.49",
+      "source": 115,
+      "target": 49,
+      "flowNeed": 3,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000330",
+      "lengthRiver": 8032.7078
+    }
+  },
+  {
+    "data": {
+      "id": "116.19",
+      "source": 116,
+      "target": 19,
+      "flowNeed": 2,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000150",
+      "lengthRiver": 11084.2062
+    }
+  },
+  {
+    "data": {
+      "id": "117.23",
+      "source": 117,
+      "target": 23,
+      "flowNeed": 7,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000195",
+      "lengthRiver": 72.8324
+    }
+  },
+  {
+    "data": {
+      "id": "136.89",
+      "source": 136,
+      "target": 89,
+      "flowNeed": 6,
+      "flow": {},
+      "codi_massa": "ES100MSPF2000227",
+      "lengthRiver": 555.2539
+    }
+  }
+]
