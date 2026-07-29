@@ -1,0 +1,116 @@
+---
+title: "Aportació de les àrees de drenatge"
+---
+
+## Balanç hídric mensual
+
+Cada àrea de drenatge genera una aportació local a partir de la precipitació, l’evapotranspiració, la neu i la superfície drenada.
+
+$$
+Q^{contrib}_{i,m}
+=
+\frac{
+A_i\,C
+\left(
+P_{i,m}-ET_{i,m}-r_m\Delta N_{i,m}
+\right)
+}{
+1000\,S_m
+}
+$$
+
+on:
+
+- $Q^{contrib}_{i,m}$: cabal aportat per l’àrea $i$ durant el mes $m$, en $\mathrm{m^3\,s^{-1}}$;
+- $A_i$: superfície de l’àrea de drenatge, en $\mathrm{m^2}$;
+- $C$: coeficient d’escorrentia;
+- $P_{i,m}$: precipitació mensual, en mm;
+- $ET_{i,m}$: evapotranspiració real mensual, en mm;
+- $\Delta N_{i,m}$: canvi mensual de l’emmagatzematge de neu;
+- $r_m$: factor de conversió de neu a equivalent d’aigua;
+- $S_m$: durada del mes, en segons;
+- el factor $1000$ converteix mil·límetres en metres.
+
+## Evapotranspiració
+
+L’evapotranspiració potencial mensual es calcula amb el mètode de Thornthwaite a partir de la temperatura mitjana mensual:
+
+$$
+PET_m =
+16
+\left(
+\frac{10T_m}{I}
+\right)^a
+K_m
+$$
+
+on:
+
+$$
+I=\sum_{m=1}^{12}
+\left(
+\frac{T_m}{5}
+\right)^{1.514}
+$$
+
+i:
+
+$$
+a =
+6.75\times10^{-7}I^3
+-
+7.71\times10^{-5}I^2
++
+1.792\times10^{-2}I
++
+0.49239
+$$
+
+$K_m$ corregeix el resultat segons la durada del dia i el nombre de dies del mes.
+
+::: {.callout-note collapse="true"}
+## Interpretació
+
+La PET representa la demanda evaporativa de l’atmosfera si hi hagués aigua suficient. No és necessàriament la quantitat d’aigua que evapotranspira realment la conca.
+:::
+
+Per a cada ús del sòl $u$, l’evapotranspiració real es calcula mitjançant una formulació dependent de la precipitació, la PET i un coeficient de vegetació^[Mas-Pla, J. et al. (2016). “Recursos hidrològics”. A [Tercer informe sobre el canvi climàtic a Catalunya](https://cads.gencat.cat/ca/publicacions/informes-sobre-el-canvi-climatic-a-catalunya/tercer-informe-sobre-el-canvi-climatic-a-catalunya-/index.html), pp. 161–188]:
+
+$$
+ET_{i,m}
+=
+\sum_u f_{i,u}
+\,
+P_{i,m}
+\,
+\frac{
+1+w_u\frac{PET_{i,m}}{P_{i,m}}
+}{
+1+w_u\frac{PET_{i,m}}{P_{i,m}}
++\frac{P_{i,m}}{PET_{i,m}}
+}
+$$
+
+on:
+
+- $f_{i,u}$: proporció de l’ús del sòl $u$ dins l’àrea $i$;
+- $w_u$: coeficient d’evapotranspiració de l’ús del sòl;
+- $P_{i,m}$: precipitació mensual;
+- $PET_{i,m}$: evapotranspiració potencial.
+
+### Coeficients segons l’ús del sòl
+
+| Ús del sòl | $w_u$ |
+|---|---:|
+| Aigua | 0 |
+| Sòl urbà i superfícies impermeables | 0 |
+| Bosc i plantacions arbòries | 1,75 |
+| Prats i pastures naturals | 1,00 |
+| Conreus de secà | 0,75 |
+| Conreus de regadiu | 1,50 |
+
+Els valors més elevats representen una major capacitat de la vegetació per utilitzar l’aigua disponible.
+
+::: {.callout-warning}
+El model representa l’efecte dels usos del sòl sobre l’evapotranspiració de manera agregada. No simula explícitament la humitat del sòl, l’arrelament ni el creixement de la vegetació.
+:::

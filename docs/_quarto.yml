@@ -1,0 +1,55 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "H2OSEG-Ter"
+  site-url: "https://h2oseg-ter.icradev.cat/docs/"
+  search:
+    location: sidebar
+    type: textbox
+
+  navbar:
+    left:
+      - href: index.qmd
+        text: Inici
+      - href: getting-started.qmd
+        text: Començar
+    right:
+      - href: https://h2oseg-ter.icradev.cat/
+        text: Obre l'eina
+
+  sidebar:
+    style: docked
+    contents:
+      - section: "Guia d'ús"
+        contents:
+          - user-guide/interface.qmd
+          - user-guide/scenarios.qmd
+
+      - section: "Model hidrològic"
+        contents:
+          - model/overview.qmd
+          - model/drainage-areas.qmd
+          - model/river-routing.qmd
+          - model/reservoirs.qmd
+
+      - section: "Referència"
+        contents:
+          - reference/assumptions.qmd
+          - reference/glossary.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    code-fold: true
+    link-external-newwindow: true
+
+lang: ca
+
+
+

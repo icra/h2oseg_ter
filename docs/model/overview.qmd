@@ -1,0 +1,62 @@
+---
+title: "Visió general del model"
+---
+
+## Representació de la conca
+
+El model representa la conca fluvial com un **graf dirigit**:
+
+- els **nodes** són punts on el cabal es genera, es modifica, s’emmagatzema, es deriva o s’avalua;
+- les **arestes** són els trams fluvials que transporten l’aigua aigües avall.
+
+Aquesta estructura permet seguir explícitament el recorregut de l’aigua des de les capçaleres fins als trams baixos de la conca.
+
+## Pas temporal
+
+La simulació utilitza un pas temporal mensual. Cada mes, el model:
+
+1. calcula l’aportació de les àrees de drenatge;
+2. suma les entrades procedents d’aigües amunt;
+3. aplica aportacions, retorns, demandes i captacions;
+4. modifica el cabal segons els guanys o pèrdues subterrànies dels trams;
+5. actualitza el balanç dels embassaments;
+6. comprova els cabals ambientals i les demandes no satisfetes.
+
+## Seqüència de càlcul
+
+Per a cada node \(i\) i mes \(m\), el balanç general es pot expressar com:
+
+$$
+Q^{out}_{i,m}
+=
+\max\left(
+0,\,
+Q^{in}_{i,m}+\Delta Q_{i,m}
+\right)
+$$
+
+on:
+
+- $Q^{in}_{i,m}$ és la suma dels cabals que arriben des d’aigües amunt;
+- $\Delta Q_{i,m}$ és el canvi local de cabal;
+- $Q^{out}_{i,m}$ és el cabal que surt del node.
+
+Els canvis locals poden ser:
+
+- positius: aportació d’una àrea de drenatge, retorn d’una depuradora o entrada externa;
+- negatius: captació urbana, agrícola o d’un altre ús.
+
+El cabal no pot esdevenir negatiu. Quan la demanda és superior a l’aigua disponible, la diferència es registra com a demanda no satisfeta i el cabal aigües avall s'assimila a zero, assumint que no hi ha tota l'aigua disponible és captada per satisfer la demanda.
+
+## Escala espacial i temporal
+
+La simplificació mensual permet executar ràpidament simulacions de diversos anys. No obstant això, el model no representa:
+
+- crescudes de durada horària o diària;
+- variacions dins d’un mateix mes;
+- processos hidràulics detallats;
+- dinàmica explícita dels aqüífers.
+
+## Implementació al navegador
+
+Els càlculs es fan al navegador de l’usuari. El graf computacional i les variables de simulació s’actualitzen després de cada canvi d’escenari, i els resultats es mostren al mapa i a les taules d’informació.

@@ -1,0 +1,90 @@
+---
+title: "Balanç dels embassaments"
+---
+
+## Sistema representat
+
+El model representa de manera agregada el sistema regulat de Sau–Susqueda–Pasteral.
+
+Per a cada mes, l’emmagatzematge s’actualitza mitjançant un balanç de volums:
+
+$$
+V_{m+1}
+=
+V_m
++
+Q^{in}_m S_m
+-
+Q^{rel}_m S_m
+-
+V^{evap}_m
+-
+V^{overflow}_m
+$$
+
+on:
+
+- $V_m$: volum emmagatzemat a l’inici del mes;
+- $Q^{in}_m$: cabal d’entrada;
+- $Q^{rel}_m$: desembassament controlat;
+- $S_m$: durada del mes en segons;
+- $V^{evap}_m$: pèrdua per evaporació;
+- $V^{overflow}_m$: volum sobreeixit.
+
+## Volum inicial
+
+Al primer mes s’utilitza el volum inicial definit per l’usuari. En els mesos següents, s’utilitza el volum final del mes anterior.
+
+## Evaporació
+
+L’evaporació es calcula a partir de:
+
+- l’evapotranspiració potencial al node de l’embassament;
+- la superfície inundada estimada;
+- el volum emmagatzemat.
+
+La pèrdua mensual és:
+
+$$
+V^{evap}_m
+=
+\frac{
+E_m A^{res}_m
+}{
+10^9
+}
+$$
+
+on $E_m$ és l’evaporació en mm i $A^{res}_m$ la superfície inundada en $\mathrm{m^2}$. El resultat s’expressa en $\mathrm{hm^3}$.
+
+## Desembassament automàtic
+
+Quan l’usuari no fixa un desembassament, el model estima l’aigua necessària per:
+
+- satisfer les demandes situades aigües avall;
+- mantenir els cabals ambientals;
+- compensar les pèrdues que es produeixen durant la propagació pel riu.
+
+## Desembassament definit per l’usuari
+
+L’usuari pot definir un volum anual o valors mensuals. El model aplica sempre la restricció física:
+
+$$
+V^{release}_m
+\leq
+V_m+V^{in}_m-V^{evap}_m
+$$
+
+Per tant, no es pot desembassar més aigua de la que hi ha disponible.
+
+## Sobreeiximent
+
+Quan el volum resultant supera la capacitat màxima del sistema, l’excés es converteix en sobreeiximent:
+
+$$
+V^{overflow}_m
+=
+\max(0,V^{provisional}_{m+1}-V^{max})
+$$
+
+El volum emmagatzemat queda limitat a $V^{max}$.

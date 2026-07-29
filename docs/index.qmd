@@ -1,0 +1,37 @@
+---
+title: "H2OSEG-Ter"
+subtitle: "Eina interactiva per explorar escenaris d’assignació d’aigua a la conca del Ter"
+---
+
+## Què és H2OSEG-Ter?
+
+**H2OSEG-Ter** és una eina web que permet explorar com diferents canvis climàtics, territorials i de gestió de l’aigua poden afectar els cabals del riu Ter, el volum emmagatzemat als embassaments, el compliment dels cabals ambientals i la satisfacció de les demandes d’aigua.
+
+L’eina funciona directament al navegador i no requereix instal·lació ni registre.
+
+[Obre H2OSEG-Ter](https://h2oseg-ter.icradev.cat/){.btn .btn-primary}
+
+## Per a què es pot utilitzar?
+
+H2OSEG-Ter està pensada per:
+
+- Comparar ràpidament escenaris alternatius.
+- Explorar els efectes de canvis en la precipitació o la temperatura.
+- Modificar les demandes urbanes i agrícoles.
+- Modificar captacions concretes o els desembassaments.
+- Consultar els cabals simulats al llarg de la xarxa fluvial.
+- Identificar trams amb incompliment del cabal ambiental.
+- Detectar demandes que no es poden satisfer.
+- Observar l’evolució del volum dels embassaments.
+
+::: {.callout-important}
+H2OSEG-Ter és una eina d’exploració i comparació d’escenaris. No és un sistema de predicció hidrològica ni un model operatiu per prendre decisions legals o de gestió en temps real.
+:::
+
+## Com començar
+
+1. Consulta la [guia ràpida](getting-started.qmd).
+2. Familiaritza’t amb la [interfície](user-guide/interface.qmd).
+3. Prova de crear un [escenari](user-guide/scenarios.qmd).
+4. Consulta [com funciona el model hidrològic](model/overview.qmd).
+5. Revisa les [limitacions](reference/assumptions.qmd) abans d’interpretar els resultats.

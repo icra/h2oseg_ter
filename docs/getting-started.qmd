@@ -1,0 +1,61 @@
+---
+title: "Com començar"
+---
+
+## Accés a l’eina
+
+L’aplicació és accessible a:
+
+<https://h2oseg-ter.icradev.cat/>
+
+No cal iniciar sessió ni instal·lar cap programa. Es recomana utilitzar una versió actualitzada de Firefox, Chrome, Edge o un navegador equivalent.
+
+## Una primera simulació
+
+Quan s’obre l’aplicació, es mostra l’escenari de referència. Per fer una primera exploració:
+
+1. Selecciona la durada de la simulació.
+2. Mantén els valors inicials de l’escenari.
+3. Prem el botó **Aplica**.
+4. Observa els colors dels trams fluvials i dels nodes.
+5. Fes clic sobre un tram o un node per consultar-ne la informació.
+6. Canvia entre el resum del període i un mes concret.
+
+## Resum del període i consulta mensual
+
+L’eina permet dues formes principals de visualització:
+
+### Resum anual o plurianual
+
+Quan es mostra el resum d’un o diversos anys, els colors indiquen la freqüència amb què es produeix una incidència, per exemple:
+
+- Nombre de mesos en què no es compleix el cabal ambiental.
+- Nombre de mesos en què una demanda no es pot satisfer.
+
+Aquesta vista és útil per identificar problemes persistents.
+
+### Mes concret
+
+Quan se selecciona un mes, la llegenda esdevé binària. Cada element indica simplement si, durant aquell mes:
+
+- Compleix o no compleix el cabal ambiental.
+- Satisfà o no satisfà la demanda.
+
+Aquesta vista és útil per estudiar situacions estacionals concretes.
+
+## Exemple senzill
+
+Pots provar aquest exercici:
+
+1. Executa l’escenari de referència.
+2. Redueix la precipitació un 20%.
+3. Torna a executar la simulació.
+4. Compara:
+   - l’entrada als embassaments;
+   - el volum final emmagatzemat;
+   - els trams amb incompliment del cabal ambiental;
+   - les demandes no satisfetes.
+
+::: {.callout-tip}
+Per interpretar un escenari, és preferible comparar-lo sempre amb l’escenari de referència i no analitzar-ne els valors de manera aïllada.
+:::

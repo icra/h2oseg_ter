@@ -1,0 +1,96 @@
+---
+title: "Crear i comparar escenaris"
+---
+
+## Què és un escenari?
+
+Un escenari és una modificació de les condicions de referència. No representa necessàriament una predicció, sinó una pregunta del tipus:
+
+> Què passaria amb els cabals si la precipitació disminuís, augmentés la demanda o canviessin els desembassaments?
+
+## Escenaris disponibles
+
+L’eina permet modificar:
+
+- precipitació;
+- temperatura;
+- demanda urbana;
+- demanda agrícola;
+- cobertura forestal;
+- captacions concretes;
+- desembassaments.
+
+Els canvis climàtics i de demanda es poden aplicar:
+
+- de manera uniforme durant tot l’any;
+- de manera diferent per a cada mes.
+
+## Modificar la precipitació
+
+Una reducció del 20% significa que, a cada mes afectat:
+
+$$
+P'_{i,m}=P_{i,m}(1-0.20)
+$$
+
+on \(P_{i,m}\) és la precipitació de referència i \(P'_{i,m}\) la precipitació modificada.
+
+## Modificar la temperatura
+
+Un augment de 2ºC s’aplica com:
+
+$$
+T'_{i,m}=T_{i,m}+2
+$$
+
+El canvi afecta l’evapotranspiració potencial i, indirectament, l’evapotranspiració real i l’aportació als rius.
+
+## Modificar les demandes
+
+Els escenaris de demanda multipliquen les captacions associades a cada categoria. Per exemple, un augment del 10% de la demanda agrícola implica:
+
+$$
+D'_{m}=D_m(1+0.10)
+$$
+
+## Modificar la cobertura forestal
+
+Aquest escenari modifica la proporció de bosc de cada àrea de drenatge respecte del valor de referència. Quan la cobertura forestal disminueix, la superfície eliminada es redistribueix entre conreus de secà i prats, mantenint-ne les proporcions originals. Si no n’hi havia, es reparteix a parts iguals.
+
+Quan la cobertura forestal augmenta, el nou bosc substitueix proporcionalment conreus de secà i prats, fins al màxim de superfície disponible entre aquestes dues cobertes.
+
+Com que el bosc té un coeficient d’evapotranspiració més elevat, una reducció de la cobertura forestal tendeix a disminuir l’evapotranspiració real i augmentar l’aportació fluvial, mentre que un augment tendeix a produir l’efecte contrari.
+
+::: {.callout-note}
+Un valor del 100% manté la cobertura original; un 50% la redueix a la meitat i un 150% l’incrementa un 50%, sempre que hi hagi prou superfície de conreus de secà i prats disponible.
+:::
+
+## Modificar una captació concreta
+
+En els nodes editables es pot definir:
+
+- un volum anual total, que es distribueix mensualment;
+- valors de cabal diferents per a cada mes.
+
+## Modificar els desembassaments
+
+Els desembassaments també es poden definir com:
+
+- volum anual;
+- valors mensuals.
+
+El model limita el desembassament a l’aigua realment disponible després de considerar l’entrada, l’emmagatzematge i l’evaporació.
+
+## Comparar correctament
+
+Per comparar dos escenaris:
+
+1. executa i registra els resultats de referència;
+2. modifica només les variables que formen part de la pregunta;
+3. torna a executar la simulació;
+4. compara els mateixos indicadors i el mateix període;
+5. revisa tant els resultats agregats com els mesos concrets.
+
+::: {.callout-warning}
+Canviar diverses variables simultàniament pot dificultar la interpretació causal dels resultats. Per entendre el funcionament del sistema, és recomanable començar modificant una sola variable.
+:::
