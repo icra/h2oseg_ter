@@ -622,7 +622,13 @@ createApp({
             scenarios.value = structuredClone(scenariosBackup)
             modalScenarios.value = false
         }
-
+        const openDocumentation = function () {
+            globalThis.open(
+                "https://icra.github.io/h2oseg_ter/",
+                "_blank",
+                "noopener,noreferrer"
+            )
+        }
         const currentSel = {id: null, kind: null} // kind: 'node' | 'edge'
 
         const edgeLayerById = new Map()
@@ -1105,6 +1111,7 @@ createApp({
             m3sToHm3: gm.m3sToHm3,
             monthSeconds: gm.monthSeconds,
             monthOfStep: gm.monthOfStep,
+            openDocumentation
         }
     }
 })
