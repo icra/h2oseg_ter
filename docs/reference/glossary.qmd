@@ -1,0 +1,42 @@
+---
+title: "Glossari"
+---
+
+**Aportació local**  
+Cabal generat dins d’una àrea de drenatge a partir del balanç entre precipitació, evapotranspiració i neu.
+
+**Cabal ambiental**  
+Cabal mínim establert per mantenir el funcionament ecològic del riu.
+
+**Captació**  
+Retirada d’aigua del riu per a un ús urbà, agrícola, industrial o una transferència.
+
+**Demanda no satisfeta**  
+Diferència entre l’aigua sol·licitada i l’aigua realment disponible en un node.
+
+**Emmagatzematge**  
+Volum d’aigua contingut als embassaments.
+
+**Escenari**  
+Conjunt de modificacions aplicades a les condicions de referència.
+
+**Evapotranspiració potencial (PET)**  
+Demanda evaporativa de l’atmosfera si l’aigua disponible no fos limitant.
+
+**Evapotranspiració real (ET o AET)**  
+Quantitat d’aigua que realment s’evapora o és transpirada per la vegetació segons el clima i la disponibilitat d’aigua.
+
+**Graf dirigit**  
+Estructura formada per nodes i connexions amb una direcció determinada, en aquest cas la direcció del flux fluvial.
+
+**Node**  
+Punt de la xarxa on el cabal es genera, es modifica, s’emmagatzema o s’avalua.
+
+**Retorn**  
+Aigua que torna al riu després d’un ús, per exemple l’efluent d’una estació depuradora.
+
+**Sobreeiximent**  
+Volum que supera la capacitat màxima d’emmagatzematge i surt del sistema.
+
+**Tram fluvial**  
+Connexió entre dos nodes per on es propaga el cabal.

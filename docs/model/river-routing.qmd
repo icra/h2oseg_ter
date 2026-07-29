@@ -1,0 +1,58 @@
+---
+title: "Propagació del cabal i aigües subterrànies"
+---
+
+## Propagació aigües avall
+
+El model recorre la xarxa seguint la direcció del flux. A cada node, suma els cabals que arriben pels trams d’aigües amunt i hi aplica el canvi local corresponent.
+
+El cabal resultant es transfereix als trams situats aigües avall.
+
+## Guanys i pèrdues subterrànies
+
+Els intercanvis entre el riu i les aigües subterrànies es representen mitjançant una formulació simplificada:
+
+$$
+Q^{out}_{e,m}
+=
+Q^{in}_{e,m}
+e^{-k_{e,m}L_e}
++
+g_{e,m}L_e
+$$
+
+on:
+
+- $Q^{in}_{e,m}$: cabal a l’inici del tram;
+- $Q^{out}_{e,m}$: cabal al final del tram;
+- $L_e$: longitud del tram;
+- $k_{e,m}$: coeficient de pèrdua per infiltració;
+- $g_{e,m}$: guany subterrani per unitat de longitud.
+
+El primer terme representa les pèrdues de cabal al llarg del tram. El segon representa una aportació subterrània additiva.
+
+## Classes d’interacció
+
+Els trams es classifiquen en tres nivells:
+
+- baix;
+- mitjà;
+- alt.
+
+La classificació es basa en un índex hidrogeològic simplificat que considera:
+
+- presència de materials al·luvials;
+- capacitat d’emmagatzematge d’aigua del sòl;
+- pendent del riu.
+
+Els trams amb més materials al·luvials, més capacitat d’emmagatzematge i pendents menors reben una classe d’interacció més elevada.
+
+## Interpretació
+
+Aquesta formulació permet representar diferències espacials sistemàtiques entre trams guanyadors i perdedors, però no simula explícitament:
+
+- nivells piezomètrics;
+- emmagatzematge de l’aqüífer;
+- retards temporals del cabal base;
+- efectes del bombeig subterrani;
+- retroalimentacions dinàmiques entre riu i aqüífer.

@@ -25,24 +25,17 @@ website:
       - section: "Guia d'ús"
         contents:
           - user-guide/interface.qmd
-          - user-guide/periods.qmd
           - user-guide/scenarios.qmd
-          - user-guide/nodes.qmd
-          - user-guide/interpretation.qmd
 
       - section: "Model hidrològic"
         contents:
           - model/overview.qmd
           - model/drainage-areas.qmd
           - model/river-routing.qmd
-          - model/abstractions.qmd
           - model/reservoirs.qmd
-          - model/scenarios.qmd
 
       - section: "Referència"
         contents:
-          - reference/variables.qmd
-          - reference/node-types.qmd
           - reference/assumptions.qmd
           - reference/glossary.qmd
 

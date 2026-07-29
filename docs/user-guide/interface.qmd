@@ -1,0 +1,70 @@
+---
+title: "Interfície i navegació"
+---
+
+## Estructura general
+
+La interfície té dos components principals:
+
+1. **Mapa interactiu**, on es representa la xarxa fluvial i els elements del model.
+2. **Panell lateral**, des d’on es configuren les simulacions i es consulten els indicadors generals.
+
+## Navegació pel mapa
+
+Es poden utilitzar els controls habituals d’un mapa web per:
+
+- apropar o allunyar la vista;
+- desplaçar-se per la conca;
+- seleccionar trams fluvials;
+- seleccionar nodes hidrològics o de gestió.
+
+En seleccionar un element, s’obre una taula amb les variables corresponents.
+
+## Tipus d’elements
+
+La xarxa inclou elements amb funcions diferents:
+
+- **àrees de drenatge**, que generen aportació hidrològica;
+- **captacions**, que retiren aigua del riu;
+- **retorns**, com els efluents d’estacions depuradores;
+- **entrades externes**, que incorporen aigua a la xarxa;
+- **embassaments i punts de desembassament**;
+- **trams fluvials**, que transporten el cabal aigües avall.
+
+## Informació d’una àrea de drenatge
+
+La taula d’una àrea de drenatge inclou:
+
+- cabal entrant;
+- aportació local;
+- cabal sortint;
+- superfície de drenatge;
+- precipitació;
+- temperatura mitjana;
+- evapotranspiració potencial;
+- evapotranspiració real.
+
+## Informació d’una captació
+
+En una captació es pot consultar:
+
+- cabal entrant;
+- cabal captat;
+- proporció del cabal captat;
+
+## Informació d’un tram fluvial
+
+Els trams mostren principalment:
+
+- cabal simulat;
+- requisit de cabal ambiental;
+- compliment o incompliment del cabal ambiental;
+- freqüència d’incompliment en el resum del període.
+
+## Resum dels embassaments
+
+El panell lateral mostra indicadors del sistema Sau–Susqueda–Pasteral, com ara:
+
+- volum final emmagatzemat;
+- entrada mitjana;
+- sortida mitjana.

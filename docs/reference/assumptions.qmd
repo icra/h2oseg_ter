@@ -1,0 +1,61 @@
+---
+title: "Hipòtesis, limitacions i ús adequat"
+---
+
+## Ús adequat
+
+H2OSEG-Ter és especialment útil per a:
+
+- exploració preliminar;
+- comparació relativa d’escenaris;
+- comunicació entre actors;
+- tallers participatius;
+- activitats educatives;
+- identificació de possibles conflictes entre demandes i cabals ambientals.
+
+## Usos per als quals no està pensada
+
+No s’hauria d’utilitzar com a únic suport per a:
+
+- predicció operativa;
+- disseny d’infraestructures;
+- assignacions legals d’aigua;
+- gestió d’emergències;
+- predicció de crescudes;
+- estudis detallats d’aigües subterrànies;
+- simulació hidràulica d’alta resolució.
+
+## Resolució mensual
+
+El model treballa amb valors mensuals. Per tant, no representa:
+
+- episodis extrems de curta durada;
+- pics de cabal;
+- variabilitat diària;
+- temps de propagació dins del mes.
+
+## Simulacions plurianuals
+
+Si l’usuari no introdueix modificacions específiques, els anys successius repeteixen el mateix patró mensual de clima i demandes.
+
+Això permet estudiar l’efecte acumulatiu d’unes condicions estacionals repetides, però no representa una sèrie històrica o futura amb variabilitat interanual.
+
+## Processos hidrològics simplificats
+
+El model no simula de manera explícita:
+
+- humitat del sòl;
+- infiltració distribuïda;
+- generació detallada d’escorrentia;
+- aqüífers;
+- cabal base retardat;
+- hidràulica dels canals;
+- normes operatives complexes dels embassaments.
+
+## Calibratge
+
+Els paràmetres hidrològics i d’interacció subterrània s’han ajustat amb dades mensuals de sis estacions en trams de cabal no regulats.
+
+::: {.callout-important}
+Els resultats s’han d’interpretar com una resposta del model a unes hipòtesis definides per l’usuari, no com una predicció certa del comportament futur de la conca.
+:::
