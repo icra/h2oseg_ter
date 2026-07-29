@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>H2OSEG-Ter</title>
+<title>Aportació de les àrees de drenatge – H2OSEG-Ter</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +23,24 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dd755132419e67449ef99e0994c660a4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-2b7d35d48cfdcf537ea68524febdeb47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dd755132419e67449ef99e0994c660a4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-2b7d35d48cfdcf537ea68524febdeb47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -68,8 +68,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-sidebar docked nav-fixed quarto-light">
@@ -79,9 +108,9 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">H2OSEG-Ter</span>
     </a>
   </div>
@@ -91,11 +120,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Inici</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./getting-started.html"> 
+    <a class="nav-link" href="../getting-started.html"> 
 <span class="menu-text">Començar</span></a>
   </li>  
 </ul>
@@ -115,7 +144,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Commuta la navegació de la barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">H2OSEG-Ter</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../model/overview.html">Model hidrològic</a></li><li class="breadcrumb-item"><a href="../model/drainage-areas.html">Aportació de les àrees de drenatge</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Commuta la navegació de la barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Cerca" onclick="window.quartoOpenSearch();">
@@ -129,7 +158,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
-      <a href="./index.html" class="sidebar-logo-link">
+      <a href="../index.html" class="sidebar-logo-link">
       </a>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -150,13 +179,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./user-guide/interface.html" class="sidebar-item-text sidebar-link">
+  <a href="../user-guide/interface.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Interfície i navegació</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./user-guide/scenarios.html" class="sidebar-item-text sidebar-link">
+  <a href="../user-guide/scenarios.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Crear i comparar escenaris</span></a>
   </div>
 </li>
@@ -173,25 +202,25 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model/overview.html" class="sidebar-item-text sidebar-link">
+  <a href="../model/overview.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Visió general del model</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model/drainage-areas.html" class="sidebar-item-text sidebar-link">
+  <a href="../model/drainage-areas.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Aportació de les àrees de drenatge</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model/river-routing.html" class="sidebar-item-text sidebar-link">
+  <a href="../model/river-routing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Propagació del cabal i aigües subterrànies</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./model/reservoirs.html" class="sidebar-item-text sidebar-link">
+  <a href="../model/reservoirs.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Balanç dels embassaments</span></a>
   </div>
 </li>
@@ -208,13 +237,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reference/assumptions.html" class="sidebar-item-text sidebar-link">
+  <a href="../reference/assumptions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Hipòtesis, limitacions i ús adequat</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reference/glossary.html" class="sidebar-item-text sidebar-link">
+  <a href="../reference/glossary.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Glossari</span></a>
   </div>
 </li>
@@ -230,19 +259,20 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">En aquesta pàgina</h2>
    
   <ul>
-  <li><a href="#què-és-h2oseg-ter" id="toc-què-és-h2oseg-ter" class="nav-link active" data-scroll-target="#què-és-h2oseg-ter">Què és H2OSEG-Ter?</a></li>
-  <li><a href="#per-a-què-es-pot-utilitzar" id="toc-per-a-què-es-pot-utilitzar" class="nav-link" data-scroll-target="#per-a-què-es-pot-utilitzar">Per a què es pot utilitzar?</a></li>
-  <li><a href="#com-començar" id="toc-com-començar" class="nav-link" data-scroll-target="#com-començar">Com començar</a></li>
+  <li><a href="#balanç-hídric-mensual" id="toc-balanç-hídric-mensual" class="nav-link active" data-scroll-target="#balanç-hídric-mensual">Balanç hídric mensual</a></li>
+  <li><a href="#evapotranspiració" id="toc-evapotranspiració" class="nav-link" data-scroll-target="#evapotranspiració">Evapotranspiració</a>
+  <ul class="collapse">
+  <li><a href="#coeficients-segons-lús-del-sòl" id="toc-coeficients-segons-lús-del-sòl" class="nav-link" data-scroll-target="#coeficients-segons-lús-del-sòl">Coeficients segons l’ús del sòl</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../model/overview.html">Model hidrològic</a></li><li class="breadcrumb-item"><a href="../model/drainage-areas.html">Aportació de les àrees de drenatge</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">H2OSEG-Ter</h1>
-<p class="subtitle lead">Eina interactiva per explorar escenaris d’assignació d’aigua a la conca del Ter</p>
+<h1 class="title">Aportació de les àrees de drenatge</h1>
 </div>
 
 
@@ -259,53 +289,164 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="què-és-h2oseg-ter" class="level2">
-<h2 class="anchored" data-anchor-id="què-és-h2oseg-ter">Què és H2OSEG-Ter?</h2>
-<p><strong>H2OSEG-Ter</strong> és una eina web que permet explorar com diferents canvis climàtics, territorials i de gestió de l’aigua poden afectar els cabals del riu Ter, el volum emmagatzemat als embassaments, el compliment dels cabals ambientals i la satisfacció de les demandes d’aigua.</p>
-<p>L’eina funciona directament al navegador i no requereix instal·lació ni registre.</p>
-<p><a href="https://h2oseg-ter.icradev.cat/" class="btn btn-primary">Obre H2OSEG-Ter</a></p>
-</section>
-<section id="per-a-què-es-pot-utilitzar" class="level2">
-<h2 class="anchored" data-anchor-id="per-a-què-es-pot-utilitzar">Per a què es pot utilitzar?</h2>
-<p>H2OSEG-Ter està pensada per:</p>
+<section id="balanç-hídric-mensual" class="level2">
+<h2 class="anchored" data-anchor-id="balanç-hídric-mensual">Balanç hídric mensual</h2>
+<p>Cada àrea de drenatge genera una aportació local a partir de la precipitació, l’evapotranspiració, la neu i la superfície drenada.</p>
+<p><span class="math display">\[
+Q^{contrib}_{i,m}
+=
+\frac{
+A_i\,C
+\left(
+P_{i,m}-ET_{i,m}-r_m\Delta N_{i,m}
+\right)
+}{
+1000\,S_m
+}
+\]</span></p>
+<p>on:</p>
 <ul>
-<li>Comparar ràpidament escenaris alternatius.</li>
-<li>Explorar els efectes de canvis en la precipitació o la temperatura.</li>
-<li>Modificar les demandes urbanes i agrícoles.</li>
-<li>Modificar captacions concretes o els desembassaments.</li>
-<li>Consultar els cabals simulats al llarg de la xarxa fluvial.</li>
-<li>Identificar trams amb incompliment del cabal ambiental.</li>
-<li>Detectar demandes que no es poden satisfer.</li>
-<li>Observar l’evolució del volum dels embassaments.</li>
+<li><span class="math inline">\(Q^{contrib}_{i,m}\)</span>: cabal aportat per l’àrea <span class="math inline">\(i\)</span> durant el mes <span class="math inline">\(m\)</span>, en <span class="math inline">\(\mathrm{m^3\,s^{-1}}\)</span>;</li>
+<li><span class="math inline">\(A_i\)</span>: superfície de l’àrea de drenatge, en <span class="math inline">\(\mathrm{m^2}\)</span>;</li>
+<li><span class="math inline">\(C\)</span>: coeficient d’escorrentia;</li>
+<li><span class="math inline">\(P_{i,m}\)</span>: precipitació mensual, en mm;</li>
+<li><span class="math inline">\(ET_{i,m}\)</span>: evapotranspiració real mensual, en mm;</li>
+<li><span class="math inline">\(\Delta N_{i,m}\)</span>: canvi mensual de l’emmagatzematge de neu;</li>
+<li><span class="math inline">\(r_m\)</span>: factor de conversió de neu a equivalent d’aigua;</li>
+<li><span class="math inline">\(S_m\)</span>: durada del mes, en segons;</li>
+<li>el factor <span class="math inline">\(1000\)</span> converteix mil·límetres en metres.</li>
 </ul>
-<div class="callout callout-style-default callout-important callout-titled">
+</section>
+<section id="evapotranspiració" class="level2">
+<h2 class="anchored" data-anchor-id="evapotranspiració">Evapotranspiració</h2>
+<p>L’evapotranspiració potencial mensual es calcula amb el mètode de Thornthwaite a partir de la temperatura mitjana mensual:</p>
+<p><span class="math display">\[
+PET_m =
+16
+\left(
+\frac{10T_m}{I}
+\right)^a
+K_m
+\]</span></p>
+<p>on:</p>
+<p><span class="math display">\[
+I=\sum_{m=1}^{12}
+\left(
+\frac{T_m}{5}
+\right)^{1.514}
+\]</span></p>
+<p>i:</p>
+<p><span class="math display">\[
+a =
+6.75\times10^{-7}I^3
+-
+7.71\times10^{-5}I^2
++
+1.792\times10^{-2}I
++
+0.49239
+\]</span></p>
+<p><span class="math inline">\(K_m\)</span> corregeix el resultat segons la durada del dia i el nombre de dies del mes.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Interpretació
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>La PET representa la demanda evaporativa de l’atmosfera si hi hagués aigua suficient. No és necessàriament la quantitat d’aigua que evapotranspira realment la conca.</p>
+</div>
+</div>
+</div>
+<p>Per a cada ús del sòl <span class="math inline">\(u\)</span>, l’evapotranspiració real es calcula mitjançant una formulació dependent de la precipitació, la PET i un coeficient de vegetació<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
+<p><span class="math display">\[
+ET_{i,m}
+=
+\sum_u f_{i,u}
+\,
+P_{i,m}
+\,
+\frac{
+1+w_u\frac{PET_{i,m}}{P_{i,m}}
+}{
+1+w_u\frac{PET_{i,m}}{P_{i,m}}
++\frac{P_{i,m}}{PET_{i,m}}
+}
+\]</span></p>
+<p>on:</p>
+<ul>
+<li><span class="math inline">\(f_{i,u}\)</span>: proporció de l’ús del sòl <span class="math inline">\(u\)</span> dins l’àrea <span class="math inline">\(i\)</span>;</li>
+<li><span class="math inline">\(w_u\)</span>: coeficient d’evapotranspiració de l’ús del sòl;</li>
+<li><span class="math inline">\(P_{i,m}\)</span>: precipitació mensual;</li>
+<li><span class="math inline">\(PET_{i,m}\)</span>: evapotranspiració potencial.</li>
+</ul>
+<section id="coeficients-segons-lús-del-sòl" class="level3">
+<h3 class="anchored" data-anchor-id="coeficients-segons-lús-del-sòl">Coeficients segons l’ús del sòl</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Ús del sòl</th>
+<th style="text-align: right;"><span class="math inline">\(w_u\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Aigua</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td>Sòl urbà i superfícies impermeables</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td>Bosc i plantacions arbòries</td>
+<td style="text-align: right;">1,75</td>
+</tr>
+<tr class="even">
+<td>Prats i pastures naturals</td>
+<td style="text-align: right;">1,00</td>
+</tr>
+<tr class="odd">
+<td>Conreus de secà</td>
+<td style="text-align: right;">0,75</td>
+</tr>
+<tr class="even">
+<td>Conreus de regadiu</td>
+<td style="text-align: right;">1,50</td>
+</tr>
+</tbody>
+</table>
+<p>Els valors més elevats representen una major capacitat de la vegetació per utilitzar l’aigua disponible.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important
+Alerta
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>H2OSEG-Ter és una eina d’exploració i comparació d’escenaris. No és un sistema de predicció hidrològica ni un model operatiu per prendre decisions legals o de gestió en temps real.</p>
+<p>El model representa l’efecte dels usos del sòl sobre l’evapotranspiració de manera agregada. No simula explícitament la humitat del sòl, l’arrelament ni el creixement de la vegetació.</p>
 </div>
 </div>
+
+
 </section>
-<section id="com-començar" class="level2">
-<h2 class="anchored" data-anchor-id="com-començar">Com començar</h2>
-<ol type="1">
-<li>Consulta la <a href="./getting-started.html">guia ràpida</a>.</li>
-<li>Familiaritza’t amb la <a href="./user-guide/interface.html">interfície</a>.</li>
-<li>Prova de crear un <a href="./user-guide/scenarios.html">escenari</a>.</li>
-<li>Consulta <a href="./model/overview.html">com funciona el model hidrològic</a>.</li>
-<li>Revisa les <a href="./reference/assumptions.html">limitacions</a> abans d’interpretar els resultats.</li>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Notes a peu de pàgina</h2>
+
+<ol>
+<li id="fn1"><p>Mas-Pla, J. et al.&nbsp;(2016). “Recursos hidrològics”. A <a href="https://cads.gencat.cat/ca/publicacions/informes-sobre-el-canvi-climatic-a-catalunya/tercer-informe-sobre-el-canvi-climatic-a-catalunya-/index.html">Tercer informe sobre el canvi climàtic a Catalunya</a>, pp.&nbsp;161–188<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-
-
-</section>
-
-</main> <!-- /main -->
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

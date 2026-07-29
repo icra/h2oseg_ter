@@ -1,0 +1,648 @@
+[
+  {
+    "objectID": "user-guide/scenarios.html",
+    "href": "user-guide/scenarios.html",
+    "title": "Crear i comparar escenaris",
+    "section": "",
+    "text": "Un escenari és una modificació de les condicions de referència. No representa necessàriament una predicció, sinó una pregunta del tipus:\n\nQuè passaria amb els cabals si la precipitació disminuís, augmentés la demanda o canviessin els desembassaments?",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#què-és-un-escenari",
+    "href": "user-guide/scenarios.html#què-és-un-escenari",
+    "title": "Crear i comparar escenaris",
+    "section": "",
+    "text": "Un escenari és una modificació de les condicions de referència. No representa necessàriament una predicció, sinó una pregunta del tipus:\n\nQuè passaria amb els cabals si la precipitació disminuís, augmentés la demanda o canviessin els desembassaments?",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#escenaris-disponibles",
+    "href": "user-guide/scenarios.html#escenaris-disponibles",
+    "title": "Crear i comparar escenaris",
+    "section": "Escenaris disponibles",
+    "text": "Escenaris disponibles\nL’eina permet modificar:\n\nprecipitació;\ntemperatura;\ndemanda urbana;\ndemanda agrícola;\ncobertura forestal;\ncaptacions concretes;\ndesembassaments.\n\nEls canvis climàtics i de demanda es poden aplicar:\n\nde manera uniforme durant tot l’any;\nde manera diferent per a cada mes.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-la-precipitació",
+    "href": "user-guide/scenarios.html#modificar-la-precipitació",
+    "title": "Crear i comparar escenaris",
+    "section": "Modificar la precipitació",
+    "text": "Modificar la precipitació\nUna reducció del 20% significa que, a cada mes afectat:\n\\[\nP'_{i,m}=P_{i,m}(1-0.20)\n\\]\non (P_{i,m}) és la precipitació de referència i (P’_{i,m}) la precipitació modificada.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-la-temperatura",
+    "href": "user-guide/scenarios.html#modificar-la-temperatura",
+    "title": "Crear i comparar escenaris",
+    "section": "Modificar la temperatura",
+    "text": "Modificar la temperatura\nUn augment de 2ºC s’aplica com:\n\\[\nT'_{i,m}=T_{i,m}+2\n\\]\nEl canvi afecta l’evapotranspiració potencial i, indirectament, l’evapotranspiració real i l’aportació als rius.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-les-demandes",
+    "href": "user-guide/scenarios.html#modificar-les-demandes",
+    "title": "Crear i comparar escenaris",
+    "section": "Modificar les demandes",
+    "text": "Modificar les demandes\nEls escenaris de demanda multipliquen les captacions associades a cada categoria. Per exemple, un augment del 10% de la demanda agrícola implica:\n\\[\nD'_{m}=D_m(1+0.10)\n\\]",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-la-cobertura-forestal",
+    "href": "user-guide/scenarios.html#modificar-la-cobertura-forestal",
+    "title": "Crear i comparar escenaris",
+    "section": "Modificar la cobertura forestal",
+    "text": "Modificar la cobertura forestal\nAquest escenari modifica la proporció de bosc de cada àrea de drenatge respecte del valor de referència. Quan la cobertura forestal disminueix, la superfície eliminada es redistribueix entre conreus de secà i prats, mantenint-ne les proporcions originals. Si no n’hi havia, es reparteix a parts iguals.\nQuan la cobertura forestal augmenta, el nou bosc substitueix proporcionalment conreus de secà i prats, fins al màxim de superfície disponible entre aquestes dues cobertes.\nCom que el bosc té un coeficient d’evapotranspiració més elevat, una reducció de la cobertura forestal tendeix a disminuir l’evapotranspiració real i augmentar l’aportació fluvial, mentre que un augment tendeix a produir l’efecte contrari.\n\n\n\n\n\n\nNota\n\n\n\nUn valor del 100% manté la cobertura original; un 50% la redueix a la meitat i un 150% l’incrementa un 50%, sempre que hi hagi prou superfície de conreus de secà i prats disponible.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-una-captació-concreta",
+    "href": "user-guide/scenarios.html#modificar-una-captació-concreta",
+    "title": "Crear i comparar escenaris",
+    "section": "Modificar una captació concreta",
+    "text": "Modificar una captació concreta\nEn els nodes editables es pot definir:\n\nun volum anual total, que es distribueix mensualment;\nvalors de cabal diferents per a cada mes.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-els-desembassaments",
+    "href": "user-guide/scenarios.html#modificar-els-desembassaments",
+    "title": "Crear i comparar escenaris",
+    "section": "Modificar els desembassaments",
+    "text": "Modificar els desembassaments\nEls desembassaments també es poden definir com:\n\nvolum anual;\nvalors mensuals.\n\nEl model limita el desembassament a l’aigua realment disponible després de considerar l’entrada, l’emmagatzematge i l’evaporació.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#comparar-correctament",
+    "href": "user-guide/scenarios.html#comparar-correctament",
+    "title": "Crear i comparar escenaris",
+    "section": "Comparar correctament",
+    "text": "Comparar correctament\nPer comparar dos escenaris:\n\nexecuta i registra els resultats de referència;\nmodifica només les variables que formen part de la pregunta;\ntorna a executar la simulació;\ncompara els mateixos indicadors i el mateix període;\nrevisa tant els resultats agregats com els mesos concrets.\n\n\n\n\n\n\n\nAlerta\n\n\n\nCanviar diverses variables simultàniament pot dificultar la interpretació causal dels resultats. Per entendre el funcionament del sistema, és recomanable començar modificant una sola variable.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Crear i comparar escenaris"
+    ]
+  },
+  {
+    "objectID": "reference/glossary.html",
+    "href": "reference/glossary.html",
+    "title": "Glossari",
+    "section": "",
+    "text": "Aportació local\nCabal generat dins d’una àrea de drenatge a partir del balanç entre precipitació, evapotranspiració i neu.\nCabal ambiental\nCabal mínim establert per mantenir el funcionament ecològic del riu.\nCaptació\nRetirada d’aigua del riu per a un ús urbà, agrícola, industrial o una transferència.\nDemanda no satisfeta\nDiferència entre l’aigua sol·licitada i l’aigua realment disponible en un node.\nEmmagatzematge\nVolum d’aigua contingut als embassaments.\nEscenari\nConjunt de modificacions aplicades a les condicions de referència.\nEvapotranspiració potencial (PET)\nDemanda evaporativa de l’atmosfera si l’aigua disponible no fos limitant.\nEvapotranspiració real (ET o AET)\nQuantitat d’aigua que realment s’evapora o és transpirada per la vegetació segons el clima i la disponibilitat d’aigua.\nGraf dirigit\nEstructura formada per nodes i connexions amb una direcció determinada, en aquest cas la direcció del flux fluvial.\nNode\nPunt de la xarxa on el cabal es genera, es modifica, s’emmagatzema o s’avalua.\nRetorn\nAigua que torna al riu després d’un ús, per exemple l’efluent d’una estació depuradora.\nSobreeiximent\nVolum que supera la capacitat màxima d’emmagatzematge i surt del sistema.\nTram fluvial\nConnexió entre dos nodes per on es propaga el cabal.",
+    "crumbs": [
+      "Inici",
+      "Referència",
+      "Glossari"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html",
+    "href": "model/river-routing.html",
+    "title": "Propagació del cabal i aigües subterrànies",
+    "section": "",
+    "text": "El model recorre la xarxa seguint la direcció del flux. A cada node, suma els cabals que arriben pels trams d’aigües amunt i hi aplica el canvi local corresponent.\nEl cabal resultant es transfereix als trams situats aigües avall.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Propagació del cabal i aigües subterrànies"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#propagació-aigües-avall",
+    "href": "model/river-routing.html#propagació-aigües-avall",
+    "title": "Propagació del cabal i aigües subterrànies",
+    "section": "",
+    "text": "El model recorre la xarxa seguint la direcció del flux. A cada node, suma els cabals que arriben pels trams d’aigües amunt i hi aplica el canvi local corresponent.\nEl cabal resultant es transfereix als trams situats aigües avall.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Propagació del cabal i aigües subterrànies"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#guanys-i-pèrdues-subterrànies",
+    "href": "model/river-routing.html#guanys-i-pèrdues-subterrànies",
+    "title": "Propagació del cabal i aigües subterrànies",
+    "section": "Guanys i pèrdues subterrànies",
+    "text": "Guanys i pèrdues subterrànies\nEls intercanvis entre el riu i les aigües subterrànies es representen mitjançant una formulació simplificada:\n\\[\nQ^{out}_{e,m}\n=\nQ^{in}_{e,m}\ne^{-k_{e,m}L_e}\n+\ng_{e,m}L_e\n\\]\non:\n\n\\(Q^{in}_{e,m}\\): cabal a l’inici del tram;\n\\(Q^{out}_{e,m}\\): cabal al final del tram;\n\\(L_e\\): longitud del tram;\n\\(k_{e,m}\\): coeficient de pèrdua per infiltració;\n\\(g_{e,m}\\): guany subterrani per unitat de longitud.\n\nEl primer terme representa les pèrdues de cabal al llarg del tram. El segon representa una aportació subterrània additiva.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Propagació del cabal i aigües subterrànies"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#classes-dinteracció",
+    "href": "model/river-routing.html#classes-dinteracció",
+    "title": "Propagació del cabal i aigües subterrànies",
+    "section": "Classes d’interacció",
+    "text": "Classes d’interacció\nEls trams es classifiquen en tres nivells:\n\nbaix;\nmitjà;\nalt.\n\nLa classificació es basa en un índex hidrogeològic simplificat que considera:\n\npresència de materials al·luvials;\ncapacitat d’emmagatzematge d’aigua del sòl;\npendent del riu.\n\nEls trams amb més materials al·luvials, més capacitat d’emmagatzematge i pendents menors reben una classe d’interacció més elevada.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Propagació del cabal i aigües subterrànies"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#interpretació",
+    "href": "model/river-routing.html#interpretació",
+    "title": "Propagació del cabal i aigües subterrànies",
+    "section": "Interpretació",
+    "text": "Interpretació\nAquesta formulació permet representar diferències espacials sistemàtiques entre trams guanyadors i perdedors, però no simula explícitament:\n\nnivells piezomètrics;\nemmagatzematge de l’aqüífer;\nretards temporals del cabal base;\nefectes del bombeig subterrani;\nretroalimentacions dinàmiques entre riu i aqüífer.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Propagació del cabal i aigües subterrànies"
+    ]
+  },
+  {
+    "objectID": "model/overview.html",
+    "href": "model/overview.html",
+    "title": "Visió general del model",
+    "section": "",
+    "text": "El model representa la conca fluvial com un graf dirigit:\n\nels nodes són punts on el cabal es genera, es modifica, s’emmagatzema, es deriva o s’avalua;\nles arestes són els trams fluvials que transporten l’aigua aigües avall.\n\nAquesta estructura permet seguir explícitament el recorregut de l’aigua des de les capçaleres fins als trams baixos de la conca.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Visió general del model"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#representació-de-la-conca",
+    "href": "model/overview.html#representació-de-la-conca",
+    "title": "Visió general del model",
+    "section": "",
+    "text": "El model representa la conca fluvial com un graf dirigit:\n\nels nodes són punts on el cabal es genera, es modifica, s’emmagatzema, es deriva o s’avalua;\nles arestes són els trams fluvials que transporten l’aigua aigües avall.\n\nAquesta estructura permet seguir explícitament el recorregut de l’aigua des de les capçaleres fins als trams baixos de la conca.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Visió general del model"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#pas-temporal",
+    "href": "model/overview.html#pas-temporal",
+    "title": "Visió general del model",
+    "section": "Pas temporal",
+    "text": "Pas temporal\nLa simulació utilitza un pas temporal mensual. Cada mes, el model:\n\ncalcula l’aportació de les àrees de drenatge;\nsuma les entrades procedents d’aigües amunt;\naplica aportacions, retorns, demandes i captacions;\nmodifica el cabal segons els guanys o pèrdues subterrànies dels trams;\nactualitza el balanç dels embassaments;\ncomprova els cabals ambientals i les demandes no satisfetes.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Visió general del model"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#seqüència-de-càlcul",
+    "href": "model/overview.html#seqüència-de-càlcul",
+    "title": "Visió general del model",
+    "section": "Seqüència de càlcul",
+    "text": "Seqüència de càlcul\nPer a cada node (i) i mes (m), el balanç general es pot expressar com:\n\\[\nQ^{out}_{i,m}\n=\n\\max\\left(\n0,\\,\nQ^{in}_{i,m}+\\Delta Q_{i,m}\n\\right)\n\\]\non:\n\n\\(Q^{in}_{i,m}\\) és la suma dels cabals que arriben des d’aigües amunt;\n\\(\\Delta Q_{i,m}\\) és el canvi local de cabal;\n\\(Q^{out}_{i,m}\\) és el cabal que surt del node.\n\nEls canvis locals poden ser:\n\npositius: aportació d’una àrea de drenatge, retorn d’una depuradora o entrada externa;\nnegatius: captació urbana, agrícola o d’un altre ús.\n\nEl cabal no pot esdevenir negatiu. Quan la demanda és superior a l’aigua disponible, la diferència es registra com a demanda no satisfeta i el cabal aigües avall s’assimila a zero, assumint que no hi ha tota l’aigua disponible és captada per satisfer la demanda.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Visió general del model"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#escala-espacial-i-temporal",
+    "href": "model/overview.html#escala-espacial-i-temporal",
+    "title": "Visió general del model",
+    "section": "Escala espacial i temporal",
+    "text": "Escala espacial i temporal\nLa simplificació mensual permet executar ràpidament simulacions de diversos anys. No obstant això, el model no representa:\n\ncrescudes de durada horària o diària;\nvariacions dins d’un mateix mes;\nprocessos hidràulics detallats;\ndinàmica explícita dels aqüífers.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Visió general del model"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#implementació-al-navegador",
+    "href": "model/overview.html#implementació-al-navegador",
+    "title": "Visió general del model",
+    "section": "Implementació al navegador",
+    "text": "Implementació al navegador\nEls càlculs es fan al navegador de l’usuari. El graf computacional i les variables de simulació s’actualitzen després de cada canvi d’escenari, i els resultats es mostren al mapa i a les taules d’informació.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Visió general del model"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "H2OSEG-Ter",
+    "section": "",
+    "text": "H2OSEG-Ter és una eina web que permet explorar com diferents canvis climàtics, territorials i de gestió de l’aigua poden afectar els cabals del riu Ter, el volum emmagatzemat als embassaments, el compliment dels cabals ambientals i la satisfacció de les demandes d’aigua.\nL’eina funciona directament al navegador i no requereix instal·lació ni registre.\nObre H2OSEG-Ter"
+  },
+  {
+    "objectID": "index.html#què-és-h2oseg-ter",
+    "href": "index.html#què-és-h2oseg-ter",
+    "title": "H2OSEG-Ter",
+    "section": "",
+    "text": "H2OSEG-Ter és una eina web que permet explorar com diferents canvis climàtics, territorials i de gestió de l’aigua poden afectar els cabals del riu Ter, el volum emmagatzemat als embassaments, el compliment dels cabals ambientals i la satisfacció de les demandes d’aigua.\nL’eina funciona directament al navegador i no requereix instal·lació ni registre.\nObre H2OSEG-Ter"
+  },
+  {
+    "objectID": "index.html#per-a-què-es-pot-utilitzar",
+    "href": "index.html#per-a-què-es-pot-utilitzar",
+    "title": "H2OSEG-Ter",
+    "section": "Per a què es pot utilitzar?",
+    "text": "Per a què es pot utilitzar?\nH2OSEG-Ter està pensada per:\n\nComparar ràpidament escenaris alternatius.\nExplorar els efectes de canvis en la precipitació o la temperatura.\nModificar les demandes urbanes i agrícoles.\nModificar captacions concretes o els desembassaments.\nConsultar els cabals simulats al llarg de la xarxa fluvial.\nIdentificar trams amb incompliment del cabal ambiental.\nDetectar demandes que no es poden satisfer.\nObservar l’evolució del volum dels embassaments.\n\n\n\n\n\n\n\nImportant\n\n\n\nH2OSEG-Ter és una eina d’exploració i comparació d’escenaris. No és un sistema de predicció hidrològica ni un model operatiu per prendre decisions legals o de gestió en temps real."
+  },
+  {
+    "objectID": "index.html#com-començar",
+    "href": "index.html#com-començar",
+    "title": "H2OSEG-Ter",
+    "section": "Com començar",
+    "text": "Com començar\n\nConsulta la guia ràpida.\nFamiliaritza’t amb la interfície.\nProva de crear un escenari.\nConsulta com funciona el model hidrològic.\nRevisa les limitacions abans d’interpretar els resultats."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "Com començar",
+    "section": "",
+    "text": "L’aplicació és accessible a:\nhttps://h2oseg-ter.icradev.cat/\nNo cal iniciar sessió ni instal·lar cap programa. Es recomana utilitzar una versió actualitzada de Firefox, Chrome, Edge o un navegador equivalent."
+  },
+  {
+    "objectID": "getting-started.html#accés-a-leina",
+    "href": "getting-started.html#accés-a-leina",
+    "title": "Com començar",
+    "section": "",
+    "text": "L’aplicació és accessible a:\nhttps://h2oseg-ter.icradev.cat/\nNo cal iniciar sessió ni instal·lar cap programa. Es recomana utilitzar una versió actualitzada de Firefox, Chrome, Edge o un navegador equivalent."
+  },
+  {
+    "objectID": "getting-started.html#una-primera-simulació",
+    "href": "getting-started.html#una-primera-simulació",
+    "title": "Com començar",
+    "section": "Una primera simulació",
+    "text": "Una primera simulació\nQuan s’obre l’aplicació, es mostra l’escenari de referència. Per fer una primera exploració:\n\nSelecciona la durada de la simulació.\nMantén els valors inicials de l’escenari.\nPrem el botó Aplica.\nObserva els colors dels trams fluvials i dels nodes.\nFes clic sobre un tram o un node per consultar-ne la informació.\nCanvia entre el resum del període i un mes concret."
+  },
+  {
+    "objectID": "getting-started.html#resum-del-període-i-consulta-mensual",
+    "href": "getting-started.html#resum-del-període-i-consulta-mensual",
+    "title": "Com començar",
+    "section": "Resum del període i consulta mensual",
+    "text": "Resum del període i consulta mensual\nL’eina permet dues formes principals de visualització:\n\nResum anual o plurianual\nQuan es mostra el resum d’un o diversos anys, els colors indiquen la freqüència amb què es produeix una incidència, per exemple:\n\nNombre de mesos en què no es compleix el cabal ambiental.\nNombre de mesos en què una demanda no es pot satisfer.\n\nAquesta vista és útil per identificar problemes persistents.\n\n\nMes concret\nQuan se selecciona un mes, la llegenda esdevé binària. Cada element indica simplement si, durant aquell mes:\n\nCompleix o no compleix el cabal ambiental.\nSatisfà o no satisfà la demanda.\n\nAquesta vista és útil per estudiar situacions estacionals concretes."
+  },
+  {
+    "objectID": "getting-started.html#exemple-senzill",
+    "href": "getting-started.html#exemple-senzill",
+    "title": "Com començar",
+    "section": "Exemple senzill",
+    "text": "Exemple senzill\nPots provar aquest exercici:\n\nExecuta l’escenari de referència.\nRedueix la precipitació un 20%.\nTorna a executar la simulació.\nCompara:\n\nl’entrada als embassaments;\nel volum final emmagatzemat;\nels trams amb incompliment del cabal ambiental;\nles demandes no satisfetes.\n\n\n\n\n\n\n\n\nConsell\n\n\n\nPer interpretar un escenari, és preferible comparar-lo sempre amb l’escenari de referència i no analitzar-ne els valors de manera aïllada."
+  },
+  {
+    "objectID": "model/drainage-areas.html",
+    "href": "model/drainage-areas.html",
+    "title": "Aportació de les àrees de drenatge",
+    "section": "",
+    "text": "Cada àrea de drenatge genera una aportació local a partir de la precipitació, l’evapotranspiració, la neu i la superfície drenada.\n\\[\nQ^{contrib}_{i,m}\n=\n\\frac{\nA_i\\,C\n\\left(\nP_{i,m}-ET_{i,m}-r_m\\Delta N_{i,m}\n\\right)\n}{\n1000\\,S_m\n}\n\\]\non:\n\n\\(Q^{contrib}_{i,m}\\): cabal aportat per l’àrea \\(i\\) durant el mes \\(m\\), en \\(\\mathrm{m^3\\,s^{-1}}\\);\n\\(A_i\\): superfície de l’àrea de drenatge, en \\(\\mathrm{m^2}\\);\n\\(C\\): coeficient d’escorrentia;\n\\(P_{i,m}\\): precipitació mensual, en mm;\n\\(ET_{i,m}\\): evapotranspiració real mensual, en mm;\n\\(\\Delta N_{i,m}\\): canvi mensual de l’emmagatzematge de neu;\n\\(r_m\\): factor de conversió de neu a equivalent d’aigua;\n\\(S_m\\): durada del mes, en segons;\nel factor \\(1000\\) converteix mil·límetres en metres.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Aportació de les àrees de drenatge"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#balanç-hídric-mensual",
+    "href": "model/drainage-areas.html#balanç-hídric-mensual",
+    "title": "Aportació de les àrees de drenatge",
+    "section": "",
+    "text": "Cada àrea de drenatge genera una aportació local a partir de la precipitació, l’evapotranspiració, la neu i la superfície drenada.\n\\[\nQ^{contrib}_{i,m}\n=\n\\frac{\nA_i\\,C\n\\left(\nP_{i,m}-ET_{i,m}-r_m\\Delta N_{i,m}\n\\right)\n}{\n1000\\,S_m\n}\n\\]\non:\n\n\\(Q^{contrib}_{i,m}\\): cabal aportat per l’àrea \\(i\\) durant el mes \\(m\\), en \\(\\mathrm{m^3\\,s^{-1}}\\);\n\\(A_i\\): superfície de l’àrea de drenatge, en \\(\\mathrm{m^2}\\);\n\\(C\\): coeficient d’escorrentia;\n\\(P_{i,m}\\): precipitació mensual, en mm;\n\\(ET_{i,m}\\): evapotranspiració real mensual, en mm;\n\\(\\Delta N_{i,m}\\): canvi mensual de l’emmagatzematge de neu;\n\\(r_m\\): factor de conversió de neu a equivalent d’aigua;\n\\(S_m\\): durada del mes, en segons;\nel factor \\(1000\\) converteix mil·límetres en metres.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Aportació de les àrees de drenatge"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#evapotranspiració",
+    "href": "model/drainage-areas.html#evapotranspiració",
+    "title": "Aportació de les àrees de drenatge",
+    "section": "Evapotranspiració",
+    "text": "Evapotranspiració\nL’evapotranspiració potencial mensual es calcula amb el mètode de Thornthwaite a partir de la temperatura mitjana mensual:\n\\[\nPET_m =\n16\n\\left(\n\\frac{10T_m}{I}\n\\right)^a\nK_m\n\\]\non:\n\\[\nI=\\sum_{m=1}^{12}\n\\left(\n\\frac{T_m}{5}\n\\right)^{1.514}\n\\]\ni:\n\\[\na =\n6.75\\times10^{-7}I^3\n-\n7.71\\times10^{-5}I^2\n+\n1.792\\times10^{-2}I\n+\n0.49239\n\\]\n\\(K_m\\) corregeix el resultat segons la durada del dia i el nombre de dies del mes.\n\n\n\n\n\n\nNotaInterpretació\n\n\n\n\n\nLa PET representa la demanda evaporativa de l’atmosfera si hi hagués aigua suficient. No és necessàriament la quantitat d’aigua que evapotranspira realment la conca.\n\n\n\nPer a cada ús del sòl \\(u\\), l’evapotranspiració real es calcula mitjançant una formulació dependent de la precipitació, la PET i un coeficient de vegetació1:\n\\[\nET_{i,m}\n=\n\\sum_u f_{i,u}\n\\,\nP_{i,m}\n\\,\n\\frac{\n1+w_u\\frac{PET_{i,m}}{P_{i,m}}\n}{\n1+w_u\\frac{PET_{i,m}}{P_{i,m}}\n+\\frac{P_{i,m}}{PET_{i,m}}\n}\n\\]\non:\n\n\\(f_{i,u}\\): proporció de l’ús del sòl \\(u\\) dins l’àrea \\(i\\);\n\\(w_u\\): coeficient d’evapotranspiració de l’ús del sòl;\n\\(P_{i,m}\\): precipitació mensual;\n\\(PET_{i,m}\\): evapotranspiració potencial.\n\n\nCoeficients segons l’ús del sòl\n\n\n\nÚs del sòl\n\\(w_u\\)\n\n\n\n\nAigua\n0\n\n\nSòl urbà i superfícies impermeables\n0\n\n\nBosc i plantacions arbòries\n1,75\n\n\nPrats i pastures naturals\n1,00\n\n\nConreus de secà\n0,75\n\n\nConreus de regadiu\n1,50\n\n\n\nEls valors més elevats representen una major capacitat de la vegetació per utilitzar l’aigua disponible.\n\n\n\n\n\n\nAlerta\n\n\n\nEl model representa l’efecte dels usos del sòl sobre l’evapotranspiració de manera agregada. No simula explícitament la humitat del sòl, l’arrelament ni el creixement de la vegetació.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Aportació de les àrees de drenatge"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#footnotes",
+    "href": "model/drainage-areas.html#footnotes",
+    "title": "Aportació de les àrees de drenatge",
+    "section": "Notes a peu de pàgina",
+    "text": "Notes a peu de pàgina\n\n\nMas-Pla, J. et al. (2016). “Recursos hidrològics”. A Tercer informe sobre el canvi climàtic a Catalunya, pp. 161–188↩︎",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Aportació de les àrees de drenatge"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html",
+    "href": "model/reservoirs.html",
+    "title": "Balanç dels embassaments",
+    "section": "",
+    "text": "El model representa de manera agregada el sistema regulat de Sau–Susqueda–Pasteral.\nPer a cada mes, l’emmagatzematge s’actualitza mitjançant un balanç de volums:\n\\[\nV_{m+1}\n=\nV_m\n+\nQ^{in}_m S_m\n-\nQ^{rel}_m S_m\n-\nV^{evap}_m\n-\nV^{overflow}_m\n\\]\non:\n\n\\(V_m\\): volum emmagatzemat a l’inici del mes;\n\\(Q^{in}_m\\): cabal d’entrada;\n\\(Q^{rel}_m\\): desembassament controlat;\n\\(S_m\\): durada del mes en segons;\n\\(V^{evap}_m\\): pèrdua per evaporació;\n\\(V^{overflow}_m\\): volum sobreeixit.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Balanç dels embassaments"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#sistema-representat",
+    "href": "model/reservoirs.html#sistema-representat",
+    "title": "Balanç dels embassaments",
+    "section": "",
+    "text": "El model representa de manera agregada el sistema regulat de Sau–Susqueda–Pasteral.\nPer a cada mes, l’emmagatzematge s’actualitza mitjançant un balanç de volums:\n\\[\nV_{m+1}\n=\nV_m\n+\nQ^{in}_m S_m\n-\nQ^{rel}_m S_m\n-\nV^{evap}_m\n-\nV^{overflow}_m\n\\]\non:\n\n\\(V_m\\): volum emmagatzemat a l’inici del mes;\n\\(Q^{in}_m\\): cabal d’entrada;\n\\(Q^{rel}_m\\): desembassament controlat;\n\\(S_m\\): durada del mes en segons;\n\\(V^{evap}_m\\): pèrdua per evaporació;\n\\(V^{overflow}_m\\): volum sobreeixit.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Balanç dels embassaments"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#volum-inicial",
+    "href": "model/reservoirs.html#volum-inicial",
+    "title": "Balanç dels embassaments",
+    "section": "Volum inicial",
+    "text": "Volum inicial\nAl primer mes s’utilitza el volum inicial definit per l’usuari. En els mesos següents, s’utilitza el volum final del mes anterior.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Balanç dels embassaments"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#evaporació",
+    "href": "model/reservoirs.html#evaporació",
+    "title": "Balanç dels embassaments",
+    "section": "Evaporació",
+    "text": "Evaporació\nL’evaporació es calcula a partir de:\n\nl’evapotranspiració potencial al node de l’embassament;\nla superfície inundada estimada;\nel volum emmagatzemat.\n\nLa pèrdua mensual és:\n\\[\nV^{evap}_m\n=\n\\frac{\nE_m A^{res}_m\n}{\n10^9\n}\n\\]\non \\(E_m\\) és l’evaporació en mm i \\(A^{res}_m\\) la superfície inundada en \\(\\mathrm{m^2}\\). El resultat s’expressa en \\(\\mathrm{hm^3}\\).",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Balanç dels embassaments"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#desembassament-automàtic",
+    "href": "model/reservoirs.html#desembassament-automàtic",
+    "title": "Balanç dels embassaments",
+    "section": "Desembassament automàtic",
+    "text": "Desembassament automàtic\nQuan l’usuari no fixa un desembassament, el model estima l’aigua necessària per:\n\nsatisfer les demandes situades aigües avall;\nmantenir els cabals ambientals;\ncompensar les pèrdues que es produeixen durant la propagació pel riu.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Balanç dels embassaments"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#desembassament-definit-per-lusuari",
+    "href": "model/reservoirs.html#desembassament-definit-per-lusuari",
+    "title": "Balanç dels embassaments",
+    "section": "Desembassament definit per l’usuari",
+    "text": "Desembassament definit per l’usuari\nL’usuari pot definir un volum anual o valors mensuals. El model aplica sempre la restricció física:\n\\[\nV^{release}_m\n\\leq\nV_m+V^{in}_m-V^{evap}_m\n\\]\nPer tant, no es pot desembassar més aigua de la que hi ha disponible.",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Balanç dels embassaments"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#sobreeiximent",
+    "href": "model/reservoirs.html#sobreeiximent",
+    "title": "Balanç dels embassaments",
+    "section": "Sobreeiximent",
+    "text": "Sobreeiximent\nQuan el volum resultant supera la capacitat màxima del sistema, l’excés es converteix en sobreeiximent:\n\\[\nV^{overflow}_m\n=\n\\max(0,V^{provisional}_{m+1}-V^{max})\n\\]\nEl volum emmagatzemat queda limitat a \\(V^{max}\\).",
+    "crumbs": [
+      "Inici",
+      "Model hidrològic",
+      "Balanç dels embassaments"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html",
+    "href": "reference/assumptions.html",
+    "title": "Hipòtesis, limitacions i ús adequat",
+    "section": "",
+    "text": "H2OSEG-Ter és especialment útil per a:\n\nexploració preliminar;\ncomparació relativa d’escenaris;\ncomunicació entre actors;\ntallers participatius;\nactivitats educatives;\nidentificació de possibles conflictes entre demandes i cabals ambientals.",
+    "crumbs": [
+      "Inici",
+      "Referència",
+      "Hipòtesis, limitacions i ús adequat"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#ús-adequat",
+    "href": "reference/assumptions.html#ús-adequat",
+    "title": "Hipòtesis, limitacions i ús adequat",
+    "section": "",
+    "text": "H2OSEG-Ter és especialment útil per a:\n\nexploració preliminar;\ncomparació relativa d’escenaris;\ncomunicació entre actors;\ntallers participatius;\nactivitats educatives;\nidentificació de possibles conflictes entre demandes i cabals ambientals.",
+    "crumbs": [
+      "Inici",
+      "Referència",
+      "Hipòtesis, limitacions i ús adequat"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#usos-per-als-quals-no-està-pensada",
+    "href": "reference/assumptions.html#usos-per-als-quals-no-està-pensada",
+    "title": "Hipòtesis, limitacions i ús adequat",
+    "section": "Usos per als quals no està pensada",
+    "text": "Usos per als quals no està pensada\nNo s’hauria d’utilitzar com a únic suport per a:\n\npredicció operativa;\ndisseny d’infraestructures;\nassignacions legals d’aigua;\ngestió d’emergències;\npredicció de crescudes;\nestudis detallats d’aigües subterrànies;\nsimulació hidràulica d’alta resolució.",
+    "crumbs": [
+      "Inici",
+      "Referència",
+      "Hipòtesis, limitacions i ús adequat"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#resolució-mensual",
+    "href": "reference/assumptions.html#resolució-mensual",
+    "title": "Hipòtesis, limitacions i ús adequat",
+    "section": "Resolució mensual",
+    "text": "Resolució mensual\nEl model treballa amb valors mensuals. Per tant, no representa:\n\nepisodis extrems de curta durada;\npics de cabal;\nvariabilitat diària;\ntemps de propagació dins del mes.",
+    "crumbs": [
+      "Inici",
+      "Referència",
+      "Hipòtesis, limitacions i ús adequat"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#simulacions-plurianuals",
+    "href": "reference/assumptions.html#simulacions-plurianuals",
+    "title": "Hipòtesis, limitacions i ús adequat",
+    "section": "Simulacions plurianuals",
+    "text": "Simulacions plurianuals\nSi l’usuari no introdueix modificacions específiques, els anys successius repeteixen el mateix patró mensual de clima i demandes.\nAixò permet estudiar l’efecte acumulatiu d’unes condicions estacionals repetides, però no representa una sèrie històrica o futura amb variabilitat interanual.",
+    "crumbs": [
+      "Inici",
+      "Referència",
+      "Hipòtesis, limitacions i ús adequat"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#processos-hidrològics-simplificats",
+    "href": "reference/assumptions.html#processos-hidrològics-simplificats",
+    "title": "Hipòtesis, limitacions i ús adequat",
+    "section": "Processos hidrològics simplificats",
+    "text": "Processos hidrològics simplificats\nEl model no simula de manera explícita:\n\nhumitat del sòl;\ninfiltració distribuïda;\ngeneració detallada d’escorrentia;\naqüífers;\ncabal base retardat;\nhidràulica dels canals;\nnormes operatives complexes dels embassaments.",
+    "crumbs": [
+      "Inici",
+      "Referència",
+      "Hipòtesis, limitacions i ús adequat"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#calibratge",
+    "href": "reference/assumptions.html#calibratge",
+    "title": "Hipòtesis, limitacions i ús adequat",
+    "section": "Calibratge",
+    "text": "Calibratge\nEls paràmetres hidrològics i d’interacció subterrània s’han ajustat amb dades mensuals de sis estacions en trams de cabal no regulats.\n\n\n\n\n\n\nImportant\n\n\n\nEls resultats s’han d’interpretar com una resposta del model a unes hipòtesis definides per l’usuari, no com una predicció certa del comportament futur de la conca.",
+    "crumbs": [
+      "Inici",
+      "Referència",
+      "Hipòtesis, limitacions i ús adequat"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html",
+    "href": "user-guide/interface.html",
+    "title": "Interfície i navegació",
+    "section": "",
+    "text": "La interfície té dos components principals:\n\nMapa interactiu, on es representa la xarxa fluvial i els elements del model.\nPanell lateral, des d’on es configuren les simulacions i es consulten els indicadors generals.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Interfície i navegació"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#estructura-general",
+    "href": "user-guide/interface.html#estructura-general",
+    "title": "Interfície i navegació",
+    "section": "",
+    "text": "La interfície té dos components principals:\n\nMapa interactiu, on es representa la xarxa fluvial i els elements del model.\nPanell lateral, des d’on es configuren les simulacions i es consulten els indicadors generals.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Interfície i navegació"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#navegació-pel-mapa",
+    "href": "user-guide/interface.html#navegació-pel-mapa",
+    "title": "Interfície i navegació",
+    "section": "Navegació pel mapa",
+    "text": "Navegació pel mapa\nEs poden utilitzar els controls habituals d’un mapa web per:\n\napropar o allunyar la vista;\ndesplaçar-se per la conca;\nseleccionar trams fluvials;\nseleccionar nodes hidrològics o de gestió.\n\nEn seleccionar un element, s’obre una taula amb les variables corresponents.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Interfície i navegació"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#tipus-delements",
+    "href": "user-guide/interface.html#tipus-delements",
+    "title": "Interfície i navegació",
+    "section": "Tipus d’elements",
+    "text": "Tipus d’elements\nLa xarxa inclou elements amb funcions diferents:\n\nàrees de drenatge, que generen aportació hidrològica;\ncaptacions, que retiren aigua del riu;\nretorns, com els efluents d’estacions depuradores;\nentrades externes, que incorporen aigua a la xarxa;\nembassaments i punts de desembassament;\ntrams fluvials, que transporten el cabal aigües avall.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Interfície i navegació"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#informació-duna-àrea-de-drenatge",
+    "href": "user-guide/interface.html#informació-duna-àrea-de-drenatge",
+    "title": "Interfície i navegació",
+    "section": "Informació d’una àrea de drenatge",
+    "text": "Informació d’una àrea de drenatge\nLa taula d’una àrea de drenatge inclou:\n\ncabal entrant;\naportació local;\ncabal sortint;\nsuperfície de drenatge;\nprecipitació;\ntemperatura mitjana;\nevapotranspiració potencial;\nevapotranspiració real.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Interfície i navegació"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#informació-duna-captació",
+    "href": "user-guide/interface.html#informació-duna-captació",
+    "title": "Interfície i navegació",
+    "section": "Informació d’una captació",
+    "text": "Informació d’una captació\nEn una captació es pot consultar:\n\ncabal entrant;\ncabal captat;\nproporció del cabal captat;",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Interfície i navegació"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#informació-dun-tram-fluvial",
+    "href": "user-guide/interface.html#informació-dun-tram-fluvial",
+    "title": "Interfície i navegació",
+    "section": "Informació d’un tram fluvial",
+    "text": "Informació d’un tram fluvial\nEls trams mostren principalment:\n\ncabal simulat;\nrequisit de cabal ambiental;\ncompliment o incompliment del cabal ambiental;\nfreqüència d’incompliment en el resum del període.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Interfície i navegació"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#resum-dels-embassaments",
+    "href": "user-guide/interface.html#resum-dels-embassaments",
+    "title": "Interfície i navegació",
+    "section": "Resum dels embassaments",
+    "text": "Resum dels embassaments\nEl panell lateral mostra indicadors del sistema Sau–Susqueda–Pasteral, com ara:\n\nvolum final emmagatzemat;\nentrada mitjana;\nsortida mitjana.",
+    "crumbs": [
+      "Inici",
+      "Guia d'ús",
+      "Interfície i navegació"
+    ]
+  }
+]
