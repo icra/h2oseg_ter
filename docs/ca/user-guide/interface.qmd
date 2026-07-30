@@ -38,11 +38,12 @@ La taula d’una àrea de drenatge inclou:
 - cabal entrant;
 - aportació local;
 - cabal sortint;
-- superfície de drenatge;
-- precipitació;
-- temperatura mitjana;
-- evapotranspiració potencial;
-- evapotranspiració real.
+- superfície de l'àrea de drenatge d'aquell node;
+- superfície de drenatge total aigües amunt;
+- precipitació mitjana aigües amunt;
+- temperatura mitjana aigües amunt;
+- evapotranspiració potencial aigües amunt;
+- evapotranspiració real aigües amunt.
 
 ## Informació d’una captació
 

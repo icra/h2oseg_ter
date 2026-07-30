@@ -38,11 +38,12 @@ The table for a drainage area includes:
 - inflow;
 - local contribution;
 - outflow;
-- drainage area;
-- precipitation;
-- mean temperature;
-- potential evapotranspiration;
-- actual evapotranspiration.
+- local drainage area;
+- upstream drainage area;
+- upstream mean precipitation;
+- upstream mean temperature;
+- upstream potential evapotranspiration;
+- upstream actual evapotranspiration.
 
 ## Abstraction information
 

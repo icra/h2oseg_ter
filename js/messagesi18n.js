@@ -88,7 +88,8 @@ const messages = {
             outflow: 'Cabal sortint',
             envFlow: 'Cabal ambiental',
 
-            drainageArea: 'Àrea de drenatge',
+            drainageArea: 'Àrea total de drenatge',
+            localDrainageArea: 'Àrea de drenatge local',
             meanPrecipitation: 'Precipitació mitjana',
             meanTemperature: 'Temperatura mitjana',
             meanETP: 'ETP mitjana',
@@ -102,7 +103,7 @@ const messages = {
             inflowVolume: "Volum d'entrada",
             releasedVolume: 'Volum desembassat',
 
-            contributedFlow: 'Cabal aportat',
+            contributedFlow: 'Aportació local',
             outgoingFlow: 'Cabal sortint',
 
             proportion: 'Proporció'
@@ -272,7 +273,8 @@ const messages = {
             outflow: 'Outflow',
             envFlow: 'Environmental flow',
 
-            drainageArea: 'Drainage area',
+            drainageArea: 'Upstream drainage area',
+            localDrainageArea: 'Local drainage area',
             meanPrecipitation: 'Mean precipitation',
             meanTemperature: 'Mean temperature',
             meanETP: 'Mean PET',
@@ -286,7 +288,7 @@ const messages = {
             inflowVolume: "Inflow volume",
             releasedVolume: 'Released volume',
 
-            contributedFlow: 'Contributed flow',
+            contributedFlow: 'Local contribution',
             outgoingFlow: 'Outgoing flow',
 
             proportion: 'Proportion'
@@ -455,7 +457,8 @@ const messages = {
             outflow: 'Caudal saliente',
             envFlow: 'Caudal ambiental',
 
-            drainageArea: 'Área de drenaje',
+            drainageArea: 'Área total de drenaje',
+            localDrainageArea: 'Área de drenaje local',
             meanPrecipitation: 'Precipitación media',
             meanTemperature: 'Temperatura media',
             meanETP: 'ETP media',
@@ -469,7 +472,7 @@ const messages = {
             inflowVolume: "Volumen de entrada",
             releasedVolume: 'Volumen desembalsado',
 
-            contributedFlow: 'Caudal aportado',
+            contributedFlow: 'Aportación local',
             outgoingFlow: 'Caudal saliente',
 
             proportion: 'Proporción'

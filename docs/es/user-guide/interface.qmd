@@ -38,11 +38,12 @@ La tabla de un área de drenaje incluye:
 - caudal entrante;
 - aportación local;
 - caudal saliente;
-- superficie de drenaje;
-- precipitación;
-- temperatura media;
-- evapotranspiración potencial;
-- evapotranspiración real.
+- superficie de drenaje del nodo;
+- superficie de drenaje total aguas arriba;
+- precipitación media aguas arriba;
+- temperatura media aguas arriba;
+- evapotranspiración potencial aguas arriba;
+- evapotranspiración real aguas arriba.
 
 ## Información de una captación
 
