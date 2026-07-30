@@ -1,0 +1,116 @@
+---
+title: "Drainage-area contributions"
+---
+
+## Monthly water balance
+
+Each drainage area generates a local contribution based on precipitation, evapotranspiration, snow and the drained area.
+
+$$
+Q^{contrib}_{i,m}
+=
+\frac{
+A_i\,C
+\left(
+P_{i,m}-ET_{i,m}-r_m\Delta N_{i,m}
+\right)
+}{
+1000\,S_m
+}
+$$
+
+where:
+
+- $Q^{contrib}_{i,m}$: flow contributed by area $i$ during month $m$, in $\mathrm{m^3\,s^{-1}}$;
+- $A_i$: drainage area, in $\mathrm{m^2}$;
+- $C$: runoff coefficient;
+- $P_{i,m}$: monthly precipitation, in mm;
+- $ET_{i,m}$: monthly actual evapotranspiration, in mm;
+- $\Delta N_{i,m}$: monthly change in snow storage;
+- $r_m$: conversion factor from snow to water equivalent;
+- $S_m$: duration of the month, in seconds;
+- the factor $1000$ converts millimetres to metres.
+
+## Evapotranspiration
+
+Monthly potential evapotranspiration is calculated from mean monthly temperature using the Thornthwaite method:
+
+$$
+PET_m =
+16
+\left(
+\frac{10T_m}{I}
+\right)^a
+K_m
+$$
+
+where:
+
+$$
+I=\sum_{m=1}^{12}
+\left(
+\frac{T_m}{5}
+\right)^{1.514}
+$$
+
+and:
+
+$$
+a =
+6.75\times10^{-7}I^3
+-
+7.71\times10^{-5}I^2
++
+1.792\times10^{-2}I
++
+0.49239
+$$
+
+$K_m$ corrects the result for day length and the number of days in the month.
+
+::: {.callout-note collapse="true"}
+## Interpretation
+
+PET represents the evaporative demand of the atmosphere if sufficient water were available. It is not necessarily the amount of water actually evapotranspired by the basin.
+:::
+
+For each land use $u$, actual evapotranspiration is calculated using a formulation based on precipitation, PET and a vegetation coefficient^[Mas-Pla, J. et al. (2016). “Recursos hidrològics”. In [Tercer informe sobre el canvi climàtic a Catalunya](https://cads.gencat.cat/ca/publicacions/informes-sobre-el-canvi-climatic-a-catalunya/tercer-informe-sobre-el-canvi-climatic-a-catalunya-/index.html), pp. 161–188]:
+
+$$
+ET_{i,m}
+=
+\sum_u f_{i,u}
+\,
+P_{i,m}
+\,
+\frac{
+1+w_u\frac{PET_{i,m}}{P_{i,m}}
+}{
+1+w_u\frac{PET_{i,m}}{P_{i,m}}
++\frac{P_{i,m}}{PET_{i,m}}
+}
+$$
+
+where:
+
+- $f_{i,u}$: proportion of land use $u$ within area $i$;
+- $w_u$: evapotranspiration coefficient for the land use;
+- $P_{i,m}$: monthly precipitation;
+- $PET_{i,m}$: potential evapotranspiration.
+
+### Coefficients by land use
+
+| Land use | $w_u$ |
+|---|---:|
+| Water | 0 |
+| Urban land and impervious surfaces | 0 |
+| Forest and tree plantations | 1.75 |
+| Natural grassland and pasture | 1.00 |
+| Rainfed crops | 0.75 |
+| Irrigated crops | 1.50 |
+
+Higher values represent a greater capacity of vegetation to use the available water.
+
+::: {.callout-warning}
+The model represents the effect of land use on evapotranspiration in an aggregated manner. It does not explicitly simulate soil moisture, rooting or vegetation growth.
+:::

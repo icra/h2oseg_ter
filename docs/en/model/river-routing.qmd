@@ -1,0 +1,58 @@
+---
+title: "Flow routing and groundwater"
+---
+
+## Downstream routing
+
+The model traverses the network in the direction of flow. At each node, it adds the flows arriving through upstream reaches and applies the corresponding local change.
+
+The resulting flow is transferred to the downstream reaches.
+
+## Groundwater gains and losses
+
+Exchanges between the river and groundwater are represented using a simplified formulation:
+
+$$
+Q^{out}_{e,m}
+=
+Q^{in}_{e,m}
+e^{-k_{e,m}L_e}
++
+g_{e,m}L_e
+$$
+
+where:
+
+- $Q^{in}_{e,m}$: flow at the start of the reach;
+- $Q^{out}_{e,m}$: flow at the end of the reach;
+- $L_e$: reach length;
+- $k_{e,m}$: infiltration loss coefficient;
+- $g_{e,m}$: groundwater gain per unit length.
+
+The first term represents flow losses along the reach. The second represents an additive groundwater contribution.
+
+## Interaction classes
+
+Reaches are classified into three levels:
+
+- low;
+- medium;
+- high.
+
+The classification is based on a simplified hydrogeological index that considers:
+
+- the presence of alluvial materials;
+- the soil's water storage capacity;
+- river slope.
+
+Reaches with more alluvial material, greater storage capacity and gentler slopes are assigned a higher interaction class.
+
+## Interpretation
+
+This formulation represents systematic spatial differences between gaining and losing reaches, but does not explicitly simulate:
+
+- piezometric levels;
+- aquifer storage;
+- temporal delays in baseflow;
+- effects of groundwater pumping;
+- dynamic feedback between the river and aquifer.

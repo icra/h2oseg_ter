@@ -1,0 +1,61 @@
+---
+title: "Getting started"
+---
+
+## Accessing the tool
+
+The application is available at:
+
+<https://h2oseg-ter.icradev.cat/?lang=en>
+
+No sign-in or software installation is required. We recommend using an up-to-date version of Firefox, Chrome, Edge or an equivalent browser.
+
+## Your first simulation
+
+When the application opens, it displays the reference scenario. For an initial exploration:
+
+1. Select the simulation duration.
+2. Keep the scenario's initial values.
+3. Press **Apply**.
+4. Observe the colours of the river reaches and nodes.
+5. Click a reach or node to view its information.
+6. Switch between the period summary and a specific month.
+
+## Period summary and monthly view
+
+The tool provides two main types of view:
+
+### Annual or multi-year summary
+
+When viewing a summary for one or more years, the colours show how often an incident occurs, for example:
+
+- Number of months in which the environmental flow requirement is not met.
+- Number of months in which a demand cannot be met.
+
+This view is useful for identifying persistent problems.
+
+### Specific month
+
+When a month is selected, the legend becomes binary. Each element simply indicates whether, during that month, it:
+
+- Meets or fails to meet the environmental flow requirement.
+- Meets or fails to meet the demand.
+
+This view is useful for studying specific seasonal situations.
+
+## Simple example
+
+Try the following exercise:
+
+1. Run the reference scenario.
+2. Reduce precipitation by 20%.
+3. Run the simulation again.
+4. Compare:
+   - reservoir inflow;
+   - final stored volume;
+   - reaches that fail to meet the environmental flow requirement;
+   - unmet demands.
+
+::: {.callout-tip}
+When interpreting a scenario, it is best to compare it with the reference scenario rather than analysing its values in isolation.
+:::

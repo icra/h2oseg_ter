@@ -1,0 +1,116 @@
+---
+title: "Aportación de las áreas de drenaje"
+---
+
+## Balance hídrico mensual
+
+Cada área de drenaje genera una aportación local a partir de la precipitación, la evapotranspiración, la nieve y la superficie drenada.
+
+$$
+Q^{contrib}_{i,m}
+=
+\frac{
+A_i\,C
+\left(
+P_{i,m}-ET_{i,m}-r_m\Delta N_{i,m}
+\right)
+}{
+1000\,S_m
+}
+$$
+
+donde:
+
+- $Q^{contrib}_{i,m}$: caudal aportado por el área $i$ durante el mes $m$, en $\mathrm{m^3\,s^{-1}}$;
+- $A_i$: superficie del área de drenaje, en $\mathrm{m^2}$;
+- $C$: coeficiente de escorrentía;
+- $P_{i,m}$: precipitación mensual, en mm;
+- $ET_{i,m}$: evapotranspiración real mensual, en mm;
+- $\Delta N_{i,m}$: cambio mensual del almacenamiento de nieve;
+- $r_m$: factor de conversión de nieve a equivalente de agua;
+- $S_m$: duración del mes, en segundos;
+- el factor $1000$ convierte milímetros en metros.
+
+## Evapotranspiración
+
+La evapotranspiración potencial mensual se calcula mediante el método de Thornthwaite a partir de la temperatura media mensual:
+
+$$
+PET_m =
+16
+\left(
+\frac{10T_m}{I}
+\right)^a
+K_m
+$$
+
+donde:
+
+$$
+I=\sum_{m=1}^{12}
+\left(
+\frac{T_m}{5}
+\right)^{1.514}
+$$
+
+y:
+
+$$
+a =
+6.75\times10^{-7}I^3
+-
+7.71\times10^{-5}I^2
++
+1.792\times10^{-2}I
++
+0.49239
+$$
+
+$K_m$ corrige el resultado según la duración del día y el número de días del mes.
+
+::: {.callout-note collapse="true"}
+## Interpretación
+
+La PET representa la demanda evaporativa de la atmósfera si hubiera suficiente agua. No es necesariamente la cantidad de agua que la cuenca evapotranspira realmente.
+:::
+
+Para cada uso del suelo $u$, la evapotranspiración real se calcula mediante una formulación dependiente de la precipitación, la PET y un coeficiente de vegetación^[Mas-Pla, J. et al. (2016). «Recursos hidrològics». En [Tercer informe sobre el canvi climàtic a Catalunya](https://cads.gencat.cat/ca/publicacions/informes-sobre-el-canvi-climatic-a-catalunya/tercer-informe-sobre-el-canvi-climatic-a-catalunya-/index.html), pp. 161–188]:
+
+$$
+ET_{i,m}
+=
+\sum_u f_{i,u}
+\,
+P_{i,m}
+\,
+\frac{
+1+w_u\frac{PET_{i,m}}{P_{i,m}}
+}{
+1+w_u\frac{PET_{i,m}}{P_{i,m}}
++\frac{P_{i,m}}{PET_{i,m}}
+}
+$$
+
+donde:
+
+- $f_{i,u}$: proporción del uso del suelo $u$ dentro del área $i$;
+- $w_u$: coeficiente de evapotranspiración del uso del suelo;
+- $P_{i,m}$: precipitación mensual;
+- $PET_{i,m}$: evapotranspiración potencial.
+
+### Coeficientes según el uso del suelo
+
+| Uso del suelo | $w_u$ |
+|---|---:|
+| Agua | 0 |
+| Suelo urbano y superficies impermeables | 0 |
+| Bosque y plantaciones arbóreas | 1,75 |
+| Prados y pastos naturales | 1,00 |
+| Cultivos de secano | 0,75 |
+| Cultivos de regadío | 1,50 |
+
+Los valores más elevados representan una mayor capacidad de la vegetación para utilizar el agua disponible.
+
+::: {.callout-warning}
+El modelo representa el efecto de los usos del suelo sobre la evapotranspiración de forma agregada. No simula explícitamente la humedad del suelo, el enraizamiento ni el crecimiento de la vegetación.
+:::

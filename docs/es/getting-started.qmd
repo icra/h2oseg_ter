@@ -1,0 +1,61 @@
+---
+title: "Primeros pasos"
+---
+
+## Acceso a la herramienta
+
+La aplicación está disponible en:
+
+<https://h2oseg-ter.icradev.cat/?lang=es>
+
+No es necesario iniciar sesión ni instalar ningún programa. Se recomienda utilizar una versión actualizada de Firefox, Chrome, Edge o un navegador equivalente.
+
+## Una primera simulación
+
+Al abrir la aplicación se muestra el escenario de referencia. Para realizar una primera exploración:
+
+1. Selecciona la duración de la simulación.
+2. Mantén los valores iniciales del escenario.
+3. Pulsa el botón **Aplicar**.
+4. Observa los colores de los tramos fluviales y de los nodos.
+5. Haz clic en un tramo o nodo para consultar su información.
+6. Alterna entre el resumen del periodo y un mes concreto.
+
+## Resumen del periodo y consulta mensual
+
+La herramienta ofrece dos formas principales de visualización:
+
+### Resumen anual o plurianual
+
+Cuando se muestra el resumen de uno o varios años, los colores indican la frecuencia con la que se produce una incidencia, por ejemplo:
+
+- Número de meses en los que no se cumple el caudal ambiental.
+- Número de meses en los que no se puede satisfacer una demanda.
+
+Esta vista es útil para identificar problemas persistentes.
+
+### Mes concreto
+
+Cuando se selecciona un mes, la leyenda pasa a ser binaria. Cada elemento indica simplemente si, durante ese mes:
+
+- Cumple o incumple el caudal ambiental.
+- Satisface o no satisface la demanda.
+
+Esta vista es útil para estudiar situaciones estacionales concretas.
+
+## Ejemplo sencillo
+
+Puedes probar este ejercicio:
+
+1. Ejecuta el escenario de referencia.
+2. Reduce la precipitación un 20 %.
+3. Vuelve a ejecutar la simulación.
+4. Compara:
+   - la entrada a los embalses;
+   - el volumen final almacenado;
+   - los tramos que incumplen el caudal ambiental;
+   - las demandas no satisfechas.
+
+::: {.callout-tip}
+Para interpretar un escenario es preferible compararlo siempre con el escenario de referencia y no analizar sus valores de forma aislada.
+:::

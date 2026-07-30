@@ -623,8 +623,11 @@ createApp({
             modalScenarios.value = false
         }
         const openDocumentation = function () {
+            const locale = i18n.global.locale.value
+            const supportedLocales = ['ca', 'en', 'es']
+            const documentationLocale = supportedLocales.includes(locale) ? locale : 'ca'
             globalThis.open(
-                "https://icra.github.io/h2oseg_ter/",
+                `https://icra.github.io/h2oseg_ter/${documentationLocale}/`,
                 "_blank",
                 "noopener,noreferrer"
             )

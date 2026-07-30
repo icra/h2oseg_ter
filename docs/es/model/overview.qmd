@@ -1,0 +1,62 @@
+---
+title: "Visión general del modelo"
+---
+
+## Representación de la cuenca
+
+El modelo representa la cuenca fluvial como un **grafo dirigido**:
+
+- los **nodos** son puntos donde el caudal se genera, modifica, almacena, deriva o evalúa;
+- las **aristas** son los tramos fluviales que transportan el agua aguas abajo.
+
+Esta estructura permite seguir explícitamente el recorrido del agua desde las cabeceras hasta los tramos bajos de la cuenca.
+
+## Paso temporal
+
+La simulación utiliza un paso temporal mensual. Cada mes, el modelo:
+
+1. calcula la aportación de las áreas de drenaje;
+2. suma las entradas procedentes de aguas arriba;
+3. aplica aportaciones, retornos, demandas y captaciones;
+4. modifica el caudal según las ganancias o pérdidas subterráneas de los tramos;
+5. actualiza el balance de los embalses;
+6. comprueba los caudales ambientales y las demandas no satisfechas.
+
+## Secuencia de cálculo
+
+Para cada nodo \(i\) y mes \(m\), el balance general se puede expresar como:
+
+$$
+Q^{out}_{i,m}
+=
+\max\left(
+0,\,
+Q^{in}_{i,m}+\Delta Q_{i,m}
+\right)
+$$
+
+donde:
+
+- $Q^{in}_{i,m}$ es la suma de los caudales que llegan desde aguas arriba;
+- $\Delta Q_{i,m}$ es el cambio local de caudal;
+- $Q^{out}_{i,m}$ es el caudal que sale del nodo.
+
+Los cambios locales pueden ser:
+
+- positivos: aportación de un área de drenaje, retorno de una depuradora o entrada externa;
+- negativos: captación urbana, agrícola o de otro uso.
+
+El caudal no puede ser negativo. Cuando la demanda supera el agua disponible, la diferencia se registra como demanda no satisfecha y el caudal aguas abajo se establece en cero, asumiendo que se capta toda el agua disponible para satisfacer la demanda.
+
+## Escala espacial y temporal
+
+La simplificación mensual permite ejecutar rápidamente simulaciones de varios años. Sin embargo, el modelo no representa:
+
+- crecidas de duración horaria o diaria;
+- variaciones dentro de un mismo mes;
+- procesos hidráulicos detallados;
+- dinámica explícita de los acuíferos.
+
+## Implementación en el navegador
+
+Los cálculos se realizan en el navegador del usuario. El grafo computacional y las variables de simulación se actualizan después de cada cambio de escenario, y los resultados se muestran en el mapa y en las tablas de información.

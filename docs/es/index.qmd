@@ -1,0 +1,37 @@
+---
+title: "H2OSEG-Ter"
+subtitle: "Herramienta interactiva para explorar escenarios de asignación de agua en la cuenca del Ter"
+---
+
+## ¿Qué es H2OSEG-Ter?
+
+**H2OSEG-Ter** es una herramienta web que permite explorar cómo distintos cambios climáticos, territoriales y de gestión del agua pueden afectar a los caudales del río Ter, al volumen almacenado en los embalses, al cumplimiento de los caudales ambientales y a la satisfacción de las demandas de agua.
+
+La herramienta funciona directamente en el navegador y no requiere instalación ni registro.
+
+[Abrir H2OSEG-Ter](https://h2oseg-ter.icradev.cat/?lang=es){.btn .btn-primary}
+
+## ¿Para qué se puede utilizar?
+
+H2OSEG-Ter está pensada para:
+
+- Comparar rápidamente escenarios alternativos.
+- Explorar los efectos de cambios en la precipitación o la temperatura.
+- Modificar las demandas urbanas y agrícolas.
+- Modificar captaciones concretas o los desembalses.
+- Consultar los caudales simulados a lo largo de la red fluvial.
+- Identificar tramos que incumplen el caudal ambiental.
+- Detectar demandas que no pueden satisfacerse.
+- Observar la evolución del volumen de los embalses.
+
+::: {.callout-important}
+H2OSEG-Ter es una herramienta de exploración y comparación de escenarios. No es un sistema de predicción hidrológica ni un modelo operativo para tomar decisiones legales o de gestión en tiempo real.
+:::
+
+## Primeros pasos
+
+1. Consulta la [guía rápida](getting-started.qmd).
+2. Familiarízate con la [interfaz](user-guide/interface.qmd).
+3. Prueba a crear un [escenario](user-guide/scenarios.qmd).
+4. Consulta [cómo funciona el modelo hidrológico](model/overview.qmd).
+5. Revisa las [limitaciones](reference/assumptions.qmd) antes de interpretar los resultados.

@@ -1,0 +1,62 @@
+---
+title: "Model overview"
+---
+
+## Basin representation
+
+The model represents the river basin as a **directed graph**:
+
+- **nodes** are points where flow is generated, modified, stored, diverted or assessed;
+- **edges** are river reaches that carry water downstream.
+
+This structure makes it possible to explicitly follow the path of water from the headwaters to the lower reaches of the basin.
+
+## Time step
+
+The simulation uses a monthly time step. Each month, the model:
+
+1. calculates contributions from drainage areas;
+2. adds inflows from upstream;
+3. applies contributions, returns, demands and abstractions;
+4. modifies flow according to groundwater gains or losses along the reaches;
+5. updates the reservoir balance;
+6. checks environmental flows and unmet demands.
+
+## Calculation sequence
+
+For each node \(i\) and month \(m\), the general balance can be expressed as:
+
+$$
+Q^{out}_{i,m}
+=
+\max\left(
+0,\,
+Q^{in}_{i,m}+\Delta Q_{i,m}
+\right)
+$$
+
+where:
+
+- $Q^{in}_{i,m}$ is the sum of flows arriving from upstream;
+- $\Delta Q_{i,m}$ is the local change in flow;
+- $Q^{out}_{i,m}$ is the flow leaving the node.
+
+Local changes can be:
+
+- positive: contribution from a drainage area, return from a treatment plant or external inflow;
+- negative: urban, agricultural or other abstraction.
+
+Flow cannot become negative. When demand exceeds the available water, the difference is recorded as unmet demand and downstream flow is set to zero, assuming that all available water is abstracted to meet the demand.
+
+## Spatial and temporal scale
+
+The monthly simplification enables multi-year simulations to run quickly. However, the model does not represent:
+
+- floods lasting hours or days;
+- variations within a month;
+- detailed hydraulic processes;
+- explicit aquifer dynamics.
+
+## Browser implementation
+
+Calculations are performed in the user's browser. The computational graph and simulation variables are updated after each scenario change, and the results are displayed on the map and in information tables.

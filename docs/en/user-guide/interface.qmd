@@ -1,0 +1,70 @@
+---
+title: "Interface and navigation"
+---
+
+## General structure
+
+The interface has two main components:
+
+1. **Interactive map**, displaying the river network and model elements.
+2. **Sidebar**, used to configure simulations and view general indicators.
+
+## Navigating the map
+
+The usual web-map controls can be used to:
+
+- zoom in or out;
+- move around the basin;
+- select river reaches;
+- select hydrological or management nodes.
+
+Selecting an element opens a table containing the corresponding variables.
+
+## Types of element
+
+The network includes elements with different functions:
+
+- **drainage areas**, which generate hydrological contributions;
+- **abstractions**, which remove water from the river;
+- **returns**, such as effluent from wastewater treatment plants;
+- **external inflows**, which add water to the network;
+- **reservoirs and release points**;
+- **river reaches**, which carry flow downstream.
+
+## Drainage area information
+
+The table for a drainage area includes:
+
+- inflow;
+- local contribution;
+- outflow;
+- drainage area;
+- precipitation;
+- mean temperature;
+- potential evapotranspiration;
+- actual evapotranspiration.
+
+## Abstraction information
+
+For an abstraction, the following can be viewed:
+
+- inflow;
+- abstracted flow;
+- proportion of flow abstracted.
+
+## River reach information
+
+River reaches mainly show:
+
+- simulated flow;
+- environmental flow requirement;
+- compliance or non-compliance with the environmental flow requirement;
+- frequency of non-compliance in the period summary.
+
+## Reservoir summary
+
+The sidebar shows indicators for the Sau–Susqueda–Pasteral system, including:
+
+- final stored volume;
+- mean inflow;
+- mean outflow.

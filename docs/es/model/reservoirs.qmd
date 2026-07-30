@@ -1,0 +1,90 @@
+---
+title: "Balance de los embalses"
+---
+
+## Sistema representado
+
+El modelo representa de forma agregada el sistema regulado Sau–Susqueda–Pasteral.
+
+Para cada mes, el almacenamiento se actualiza mediante un balance de volúmenes:
+
+$$
+V_{m+1}
+=
+V_m
++
+Q^{in}_m S_m
+-
+Q^{rel}_m S_m
+-
+V^{evap}_m
+-
+V^{overflow}_m
+$$
+
+donde:
+
+- $V_m$: volumen almacenado al inicio del mes;
+- $Q^{in}_m$: caudal de entrada;
+- $Q^{rel}_m$: desembalse controlado;
+- $S_m$: duración del mes en segundos;
+- $V^{evap}_m$: pérdida por evaporación;
+- $V^{overflow}_m$: volumen aliviado.
+
+## Volumen inicial
+
+En el primer mes se utiliza el volumen inicial definido por el usuario. En los meses siguientes se utiliza el volumen final del mes anterior.
+
+## Evaporación
+
+La evaporación se calcula a partir de:
+
+- la evapotranspiración potencial en el nodo del embalse;
+- la superficie inundada estimada;
+- el volumen almacenado.
+
+La pérdida mensual es:
+
+$$
+V^{evap}_m
+=
+\frac{
+E_m A^{res}_m
+}{
+10^9
+}
+$$
+
+donde $E_m$ es la evaporación en mm y $A^{res}_m$ es la superficie inundada en $\mathrm{m^2}$. El resultado se expresa en $\mathrm{hm^3}$.
+
+## Desembalse automático
+
+Cuando el usuario no fija un desembalse, el modelo estima el agua necesaria para:
+
+- satisfacer las demandas situadas aguas abajo;
+- mantener los caudales ambientales;
+- compensar las pérdidas que se producen durante la propagación por el río.
+
+## Desembalse definido por el usuario
+
+El usuario puede definir un volumen anual o valores mensuales. El modelo aplica siempre la restricción física:
+
+$$
+V^{release}_m
+\leq
+V_m+V^{in}_m-V^{evap}_m
+$$
+
+Por tanto, no se puede desembalsar más agua de la disponible.
+
+## Aliviado
+
+Cuando el volumen resultante supera la capacidad máxima del sistema, el exceso se convierte en volumen aliviado:
+
+$$
+V^{overflow}_m
+=
+\max(0,V^{provisional}_{m+1}-V^{max})
+$$
+
+El volumen almacenado queda limitado a $V^{max}$.

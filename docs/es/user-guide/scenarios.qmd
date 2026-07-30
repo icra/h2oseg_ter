@@ -1,0 +1,96 @@
+---
+title: "Crear y comparar escenarios"
+---
+
+## ¿Qué es un escenario?
+
+Un escenario es una modificación de las condiciones de referencia. No representa necesariamente una predicción, sino una pregunta del tipo:
+
+> ¿Qué ocurriría con los caudales si disminuyera la precipitación, aumentara la demanda o cambiaran los desembalses?
+
+## Escenarios disponibles
+
+La herramienta permite modificar:
+
+- precipitación;
+- temperatura;
+- demanda urbana;
+- demanda agrícola;
+- cobertura forestal;
+- captaciones concretas;
+- desembalses.
+
+Los cambios climáticos y de demanda se pueden aplicar:
+
+- de forma uniforme durante todo el año;
+- de forma diferente para cada mes.
+
+## Modificar la precipitación
+
+Una reducción del 20 % significa que, en cada mes afectado:
+
+$$
+P'_{i,m}=P_{i,m}(1-0.20)
+$$
+
+donde \(P_{i,m}\) es la precipitación de referencia y \(P'_{i,m}\) es la precipitación modificada.
+
+## Modificar la temperatura
+
+Un aumento de 2 °C se aplica como:
+
+$$
+T'_{i,m}=T_{i,m}+2
+$$
+
+El cambio afecta a la evapotranspiración potencial e, indirectamente, a la evapotranspiración real y a la aportación a los ríos.
+
+## Modificar las demandas
+
+Los escenarios de demanda multiplican las captaciones asociadas a cada categoría. Por ejemplo, un aumento del 10 % de la demanda agrícola implica:
+
+$$
+D'_{m}=D_m(1+0.10)
+$$
+
+## Modificar la cobertura forestal
+
+Este escenario modifica la proporción de bosque de cada área de drenaje respecto al valor de referencia. Cuando disminuye la cobertura forestal, la superficie eliminada se redistribuye entre cultivos de secano y prados, manteniendo sus proporciones originales. Si no existían, se reparte a partes iguales.
+
+Cuando aumenta la cobertura forestal, el nuevo bosque sustituye proporcionalmente a cultivos de secano y prados, hasta el máximo de superficie disponible entre estas dos coberturas.
+
+Como el bosque tiene un coeficiente de evapotranspiración más elevado, una reducción de la cobertura forestal tiende a disminuir la evapotranspiración real y a aumentar la aportación fluvial, mientras que un aumento tiende a producir el efecto contrario.
+
+::: {.callout-note}
+Un valor del 100 % mantiene la cobertura original; un 50 % la reduce a la mitad y un 150 % la incrementa un 50 %, siempre que haya suficiente superficie disponible de cultivos de secano y prados.
+:::
+
+## Modificar una captación concreta
+
+En los nodos editables se puede definir:
+
+- un volumen anual total, que se distribuye mensualmente;
+- valores de caudal diferentes para cada mes.
+
+## Modificar los desembalses
+
+Los desembalses también se pueden definir como:
+
+- volumen anual;
+- valores mensuales.
+
+El modelo limita el desembalse al agua realmente disponible después de considerar la entrada, el almacenamiento y la evaporación.
+
+## Comparar correctamente
+
+Para comparar dos escenarios:
+
+1. ejecuta y registra los resultados de referencia;
+2. modifica únicamente las variables que forman parte de la pregunta;
+3. vuelve a ejecutar la simulación;
+4. compara los mismos indicadores y el mismo periodo;
+5. revisa tanto los resultados agregados como los meses concretos.
+
+::: {.callout-warning}
+Cambiar varias variables simultáneamente puede dificultar la interpretación causal de los resultados. Para entender el funcionamiento del sistema se recomienda empezar modificando una sola variable.
+:::

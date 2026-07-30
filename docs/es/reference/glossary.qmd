@@ -1,0 +1,42 @@
+---
+title: "Glosario"
+---
+
+**Almacenamiento**  
+Volumen de agua contenido en los embalses.
+
+**Aportación local**  
+Caudal generado dentro de un área de drenaje a partir del balance entre precipitación, evapotranspiración y nieve.
+
+**Captación**  
+Retirada de agua del río para un uso urbano, agrícola, industrial o una transferencia.
+
+**Caudal ambiental**  
+Caudal mínimo establecido para mantener el funcionamiento ecológico del río.
+
+**Demanda no satisfecha**  
+Diferencia entre el agua solicitada y el agua realmente disponible en un nodo.
+
+**Desbordamiento**  
+Volumen que supera la capacidad máxima de almacenamiento y sale del sistema.
+
+**Escenario**  
+Conjunto de modificaciones aplicadas a las condiciones de referencia.
+
+**Evapotranspiración potencial (PET)**  
+Demanda evaporativa de la atmósfera si el agua disponible no fuera limitante.
+
+**Evapotranspiración real (ET o AET)**  
+Cantidad de agua que realmente se evapora o es transpirada por la vegetación según el clima y la disponibilidad de agua.
+
+**Grafo dirigido**  
+Estructura formada por nodos y conexiones con una dirección determinada, en este caso la dirección del flujo fluvial.
+
+**Nodo**  
+Punto de la red donde el caudal se genera, modifica, almacena o evalúa.
+
+**Retorno**  
+Agua que vuelve al río después de un uso, por ejemplo, el efluente de una estación depuradora.
+
+**Tramo fluvial**  
+Conexión entre dos nodos por la que se propaga el caudal.

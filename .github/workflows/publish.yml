@@ -7,7 +7,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build-deploy:
@@ -20,10 +26,33 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Render and publish
-        uses: quarto-dev/quarto-actions/publish@v2
+      - name: Render Catalan documentation
+        run: quarto render docs/ca
+
+      - name: Render English documentation
+        run: quarto render docs/en
+
+      - name: Render Spanish documentation
+        run: quarto render docs/es
+
+      - name: Assemble multilingual site
+        shell: bash
+        run: |
+          mkdir -p site/ca site/en site/es
+          cp -R docs/ca/_site/. site/ca/
+          cp -R docs/en/_site/. site/en/
+          cp -R docs/es/_site/. site/es/
+          cp docs/landing/index.html site/index.html
+          touch site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          target: gh-pages
-          path: docs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,70 @@
+---
+title: "Interfaz y navegación"
+---
+
+## Estructura general
+
+La interfaz tiene dos componentes principales:
+
+1. **Mapa interactivo**, donde se representan la red fluvial y los elementos del modelo.
+2. **Panel lateral**, desde el que se configuran las simulaciones y se consultan los indicadores generales.
+
+## Navegación por el mapa
+
+Se pueden utilizar los controles habituales de un mapa web para:
+
+- acercar o alejar la vista;
+- desplazarse por la cuenca;
+- seleccionar tramos fluviales;
+- seleccionar nodos hidrológicos o de gestión.
+
+Al seleccionar un elemento se abre una tabla con las variables correspondientes.
+
+## Tipos de elementos
+
+La red incluye elementos con distintas funciones:
+
+- **áreas de drenaje**, que generan aportación hidrológica;
+- **captaciones**, que retiran agua del río;
+- **retornos**, como los efluentes de estaciones depuradoras;
+- **entradas externas**, que incorporan agua a la red;
+- **embalses y puntos de desembalse**;
+- **tramos fluviales**, que transportan el caudal aguas abajo.
+
+## Información de un área de drenaje
+
+La tabla de un área de drenaje incluye:
+
+- caudal entrante;
+- aportación local;
+- caudal saliente;
+- superficie de drenaje;
+- precipitación;
+- temperatura media;
+- evapotranspiración potencial;
+- evapotranspiración real.
+
+## Información de una captación
+
+En una captación se puede consultar:
+
+- caudal entrante;
+- caudal captado;
+- proporción del caudal captado.
+
+## Información de un tramo fluvial
+
+Los tramos muestran principalmente:
+
+- caudal simulado;
+- requisito de caudal ambiental;
+- cumplimiento o incumplimiento del caudal ambiental;
+- frecuencia de incumplimiento en el resumen del periodo.
+
+## Resumen de los embalses
+
+El panel lateral muestra indicadores del sistema Sau–Susqueda–Pasteral, como:
+
+- volumen final almacenado;
+- entrada media;
+- salida media.

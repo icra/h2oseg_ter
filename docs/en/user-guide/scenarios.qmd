@@ -1,0 +1,96 @@
+---
+title: "Creating and comparing scenarios"
+---
+
+## What is a scenario?
+
+A scenario is a modification of the reference conditions. It does not necessarily represent a prediction, but rather a question such as:
+
+> What would happen to river flows if precipitation decreased, demand increased or reservoir releases changed?
+
+## Available scenarios
+
+The tool allows you to modify:
+
+- precipitation;
+- temperature;
+- urban demand;
+- agricultural demand;
+- forest cover;
+- specific abstractions;
+- reservoir releases.
+
+Changes in climate and demand can be applied:
+
+- uniformly throughout the year;
+- differently for each month.
+
+## Modifying precipitation
+
+A 20% reduction means that, for each affected month:
+
+$$
+P'_{i,m}=P_{i,m}(1-0.20)
+$$
+
+where \(P_{i,m}\) is the reference precipitation and \(P'_{i,m}\) is the modified precipitation.
+
+## Modifying temperature
+
+An increase of 2 °C is applied as follows:
+
+$$
+T'_{i,m}=T_{i,m}+2
+$$
+
+The change affects potential evapotranspiration and, indirectly, actual evapotranspiration and river contributions.
+
+## Modifying demands
+
+Demand scenarios multiply the abstractions associated with each category. For example, a 10% increase in agricultural demand means:
+
+$$
+D'_{m}=D_m(1+0.10)
+$$
+
+## Modifying forest cover
+
+This scenario modifies the proportion of forest in each drainage area relative to the reference value. When forest cover decreases, the removed area is redistributed between rainfed crops and grassland while maintaining their original proportions. If neither was present, it is divided equally between them.
+
+When forest cover increases, the new forest proportionally replaces rainfed crops and grassland, up to the maximum area available across these two land-cover types.
+
+Because forest has a higher evapotranspiration coefficient, reducing forest cover tends to decrease actual evapotranspiration and increase river contributions, while increasing it tends to have the opposite effect.
+
+::: {.callout-note}
+A value of 100% retains the original cover; 50% halves it and 150% increases it by 50%, provided that sufficient rainfed crop and grassland area is available.
+:::
+
+## Modifying a specific abstraction
+
+For editable nodes, you can specify:
+
+- a total annual volume, which is distributed monthly;
+- different flow values for each month.
+
+## Modifying reservoir releases
+
+Reservoir releases can also be specified as:
+
+- an annual volume;
+- monthly values.
+
+The model limits the release to the water actually available after accounting for inflow, storage and evaporation.
+
+## Making valid comparisons
+
+To compare two scenarios:
+
+1. run and record the reference results;
+2. modify only the variables relevant to the question;
+3. run the simulation again;
+4. compare the same indicators and time period;
+5. review both aggregated results and specific months.
+
+::: {.callout-warning}
+Changing several variables at once can make it difficult to interpret the causes of the results. To understand how the system works, we recommend starting by changing a single variable.
+:::

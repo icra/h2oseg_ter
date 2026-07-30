@@ -1,0 +1,61 @@
+---
+title: "Hipótesis, limitaciones y uso adecuado"
+---
+
+## Uso adecuado
+
+H2OSEG-Ter es especialmente útil para:
+
+- exploración preliminar;
+- comparación relativa de escenarios;
+- comunicación entre actores;
+- talleres participativos;
+- actividades educativas;
+- identificación de posibles conflictos entre demandas y caudales ambientales.
+
+## Usos para los que no está pensada
+
+No debería utilizarse como único apoyo para:
+
+- predicción operativa;
+- diseño de infraestructuras;
+- asignaciones legales de agua;
+- gestión de emergencias;
+- predicción de crecidas;
+- estudios detallados de aguas subterráneas;
+- simulación hidráulica de alta resolución.
+
+## Resolución mensual
+
+El modelo trabaja con valores mensuales. Por tanto, no representa:
+
+- episodios extremos de corta duración;
+- picos de caudal;
+- variabilidad diaria;
+- tiempos de propagación dentro del mes.
+
+## Simulaciones plurianuales
+
+Si el usuario no introduce modificaciones específicas, los años sucesivos repiten el mismo patrón mensual de clima y demandas.
+
+Esto permite estudiar el efecto acumulativo de unas condiciones estacionales repetidas, pero no representa una serie histórica o futura con variabilidad interanual.
+
+## Procesos hidrológicos simplificados
+
+El modelo no simula de forma explícita:
+
+- humedad del suelo;
+- infiltración distribuida;
+- generación detallada de escorrentía;
+- acuíferos;
+- caudal base retardado;
+- hidráulica de los canales;
+- normas operativas complejas de los embalses.
+
+## Calibración
+
+Los parámetros hidrológicos y de interacción subterránea se han ajustado con datos mensuales de seis estaciones situadas en tramos de caudal no regulados.
+
+::: {.callout-important}
+Los resultados deben interpretarse como una respuesta del modelo a unas hipótesis definidas por el usuario, no como una predicción cierta del comportamiento futuro de la cuenca.
+:::

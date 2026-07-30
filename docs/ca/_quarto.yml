@@ -4,7 +4,7 @@ project:
 
 website:
   title: "H2OSEG-Ter"
-  site-url: "https://h2oseg-ter.icradev.cat/docs/"
+  site-url: "https://icra.github.io/h2oseg_ter/ca/"
   search:
     location: sidebar
     type: textbox
@@ -16,7 +16,15 @@ website:
       - href: getting-started.qmd
         text: Començar
     right:
-      - href: https://h2oseg-ter.icradev.cat/
+      - text: Idioma
+        menu:
+          - text: Català
+            href: https://icra.github.io/h2oseg_ter/ca/
+          - text: English
+            href: https://icra.github.io/h2oseg_ter/en/
+          - text: Español
+            href: https://icra.github.io/h2oseg_ter/es/
+      - href: https://h2oseg-ter.icradev.cat/?lang=ca
         text: Obre l'eina
 
   sidebar:
@@ -50,6 +58,3 @@ format:
     link-external-newwindow: true
 
 lang: ca
-
-
-

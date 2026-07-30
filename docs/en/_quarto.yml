@@ -1,0 +1,60 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "H2OSEG-Ter"
+  site-url: "https://icra.github.io/h2oseg_ter/en/"
+  search:
+    location: sidebar
+    type: textbox
+
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: getting-started.qmd
+        text: Getting started
+    right:
+      - text: Language
+        menu:
+          - text: Català
+            href: https://icra.github.io/h2oseg_ter/ca/
+          - text: English
+            href: https://icra.github.io/h2oseg_ter/en/
+          - text: Español
+            href: https://icra.github.io/h2oseg_ter/es/
+      - href: https://h2oseg-ter.icradev.cat/?lang=en
+        text: Open the tool
+
+  sidebar:
+    style: docked
+    contents:
+      - section: "User guide"
+        contents:
+          - user-guide/interface.qmd
+          - user-guide/scenarios.qmd
+
+      - section: "Hydrological model"
+        contents:
+          - model/overview.qmd
+          - model/drainage-areas.qmd
+          - model/river-routing.qmd
+          - model/reservoirs.qmd
+
+      - section: "Reference"
+        contents:
+          - reference/assumptions.qmd
+          - reference/glossary.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    code-fold: true
+    link-external-newwindow: true
+
+lang: en

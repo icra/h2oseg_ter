@@ -1,0 +1,58 @@
+---
+title: "Propagación del caudal y aguas subterráneas"
+---
+
+## Propagación aguas abajo
+
+El modelo recorre la red siguiendo la dirección del flujo. En cada nodo suma los caudales que llegan por los tramos de aguas arriba y aplica el cambio local correspondiente.
+
+El caudal resultante se transfiere a los tramos situados aguas abajo.
+
+## Ganancias y pérdidas subterráneas
+
+Los intercambios entre el río y las aguas subterráneas se representan mediante una formulación simplificada:
+
+$$
+Q^{out}_{e,m}
+=
+Q^{in}_{e,m}
+e^{-k_{e,m}L_e}
++
+g_{e,m}L_e
+$$
+
+donde:
+
+- $Q^{in}_{e,m}$: caudal al inicio del tramo;
+- $Q^{out}_{e,m}$: caudal al final del tramo;
+- $L_e$: longitud del tramo;
+- $k_{e,m}$: coeficiente de pérdida por infiltración;
+- $g_{e,m}$: ganancia subterránea por unidad de longitud.
+
+El primer término representa las pérdidas de caudal a lo largo del tramo. El segundo representa una aportación subterránea aditiva.
+
+## Clases de interacción
+
+Los tramos se clasifican en tres niveles:
+
+- bajo;
+- medio;
+- alto.
+
+La clasificación se basa en un índice hidrogeológico simplificado que considera:
+
+- presencia de materiales aluviales;
+- capacidad de almacenamiento de agua del suelo;
+- pendiente del río.
+
+Los tramos con más materiales aluviales, mayor capacidad de almacenamiento y pendientes menores reciben una clase de interacción más elevada.
+
+## Interpretación
+
+Esta formulación permite representar diferencias espaciales sistemáticas entre tramos ganadores y perdedores, pero no simula explícitamente:
+
+- niveles piezométricos;
+- almacenamiento del acuífero;
+- retardos temporales del caudal base;
+- efectos del bombeo subterráneo;
+- retroalimentaciones dinámicas entre río y acuífero.

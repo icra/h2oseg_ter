@@ -1,0 +1,61 @@
+---
+title: "Assumptions, limitations and appropriate use"
+---
+
+## Appropriate use
+
+H2OSEG-Ter is particularly useful for:
+
+- preliminary exploration;
+- relative comparison of scenarios;
+- communication among stakeholders;
+- participatory workshops;
+- educational activities;
+- identifying potential conflicts between demands and environmental flows.
+
+## Uses for which it is not intended
+
+It should not be used as the sole basis for:
+
+- operational forecasting;
+- infrastructure design;
+- legal water allocations;
+- emergency management;
+- flood forecasting;
+- detailed groundwater studies;
+- high-resolution hydraulic simulation.
+
+## Monthly resolution
+
+The model uses monthly values. It therefore does not represent:
+
+- short-duration extreme events;
+- flow peaks;
+- daily variability;
+- routing times within the month.
+
+## Multi-year simulations
+
+If the user does not enter specific modifications, successive years repeat the same monthly pattern of climate and demands.
+
+This makes it possible to study the cumulative effect of repeated seasonal conditions, but does not represent a historical or future series with interannual variability.
+
+## Simplified hydrological processes
+
+The model does not explicitly simulate:
+
+- soil moisture;
+- distributed infiltration;
+- detailed runoff generation;
+- aquifers;
+- delayed baseflow;
+- channel hydraulics;
+- complex reservoir operating rules.
+
+## Calibration
+
+The hydrological and groundwater-interaction parameters were fitted using monthly data from six gauging stations on unregulated river reaches.
+
+::: {.callout-important}
+The results should be interpreted as the model's response to assumptions defined by the user, not as a certain prediction of the basin's future behaviour.
+:::

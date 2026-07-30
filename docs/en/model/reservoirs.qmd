@@ -1,0 +1,90 @@
+---
+title: "Reservoir balance"
+---
+
+## Represented system
+
+The model represents the regulated Sau–Susqueda–Pasteral system in an aggregated manner.
+
+For each month, storage is updated using a volume balance:
+
+$$
+V_{m+1}
+=
+V_m
++
+Q^{in}_m S_m
+-
+Q^{rel}_m S_m
+-
+V^{evap}_m
+-
+V^{overflow}_m
+$$
+
+where:
+
+- $V_m$: volume stored at the start of the month;
+- $Q^{in}_m$: inflow;
+- $Q^{rel}_m$: controlled release;
+- $S_m$: duration of the month in seconds;
+- $V^{evap}_m$: evaporation loss;
+- $V^{overflow}_m$: overflow volume.
+
+## Initial volume
+
+The initial volume specified by the user is used in the first month. In subsequent months, the final volume from the previous month is used.
+
+## Evaporation
+
+Evaporation is calculated from:
+
+- potential evapotranspiration at the reservoir node;
+- estimated inundated area;
+- stored volume.
+
+The monthly loss is:
+
+$$
+V^{evap}_m
+=
+\frac{
+E_m A^{res}_m
+}{
+10^9
+}
+$$
+
+where $E_m$ is evaporation in mm and $A^{res}_m$ is the inundated area in $\mathrm{m^2}$. The result is expressed in $\mathrm{hm^3}$.
+
+## Automatic release
+
+When the user does not set a release, the model estimates the water required to:
+
+- meet downstream demands;
+- maintain environmental flows;
+- compensate for losses that occur during routing along the river.
+
+## User-defined release
+
+The user can specify an annual volume or monthly values. The model always applies the physical constraint:
+
+$$
+V^{release}_m
+\leq
+V_m+V^{in}_m-V^{evap}_m
+$$
+
+Therefore, no more water can be released than is available.
+
+## Overflow
+
+When the resulting volume exceeds the maximum system capacity, the excess becomes overflow:
+
+$$
+V^{overflow}_m
+=
+\max(0,V^{provisional}_{m+1}-V^{max})
+$$
+
+The stored volume is limited to $V^{max}$.

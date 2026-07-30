@@ -1,0 +1,42 @@
+---
+title: "Glossary"
+---
+
+**Abstraction**  
+Removal of water from the river for urban, agricultural or industrial use, or for a transfer.
+
+**Actual evapotranspiration (ET or AET)**  
+The amount of water actually evaporated or transpired by vegetation according to climate and water availability.
+
+**Directed graph**  
+A structure consisting of nodes and connections with a specific direction, in this case the direction of river flow.
+
+**Environmental flow**  
+The minimum flow established to maintain the ecological functioning of the river.
+
+**Local contribution**  
+Flow generated within a drainage area from the balance between precipitation, evapotranspiration and snow.
+
+**Node**  
+A point in the network where flow is generated, modified, stored or assessed.
+
+**Overflow**  
+Volume that exceeds the maximum storage capacity and leaves the system.
+
+**Potential evapotranspiration (PET)**  
+The evaporative demand of the atmosphere if the available water were not limiting.
+
+**Reservoir storage**  
+Volume of water held in the reservoirs.
+
+**Return**  
+Water that returns to the river after use, such as effluent from a wastewater treatment plant.
+
+**River reach**  
+A connection between two nodes through which flow is routed.
+
+**Scenario**  
+A set of modifications applied to the reference conditions.
+
+**Unmet demand**  
+The difference between the water requested and the water actually available at a node.
