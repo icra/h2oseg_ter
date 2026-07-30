@@ -15,7 +15,7 @@
 <body>
 <div id="app">
     <!-- MODAL D'ESCENARIS -->
-    <div v-if="modalScenarios" class="modal-backdrop" v-cloak>
+    <div v-if="modalScenarios" class="modal-backdrop" v-cloak @click.self="closeModalScenarios">
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
@@ -350,7 +350,7 @@
     </div>
 
     <!-- MODAL D'INFO -->
-    <div v-if="openModalInfo && selectedEle" class="modal-backdrop" v-cloak>
+    <div v-if="openModalInfo && selectedEle" class="modal-backdrop" v-cloak @click.self="openModalInfo=false">
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
