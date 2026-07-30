@@ -1,0 +1,648 @@
+[
+  {
+    "objectID": "reference/assumptions.html",
+    "href": "reference/assumptions.html",
+    "title": "Assumptions, limitations and appropriate use",
+    "section": "",
+    "text": "H2OSEG-Ter is particularly useful for:\n\npreliminary exploration;\nrelative comparison of scenarios;\ncommunication among stakeholders;\nparticipatory workshops;\neducational activities;\nidentifying potential conflicts between demands and environmental flows.",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "Assumptions, limitations and appropriate use"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#appropriate-use",
+    "href": "reference/assumptions.html#appropriate-use",
+    "title": "Assumptions, limitations and appropriate use",
+    "section": "",
+    "text": "H2OSEG-Ter is particularly useful for:\n\npreliminary exploration;\nrelative comparison of scenarios;\ncommunication among stakeholders;\nparticipatory workshops;\neducational activities;\nidentifying potential conflicts between demands and environmental flows.",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "Assumptions, limitations and appropriate use"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#uses-for-which-it-is-not-intended",
+    "href": "reference/assumptions.html#uses-for-which-it-is-not-intended",
+    "title": "Assumptions, limitations and appropriate use",
+    "section": "Uses for which it is not intended",
+    "text": "Uses for which it is not intended\nIt should not be used as the sole basis for:\n\noperational forecasting;\ninfrastructure design;\nlegal water allocations;\nemergency management;\nflood forecasting;\ndetailed groundwater studies;\nhigh-resolution hydraulic simulation.",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "Assumptions, limitations and appropriate use"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#monthly-resolution",
+    "href": "reference/assumptions.html#monthly-resolution",
+    "title": "Assumptions, limitations and appropriate use",
+    "section": "Monthly resolution",
+    "text": "Monthly resolution\nThe model uses monthly values. It therefore does not represent:\n\nshort-duration extreme events;\nflow peaks;\ndaily variability;\nrouting times within the month.",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "Assumptions, limitations and appropriate use"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#multi-year-simulations",
+    "href": "reference/assumptions.html#multi-year-simulations",
+    "title": "Assumptions, limitations and appropriate use",
+    "section": "Multi-year simulations",
+    "text": "Multi-year simulations\nIf the user does not enter specific modifications, successive years repeat the same monthly pattern of climate and demands.\nThis makes it possible to study the cumulative effect of repeated seasonal conditions, but does not represent a historical or future series with interannual variability.",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "Assumptions, limitations and appropriate use"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#simplified-hydrological-processes",
+    "href": "reference/assumptions.html#simplified-hydrological-processes",
+    "title": "Assumptions, limitations and appropriate use",
+    "section": "Simplified hydrological processes",
+    "text": "Simplified hydrological processes\nThe model does not explicitly simulate:\n\nsoil moisture;\ndistributed infiltration;\ndetailed runoff generation;\naquifers;\ndelayed baseflow;\nchannel hydraulics;\ncomplex reservoir operating rules.",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "Assumptions, limitations and appropriate use"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#calibration",
+    "href": "reference/assumptions.html#calibration",
+    "title": "Assumptions, limitations and appropriate use",
+    "section": "Calibration",
+    "text": "Calibration\nThe hydrological and groundwater-interaction parameters were fitted using monthly data from six gauging stations on unregulated river reaches.\n\n\n\n\n\n\nImportant\n\n\n\nThe results should be interpreted as the model’s response to assumptions defined by the user, not as a certain prediction of the basin’s future behaviour.",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "Assumptions, limitations and appropriate use"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "H2OSEG-Ter",
+    "section": "",
+    "text": "H2OSEG-Ter is a web tool for exploring how changes in climate, land use and water management may affect flows in the Ter river, the volume stored in reservoirs, compliance with environmental flow requirements and the extent to which water demands are met.\nThe tool runs directly in the browser and requires neither installation nor registration.\nOpen H2OSEG-Ter"
+  },
+  {
+    "objectID": "index.html#what-is-h2oseg-ter",
+    "href": "index.html#what-is-h2oseg-ter",
+    "title": "H2OSEG-Ter",
+    "section": "",
+    "text": "H2OSEG-Ter is a web tool for exploring how changes in climate, land use and water management may affect flows in the Ter river, the volume stored in reservoirs, compliance with environmental flow requirements and the extent to which water demands are met.\nThe tool runs directly in the browser and requires neither installation nor registration.\nOpen H2OSEG-Ter"
+  },
+  {
+    "objectID": "index.html#what-can-it-be-used-for",
+    "href": "index.html#what-can-it-be-used-for",
+    "title": "H2OSEG-Ter",
+    "section": "What can it be used for?",
+    "text": "What can it be used for?\nH2OSEG-Ter is designed to:\n\nQuickly compare alternative scenarios.\nExplore the effects of changes in precipitation or temperature.\nModify urban and agricultural water demands.\nModify specific abstractions or reservoir releases.\nView simulated flows throughout the river network.\nIdentify reaches that fail to meet environmental flow requirements.\nDetect demands that cannot be met.\nObserve changes in reservoir storage.\n\n\n\n\n\n\n\nImportant\n\n\n\nH2OSEG-Ter is a tool for exploring and comparing scenarios. It is not a hydrological forecasting system or an operational model for making legal or real-time management decisions."
+  },
+  {
+    "objectID": "index.html#getting-started",
+    "href": "index.html#getting-started",
+    "title": "H2OSEG-Ter",
+    "section": "Getting started",
+    "text": "Getting started\n\nRead the quick-start guide.\nFamiliarise yourself with the interface.\nTry creating a scenario.\nLearn how the hydrological model works.\nReview the limitations before interpreting the results."
+  },
+  {
+    "objectID": "model/drainage-areas.html",
+    "href": "model/drainage-areas.html",
+    "title": "Drainage-area contributions",
+    "section": "",
+    "text": "Each drainage area generates a local contribution based on precipitation, evapotranspiration, snow and the drained area.\n\\[\nQ^{contrib}_{i,m}\n=\n\\frac{\nA_i\\,C\n\\left(\nP_{i,m}-ET_{i,m}-r_m\\Delta N_{i,m}\n\\right)\n}{\n1000\\,S_m\n}\n\\]\nwhere:\n\n\\(Q^{contrib}_{i,m}\\): flow contributed by area \\(i\\) during month \\(m\\), in \\(\\mathrm{m^3\\,s^{-1}}\\);\n\\(A_i\\): drainage area, in \\(\\mathrm{m^2}\\);\n\\(C\\): runoff coefficient;\n\\(P_{i,m}\\): monthly precipitation, in mm;\n\\(ET_{i,m}\\): monthly actual evapotranspiration, in mm;\n\\(\\Delta N_{i,m}\\): monthly change in snow storage;\n\\(r_m\\): conversion factor from snow to water equivalent;\n\\(S_m\\): duration of the month, in seconds;\nthe factor \\(1000\\) converts millimetres to metres.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Drainage-area contributions"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#monthly-water-balance",
+    "href": "model/drainage-areas.html#monthly-water-balance",
+    "title": "Drainage-area contributions",
+    "section": "",
+    "text": "Each drainage area generates a local contribution based on precipitation, evapotranspiration, snow and the drained area.\n\\[\nQ^{contrib}_{i,m}\n=\n\\frac{\nA_i\\,C\n\\left(\nP_{i,m}-ET_{i,m}-r_m\\Delta N_{i,m}\n\\right)\n}{\n1000\\,S_m\n}\n\\]\nwhere:\n\n\\(Q^{contrib}_{i,m}\\): flow contributed by area \\(i\\) during month \\(m\\), in \\(\\mathrm{m^3\\,s^{-1}}\\);\n\\(A_i\\): drainage area, in \\(\\mathrm{m^2}\\);\n\\(C\\): runoff coefficient;\n\\(P_{i,m}\\): monthly precipitation, in mm;\n\\(ET_{i,m}\\): monthly actual evapotranspiration, in mm;\n\\(\\Delta N_{i,m}\\): monthly change in snow storage;\n\\(r_m\\): conversion factor from snow to water equivalent;\n\\(S_m\\): duration of the month, in seconds;\nthe factor \\(1000\\) converts millimetres to metres.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Drainage-area contributions"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#evapotranspiration",
+    "href": "model/drainage-areas.html#evapotranspiration",
+    "title": "Drainage-area contributions",
+    "section": "Evapotranspiration",
+    "text": "Evapotranspiration\nMonthly potential evapotranspiration is calculated from mean monthly temperature using the Thornthwaite method:\n\\[\nPET_m =\n16\n\\left(\n\\frac{10T_m}{I}\n\\right)^a\nK_m\n\\]\nwhere:\n\\[\nI=\\sum_{m=1}^{12}\n\\left(\n\\frac{T_m}{5}\n\\right)^{1.514}\n\\]\nand:\n\\[\na =\n6.75\\times10^{-7}I^3\n-\n7.71\\times10^{-5}I^2\n+\n1.792\\times10^{-2}I\n+\n0.49239\n\\]\n\\(K_m\\) corrects the result for day length and the number of days in the month.\n\n\n\n\n\n\nNoteInterpretation\n\n\n\n\n\nPET represents the evaporative demand of the atmosphere if sufficient water were available. It is not necessarily the amount of water actually evapotranspired by the basin.\n\n\n\nFor each land use \\(u\\), actual evapotranspiration is calculated using a formulation based on precipitation, PET and a vegetation coefficient1:\n\\[\nET_{i,m}\n=\n\\sum_u f_{i,u}\n\\,\nP_{i,m}\n\\,\n\\frac{\n1+w_u\\frac{PET_{i,m}}{P_{i,m}}\n}{\n1+w_u\\frac{PET_{i,m}}{P_{i,m}}\n+\\frac{P_{i,m}}{PET_{i,m}}\n}\n\\]\nwhere:\n\n\\(f_{i,u}\\): proportion of land use \\(u\\) within area \\(i\\);\n\\(w_u\\): evapotranspiration coefficient for the land use;\n\\(P_{i,m}\\): monthly precipitation;\n\\(PET_{i,m}\\): potential evapotranspiration.\n\n\nCoefficients by land use\n\n\n\nLand use\n\\(w_u\\)\n\n\n\n\nWater\n0\n\n\nUrban land and impervious surfaces\n0\n\n\nForest and tree plantations\n1.75\n\n\nNatural grassland and pasture\n1.00\n\n\nRainfed crops\n0.75\n\n\nIrrigated crops\n1.50\n\n\n\nHigher values represent a greater capacity of vegetation to use the available water.\n\n\n\n\n\n\nWarning\n\n\n\nThe model represents the effect of land use on evapotranspiration in an aggregated manner. It does not explicitly simulate soil moisture, rooting or vegetation growth.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Drainage-area contributions"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#footnotes",
+    "href": "model/drainage-areas.html#footnotes",
+    "title": "Drainage-area contributions",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nMas-Pla, J. et al. (2016). “Recursos hidrològics”. In Tercer informe sobre el canvi climàtic a Catalunya, pp. 161–188↩︎",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Drainage-area contributions"
+    ]
+  },
+  {
+    "objectID": "model/overview.html",
+    "href": "model/overview.html",
+    "title": "Model overview",
+    "section": "",
+    "text": "The model represents the river basin as a directed graph:\n\nnodes are points where flow is generated, modified, stored, diverted or assessed;\nedges are river reaches that carry water downstream.\n\nThis structure makes it possible to explicitly follow the path of water from the headwaters to the lower reaches of the basin.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Model overview"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#basin-representation",
+    "href": "model/overview.html#basin-representation",
+    "title": "Model overview",
+    "section": "",
+    "text": "The model represents the river basin as a directed graph:\n\nnodes are points where flow is generated, modified, stored, diverted or assessed;\nedges are river reaches that carry water downstream.\n\nThis structure makes it possible to explicitly follow the path of water from the headwaters to the lower reaches of the basin.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Model overview"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#time-step",
+    "href": "model/overview.html#time-step",
+    "title": "Model overview",
+    "section": "Time step",
+    "text": "Time step\nThe simulation uses a monthly time step. Each month, the model:\n\ncalculates contributions from drainage areas;\nadds inflows from upstream;\napplies contributions, returns, demands and abstractions;\nmodifies flow according to groundwater gains or losses along the reaches;\nupdates the reservoir balance;\nchecks environmental flows and unmet demands.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Model overview"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#calculation-sequence",
+    "href": "model/overview.html#calculation-sequence",
+    "title": "Model overview",
+    "section": "Calculation sequence",
+    "text": "Calculation sequence\nFor each node (i) and month (m), the general balance can be expressed as:\n\\[\nQ^{out}_{i,m}\n=\n\\max\\left(\n0,\\,\nQ^{in}_{i,m}+\\Delta Q_{i,m}\n\\right)\n\\]\nwhere:\n\n\\(Q^{in}_{i,m}\\) is the sum of flows arriving from upstream;\n\\(\\Delta Q_{i,m}\\) is the local change in flow;\n\\(Q^{out}_{i,m}\\) is the flow leaving the node.\n\nLocal changes can be:\n\npositive: contribution from a drainage area, return from a treatment plant or external inflow;\nnegative: urban, agricultural or other abstraction.\n\nFlow cannot become negative. When demand exceeds the available water, the difference is recorded as unmet demand and downstream flow is set to zero, assuming that all available water is abstracted to meet the demand.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Model overview"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#spatial-and-temporal-scale",
+    "href": "model/overview.html#spatial-and-temporal-scale",
+    "title": "Model overview",
+    "section": "Spatial and temporal scale",
+    "text": "Spatial and temporal scale\nThe monthly simplification enables multi-year simulations to run quickly. However, the model does not represent:\n\nfloods lasting hours or days;\nvariations within a month;\ndetailed hydraulic processes;\nexplicit aquifer dynamics.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Model overview"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#browser-implementation",
+    "href": "model/overview.html#browser-implementation",
+    "title": "Model overview",
+    "section": "Browser implementation",
+    "text": "Browser implementation\nCalculations are performed in the user’s browser. The computational graph and simulation variables are updated after each scenario change, and the results are displayed on the map and in information tables.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Model overview"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html",
+    "href": "user-guide/scenarios.html",
+    "title": "Creating and comparing scenarios",
+    "section": "",
+    "text": "A scenario is a modification of the reference conditions. It does not necessarily represent a prediction, but rather a question such as:\n\nWhat would happen to river flows if precipitation decreased, demand increased or reservoir releases changed?",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#what-is-a-scenario",
+    "href": "user-guide/scenarios.html#what-is-a-scenario",
+    "title": "Creating and comparing scenarios",
+    "section": "",
+    "text": "A scenario is a modification of the reference conditions. It does not necessarily represent a prediction, but rather a question such as:\n\nWhat would happen to river flows if precipitation decreased, demand increased or reservoir releases changed?",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#available-scenarios",
+    "href": "user-guide/scenarios.html#available-scenarios",
+    "title": "Creating and comparing scenarios",
+    "section": "Available scenarios",
+    "text": "Available scenarios\nThe tool allows you to modify:\n\nprecipitation;\ntemperature;\nurban demand;\nagricultural demand;\nforest cover;\nspecific abstractions;\nreservoir releases.\n\nChanges in climate and demand can be applied:\n\nuniformly throughout the year;\ndifferently for each month.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modifying-precipitation",
+    "href": "user-guide/scenarios.html#modifying-precipitation",
+    "title": "Creating and comparing scenarios",
+    "section": "Modifying precipitation",
+    "text": "Modifying precipitation\nA 20% reduction means that, for each affected month:\n\\[\nP'_{i,m}=P_{i,m}(1-0.20)\n\\]\nwhere (P_{i,m}) is the reference precipitation and (P’_{i,m}) is the modified precipitation.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modifying-temperature",
+    "href": "user-guide/scenarios.html#modifying-temperature",
+    "title": "Creating and comparing scenarios",
+    "section": "Modifying temperature",
+    "text": "Modifying temperature\nAn increase of 2 °C is applied as follows:\n\\[\nT'_{i,m}=T_{i,m}+2\n\\]\nThe change affects potential evapotranspiration and, indirectly, actual evapotranspiration and river contributions.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modifying-demands",
+    "href": "user-guide/scenarios.html#modifying-demands",
+    "title": "Creating and comparing scenarios",
+    "section": "Modifying demands",
+    "text": "Modifying demands\nDemand scenarios multiply the abstractions associated with each category. For example, a 10% increase in agricultural demand means:\n\\[\nD'_{m}=D_m(1+0.10)\n\\]",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modifying-forest-cover",
+    "href": "user-guide/scenarios.html#modifying-forest-cover",
+    "title": "Creating and comparing scenarios",
+    "section": "Modifying forest cover",
+    "text": "Modifying forest cover\nThis scenario modifies the proportion of forest in each drainage area relative to the reference value. When forest cover decreases, the removed area is redistributed between rainfed crops and grassland while maintaining their original proportions. If neither was present, it is divided equally between them.\nWhen forest cover increases, the new forest proportionally replaces rainfed crops and grassland, up to the maximum area available across these two land-cover types.\nBecause forest has a higher evapotranspiration coefficient, reducing forest cover tends to decrease actual evapotranspiration and increase river contributions, while increasing it tends to have the opposite effect.\n\n\n\n\n\n\nNote\n\n\n\nA value of 100% retains the original cover; 50% halves it and 150% increases it by 50%, provided that sufficient rainfed crop and grassland area is available.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modifying-a-specific-abstraction",
+    "href": "user-guide/scenarios.html#modifying-a-specific-abstraction",
+    "title": "Creating and comparing scenarios",
+    "section": "Modifying a specific abstraction",
+    "text": "Modifying a specific abstraction\nFor editable nodes, you can specify:\n\na total annual volume, which is distributed monthly;\ndifferent flow values for each month.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modifying-reservoir-releases",
+    "href": "user-guide/scenarios.html#modifying-reservoir-releases",
+    "title": "Creating and comparing scenarios",
+    "section": "Modifying reservoir releases",
+    "text": "Modifying reservoir releases\nReservoir releases can also be specified as:\n\nan annual volume;\nmonthly values.\n\nThe model limits the release to the water actually available after accounting for inflow, storage and evaporation.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#making-valid-comparisons",
+    "href": "user-guide/scenarios.html#making-valid-comparisons",
+    "title": "Creating and comparing scenarios",
+    "section": "Making valid comparisons",
+    "text": "Making valid comparisons\nTo compare two scenarios:\n\nrun and record the reference results;\nmodify only the variables relevant to the question;\nrun the simulation again;\ncompare the same indicators and time period;\nreview both aggregated results and specific months.\n\n\n\n\n\n\n\nWarning\n\n\n\nChanging several variables at once can make it difficult to interpret the causes of the results. To understand how the system works, we recommend starting by changing a single variable.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Creating and comparing scenarios"
+    ]
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "Getting started",
+    "section": "",
+    "text": "The application is available at:\nhttps://h2oseg-ter.icradev.cat/?lang=en\nNo sign-in or software installation is required. We recommend using an up-to-date version of Firefox, Chrome, Edge or an equivalent browser."
+  },
+  {
+    "objectID": "getting-started.html#accessing-the-tool",
+    "href": "getting-started.html#accessing-the-tool",
+    "title": "Getting started",
+    "section": "",
+    "text": "The application is available at:\nhttps://h2oseg-ter.icradev.cat/?lang=en\nNo sign-in or software installation is required. We recommend using an up-to-date version of Firefox, Chrome, Edge or an equivalent browser."
+  },
+  {
+    "objectID": "getting-started.html#your-first-simulation",
+    "href": "getting-started.html#your-first-simulation",
+    "title": "Getting started",
+    "section": "Your first simulation",
+    "text": "Your first simulation\nWhen the application opens, it displays the reference scenario. For an initial exploration:\n\nSelect the simulation duration.\nKeep the scenario’s initial values.\nPress Apply.\nObserve the colours of the river reaches and nodes.\nClick a reach or node to view its information.\nSwitch between the period summary and a specific month."
+  },
+  {
+    "objectID": "getting-started.html#period-summary-and-monthly-view",
+    "href": "getting-started.html#period-summary-and-monthly-view",
+    "title": "Getting started",
+    "section": "Period summary and monthly view",
+    "text": "Period summary and monthly view\nThe tool provides two main types of view:\n\nAnnual or multi-year summary\nWhen viewing a summary for one or more years, the colours show how often an incident occurs, for example:\n\nNumber of months in which the environmental flow requirement is not met.\nNumber of months in which a demand cannot be met.\n\nThis view is useful for identifying persistent problems.\n\n\nSpecific month\nWhen a month is selected, the legend becomes binary. Each element simply indicates whether, during that month, it:\n\nMeets or fails to meet the environmental flow requirement.\nMeets or fails to meet the demand.\n\nThis view is useful for studying specific seasonal situations."
+  },
+  {
+    "objectID": "getting-started.html#simple-example",
+    "href": "getting-started.html#simple-example",
+    "title": "Getting started",
+    "section": "Simple example",
+    "text": "Simple example\nTry the following exercise:\n\nRun the reference scenario.\nReduce precipitation by 20%.\nRun the simulation again.\nCompare:\n\nreservoir inflow;\nfinal stored volume;\nreaches that fail to meet the environmental flow requirement;\nunmet demands.\n\n\n\n\n\n\n\n\nTip\n\n\n\nWhen interpreting a scenario, it is best to compare it with the reference scenario rather than analysing its values in isolation."
+  },
+  {
+    "objectID": "user-guide/interface.html",
+    "href": "user-guide/interface.html",
+    "title": "Interface and navigation",
+    "section": "",
+    "text": "The interface has two main components:\n\nInteractive map, displaying the river network and model elements.\nSidebar, used to configure simulations and view general indicators.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Interface and navigation"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#general-structure",
+    "href": "user-guide/interface.html#general-structure",
+    "title": "Interface and navigation",
+    "section": "",
+    "text": "The interface has two main components:\n\nInteractive map, displaying the river network and model elements.\nSidebar, used to configure simulations and view general indicators.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Interface and navigation"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#navigating-the-map",
+    "href": "user-guide/interface.html#navigating-the-map",
+    "title": "Interface and navigation",
+    "section": "Navigating the map",
+    "text": "Navigating the map\nThe usual web-map controls can be used to:\n\nzoom in or out;\nmove around the basin;\nselect river reaches;\nselect hydrological or management nodes.\n\nSelecting an element opens a table containing the corresponding variables.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Interface and navigation"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#types-of-element",
+    "href": "user-guide/interface.html#types-of-element",
+    "title": "Interface and navigation",
+    "section": "Types of element",
+    "text": "Types of element\nThe network includes elements with different functions:\n\ndrainage areas, which generate hydrological contributions;\nabstractions, which remove water from the river;\nreturns, such as effluent from wastewater treatment plants;\nexternal inflows, which add water to the network;\nreservoirs and release points;\nriver reaches, which carry flow downstream.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Interface and navigation"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#drainage-area-information",
+    "href": "user-guide/interface.html#drainage-area-information",
+    "title": "Interface and navigation",
+    "section": "Drainage area information",
+    "text": "Drainage area information\nThe table for a drainage area includes:\n\ninflow;\nlocal contribution;\noutflow;\ndrainage area;\nprecipitation;\nmean temperature;\npotential evapotranspiration;\nactual evapotranspiration.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Interface and navigation"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#abstraction-information",
+    "href": "user-guide/interface.html#abstraction-information",
+    "title": "Interface and navigation",
+    "section": "Abstraction information",
+    "text": "Abstraction information\nFor an abstraction, the following can be viewed:\n\ninflow;\nabstracted flow;\nproportion of flow abstracted.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Interface and navigation"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#river-reach-information",
+    "href": "user-guide/interface.html#river-reach-information",
+    "title": "Interface and navigation",
+    "section": "River reach information",
+    "text": "River reach information\nRiver reaches mainly show:\n\nsimulated flow;\nenvironmental flow requirement;\ncompliance or non-compliance with the environmental flow requirement;\nfrequency of non-compliance in the period summary.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Interface and navigation"
+    ]
+  },
+  {
+    "objectID": "user-guide/interface.html#reservoir-summary",
+    "href": "user-guide/interface.html#reservoir-summary",
+    "title": "Interface and navigation",
+    "section": "Reservoir summary",
+    "text": "Reservoir summary\nThe sidebar shows indicators for the Sau–Susqueda–Pasteral system, including:\n\nfinal stored volume;\nmean inflow;\nmean outflow.",
+    "crumbs": [
+      "Home",
+      "User guide",
+      "Interface and navigation"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html",
+    "href": "model/reservoirs.html",
+    "title": "Reservoir balance",
+    "section": "",
+    "text": "The model represents the regulated Sau–Susqueda–Pasteral system in an aggregated manner.\nFor each month, storage is updated using a volume balance:\n\\[\nV_{m+1}\n=\nV_m\n+\nQ^{in}_m S_m\n-\nQ^{rel}_m S_m\n-\nV^{evap}_m\n-\nV^{overflow}_m\n\\]\nwhere:\n\n\\(V_m\\): volume stored at the start of the month;\n\\(Q^{in}_m\\): inflow;\n\\(Q^{rel}_m\\): controlled release;\n\\(S_m\\): duration of the month in seconds;\n\\(V^{evap}_m\\): evaporation loss;\n\\(V^{overflow}_m\\): overflow volume.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Reservoir balance"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#represented-system",
+    "href": "model/reservoirs.html#represented-system",
+    "title": "Reservoir balance",
+    "section": "",
+    "text": "The model represents the regulated Sau–Susqueda–Pasteral system in an aggregated manner.\nFor each month, storage is updated using a volume balance:\n\\[\nV_{m+1}\n=\nV_m\n+\nQ^{in}_m S_m\n-\nQ^{rel}_m S_m\n-\nV^{evap}_m\n-\nV^{overflow}_m\n\\]\nwhere:\n\n\\(V_m\\): volume stored at the start of the month;\n\\(Q^{in}_m\\): inflow;\n\\(Q^{rel}_m\\): controlled release;\n\\(S_m\\): duration of the month in seconds;\n\\(V^{evap}_m\\): evaporation loss;\n\\(V^{overflow}_m\\): overflow volume.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Reservoir balance"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#initial-volume",
+    "href": "model/reservoirs.html#initial-volume",
+    "title": "Reservoir balance",
+    "section": "Initial volume",
+    "text": "Initial volume\nThe initial volume specified by the user is used in the first month. In subsequent months, the final volume from the previous month is used.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Reservoir balance"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#evaporation",
+    "href": "model/reservoirs.html#evaporation",
+    "title": "Reservoir balance",
+    "section": "Evaporation",
+    "text": "Evaporation\nEvaporation is calculated from:\n\npotential evapotranspiration at the reservoir node;\nestimated inundated area;\nstored volume.\n\nThe monthly loss is:\n\\[\nV^{evap}_m\n=\n\\frac{\nE_m A^{res}_m\n}{\n10^9\n}\n\\]\nwhere \\(E_m\\) is evaporation in mm and \\(A^{res}_m\\) is the inundated area in \\(\\mathrm{m^2}\\). The result is expressed in \\(\\mathrm{hm^3}\\).",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Reservoir balance"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#automatic-release",
+    "href": "model/reservoirs.html#automatic-release",
+    "title": "Reservoir balance",
+    "section": "Automatic release",
+    "text": "Automatic release\nWhen the user does not set a release, the model estimates the water required to:\n\nmeet downstream demands;\nmaintain environmental flows;\ncompensate for losses that occur during routing along the river.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Reservoir balance"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#user-defined-release",
+    "href": "model/reservoirs.html#user-defined-release",
+    "title": "Reservoir balance",
+    "section": "User-defined release",
+    "text": "User-defined release\nThe user can specify an annual volume or monthly values. The model always applies the physical constraint:\n\\[\nV^{release}_m\n\\leq\nV_m+V^{in}_m-V^{evap}_m\n\\]\nTherefore, no more water can be released than is available.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Reservoir balance"
+    ]
+  },
+  {
+    "objectID": "model/reservoirs.html#overflow",
+    "href": "model/reservoirs.html#overflow",
+    "title": "Reservoir balance",
+    "section": "Overflow",
+    "text": "Overflow\nWhen the resulting volume exceeds the maximum system capacity, the excess becomes overflow:\n\\[\nV^{overflow}_m\n=\n\\max(0,V^{provisional}_{m+1}-V^{max})\n\\]\nThe stored volume is limited to \\(V^{max}\\).",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Reservoir balance"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html",
+    "href": "model/river-routing.html",
+    "title": "Flow routing and groundwater",
+    "section": "",
+    "text": "The model traverses the network in the direction of flow. At each node, it adds the flows arriving through upstream reaches and applies the corresponding local change.\nThe resulting flow is transferred to the downstream reaches.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Flow routing and groundwater"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#downstream-routing",
+    "href": "model/river-routing.html#downstream-routing",
+    "title": "Flow routing and groundwater",
+    "section": "",
+    "text": "The model traverses the network in the direction of flow. At each node, it adds the flows arriving through upstream reaches and applies the corresponding local change.\nThe resulting flow is transferred to the downstream reaches.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Flow routing and groundwater"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#groundwater-gains-and-losses",
+    "href": "model/river-routing.html#groundwater-gains-and-losses",
+    "title": "Flow routing and groundwater",
+    "section": "Groundwater gains and losses",
+    "text": "Groundwater gains and losses\nExchanges between the river and groundwater are represented using a simplified formulation:\n\\[\nQ^{out}_{e,m}\n=\nQ^{in}_{e,m}\ne^{-k_{e,m}L_e}\n+\ng_{e,m}L_e\n\\]\nwhere:\n\n\\(Q^{in}_{e,m}\\): flow at the start of the reach;\n\\(Q^{out}_{e,m}\\): flow at the end of the reach;\n\\(L_e\\): reach length;\n\\(k_{e,m}\\): infiltration loss coefficient;\n\\(g_{e,m}\\): groundwater gain per unit length.\n\nThe first term represents flow losses along the reach. The second represents an additive groundwater contribution.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Flow routing and groundwater"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#interaction-classes",
+    "href": "model/river-routing.html#interaction-classes",
+    "title": "Flow routing and groundwater",
+    "section": "Interaction classes",
+    "text": "Interaction classes\nReaches are classified into three levels:\n\nlow;\nmedium;\nhigh.\n\nThe classification is based on a simplified hydrogeological index that considers:\n\nthe presence of alluvial materials;\nthe soil’s water storage capacity;\nriver slope.\n\nReaches with more alluvial material, greater storage capacity and gentler slopes are assigned a higher interaction class.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Flow routing and groundwater"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#interpretation",
+    "href": "model/river-routing.html#interpretation",
+    "title": "Flow routing and groundwater",
+    "section": "Interpretation",
+    "text": "Interpretation\nThis formulation represents systematic spatial differences between gaining and losing reaches, but does not explicitly simulate:\n\npiezometric levels;\naquifer storage;\ntemporal delays in baseflow;\neffects of groundwater pumping;\ndynamic feedback between the river and aquifer.",
+    "crumbs": [
+      "Home",
+      "Hydrological model",
+      "Flow routing and groundwater"
+    ]
+  },
+  {
+    "objectID": "reference/glossary.html",
+    "href": "reference/glossary.html",
+    "title": "Glossary",
+    "section": "",
+    "text": "Abstraction\nRemoval of water from the river for urban, agricultural or industrial use, or for a transfer.\nActual evapotranspiration (ET or AET)\nThe amount of water actually evaporated or transpired by vegetation according to climate and water availability.\nDirected graph\nA structure consisting of nodes and connections with a specific direction, in this case the direction of river flow.\nEnvironmental flow\nThe minimum flow established to maintain the ecological functioning of the river.\nLocal contribution\nFlow generated within a drainage area from the balance between precipitation, evapotranspiration and snow.\nNode\nA point in the network where flow is generated, modified, stored or assessed.\nOverflow\nVolume that exceeds the maximum storage capacity and leaves the system.\nPotential evapotranspiration (PET)\nThe evaporative demand of the atmosphere if the available water were not limiting.\nReservoir storage\nVolume of water held in the reservoirs.\nReturn\nWater that returns to the river after use, such as effluent from a wastewater treatment plant.\nRiver reach\nA connection between two nodes through which flow is routed.\nScenario\nA set of modifications applied to the reference conditions.\nUnmet demand\nThe difference between the water requested and the water actually available at a node.",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "Glossary"
+    ]
+  }
+]
