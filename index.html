@@ -15,7 +15,7 @@
 <body>
 <div id="app">
     <!-- MODAL D'ESCENARIS -->
-    <div v-if="modalScenarios" class="modal-backdrop" v-cloak>
+    <div v-if="modalScenarios" class="modal-backdrop" v-cloak @click.self="closeModalScenarios">
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
@@ -350,7 +350,7 @@
     </div>
 
     <!-- MODAL D'INFO -->
-    <div v-if="openModalInfo && selectedEle" class="modal-backdrop" v-cloak>
+    <div v-if="openModalInfo && selectedEle" class="modal-backdrop" v-cloak @click.self="openModalInfo=false">
         <div class="modal-dialog" @click.stop>
             <!-- HEADER -->
             <div class="modal-header">
@@ -444,7 +444,7 @@
                                 <td v-if="nYears > 1">{{ Math.floor((k - 1) / 12) + 1 }}</td>
                                 <td>{{ $t(baseMonths[monthOfStep(k)-1].label) }}</td>
                                 <td class="valor">{{ Number(selectedEle['inflow'+k]).toFixed(2) }}</td>
-                                <td class="valor">{{ Number(selectedEle['m'+monthOfStep(k)]).toFixed(1) }}</td>
+                                <td class="valor">{{ Number(selectedEle['m'+monthOfStep(k)]).toFixed(2) }}</td>
                                 <td class="valor">{{ Number(Number(selectedEle['m'+monthOfStep(k)] || 0) === 0  ? selectedEle['inflow'+k] : selectedEle['outflow'+k]).toFixed(2) }}</td>
                                 <td class="valor">{{ Number(Number(selectedEle['area_m2']) / 1_000_000).toFixed(1) }}</td>
                                 <td class="valor">{{ Number(upstream.areaKm2).toFixed(0) }}</td>
