@@ -446,7 +446,7 @@
     "href": "user-guide/interface.html#drainage-area-information",
     "title": "Interface and navigation",
     "section": "Drainage area information",
-    "text": "Drainage area information\nThe table for a drainage area includes:\n\ninflow;\nlocal contribution;\noutflow;\ndrainage area;\nprecipitation;\nmean temperature;\npotential evapotranspiration;\nactual evapotranspiration.",
+    "text": "Drainage area information\nThe table for a drainage area includes:\n\ninflow;\nlocal contribution;\noutflow;\nlocal drainage area;\nupstream drainage area;\nupstream mean precipitation;\nupstream mean temperature;\nupstream potential evapotranspiration;\nupstream actual evapotranspiration.",
     "crumbs": [
       "Home",
       "User guide",

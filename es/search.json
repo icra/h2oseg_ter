@@ -446,7 +446,7 @@
     "href": "user-guide/interface.html#información-de-un-área-de-drenaje",
     "title": "Interfaz y navegación",
     "section": "Información de un área de drenaje",
-    "text": "Información de un área de drenaje\nLa tabla de un área de drenaje incluye:\n\ncaudal entrante;\naportación local;\ncaudal saliente;\nsuperficie de drenaje;\nprecipitación;\ntemperatura media;\nevapotranspiración potencial;\nevapotranspiración real.",
+    "text": "Información de un área de drenaje\nLa tabla de un área de drenaje incluye:\n\ncaudal entrante;\naportación local;\ncaudal saliente;\nsuperficie de drenaje del nodo;\nsuperficie de drenaje total aguas arriba;\nprecipitación media aguas arriba;\ntemperatura media aguas arriba;\nevapotranspiración potencial aguas arriba;\nevapotranspiración real aguas arriba.",
     "crumbs": [
       "Inicio",
       "Guía de uso",

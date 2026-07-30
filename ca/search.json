@@ -446,7 +446,7 @@
     "href": "user-guide/interface.html#informació-duna-àrea-de-drenatge",
     "title": "Interfície i navegació",
     "section": "Informació d’una àrea de drenatge",
-    "text": "Informació d’una àrea de drenatge\nLa taula d’una àrea de drenatge inclou:\n\ncabal entrant;\naportació local;\ncabal sortint;\nsuperfície de drenatge;\nprecipitació;\ntemperatura mitjana;\nevapotranspiració potencial;\nevapotranspiració real.",
+    "text": "Informació d’una àrea de drenatge\nLa taula d’una àrea de drenatge inclou:\n\ncabal entrant;\naportació local;\ncabal sortint;\nsuperfície de l’àrea de drenatge d’aquell node;\nsuperfície de drenatge total aigües amunt;\nprecipitació mitjana aigües amunt;\ntemperatura mitjana aigües amunt;\nevapotranspiració potencial aigües amunt;\nevapotranspiració real aigües amunt.",
     "crumbs": [
       "Inici",
       "Guia d'ús",
