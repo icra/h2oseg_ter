@@ -1,364 +1,5 @@
 [
   {
-    "objectID": "reference/assumptions.html",
-    "href": "reference/assumptions.html",
-    "title": "Hipótesis, limitaciones y uso adecuado",
-    "section": "",
-    "text": "H2OSEG-Ter es especialmente útil para:\n\nexploración preliminar;\ncomparación relativa de escenarios;\ncomunicación entre actores;\ntalleres participativos;\nactividades educativas;\nidentificación de posibles conflictos entre demandas y caudales ambientales.",
-    "crumbs": [
-      "Inicio",
-      "Referencia",
-      "Hipótesis, limitaciones y uso adecuado"
-    ]
-  },
-  {
-    "objectID": "reference/assumptions.html#uso-adecuado",
-    "href": "reference/assumptions.html#uso-adecuado",
-    "title": "Hipótesis, limitaciones y uso adecuado",
-    "section": "",
-    "text": "H2OSEG-Ter es especialmente útil para:\n\nexploración preliminar;\ncomparación relativa de escenarios;\ncomunicación entre actores;\ntalleres participativos;\nactividades educativas;\nidentificación de posibles conflictos entre demandas y caudales ambientales.",
-    "crumbs": [
-      "Inicio",
-      "Referencia",
-      "Hipótesis, limitaciones y uso adecuado"
-    ]
-  },
-  {
-    "objectID": "reference/assumptions.html#usos-para-los-que-no-está-pensada",
-    "href": "reference/assumptions.html#usos-para-los-que-no-está-pensada",
-    "title": "Hipótesis, limitaciones y uso adecuado",
-    "section": "Usos para los que no está pensada",
-    "text": "Usos para los que no está pensada\nNo debería utilizarse como único apoyo para:\n\npredicción operativa;\ndiseño de infraestructuras;\nasignaciones legales de agua;\ngestión de emergencias;\npredicción de crecidas;\nestudios detallados de aguas subterráneas;\nsimulación hidráulica de alta resolución.",
-    "crumbs": [
-      "Inicio",
-      "Referencia",
-      "Hipótesis, limitaciones y uso adecuado"
-    ]
-  },
-  {
-    "objectID": "reference/assumptions.html#resolución-mensual",
-    "href": "reference/assumptions.html#resolución-mensual",
-    "title": "Hipótesis, limitaciones y uso adecuado",
-    "section": "Resolución mensual",
-    "text": "Resolución mensual\nEl modelo trabaja con valores mensuales. Por tanto, no representa:\n\nepisodios extremos de corta duración;\npicos de caudal;\nvariabilidad diaria;\ntiempos de propagación dentro del mes.",
-    "crumbs": [
-      "Inicio",
-      "Referencia",
-      "Hipótesis, limitaciones y uso adecuado"
-    ]
-  },
-  {
-    "objectID": "reference/assumptions.html#simulaciones-plurianuales",
-    "href": "reference/assumptions.html#simulaciones-plurianuales",
-    "title": "Hipótesis, limitaciones y uso adecuado",
-    "section": "Simulaciones plurianuales",
-    "text": "Simulaciones plurianuales\nSi el usuario no introduce modificaciones específicas, los años sucesivos repiten el mismo patrón mensual de clima y demandas.\nEsto permite estudiar el efecto acumulativo de unas condiciones estacionales repetidas, pero no representa una serie histórica o futura con variabilidad interanual.",
-    "crumbs": [
-      "Inicio",
-      "Referencia",
-      "Hipótesis, limitaciones y uso adecuado"
-    ]
-  },
-  {
-    "objectID": "reference/assumptions.html#procesos-hidrológicos-simplificados",
-    "href": "reference/assumptions.html#procesos-hidrológicos-simplificados",
-    "title": "Hipótesis, limitaciones y uso adecuado",
-    "section": "Procesos hidrológicos simplificados",
-    "text": "Procesos hidrológicos simplificados\nEl modelo no simula de forma explícita:\n\nhumedad del suelo;\ninfiltración distribuida;\ngeneración detallada de escorrentía;\nacuíferos;\ncaudal base retardado;\nhidráulica de los canales;\nnormas operativas complejas de los embalses.",
-    "crumbs": [
-      "Inicio",
-      "Referencia",
-      "Hipótesis, limitaciones y uso adecuado"
-    ]
-  },
-  {
-    "objectID": "reference/assumptions.html#calibración",
-    "href": "reference/assumptions.html#calibración",
-    "title": "Hipótesis, limitaciones y uso adecuado",
-    "section": "Calibración",
-    "text": "Calibración\nLos parámetros hidrológicos y de interacción subterránea se han ajustado con datos mensuales de seis estaciones situadas en tramos de caudal no regulados.\n\n\n\n\n\n\nImportante\n\n\n\nLos resultados deben interpretarse como una respuesta del modelo a unas hipótesis definidas por el usuario, no como una predicción cierta del comportamiento futuro de la cuenca.",
-    "crumbs": [
-      "Inicio",
-      "Referencia",
-      "Hipótesis, limitaciones y uso adecuado"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "H2OSEG-Ter",
-    "section": "",
-    "text": "H2OSEG-Ter es una herramienta web que permite explorar cómo distintos cambios climáticos, territoriales y de gestión del agua pueden afectar a los caudales del río Ter, al volumen almacenado en los embalses, al cumplimiento de los caudales ambientales y a la satisfacción de las demandas de agua.\nLa herramienta funciona directamente en el navegador y no requiere instalación ni registro.\nAbrir H2OSEG-Ter"
-  },
-  {
-    "objectID": "index.html#qué-es-h2oseg-ter",
-    "href": "index.html#qué-es-h2oseg-ter",
-    "title": "H2OSEG-Ter",
-    "section": "",
-    "text": "H2OSEG-Ter es una herramienta web que permite explorar cómo distintos cambios climáticos, territoriales y de gestión del agua pueden afectar a los caudales del río Ter, al volumen almacenado en los embalses, al cumplimiento de los caudales ambientales y a la satisfacción de las demandas de agua.\nLa herramienta funciona directamente en el navegador y no requiere instalación ni registro.\nAbrir H2OSEG-Ter"
-  },
-  {
-    "objectID": "index.html#para-qué-se-puede-utilizar",
-    "href": "index.html#para-qué-se-puede-utilizar",
-    "title": "H2OSEG-Ter",
-    "section": "¿Para qué se puede utilizar?",
-    "text": "¿Para qué se puede utilizar?\nH2OSEG-Ter está pensada para:\n\nComparar rápidamente escenarios alternativos.\nExplorar los efectos de cambios en la precipitación o la temperatura.\nModificar las demandas urbanas y agrícolas.\nModificar captaciones concretas o los desembalses.\nConsultar los caudales simulados a lo largo de la red fluvial.\nIdentificar tramos que incumplen el caudal ambiental.\nDetectar demandas que no pueden satisfacerse.\nObservar la evolución del volumen de los embalses.\n\n\n\n\n\n\n\nImportante\n\n\n\nH2OSEG-Ter es una herramienta de exploración y comparación de escenarios. No es un sistema de predicción hidrológica ni un modelo operativo para tomar decisiones legales o de gestión en tiempo real."
-  },
-  {
-    "objectID": "index.html#primeros-pasos",
-    "href": "index.html#primeros-pasos",
-    "title": "H2OSEG-Ter",
-    "section": "Primeros pasos",
-    "text": "Primeros pasos\n\nConsulta la guía rápida.\nFamiliarízate con la interfaz.\nPrueba a crear un escenario.\nConsulta cómo funciona el modelo hidrológico.\nRevisa las limitaciones antes de interpretar los resultados."
-  },
-  {
-    "objectID": "model/drainage-areas.html",
-    "href": "model/drainage-areas.html",
-    "title": "Aportación de las áreas de drenaje",
-    "section": "",
-    "text": "Cada área de drenaje genera una aportación local a partir de la precipitación, la evapotranspiración, la nieve y la superficie drenada.\n\\[\nQ^{contrib}_{i,m}\n=\n\\frac{\nA_i\\,C\n\\left(\nP_{i,m}-ET_{i,m}-r_m\\Delta N_{i,m}\n\\right)\n}{\n1000\\,S_m\n}\n\\]\ndonde:\n\n\\(Q^{contrib}_{i,m}\\): caudal aportado por el área \\(i\\) durante el mes \\(m\\), en \\(\\mathrm{m^3\\,s^{-1}}\\);\n\\(A_i\\): superficie del área de drenaje, en \\(\\mathrm{m^2}\\);\n\\(C\\): coeficiente de escorrentía;\n\\(P_{i,m}\\): precipitación mensual, en mm;\n\\(ET_{i,m}\\): evapotranspiración real mensual, en mm;\n\\(\\Delta N_{i,m}\\): cambio mensual del almacenamiento de nieve;\n\\(r_m\\): factor de conversión de nieve a equivalente de agua;\n\\(S_m\\): duración del mes, en segundos;\nel factor \\(1000\\) convierte milímetros en metros.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Aportación de las áreas de drenaje"
-    ]
-  },
-  {
-    "objectID": "model/drainage-areas.html#balance-hídrico-mensual",
-    "href": "model/drainage-areas.html#balance-hídrico-mensual",
-    "title": "Aportación de las áreas de drenaje",
-    "section": "",
-    "text": "Cada área de drenaje genera una aportación local a partir de la precipitación, la evapotranspiración, la nieve y la superficie drenada.\n\\[\nQ^{contrib}_{i,m}\n=\n\\frac{\nA_i\\,C\n\\left(\nP_{i,m}-ET_{i,m}-r_m\\Delta N_{i,m}\n\\right)\n}{\n1000\\,S_m\n}\n\\]\ndonde:\n\n\\(Q^{contrib}_{i,m}\\): caudal aportado por el área \\(i\\) durante el mes \\(m\\), en \\(\\mathrm{m^3\\,s^{-1}}\\);\n\\(A_i\\): superficie del área de drenaje, en \\(\\mathrm{m^2}\\);\n\\(C\\): coeficiente de escorrentía;\n\\(P_{i,m}\\): precipitación mensual, en mm;\n\\(ET_{i,m}\\): evapotranspiración real mensual, en mm;\n\\(\\Delta N_{i,m}\\): cambio mensual del almacenamiento de nieve;\n\\(r_m\\): factor de conversión de nieve a equivalente de agua;\n\\(S_m\\): duración del mes, en segundos;\nel factor \\(1000\\) convierte milímetros en metros.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Aportación de las áreas de drenaje"
-    ]
-  },
-  {
-    "objectID": "model/drainage-areas.html#evapotranspiración",
-    "href": "model/drainage-areas.html#evapotranspiración",
-    "title": "Aportación de las áreas de drenaje",
-    "section": "Evapotranspiración",
-    "text": "Evapotranspiración\nLa evapotranspiración potencial mensual se calcula mediante el método de Thornthwaite a partir de la temperatura media mensual:\n\\[\nPET_m =\n16\n\\left(\n\\frac{10T_m}{I}\n\\right)^a\nK_m\n\\]\ndonde:\n\\[\nI=\\sum_{m=1}^{12}\n\\left(\n\\frac{T_m}{5}\n\\right)^{1.514}\n\\]\ny:\n\\[\na =\n6.75\\times10^{-7}I^3\n-\n7.71\\times10^{-5}I^2\n+\n1.792\\times10^{-2}I\n+\n0.49239\n\\]\n\\(K_m\\) corrige el resultado según la duración del día y el número de días del mes.\n\n\n\n\n\n\nNotaInterpretación\n\n\n\n\n\nLa PET representa la demanda evaporativa de la atmósfera si hubiera suficiente agua. No es necesariamente la cantidad de agua que la cuenca evapotranspira realmente.\n\n\n\nPara cada uso del suelo \\(u\\), la evapotranspiración real se calcula mediante una formulación dependiente de la precipitación, la PET y un coeficiente de vegetación1:\n\\[\nET_{i,m}\n=\n\\sum_u f_{i,u}\n\\,\nP_{i,m}\n\\,\n\\frac{\n1+w_u\\frac{PET_{i,m}}{P_{i,m}}\n}{\n1+w_u\\frac{PET_{i,m}}{P_{i,m}}\n+\\frac{P_{i,m}}{PET_{i,m}}\n}\n\\]\ndonde:\n\n\\(f_{i,u}\\): proporción del uso del suelo \\(u\\) dentro del área \\(i\\);\n\\(w_u\\): coeficiente de evapotranspiración del uso del suelo;\n\\(P_{i,m}\\): precipitación mensual;\n\\(PET_{i,m}\\): evapotranspiración potencial.\n\n\nCoeficientes según el uso del suelo\n\n\n\nUso del suelo\n\\(w_u\\)\n\n\n\n\nAgua\n0\n\n\nSuelo urbano y superficies impermeables\n0\n\n\nBosque y plantaciones arbóreas\n1,75\n\n\nPrados y pastos naturales\n1,00\n\n\nCultivos de secano\n0,75\n\n\nCultivos de regadío\n1,50\n\n\n\nLos valores más elevados representan una mayor capacidad de la vegetación para utilizar el agua disponible.\n\n\n\n\n\n\nAdvertencia\n\n\n\nEl modelo representa el efecto de los usos del suelo sobre la evapotranspiración de forma agregada. No simula explícitamente la humedad del suelo, el enraizamiento ni el crecimiento de la vegetación.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Aportación de las áreas de drenaje"
-    ]
-  },
-  {
-    "objectID": "model/drainage-areas.html#footnotes",
-    "href": "model/drainage-areas.html#footnotes",
-    "title": "Aportación de las áreas de drenaje",
-    "section": "Notas",
-    "text": "Notas\n\n\nMas-Pla, J. et al. (2016). «Recursos hidrològics». En Tercer informe sobre el canvi climàtic a Catalunya, pp. 161–188↩︎",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Aportación de las áreas de drenaje"
-    ]
-  },
-  {
-    "objectID": "model/overview.html",
-    "href": "model/overview.html",
-    "title": "Visión general del modelo",
-    "section": "",
-    "text": "El modelo representa la cuenca fluvial como un grafo dirigido:\n\nlos nodos son puntos donde el caudal se genera, modifica, almacena, deriva o evalúa;\nlas aristas son los tramos fluviales que transportan el agua aguas abajo.\n\nEsta estructura permite seguir explícitamente el recorrido del agua desde las cabeceras hasta los tramos bajos de la cuenca.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Visión general del modelo"
-    ]
-  },
-  {
-    "objectID": "model/overview.html#representación-de-la-cuenca",
-    "href": "model/overview.html#representación-de-la-cuenca",
-    "title": "Visión general del modelo",
-    "section": "",
-    "text": "El modelo representa la cuenca fluvial como un grafo dirigido:\n\nlos nodos son puntos donde el caudal se genera, modifica, almacena, deriva o evalúa;\nlas aristas son los tramos fluviales que transportan el agua aguas abajo.\n\nEsta estructura permite seguir explícitamente el recorrido del agua desde las cabeceras hasta los tramos bajos de la cuenca.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Visión general del modelo"
-    ]
-  },
-  {
-    "objectID": "model/overview.html#paso-temporal",
-    "href": "model/overview.html#paso-temporal",
-    "title": "Visión general del modelo",
-    "section": "Paso temporal",
-    "text": "Paso temporal\nLa simulación utiliza un paso temporal mensual. Cada mes, el modelo:\n\ncalcula la aportación de las áreas de drenaje;\nsuma las entradas procedentes de aguas arriba;\naplica aportaciones, retornos, demandas y captaciones;\nmodifica el caudal según las ganancias o pérdidas subterráneas de los tramos;\nactualiza el balance de los embalses;\ncomprueba los caudales ambientales y las demandas no satisfechas.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Visión general del modelo"
-    ]
-  },
-  {
-    "objectID": "model/overview.html#secuencia-de-cálculo",
-    "href": "model/overview.html#secuencia-de-cálculo",
-    "title": "Visión general del modelo",
-    "section": "Secuencia de cálculo",
-    "text": "Secuencia de cálculo\nPara cada nodo (i) y mes (m), el balance general se puede expresar como:\n\\[\nQ^{out}_{i,m}\n=\n\\max\\left(\n0,\\,\nQ^{in}_{i,m}+\\Delta Q_{i,m}\n\\right)\n\\]\ndonde:\n\n\\(Q^{in}_{i,m}\\) es la suma de los caudales que llegan desde aguas arriba;\n\\(\\Delta Q_{i,m}\\) es el cambio local de caudal;\n\\(Q^{out}_{i,m}\\) es el caudal que sale del nodo.\n\nLos cambios locales pueden ser:\n\npositivos: aportación de un área de drenaje, retorno de una depuradora o entrada externa;\nnegativos: captación urbana, agrícola o de otro uso.\n\nEl caudal no puede ser negativo. Cuando la demanda supera el agua disponible, la diferencia se registra como demanda no satisfecha y el caudal aguas abajo se establece en cero, asumiendo que se capta toda el agua disponible para satisfacer la demanda.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Visión general del modelo"
-    ]
-  },
-  {
-    "objectID": "model/overview.html#escala-espacial-y-temporal",
-    "href": "model/overview.html#escala-espacial-y-temporal",
-    "title": "Visión general del modelo",
-    "section": "Escala espacial y temporal",
-    "text": "Escala espacial y temporal\nLa simplificación mensual permite ejecutar rápidamente simulaciones de varios años. Sin embargo, el modelo no representa:\n\ncrecidas de duración horaria o diaria;\nvariaciones dentro de un mismo mes;\nprocesos hidráulicos detallados;\ndinámica explícita de los acuíferos.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Visión general del modelo"
-    ]
-  },
-  {
-    "objectID": "model/overview.html#implementación-en-el-navegador",
-    "href": "model/overview.html#implementación-en-el-navegador",
-    "title": "Visión general del modelo",
-    "section": "Implementación en el navegador",
-    "text": "Implementación en el navegador\nLos cálculos se realizan en el navegador del usuario. El grafo computacional y las variables de simulación se actualizan después de cada cambio de escenario, y los resultados se muestran en el mapa y en las tablas de información.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Visión general del modelo"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html",
-    "href": "user-guide/scenarios.html",
-    "title": "Crear y comparar escenarios",
-    "section": "",
-    "text": "Un escenario es una modificación de las condiciones de referencia. No representa necesariamente una predicción, sino una pregunta del tipo:\n\n¿Qué ocurriría con los caudales si disminuyera la precipitación, aumentara la demanda o cambiaran los desembalses?",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#qué-es-un-escenario",
-    "href": "user-guide/scenarios.html#qué-es-un-escenario",
-    "title": "Crear y comparar escenarios",
-    "section": "",
-    "text": "Un escenario es una modificación de las condiciones de referencia. No representa necesariamente una predicción, sino una pregunta del tipo:\n\n¿Qué ocurriría con los caudales si disminuyera la precipitación, aumentara la demanda o cambiaran los desembalses?",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#escenarios-disponibles",
-    "href": "user-guide/scenarios.html#escenarios-disponibles",
-    "title": "Crear y comparar escenarios",
-    "section": "Escenarios disponibles",
-    "text": "Escenarios disponibles\nLa herramienta permite modificar:\n\nprecipitación;\ntemperatura;\ndemanda urbana;\ndemanda agrícola;\ncobertura forestal;\ncaptaciones concretas;\ndesembalses.\n\nLos cambios climáticos y de demanda se pueden aplicar:\n\nde forma uniforme durante todo el año;\nde forma diferente para cada mes.",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#modificar-la-precipitación",
-    "href": "user-guide/scenarios.html#modificar-la-precipitación",
-    "title": "Crear y comparar escenarios",
-    "section": "Modificar la precipitación",
-    "text": "Modificar la precipitación\nUna reducción del 20 % significa que, en cada mes afectado:\n\\[\nP'_{i,m}=P_{i,m}(1-0.20)\n\\]\ndonde (P_{i,m}) es la precipitación de referencia y (P’_{i,m}) es la precipitación modificada.",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#modificar-la-temperatura",
-    "href": "user-guide/scenarios.html#modificar-la-temperatura",
-    "title": "Crear y comparar escenarios",
-    "section": "Modificar la temperatura",
-    "text": "Modificar la temperatura\nUn aumento de 2 °C se aplica como:\n\\[\nT'_{i,m}=T_{i,m}+2\n\\]\nEl cambio afecta a la evapotranspiración potencial e, indirectamente, a la evapotranspiración real y a la aportación a los ríos.",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#modificar-las-demandas",
-    "href": "user-guide/scenarios.html#modificar-las-demandas",
-    "title": "Crear y comparar escenarios",
-    "section": "Modificar las demandas",
-    "text": "Modificar las demandas\nLos escenarios de demanda multiplican las captaciones asociadas a cada categoría. Por ejemplo, un aumento del 10 % de la demanda agrícola implica:\n\\[\nD'_{m}=D_m(1+0.10)\n\\]",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#modificar-la-cobertura-forestal",
-    "href": "user-guide/scenarios.html#modificar-la-cobertura-forestal",
-    "title": "Crear y comparar escenarios",
-    "section": "Modificar la cobertura forestal",
-    "text": "Modificar la cobertura forestal\nEste escenario modifica la proporción de bosque de cada área de drenaje respecto al valor de referencia. Cuando disminuye la cobertura forestal, la superficie eliminada se redistribuye entre cultivos de secano y prados, manteniendo sus proporciones originales. Si no existían, se reparte a partes iguales.\nCuando aumenta la cobertura forestal, el nuevo bosque sustituye proporcionalmente a cultivos de secano y prados, hasta el máximo de superficie disponible entre estas dos coberturas.\nComo el bosque tiene un coeficiente de evapotranspiración más elevado, una reducción de la cobertura forestal tiende a disminuir la evapotranspiración real y a aumentar la aportación fluvial, mientras que un aumento tiende a producir el efecto contrario.\n\n\n\n\n\n\nNota\n\n\n\nUn valor del 100 % mantiene la cobertura original; un 50 % la reduce a la mitad y un 150 % la incrementa un 50 %, siempre que haya suficiente superficie disponible de cultivos de secano y prados.",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#modificar-una-captación-concreta",
-    "href": "user-guide/scenarios.html#modificar-una-captación-concreta",
-    "title": "Crear y comparar escenarios",
-    "section": "Modificar una captación concreta",
-    "text": "Modificar una captación concreta\nEn los nodos editables se puede definir:\n\nun volumen anual total, que se distribuye mensualmente;\nvalores de caudal diferentes para cada mes.",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#modificar-los-desembalses",
-    "href": "user-guide/scenarios.html#modificar-los-desembalses",
-    "title": "Crear y comparar escenarios",
-    "section": "Modificar los desembalses",
-    "text": "Modificar los desembalses\nLos desembalses también se pueden definir como:\n\nvolumen anual;\nvalores mensuales.\n\nEl modelo limita el desembalse al agua realmente disponible después de considerar la entrada, el almacenamiento y la evaporación.",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "user-guide/scenarios.html#comparar-correctamente",
-    "href": "user-guide/scenarios.html#comparar-correctamente",
-    "title": "Crear y comparar escenarios",
-    "section": "Comparar correctamente",
-    "text": "Comparar correctamente\nPara comparar dos escenarios:\n\nejecuta y registra los resultados de referencia;\nmodifica únicamente las variables que forman parte de la pregunta;\nvuelve a ejecutar la simulación;\ncompara los mismos indicadores y el mismo periodo;\nrevisa tanto los resultados agregados como los meses concretos.\n\n\n\n\n\n\n\nAdvertencia\n\n\n\nCambiar varias variables simultáneamente puede dificultar la interpretación causal de los resultados. Para entender el funcionamiento del sistema se recomienda empezar modificando una sola variable.",
-    "crumbs": [
-      "Inicio",
-      "Guía de uso",
-      "Crear y comparar escenarios"
-    ]
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "Acerca de",
-    "section": "",
-    "text": "Acerca de este sitio"
-  },
-  {
     "objectID": "getting-started.html",
     "href": "getting-started.html",
     "title": "Primeros pasos",
@@ -490,6 +131,310 @@
     ]
   },
   {
+    "objectID": "model/river-routing.html",
+    "href": "model/river-routing.html",
+    "title": "Propagación del caudal y aguas subterráneas",
+    "section": "",
+    "text": "El modelo recorre la red siguiendo la dirección del flujo. En cada nodo suma los caudales que llegan por los tramos de aguas arriba y aplica el cambio local correspondiente.\nEl caudal resultante se transfiere a los tramos situados aguas abajo.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Propagación del caudal y aguas subterráneas"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#propagación-aguas-abajo",
+    "href": "model/river-routing.html#propagación-aguas-abajo",
+    "title": "Propagación del caudal y aguas subterráneas",
+    "section": "",
+    "text": "El modelo recorre la red siguiendo la dirección del flujo. En cada nodo suma los caudales que llegan por los tramos de aguas arriba y aplica el cambio local correspondiente.\nEl caudal resultante se transfiere a los tramos situados aguas abajo.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Propagación del caudal y aguas subterráneas"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#ganancias-y-pérdidas-subterráneas",
+    "href": "model/river-routing.html#ganancias-y-pérdidas-subterráneas",
+    "title": "Propagación del caudal y aguas subterráneas",
+    "section": "Ganancias y pérdidas subterráneas",
+    "text": "Ganancias y pérdidas subterráneas\nLos intercambios entre el río y las aguas subterráneas se representan mediante una formulación simplificada:\n\\[\nQ^{out}_{e,m}\n=\nQ^{in}_{e,m}\ne^{-k_{e,m}L_e}\n+\ng_{e,m}L_e\n\\]\ndonde:\n\n\\(Q^{in}_{e,m}\\): caudal al inicio del tramo;\n\\(Q^{out}_{e,m}\\): caudal al final del tramo;\n\\(L_e\\): longitud del tramo;\n\\(k_{e,m}\\): coeficiente de pérdida por infiltración;\n\\(g_{e,m}\\): ganancia subterránea por unidad de longitud.\n\nEl primer término representa las pérdidas de caudal a lo largo del tramo. El segundo representa una aportación subterránea aditiva.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Propagación del caudal y aguas subterráneas"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#clases-de-interacción",
+    "href": "model/river-routing.html#clases-de-interacción",
+    "title": "Propagación del caudal y aguas subterráneas",
+    "section": "Clases de interacción",
+    "text": "Clases de interacción\nLos tramos se clasifican en tres niveles:\n\nbajo;\nmedio;\nalto.\n\nLa clasificación se basa en un índice hidrogeológico simplificado que considera:\n\npresencia de materiales aluviales;\ncapacidad de almacenamiento de agua del suelo;\npendiente del río.\n\nLos tramos con más materiales aluviales, mayor capacidad de almacenamiento y pendientes menores reciben una clase de interacción más elevada.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Propagación del caudal y aguas subterráneas"
+    ]
+  },
+  {
+    "objectID": "model/river-routing.html#interpretación",
+    "href": "model/river-routing.html#interpretación",
+    "title": "Propagación del caudal y aguas subterráneas",
+    "section": "Interpretación",
+    "text": "Interpretación\nEsta formulación permite representar diferencias espaciales sistemáticas entre tramos ganadores y perdedores, pero no simula explícitamente:\n\nniveles piezométricos;\nalmacenamiento del acuífero;\nretardos temporales del caudal base;\nefectos del bombeo subterráneo;\nretroalimentaciones dinámicas entre río y acuífero.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Propagación del caudal y aguas subterráneas"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html",
+    "href": "model/drainage-areas.html",
+    "title": "Aportación de las áreas de drenaje",
+    "section": "",
+    "text": "Cada área de drenaje genera una aportación local a partir de la precipitación, la evapotranspiración, la nieve y la superficie drenada.\n\\[\nQ^{contrib}_{i,m}\n=\n\\frac{\nA_i\\,C\n\\left(\nP_{i,m}-ET_{i,m}-r_m\\Delta N_{i,m}\n\\right)\n}{\n1000\\,S_m\n}\n\\]\ndonde:\n\n\\(Q^{contrib}_{i,m}\\): caudal aportado por el área \\(i\\) durante el mes \\(m\\), en \\(\\mathrm{m^3\\,s^{-1}}\\);\n\\(A_i\\): superficie del área de drenaje, en \\(\\mathrm{m^2}\\);\n\\(C\\): coeficiente de escorrentía;\n\\(P_{i,m}\\): precipitación mensual, en mm;\n\\(ET_{i,m}\\): evapotranspiración real mensual, en mm;\n\\(\\Delta N_{i,m}\\): cambio mensual del almacenamiento de nieve;\n\\(r_m\\): factor de conversión de nieve a equivalente de agua;\n\\(S_m\\): duración del mes, en segundos;\nel factor \\(1000\\) convierte milímetros en metros.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Aportación de las áreas de drenaje"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#balance-hídrico-mensual",
+    "href": "model/drainage-areas.html#balance-hídrico-mensual",
+    "title": "Aportación de las áreas de drenaje",
+    "section": "",
+    "text": "Cada área de drenaje genera una aportación local a partir de la precipitación, la evapotranspiración, la nieve y la superficie drenada.\n\\[\nQ^{contrib}_{i,m}\n=\n\\frac{\nA_i\\,C\n\\left(\nP_{i,m}-ET_{i,m}-r_m\\Delta N_{i,m}\n\\right)\n}{\n1000\\,S_m\n}\n\\]\ndonde:\n\n\\(Q^{contrib}_{i,m}\\): caudal aportado por el área \\(i\\) durante el mes \\(m\\), en \\(\\mathrm{m^3\\,s^{-1}}\\);\n\\(A_i\\): superficie del área de drenaje, en \\(\\mathrm{m^2}\\);\n\\(C\\): coeficiente de escorrentía;\n\\(P_{i,m}\\): precipitación mensual, en mm;\n\\(ET_{i,m}\\): evapotranspiración real mensual, en mm;\n\\(\\Delta N_{i,m}\\): cambio mensual del almacenamiento de nieve;\n\\(r_m\\): factor de conversión de nieve a equivalente de agua;\n\\(S_m\\): duración del mes, en segundos;\nel factor \\(1000\\) convierte milímetros en metros.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Aportación de las áreas de drenaje"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#evapotranspiración",
+    "href": "model/drainage-areas.html#evapotranspiración",
+    "title": "Aportación de las áreas de drenaje",
+    "section": "Evapotranspiración",
+    "text": "Evapotranspiración\nLa evapotranspiración potencial mensual se calcula mediante el método de Thornthwaite a partir de la temperatura media mensual:\n\\[\nPET_m =\n16\n\\left(\n\\frac{10T_m}{I}\n\\right)^a\nK_m\n\\]\ndonde:\n\\[\nI=\\sum_{m=1}^{12}\n\\left(\n\\frac{T_m}{5}\n\\right)^{1.514}\n\\]\ny:\n\\[\na =\n6.75\\times10^{-7}I^3\n-\n7.71\\times10^{-5}I^2\n+\n1.792\\times10^{-2}I\n+\n0.49239\n\\]\n\\(K_m\\) corrige el resultado según la duración del día y el número de días del mes.\n\n\n\n\n\n\nNotaInterpretación\n\n\n\n\n\nLa PET representa la demanda evaporativa de la atmósfera si hubiera suficiente agua. No es necesariamente la cantidad de agua que la cuenca evapotranspira realmente.\n\n\n\nPara cada uso del suelo \\(u\\), la evapotranspiración real se calcula mediante una formulación dependiente de la precipitación, la PET y un coeficiente de vegetación1:\n\\[\nET_{i,m}\n=\n\\sum_u f_{i,u}\n\\,\nP_{i,m}\n\\,\n\\frac{\n1+w_u\\frac{PET_{i,m}}{P_{i,m}}\n}{\n1+w_u\\frac{PET_{i,m}}{P_{i,m}}\n+\\frac{P_{i,m}}{PET_{i,m}}\n}\n\\]\ndonde:\n\n\\(f_{i,u}\\): proporción del uso del suelo \\(u\\) dentro del área \\(i\\);\n\\(w_u\\): coeficiente de evapotranspiración del uso del suelo;\n\\(P_{i,m}\\): precipitación mensual;\n\\(PET_{i,m}\\): evapotranspiración potencial.\n\n\nCoeficientes según el uso del suelo\n\n\n\nUso del suelo\n\\(w_u\\)\n\n\n\n\nAgua\n0\n\n\nSuelo urbano y superficies impermeables\n0\n\n\nBosque y plantaciones arbóreas\n1,75\n\n\nPrados y pastos naturales\n1,00\n\n\nCultivos de secano\n0,75\n\n\nCultivos de regadío\n1,50\n\n\n\nLos valores más elevados representan una mayor capacidad de la vegetación para utilizar el agua disponible.\n\n\n\n\n\n\nAdvertencia\n\n\n\nEl modelo representa el efecto de los usos del suelo sobre la evapotranspiración de forma agregada. No simula explícitamente la humedad del suelo, el enraizamiento ni el crecimiento de la vegetación.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Aportación de las áreas de drenaje"
+    ]
+  },
+  {
+    "objectID": "model/drainage-areas.html#footnotes",
+    "href": "model/drainage-areas.html#footnotes",
+    "title": "Aportación de las áreas de drenaje",
+    "section": "Notas",
+    "text": "Notas\n\n\nMas-Pla, J. et al. (2016). «Recursos hidrològics». En Tercer informe sobre el canvi climàtic a Catalunya, pp. 161–188↩︎",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Aportación de las áreas de drenaje"
+    ]
+  },
+  {
+    "objectID": "reference/glossary.html",
+    "href": "reference/glossary.html",
+    "title": "Glosario",
+    "section": "",
+    "text": "Almacenamiento\nVolumen de agua contenido en los embalses.\nAportación local\nCaudal generado dentro de un área de drenaje a partir del balance entre precipitación, evapotranspiración y nieve.\nCaptación\nRetirada de agua del río para un uso urbano, agrícola, industrial o una transferencia.\nCaudal ambiental\nCaudal mínimo establecido para mantener el funcionamiento ecológico del río.\nDemanda no satisfecha\nDiferencia entre el agua solicitada y el agua realmente disponible en un nodo.\nDesbordamiento\nVolumen que supera la capacidad máxima de almacenamiento y sale del sistema.\nEscenario\nConjunto de modificaciones aplicadas a las condiciones de referencia.\nEvapotranspiración potencial (PET)\nDemanda evaporativa de la atmósfera si el agua disponible no fuera limitante.\nEvapotranspiración real (ET o AET)\nCantidad de agua que realmente se evapora o es transpirada por la vegetación según el clima y la disponibilidad de agua.\nGrafo dirigido\nEstructura formada por nodos y conexiones con una dirección determinada, en este caso la dirección del flujo fluvial.\nNodo\nPunto de la red donde el caudal se genera, modifica, almacena o evalúa.\nRetorno\nAgua que vuelve al río después de un uso, por ejemplo, el efluente de una estación depuradora.\nTramo fluvial\nConexión entre dos nodos por la que se propaga el caudal.",
+    "crumbs": [
+      "Inicio",
+      "Referencia",
+      "Glosario"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "H2OSEG-Ter",
+    "section": "",
+    "text": "H2OSEG-Ter es una herramienta web que permite explorar cómo distintos cambios climáticos, territoriales y de gestión del agua pueden afectar a los caudales del río Ter, al volumen almacenado en los embalses, al cumplimiento de los caudales ambientales y a la satisfacción de las demandas de agua.\nLa herramienta funciona directamente en el navegador y no requiere instalación ni registro.\nAbrir H2OSEG-Ter"
+  },
+  {
+    "objectID": "index.html#qué-es-h2oseg-ter",
+    "href": "index.html#qué-es-h2oseg-ter",
+    "title": "H2OSEG-Ter",
+    "section": "",
+    "text": "H2OSEG-Ter es una herramienta web que permite explorar cómo distintos cambios climáticos, territoriales y de gestión del agua pueden afectar a los caudales del río Ter, al volumen almacenado en los embalses, al cumplimiento de los caudales ambientales y a la satisfacción de las demandas de agua.\nLa herramienta funciona directamente en el navegador y no requiere instalación ni registro.\nAbrir H2OSEG-Ter"
+  },
+  {
+    "objectID": "index.html#para-qué-se-puede-utilizar",
+    "href": "index.html#para-qué-se-puede-utilizar",
+    "title": "H2OSEG-Ter",
+    "section": "¿Para qué se puede utilizar?",
+    "text": "¿Para qué se puede utilizar?\nH2OSEG-Ter está pensada para:\n\nComparar rápidamente escenarios alternativos.\nExplorar los efectos de cambios en la precipitación o la temperatura.\nModificar las demandas urbanas y agrícolas.\nModificar captaciones concretas o los desembalses.\nConsultar los caudales simulados a lo largo de la red fluvial.\nIdentificar tramos que incumplen el caudal ambiental.\nDetectar demandas que no pueden satisfacerse.\nObservar la evolución del volumen de los embalses.\n\n\n\n\n\n\n\nImportante\n\n\n\nH2OSEG-Ter es una herramienta de exploración y comparación de escenarios. No es un sistema de predicción hidrológica ni un modelo operativo para tomar decisiones legales o de gestión en tiempo real."
+  },
+  {
+    "objectID": "index.html#primeros-pasos",
+    "href": "index.html#primeros-pasos",
+    "title": "H2OSEG-Ter",
+    "section": "Primeros pasos",
+    "text": "Primeros pasos\n\nConsulta la guía rápida.\nFamiliarízate con la interfaz.\nPrueba a crear un escenario.\nConsulta cómo funciona el modelo hidrológico.\nRevisa las limitaciones antes de interpretar los resultados."
+  },
+  {
+    "objectID": "reference/assumptions.html",
+    "href": "reference/assumptions.html",
+    "title": "Hipótesis, limitaciones y uso adecuado",
+    "section": "",
+    "text": "H2OSEG-Ter es especialmente útil para:\n\nexploración preliminar;\ncomparación relativa de escenarios;\ncomunicación entre actores;\ntalleres participativos;\nactividades educativas;\nidentificación de posibles conflictos entre demandas y caudales ambientales.",
+    "crumbs": [
+      "Inicio",
+      "Referencia",
+      "Hipótesis, limitaciones y uso adecuado"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#uso-adecuado",
+    "href": "reference/assumptions.html#uso-adecuado",
+    "title": "Hipótesis, limitaciones y uso adecuado",
+    "section": "",
+    "text": "H2OSEG-Ter es especialmente útil para:\n\nexploración preliminar;\ncomparación relativa de escenarios;\ncomunicación entre actores;\ntalleres participativos;\nactividades educativas;\nidentificación de posibles conflictos entre demandas y caudales ambientales.",
+    "crumbs": [
+      "Inicio",
+      "Referencia",
+      "Hipótesis, limitaciones y uso adecuado"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#usos-para-los-que-no-está-pensada",
+    "href": "reference/assumptions.html#usos-para-los-que-no-está-pensada",
+    "title": "Hipótesis, limitaciones y uso adecuado",
+    "section": "Usos para los que no está pensada",
+    "text": "Usos para los que no está pensada\nNo debería utilizarse como único apoyo para:\n\npredicción operativa;\ndiseño de infraestructuras;\nasignaciones legales de agua;\ngestión de emergencias;\npredicción de crecidas;\nestudios detallados de aguas subterráneas;\nsimulación hidráulica de alta resolución.",
+    "crumbs": [
+      "Inicio",
+      "Referencia",
+      "Hipótesis, limitaciones y uso adecuado"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#resolución-mensual",
+    "href": "reference/assumptions.html#resolución-mensual",
+    "title": "Hipótesis, limitaciones y uso adecuado",
+    "section": "Resolución mensual",
+    "text": "Resolución mensual\nEl modelo trabaja con valores mensuales. Por tanto, no representa:\n\nepisodios extremos de corta duración;\npicos de caudal;\nvariabilidad diaria;\ntiempos de propagación dentro del mes.",
+    "crumbs": [
+      "Inicio",
+      "Referencia",
+      "Hipótesis, limitaciones y uso adecuado"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#simulaciones-plurianuales",
+    "href": "reference/assumptions.html#simulaciones-plurianuales",
+    "title": "Hipótesis, limitaciones y uso adecuado",
+    "section": "Simulaciones plurianuales",
+    "text": "Simulaciones plurianuales\nSi el usuario no introduce modificaciones específicas, los años sucesivos repiten el mismo patrón mensual de clima y demandas.\nEsto permite estudiar el efecto acumulativo de unas condiciones estacionales repetidas, pero no representa una serie histórica o futura con variabilidad interanual.",
+    "crumbs": [
+      "Inicio",
+      "Referencia",
+      "Hipótesis, limitaciones y uso adecuado"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#procesos-hidrológicos-simplificados",
+    "href": "reference/assumptions.html#procesos-hidrológicos-simplificados",
+    "title": "Hipótesis, limitaciones y uso adecuado",
+    "section": "Procesos hidrológicos simplificados",
+    "text": "Procesos hidrológicos simplificados\nEl modelo no simula de forma explícita:\n\nhumedad del suelo;\ninfiltración distribuida;\ngeneración detallada de escorrentía;\nacuíferos;\ncaudal base retardado;\nhidráulica de los canales;\nnormas operativas complejas de los embalses.",
+    "crumbs": [
+      "Inicio",
+      "Referencia",
+      "Hipótesis, limitaciones y uso adecuado"
+    ]
+  },
+  {
+    "objectID": "reference/assumptions.html#calibración",
+    "href": "reference/assumptions.html#calibración",
+    "title": "Hipótesis, limitaciones y uso adecuado",
+    "section": "Calibración",
+    "text": "Calibración\nLos parámetros hidrológicos y de interacción subterránea se han ajustado con datos mensuales de seis estaciones situadas en tramos de caudal no regulados.\n\n\n\n\n\n\nImportante\n\n\n\nLos resultados deben interpretarse como una respuesta del modelo a unas hipótesis definidas por el usuario, no como una predicción cierta del comportamiento futuro de la cuenca.",
+    "crumbs": [
+      "Inicio",
+      "Referencia",
+      "Hipótesis, limitaciones y uso adecuado"
+    ]
+  },
+  {
+    "objectID": "model/overview.html",
+    "href": "model/overview.html",
+    "title": "Visión general del modelo",
+    "section": "",
+    "text": "El modelo representa la cuenca fluvial como un grafo dirigido:\n\nlos nodos son puntos donde el caudal se genera, modifica, almacena, deriva o evalúa;\nlas aristas son los tramos fluviales que transportan el agua aguas abajo.\n\nEsta estructura permite seguir explícitamente el recorrido del agua desde las cabeceras hasta los tramos bajos de la cuenca.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Visión general del modelo"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#representación-de-la-cuenca",
+    "href": "model/overview.html#representación-de-la-cuenca",
+    "title": "Visión general del modelo",
+    "section": "",
+    "text": "El modelo representa la cuenca fluvial como un grafo dirigido:\n\nlos nodos son puntos donde el caudal se genera, modifica, almacena, deriva o evalúa;\nlas aristas son los tramos fluviales que transportan el agua aguas abajo.\n\nEsta estructura permite seguir explícitamente el recorrido del agua desde las cabeceras hasta los tramos bajos de la cuenca.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Visión general del modelo"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#paso-temporal",
+    "href": "model/overview.html#paso-temporal",
+    "title": "Visión general del modelo",
+    "section": "Paso temporal",
+    "text": "Paso temporal\nLa simulación utiliza un paso temporal mensual. Cada mes, el modelo:\n\ncalcula la aportación de las áreas de drenaje;\nsuma las entradas procedentes de aguas arriba;\naplica aportaciones, retornos, demandas y captaciones;\nmodifica el caudal según las ganancias o pérdidas subterráneas de los tramos;\nactualiza el balance de los embalses;\ncomprueba los caudales ambientales y las demandas no satisfechas.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Visión general del modelo"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#secuencia-de-cálculo",
+    "href": "model/overview.html#secuencia-de-cálculo",
+    "title": "Visión general del modelo",
+    "section": "Secuencia de cálculo",
+    "text": "Secuencia de cálculo\nPara cada nodo (i) y mes (m), el balance general se puede expresar como:\n\\[\nQ^{out}_{i,m}\n=\n\\max\\left(\n0,\\,\nQ^{in}_{i,m}+\\Delta Q_{i,m}\n\\right)\n\\]\ndonde:\n\n\\(Q^{in}_{i,m}\\) es la suma de los caudales que llegan desde aguas arriba;\n\\(\\Delta Q_{i,m}\\) es el cambio local de caudal;\n\\(Q^{out}_{i,m}\\) es el caudal que sale del nodo.\n\nLos cambios locales pueden ser:\n\npositivos: aportación de un área de drenaje, retorno de una depuradora o entrada externa;\nnegativos: captación urbana, agrícola o de otro uso.\n\nEl caudal no puede ser negativo. Cuando la demanda supera el agua disponible, la diferencia se registra como demanda no satisfecha y el caudal aguas abajo se establece en cero, asumiendo que se capta toda el agua disponible para satisfacer la demanda.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Visión general del modelo"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#escala-espacial-y-temporal",
+    "href": "model/overview.html#escala-espacial-y-temporal",
+    "title": "Visión general del modelo",
+    "section": "Escala espacial y temporal",
+    "text": "Escala espacial y temporal\nLa simplificación mensual permite ejecutar rápidamente simulaciones de varios años. Sin embargo, el modelo no representa:\n\ncrecidas de duración horaria o diaria;\nvariaciones dentro de un mismo mes;\nprocesos hidráulicos detallados;\ndinámica explícita de los acuíferos.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Visión general del modelo"
+    ]
+  },
+  {
+    "objectID": "model/overview.html#implementación-en-el-navegador",
+    "href": "model/overview.html#implementación-en-el-navegador",
+    "title": "Visión general del modelo",
+    "section": "Implementación en el navegador",
+    "text": "Implementación en el navegador\nLos cálculos se realizan en el navegador del usuario. El grafo computacional y las variables de simulación se actualizan después de cada cambio de escenario, y los resultados se muestran en el mapa y en las tablas de información.",
+    "crumbs": [
+      "Inicio",
+      "Modelo hidrológico",
+      "Visión general del modelo"
+    ]
+  },
+  {
     "objectID": "model/reservoirs.html",
     "href": "model/reservoirs.html",
     "title": "Balance de los embalses",
@@ -574,75 +519,130 @@
     ]
   },
   {
-    "objectID": "model/river-routing.html",
-    "href": "model/river-routing.html",
-    "title": "Propagación del caudal y aguas subterráneas",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Acerca de",
     "section": "",
-    "text": "El modelo recorre la red siguiendo la dirección del flujo. En cada nodo suma los caudales que llegan por los tramos de aguas arriba y aplica el cambio local correspondiente.\nEl caudal resultante se transfiere a los tramos situados aguas abajo.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Propagación del caudal y aguas subterráneas"
-    ]
+    "text": "Acerca de este sitio"
   },
   {
-    "objectID": "model/river-routing.html#propagación-aguas-abajo",
-    "href": "model/river-routing.html#propagación-aguas-abajo",
-    "title": "Propagación del caudal y aguas subterráneas",
+    "objectID": "user-guide/scenarios.html",
+    "href": "user-guide/scenarios.html",
+    "title": "Crear y comparar escenarios",
     "section": "",
-    "text": "El modelo recorre la red siguiendo la dirección del flujo. En cada nodo suma los caudales que llegan por los tramos de aguas arriba y aplica el cambio local correspondiente.\nEl caudal resultante se transfiere a los tramos situados aguas abajo.",
+    "text": "Un escenario es una modificación de las condiciones de referencia. No representa necesariamente una predicción, sino una pregunta del tipo:\n\n¿Qué ocurriría con los caudales si disminuyera la precipitación, aumentara la demanda o cambiaran los desembalses?",
     "crumbs": [
       "Inicio",
-      "Modelo hidrológico",
-      "Propagación del caudal y aguas subterráneas"
+      "Guía de uso",
+      "Crear y comparar escenarios"
     ]
   },
   {
-    "objectID": "model/river-routing.html#ganancias-y-pérdidas-subterráneas",
-    "href": "model/river-routing.html#ganancias-y-pérdidas-subterráneas",
-    "title": "Propagación del caudal y aguas subterráneas",
-    "section": "Ganancias y pérdidas subterráneas",
-    "text": "Ganancias y pérdidas subterráneas\nLos intercambios entre el río y las aguas subterráneas se representan mediante una formulación simplificada:\n\\[\nQ^{out}_{e,m}\n=\nQ^{in}_{e,m}\ne^{-k_{e,m}L_e}\n+\ng_{e,m}L_e\n\\]\ndonde:\n\n\\(Q^{in}_{e,m}\\): caudal al inicio del tramo;\n\\(Q^{out}_{e,m}\\): caudal al final del tramo;\n\\(L_e\\): longitud del tramo;\n\\(k_{e,m}\\): coeficiente de pérdida por infiltración;\n\\(g_{e,m}\\): ganancia subterránea por unidad de longitud.\n\nEl primer término representa las pérdidas de caudal a lo largo del tramo. El segundo representa una aportación subterránea aditiva.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Propagación del caudal y aguas subterráneas"
-    ]
-  },
-  {
-    "objectID": "model/river-routing.html#clases-de-interacción",
-    "href": "model/river-routing.html#clases-de-interacción",
-    "title": "Propagación del caudal y aguas subterráneas",
-    "section": "Clases de interacción",
-    "text": "Clases de interacción\nLos tramos se clasifican en tres niveles:\n\nbajo;\nmedio;\nalto.\n\nLa clasificación se basa en un índice hidrogeológico simplificado que considera:\n\npresencia de materiales aluviales;\ncapacidad de almacenamiento de agua del suelo;\npendiente del río.\n\nLos tramos con más materiales aluviales, mayor capacidad de almacenamiento y pendientes menores reciben una clase de interacción más elevada.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Propagación del caudal y aguas subterráneas"
-    ]
-  },
-  {
-    "objectID": "model/river-routing.html#interpretación",
-    "href": "model/river-routing.html#interpretación",
-    "title": "Propagación del caudal y aguas subterráneas",
-    "section": "Interpretación",
-    "text": "Interpretación\nEsta formulación permite representar diferencias espaciales sistemáticas entre tramos ganadores y perdedores, pero no simula explícitamente:\n\nniveles piezométricos;\nalmacenamiento del acuífero;\nretardos temporales del caudal base;\nefectos del bombeo subterráneo;\nretroalimentaciones dinámicas entre río y acuífero.",
-    "crumbs": [
-      "Inicio",
-      "Modelo hidrológico",
-      "Propagación del caudal y aguas subterráneas"
-    ]
-  },
-  {
-    "objectID": "reference/glossary.html",
-    "href": "reference/glossary.html",
-    "title": "Glosario",
+    "objectID": "user-guide/scenarios.html#qué-es-un-escenario",
+    "href": "user-guide/scenarios.html#qué-es-un-escenario",
+    "title": "Crear y comparar escenarios",
     "section": "",
-    "text": "Almacenamiento\nVolumen de agua contenido en los embalses.\nAportación local\nCaudal generado dentro de un área de drenaje a partir del balance entre precipitación, evapotranspiración y nieve.\nCaptación\nRetirada de agua del río para un uso urbano, agrícola, industrial o una transferencia.\nCaudal ambiental\nCaudal mínimo establecido para mantener el funcionamiento ecológico del río.\nDemanda no satisfecha\nDiferencia entre el agua solicitada y el agua realmente disponible en un nodo.\nDesbordamiento\nVolumen que supera la capacidad máxima de almacenamiento y sale del sistema.\nEscenario\nConjunto de modificaciones aplicadas a las condiciones de referencia.\nEvapotranspiración potencial (PET)\nDemanda evaporativa de la atmósfera si el agua disponible no fuera limitante.\nEvapotranspiración real (ET o AET)\nCantidad de agua que realmente se evapora o es transpirada por la vegetación según el clima y la disponibilidad de agua.\nGrafo dirigido\nEstructura formada por nodos y conexiones con una dirección determinada, en este caso la dirección del flujo fluvial.\nNodo\nPunto de la red donde el caudal se genera, modifica, almacena o evalúa.\nRetorno\nAgua que vuelve al río después de un uso, por ejemplo, el efluente de una estación depuradora.\nTramo fluvial\nConexión entre dos nodos por la que se propaga el caudal.",
+    "text": "Un escenario es una modificación de las condiciones de referencia. No representa necesariamente una predicción, sino una pregunta del tipo:\n\n¿Qué ocurriría con los caudales si disminuyera la precipitación, aumentara la demanda o cambiaran los desembalses?",
     "crumbs": [
       "Inicio",
-      "Referencia",
-      "Glosario"
+      "Guía de uso",
+      "Crear y comparar escenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#escenarios-disponibles",
+    "href": "user-guide/scenarios.html#escenarios-disponibles",
+    "title": "Crear y comparar escenarios",
+    "section": "Escenarios disponibles",
+    "text": "Escenarios disponibles\nLa herramienta permite modificar:\n\nprecipitación;\ntemperatura;\ndemanda urbana;\ndemanda agrícola;\ncobertura forestal;\ncaptaciones concretas;\ndesembalses.\n\nLos cambios climáticos y de demanda se pueden aplicar:\n\nde forma uniforme durante todo el año;\nde forma diferente para cada mes.",
+    "crumbs": [
+      "Inicio",
+      "Guía de uso",
+      "Crear y comparar escenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-la-precipitación",
+    "href": "user-guide/scenarios.html#modificar-la-precipitación",
+    "title": "Crear y comparar escenarios",
+    "section": "Modificar la precipitación",
+    "text": "Modificar la precipitación\nUna reducción del 20 % significa que, en cada mes afectado:\n\\[\nP'_{i,m}=P_{i,m}(1-0.20)\n\\]\ndonde (P_{i,m}) es la precipitación de referencia y (P’_{i,m}) es la precipitación modificada.",
+    "crumbs": [
+      "Inicio",
+      "Guía de uso",
+      "Crear y comparar escenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-la-temperatura",
+    "href": "user-guide/scenarios.html#modificar-la-temperatura",
+    "title": "Crear y comparar escenarios",
+    "section": "Modificar la temperatura",
+    "text": "Modificar la temperatura\nUn aumento de 2 °C se aplica como:\n\\[\nT'_{i,m}=T_{i,m}+2\n\\]\nEl cambio afecta a la evapotranspiración potencial e, indirectamente, a la evapotranspiración real y a la aportación a los ríos.",
+    "crumbs": [
+      "Inicio",
+      "Guía de uso",
+      "Crear y comparar escenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-las-demandas",
+    "href": "user-guide/scenarios.html#modificar-las-demandas",
+    "title": "Crear y comparar escenarios",
+    "section": "Modificar las demandas",
+    "text": "Modificar las demandas\nLos escenarios de demanda multiplican las captaciones asociadas a cada categoría. Por ejemplo, un aumento del 10 % de la demanda agrícola implica:\n\\[\nD'_{m}=D_m(1+0.10)\n\\]",
+    "crumbs": [
+      "Inicio",
+      "Guía de uso",
+      "Crear y comparar escenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-la-cobertura-forestal",
+    "href": "user-guide/scenarios.html#modificar-la-cobertura-forestal",
+    "title": "Crear y comparar escenarios",
+    "section": "Modificar la cobertura forestal",
+    "text": "Modificar la cobertura forestal\nEste escenario modifica la proporción de bosque de cada área de drenaje respecto al valor de referencia. Cuando disminuye la cobertura forestal, la superficie eliminada se redistribuye entre cultivos de secano y prados, manteniendo sus proporciones originales. Si no existían, se reparte a partes iguales.\nCuando aumenta la cobertura forestal, el nuevo bosque sustituye proporcionalmente a cultivos de secano y prados, hasta el máximo de superficie disponible entre estas dos coberturas.\nComo el bosque tiene un coeficiente de evapotranspiración más elevado, una reducción de la cobertura forestal tiende a disminuir la evapotranspiración real y a aumentar la aportación fluvial, mientras que un aumento tiende a producir el efecto contrario.\n\n\n\n\n\n\nNota\n\n\n\nUn valor del 100 % mantiene la cobertura original; un 50 % la reduce a la mitad y un 150 % la incrementa un 50 %, siempre que haya suficiente superficie disponible de cultivos de secano y prados.",
+    "crumbs": [
+      "Inicio",
+      "Guía de uso",
+      "Crear y comparar escenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-una-captación-concreta",
+    "href": "user-guide/scenarios.html#modificar-una-captación-concreta",
+    "title": "Crear y comparar escenarios",
+    "section": "Modificar una captación concreta",
+    "text": "Modificar una captación concreta\nEn los nodos editables se puede definir:\n\nun volumen anual total, que se distribuye mensualmente;\nvalores de caudal diferentes para cada mes.",
+    "crumbs": [
+      "Inicio",
+      "Guía de uso",
+      "Crear y comparar escenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#modificar-los-desembalses",
+    "href": "user-guide/scenarios.html#modificar-los-desembalses",
+    "title": "Crear y comparar escenarios",
+    "section": "Modificar los desembalses",
+    "text": "Modificar los desembalses\nLos desembalses también se pueden definir como:\n\nvolumen anual;\nvalores mensuales.\n\nEl modelo limita el desembalse al agua realmente disponible después de considerar la entrada, el almacenamiento y la evaporación.",
+    "crumbs": [
+      "Inicio",
+      "Guía de uso",
+      "Crear y comparar escenarios"
+    ]
+  },
+  {
+    "objectID": "user-guide/scenarios.html#comparar-correctamente",
+    "href": "user-guide/scenarios.html#comparar-correctamente",
+    "title": "Crear y comparar escenarios",
+    "section": "Comparar correctamente",
+    "text": "Comparar correctamente\nPara comparar dos escenarios:\n\nejecuta y registra los resultados de referencia;\nmodifica únicamente las variables que forman parte de la pregunta;\nvuelve a ejecutar la simulación;\ncompara los mismos indicadores y el mismo periodo;\nrevisa tanto los resultados agregados como los meses concretos.\n\n\n\n\n\n\n\nAdvertencia\n\n\n\nCambiar varias variables simultáneamente puede dificultar la interpretación causal de los resultados. Para entender el funcionamiento del sistema se recomienda empezar modificando una sola variable.",
+    "crumbs": [
+      "Inicio",
+      "Guía de uso",
+      "Crear y comparar escenarios"
     ]
   }
 ]
