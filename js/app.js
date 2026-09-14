@@ -57,8 +57,8 @@ const fmtConstant = function(v, v0) {
 }
 
 const safeRatio = function(num, den) {
-    const p = Math.abs(Number(num) / Number(den))
-    return Number.isFinite(p) ? p.toPrecision(1) : '-'
+    const p = Math.abs(Number(num) / Number(den)) * 100
+    return Number.isFinite(p) ? p.toFixed(1) : '-'
 }
 
 const fmtHm3 = v => Number.isFinite(+v) ? (+v).toFixed(1) + ' Hm³' : '—'
