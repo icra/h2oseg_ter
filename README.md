@@ -1,6 +1,6 @@
 # H2OSEG Ter
 
-[![DOI](https://zenodo.org/badge/996690695.svg)](https://doi.org/10.5281/zenodo.22828047)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22828047.svg)](https://doi.org/10.5281/zenodo.22828047)
 
 H2OSEG Ter is an interactive decision-support and exploratory modelling tool for the Ter River basin (Catalonia, Spain).
 
