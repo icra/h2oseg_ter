@@ -528,9 +528,9 @@
     <div class="layout" :class="{ 'layout-show-sidebar': mobileSidebarOpen }" v-cloak>
         <nav class="mobile-view-switch" :aria-label="$t('mobile.views')">
             <button type="button" aria-controls="map-wrapper" :aria-pressed="!mobileSidebarOpen"
-                    @click="mobileSidebarOpen = false">{{ $t('mobile.map') }}</button>
+                    @click="switchMobileView(false, $event)">{{ $t('mobile.map') }}</button>
             <button type="button" aria-controls="sidebar" :aria-pressed="mobileSidebarOpen"
-                    @click="mobileSidebarOpen = true">{{ $t('mobile.simulation') }}</button>
+                    @click="switchMobileView(true, $event)">{{ $t('mobile.simulation') }}</button>
         </nav>
         <div id="map-wrapper">
             <!-- Títol sobre el mapa -->
@@ -539,7 +539,7 @@
                 <strong v-if="Number(selK) !== 0">{{ nYears > 1 ? $t('time.yearPrefix', { year: simYear }) : '' }}{{ (monthSelector.find(m => m.value === month) || {label:'—'}).label }}</strong>
             </div>
 
-            <button v-if="selectedEle" type="button" class="mobile-selection-button"
+            <button v-if="selectedEle && !mobileSidebarOpen" type="button" class="mobile-selection-button"
                     @click="showMobileSelection">{{ $t('mobile.selection') }}</button>
 
             <!-- Llegenda flotant -->

@@ -317,6 +317,11 @@ createApp({
         const mobileSidebarOpen = ref(false)
         const selectionCard = ref(null)
 
+        function switchMobileView(showSidebar, event) {
+            event.currentTarget.focus({preventScroll: true})
+            mobileSidebarOpen.value = showSidebar
+        }
+
         async function showMobileSelection() {
             mobileSidebarOpen.value = true
             await nextTick()
@@ -1114,6 +1119,7 @@ createApp({
             legendCollapsed,
             mobileSidebarOpen,
             selectionCard,
+            switchMobileView,
             showMobileSelection,
             downloadData,
             nodeTypeSymbols: int.nodeTypeSymbols,
