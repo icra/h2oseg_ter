@@ -314,6 +314,21 @@ createApp({
         const forestSurface = ref(null)
         const tick = ref(0)
         const legendCollapsed = ref(true)
+        const mobileSidebarOpen = ref(false)
+        const selectionCard = ref(null)
+
+        function switchMobileView(showSidebar, event) {
+            event.currentTarget.focus({preventScroll: true})
+            mobileSidebarOpen.value = showSidebar
+        }
+
+        async function showMobileSelection() {
+            mobileSidebarOpen.value = true
+            await nextTick()
+            selectionCard.value?.focus({preventScroll: true})
+            selectionCard.value?.scrollIntoView({block: 'start'})
+        }
+
         const downloadData = function() {
             if (!cy.value) {
                 console.error("Cytoscape no està inicialitzat");
@@ -810,7 +825,9 @@ createApp({
                     options: {position: 'topleft'},
 
                     onAdd: function () {
-                        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+                        const container = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
+                        container.type = 'button';
+                        container.setAttribute('aria-label', t('map.resetView'));
 
                         // Crea un rectangle amb vora discontínua via CSS
                         container.innerHTML = `
@@ -820,13 +837,6 @@ createApp({
                             </svg>
                         `;
 
-                        container.style.backgroundColor = 'white';
-                        container.style.width = '30px';
-                        container.style.height = '30px';
-                        container.style.display = 'flex';
-                        container.style.alignItems = 'center';
-                        container.style.justifyContent = 'center';
-                        container.style.cursor = 'pointer';
                         container.title = t('map.resetView');
 
                         L.DomEvent.disableClickPropagation(container);
@@ -1107,6 +1117,10 @@ createApp({
             volumEmb,
             tick,
             legendCollapsed,
+            mobileSidebarOpen,
+            selectionCard,
+            switchMobileView,
+            showMobileSelection,
             downloadData,
             nodeTypeSymbols: int.nodeTypeSymbols,
             nodeSVG: int.nodeSymbolSVG,

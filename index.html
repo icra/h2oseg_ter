@@ -2,6 +2,7 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>H2OSEG Ter</title>
     <!-- Estils de Leaflet -->
     <link rel="stylesheet" href="css/leaflet.css" />
@@ -524,7 +525,13 @@
             <p>{{ $t('loading.yearProgress', { current: Math.min(loadingYear, nYears), total: nYears }) }}</p>
         </div>
     </div>
-    <div class="layout" v-cloak>
+    <div class="layout" :class="{ 'layout-show-sidebar': mobileSidebarOpen }" v-cloak>
+        <nav class="mobile-view-switch" :aria-label="$t('mobile.views')">
+            <button type="button" aria-controls="map-wrapper" :aria-pressed="!mobileSidebarOpen"
+                    @click="switchMobileView(false, $event)">{{ $t('mobile.map') }}</button>
+            <button type="button" aria-controls="sidebar" :aria-pressed="mobileSidebarOpen"
+                    @click="switchMobileView(true, $event)">{{ $t('mobile.simulation') }}</button>
+        </nav>
         <div id="map-wrapper">
             <!-- Títol sobre el mapa -->
             <div class="map-title" v-cloak>
@@ -532,28 +539,18 @@
                 <strong v-if="Number(selK) !== 0">{{ nYears > 1 ? $t('time.yearPrefix', { year: simYear }) : '' }}{{ (monthSelector.find(m => m.value === month) || {label:'—'}).label }}</strong>
             </div>
 
+            <button v-if="selectedEle && !mobileSidebarOpen" type="button" class="mobile-selection-button"
+                    @click="showMobileSelection">{{ $t('mobile.selection') }}</button>
+
             <!-- Llegenda flotant -->
             <div class="map-legend" v-cloak>
                 <div class="legend-block">
-                    <div class="legend-header" @click="legendCollapsed = !legendCollapsed">
+                    <button type="button" class="legend-header legend-toggle"
+                            :aria-expanded="!legendCollapsed" aria-controls="map-legend-content"
+                            @click="legendCollapsed = !legendCollapsed">
                         <span class="legend-title">{{ $t('map.legend') }}</span>
-                        <button
-
-                            class="legend-toggle"
-
-                            type="button"
-
-                            :aria-expanded="(!legendCollapsed).toString()"
-
-                            aria-controls="map-legend-content"
-
-                            :aria-label="$t('map.toggleLegend')"
-
-                        >
-
-                            {{ legendCollapsed ? '▲' : '▼' }}
-                        </button>
-                    </div>
+                        <span aria-hidden="true">{{ legendCollapsed ? '▲' : '▼' }}</span>
+                    </button>
                     <div id="map-legend-content" v-show="!legendCollapsed" class="legend-content">
 
                     <!-- Mode TOTAL ANUAL -->
@@ -769,7 +766,7 @@
                 </p>
             </div>
             <!-- CARD PRINCIPAL DE L'ELEMENT SELECCIONAT -->
-            <div v-if="selectedEle" class="res-mini res-stack">
+            <div v-if="selectedEle" ref="selectionCard" tabindex="-1" class="res-mini res-stack">
                 <!-- Capçalera de la card -->
                 <div class="res-top">
                     <svg v-if="selectedEle.id === 'DESEMBASSAT'" class="ico" viewBox="0 0 24 24" aria-hidden="true">
@@ -1132,7 +1129,7 @@
             </div>
             <div class="sidebar-footer">
                 <button @click="reset">{{ $t('initialValues') }}</button>
-                <button style="margin-left: 1em;" @click="downloadData">{{ $t('downloadData') }}</button>
+                <button class="download-button" @click="downloadData">{{ $t('downloadData') }}</button>
                 <hr />
                 <button @click="openDocumentation">{{ $t('documentation') }}</button>
             </div>

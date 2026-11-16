@@ -109,6 +109,12 @@ const messages = {
             proportion: 'Proporció'
         },
         cancel: "Cancel·la",
+        mobile: {
+            views: "Vistes",
+            map: "Mapa",
+            simulation: "Simulació",
+            selection: "Veure la selecció"
+        },
         apply: "Aplica",
         applyChanges: "Aplica canvis",
         close: 'Tanca',
@@ -294,6 +300,12 @@ const messages = {
             proportion: 'Proportion'
         },
         cancel: "Cancel",
+        mobile: {
+            views: "Views",
+            map: "Map",
+            simulation: "Simulation",
+            selection: "View selection"
+        },
         apply: "Apply",
         applyChanges: "Apply changes",
         close: 'Close',
@@ -478,6 +490,12 @@ const messages = {
             proportion: 'Proporción'
         },
         cancel: "Cancelar",
+        mobile: {
+            views: "Vistas",
+            map: "Mapa",
+            simulation: "Simulación",
+            selection: "Ver la selección"
+        },
         apply: "Aplicar",
         applyChanges: "Aplicar cambios",
         close: 'Cerrar',
