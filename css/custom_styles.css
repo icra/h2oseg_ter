@@ -977,3 +977,237 @@ button:hover {
     opacity: 0.9;
     font-size: 0.95em;
 }
+
+.mobile-view-switch,
+.mobile-selection-button {
+    display: none;
+}
+
+.sidebar-footer .download-button {
+    margin-left: 1em;
+}
+
+.leaflet-bar.leaflet-control-custom {
+    display: grid;
+    place-items: center;
+    box-sizing: content-box;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    background: #fff;
+}
+
+.legend-header {
+    width: 100%;
+}
+
+@media (max-width: 800px), (max-width: 960px) and (max-height: 520px) and (pointer: coarse) {
+    .layout {
+        height: 100vh;
+        height: 100dvh;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .mobile-view-switch {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px;
+        padding: 6px 8px;
+        background: #f1f5f9;
+        border-bottom: 1px solid #dbe3eb;
+    }
+
+    .mobile-view-switch button {
+        min-height: 44px;
+        border-color: transparent;
+        background: transparent;
+        color: #334155;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .mobile-view-switch button[aria-pressed="true"] {
+        background: #fff;
+        border-color: #cbd5e1;
+        color: #075985;
+    }
+
+    /* El mapa conserva les seves dimensions mentre es mostra el panell. */
+    #map-wrapper,
+    #sidebar {
+        grid-area: 2 / 1;
+        min-width: 0;
+        min-height: 0;
+    }
+
+    .layout:not(.layout-show-sidebar) #sidebar {
+        display: none;
+    }
+
+    .layout-show-sidebar #map-wrapper {
+        visibility: hidden;
+    }
+
+    #sidebar {
+        justify-content: flex-start;
+        gap: 12px;
+        padding: 12px;
+        overscroll-behavior: contain;
+    }
+
+    .sidebar-header {
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 0;
+    }
+
+    .locale-changer {
+        position: static;
+    }
+
+    .locale-select,
+    .time-select,
+    .time-input,
+    .res-input {
+        box-sizing: border-box;
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .time-controls {
+        margin: 0;
+    }
+
+    .time-row {
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .time-row .time-field {
+        flex-basis: 110px;
+        min-width: 0;
+    }
+
+    #sidebar button,
+    .modal-dialog button,
+    .scenario-toggle,
+    .scenario-monthly {
+        min-height: 44px;
+    }
+
+    .res-mini {
+        margin: 0;
+    }
+
+    .res-top {
+        grid-template-columns: 14px auto minmax(0, 1fr);
+    }
+
+    .res-actions {
+        flex-wrap: wrap;
+    }
+
+    .mode-toggle {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .sidebar-footer button {
+        margin-bottom: 4px;
+    }
+
+    .sidebar-footer .download-button {
+        margin-left: 0;
+    }
+
+    .mobile-selection-button {
+        display: block;
+        position: absolute;
+        z-index: 10;
+        top: 52px;
+        right: 10px;
+        min-height: 44px;
+        color: #075985;
+        font-weight: 600;
+    }
+
+    .map-title {
+        box-sizing: border-box;
+        width: max-content;
+        max-width: calc(100% - 124px);
+        text-align: center;
+    }
+
+    .map-legend {
+        left: 8px;
+        right: auto;
+        bottom: 26px;
+        max-width: calc(100% - 16px);
+    }
+
+    .map-legend .legend-block {
+        min-width: 0;
+    }
+
+    .legend-toggle {
+        min-height: 44px;
+    }
+
+    .legend-content {
+        max-height: 36vh;
+        max-height: 36dvh;
+        overflow: auto;
+        overscroll-behavior: contain;
+    }
+
+    #cy-leaflet .leaflet-control-zoom a,
+    #cy-leaflet .leaflet-control-custom {
+        width: 44px;
+        height: 44px;
+        line-height: 44px;
+    }
+
+    .modal-dialog {
+        width: calc(100% - 16px);
+        min-width: 0;
+        max-height: calc(100dvh - 16px);
+    }
+
+    .modal-close {
+        flex: 0 0 44px;
+    }
+
+    .modal-body {
+        overflow: auto;
+        overscroll-behavior: contain;
+    }
+
+    .modal-footer,
+    .scenario-header,
+    .scenario-values {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .monthly-slider-row {
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 4px 8px;
+    }
+
+    .monthly-label {
+        white-space: normal;
+    }
+
+    .monthly-range {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        margin: 0;
+    }
+
+    .scenario-slider input[type="range"],
+    .monthly-range {
+        min-height: 32px;
+    }
+}
